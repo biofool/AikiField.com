@@ -9,12 +9,12 @@
 LOCAL_PATH="$(cd "$(dirname "$0")" && pwd)/"
 REMOTE_HOST="peec.biz"
 REMOTE_USER="peecbiz"
-REMOTE_PATH="public_html/aikifield.com/"
+REMOTE_PATH="public_html/aikifield/"
 SSH_KEY="$HOME/.ssh/quantumaikido_ed25519"
 
 # Known remote servers: "host|user|path|description"
 KNOWN_REMOTES=(
-    "peec.biz|peecbiz|public_html/aikifield.com/|Production server (peec.biz)"
+    "peec.biz|peecbiz|public_html/aikifield/|Production server (peec.biz)"
 )
 
 SCP_KEY_ARGS=(-i "$SSH_KEY" -o LogLevel=ERROR)
@@ -39,6 +39,8 @@ RSYNC_REMOTE="${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_PATH}"
 EXCLUDES=(
     --exclude='.git/'
     --exclude='.devin/'
+    --exclude='.well-known/'
+    --exclude='cgi-bin/'
     --exclude='input/'
     --exclude='logs/'
     --exclude='.env'
