@@ -16,7 +16,7 @@
 
 ## Why AikiField
 
-**Subtitle:** Most security consultants hand you a roadmap and leave. We develop the leadership capacity to execute it — so security becomes a competitive advantage, not a compliance burden.
+**Subtitle:** Other security consultants will  you a roadmap and leave or they want to bill you for a massive top heavy program ot. We develop the leadership capacity to execute it — so security becomes a competitive advantage, not a compliance burden.
 
 ### CISO-Level Strategy, Right-Sized
 You don't need a 50-person security department. You need the 80/20 — the minimum viable security program that protects your customers, passes enterprise procurement, and scales with your growth. We bring CISO-level thinking without the CISO-level overhead.
