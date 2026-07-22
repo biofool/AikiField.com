@@ -1,6 +1,6 @@
-# AikiField.com — All Pages
+# AikiField.com — Revised Copy
 
-> **Positioning:** Kenneth is a security leader with 20+ years building and running security programs — from CISO of a venture-backed product company to executive coach. The site is 70% security services (Fractional CISO, product security, AI governance, DevSecOps, vulnerability remediation, customer security/compliance) and 30% executive coaching (the AikiField presence-based methodology that makes security leadership stick). Lead offering: **Fractional CISO + AI Governance for Product Companies**.
+> This pass folds in your latest edits and drops every "this, not that" contrast trailer down to just the affirmative claim. Methodology terms like "not-knowing" stayed — that's vocabulary, not a rhetorical contrast.
 
 ---
 
@@ -8,43 +8,39 @@
 
 ## Hero
 
-**Headline:** Security leadership that moves at the speed of your business.
+**Headline:** Security leadership that keeps pace with your business. The audit calendar is in the rear view mirror.
 
-**Subhead:** Fractional CISO, AI-assisted security engineering, and executive coaching for product companies. 20+ years building security programs that integrate into the business — finding the 20% of the work that brings 80% of the results.
+**Subhead:** I'm a fractional CISO for product companies. 20+ years building and running security programs — from CISO of a venture-backed product company to executive coach. I find the 20% of the work that brings 80% of the results.
 
 **Buttons:** Explore Services / Our Approach
 
 ## Why AikiField
 
-**Subtitle:** Most security consultants hand you a roadmap and leave, or bill you for a massive top-heavy program. We integrate security into your business process — right-sized, revenue-aware, and built to last.
+**Subtitle:** Many security consultants hand you a roadmap and leave, or bill you for a massive program. I integrate security into your business process — right-sized, revenue-aware, and built to last.
 
 ### Security Built Into the Business
-Security shouldn't be a separate line item. We left-shift security into your development budget, align it to your revenue model, and focus on what your customers actually require. A lean program that protects your business without slowing it down.
+Security shouldn't be a separate line item. I left-shift security into your development budget, align it to your revenue model, and focus on what your customers actually require. A lean program that protects your business without slowing it down.
 
 ### AI-Assisted Security Engineering
-AI-assisted triage and remediation workflows that cut vulnerability mitigation time from 21 days to 3. Not AI hype — production AI workflows with prompts and validation procedures across application, cloud, infrastructure, and customer-reported vulnerabilities.
+AI-assisted triage and remediation workflows that cut vulnerability mitigation time from 21 days to 3. Production AI workflows with prompts and validation procedures across application, cloud, infrastructure, and customer-reported vulnerabilities.
 
 ### Leadership That Sticks
-Security programs fail not because the technical strategy is wrong, but because the leadership capacity to execute it isn't there. We combine security advisory with presence-based executive coaching — so your leaders develop the grounded judgment to lead security for the long haul.
-
-## Quote
-> The primary task of a leader is the mastery of his or her own energy.
-> — Peter Drucker
+Security programs fail because the leadership capacity to execute isn't there. I combine security advisory with presence-based executive coaching — so your leaders develop the grounded judgment to lead security for the long haul.
 
 ## The Framework
 
 **Subtitle:** Two disciplines, one integrated practice. Security engineering meets leadership development.
 
 ### From Roadmap to Reality
-Most security engagements produce a document. Ours produce a capability. We combine 20+ years of CISO-level security experience with a presence-based coaching methodology that develops the leadership capacity to execute under pressure.
+Most security engagements produce a document. Mine produce a capability. I combine 20+ years of CISO-level security experience with a presence-based coaching methodology that develops the leadership capacity to execute under pressure.
 
-Our work shifts from reactive security (firefighting, compliance panic, audit-driven checklists) to proactive security leadership — grounded presence, strategic clarity, and the ability to navigate uncertainty with confidence.
+The work shifts from reactive security (firefighting, compliance panic, audit-driven checklists) to proactive security leadership — grounded presence, strategic clarity, and the ability to navigate uncertainty with confidence.
 
-**One Cardinal Assumption:** Energy follows attention. Where a leader places their attention determines the security posture of the entire organization.
+**One Cardinal Assumption:** Energy follows attention. Where a leader places their attention determines the security posture of the entire organization. This is the starting point for every engagement — before tools, before policies, before frameworks.
 
-**Principle 1 — Inspired Presence:** The grounded, calm authority that a security leader projects — in a breach, in a board meeting, in a customer security review. Presence is the first control.
+**Principle 1 — Inspired Presence:** The grounded, calm authority a security leader projects — in a breach, in a board meeting, in a customer security review. Presence is trainable.
 
-**Principle 2 — Relational Harmony:** Security is not a wall — it's a conversation. The ability to partner with engineering, align with product, and build trust with customers is what makes security programs work.
+**Principle 2 — Relational Harmony:** Security is a conversation. The ability to partner with engineering, align with product, and build trust with customers is what makes security programs actually work.
 
 **Principle 3 — Open Inquiry:** The threat landscape is always shifting. The capacity to not-know, to question assumptions, and to sense emerging risks before they materialize is the essence of security leadership.
 
@@ -62,7 +58,7 @@ Workflow rearchitecture reduced average time to identify, escalate, and remediat
 Implemented AI-assisted triage and remediation workflows with the Aikido.dev platform, reducing average vulnerability mitigation time from 21 days to 3 days across application, OS/package, cloud/infrastructure, and customer-reported vulnerabilities.
 
 ## CTA
-**Ready to begin?** Whether you need a fractional CISO, AI-assisted security engineering, or leadership coaching for your engineering leaders — we'll design an engagement that meets you where you are.
+**Ready to begin?** Whether you need a fractional CISO, AI-assisted security engineering, or leadership coaching for your engineering leaders — I'll design an engagement that meets you where you are. [Book a Discovery Call]
 
 ---
 
@@ -70,46 +66,45 @@ Implemented AI-assisted triage and remediation workflows with the Aikido.dev pla
 
 ## Page Header
 **Title:** Our Approach
-**Subtitle:** Security engineering and leadership development, integrated. We build your security program — and the leadership capacity to sustain it.
+**Subtitle:** Security engineering and leadership development, integrated. I build your security program — and the leadership capacity to sustain it.
 
 ## One Cardinal Assumption
 
 **Energy follows attention.**
 
-Where a leader places their attention determines the security posture of the entire organization. A CEO who is calm during a breach sets the tone for the response. A CTO who approaches security with curiosity creates a culture where engineers flag vulnerabilities instead of hiding them. Before tools, before policies, before frameworks: leadership presence.
+Where a leader places their attention determines the security posture of the entire organization. Before tools, before policies, before frameworks: leadership. Secure software behaves the way you expect.
 
 ## Shifting Domains of Security Leadership
 
-**Subtitle:** The core of our work is a shift in the domain from which a security leader operates.
+**Subtitle:** The core of the work is a shift in the domain from which a security leader operates.
 
 ### From: Reactive Security
 Fear-driven, compliance-focused, always playing catch-up.
-- Panic-driven reactions to incidents and audits
+- Avoidant reactions to incidents and audits
 - Security as a checkbox, a wall, or a "no" department
-- Leading from fear, control, or avoidance
 
 ### To: Proactive Security Leadership
 Embodied, strategic awareness — confident, compassionate decision-making.
 - Grounded, centered response to incidents and customer concerns
 - Open, systemic perception of the full risk landscape
-- Leading from presence, partnership, and inquiry
+- Leading from partnership, and inquiry
 
 ## Three Principles
 
-**Subtitle:** The qualities of security leadership we cultivate.
+**Subtitle:** The qualities of security leadership I cultivate in every engagement.
 
 ### I — Inspired Presence
-Grounded, calm authority under pressure. When a security leader is centered during an incident, composed in a board meeting, confident in a customer review — they become a stabilizing force. Presence that comes from *being*, not from title.
+Grounded, calm authority under pressure. When a security leader is centered during an incident, composed in a board meeting, confident in a customer review — they become a stabilizing force. Presence that comes from being.
 
 ### II — Relational Harmony
-Security as partnership. Blending with engineering priorities, joining with product timelines, co-creating solutions that serve the whole business. Security that works *with* the organization, not against it.
+Security as partnership. Blending with engineering priorities, joining with product timelines, co-creating solutions that serve the whole business. Security that works with the organization.
 
 ### III — Open Inquiry
-The power of not-knowing. Questioning assumptions about threat models, sensing emerging risks before they materialize, approaching AI governance with curiosity. Adaptive security — leading from inquiry, not yesterday's playbook.
+The power of not-knowing. Questioning assumptions about threat models, sensing emerging risks before they materialize, approaching AI governance with curiosity. Adaptive security — leading from inquiry.
 
 ## Three Practices
 
-**Subtitle:** How the principles are developed — through embodied experience applied to real security challenges.
+**Subtitle:** How the principles get developed — through embodied experience applied to real security challenges.
 
 ### Practice I — Opening the Body
 **Energize — Center / Ground / Flow**
@@ -117,15 +112,15 @@ The power of not-knowing. Questioning assumptions about threat models, sensing e
 Somatic practices for grounded presence under pressure: calm during an incident, composed during a customer audit, authoritative in a board briefing.
 - Centering — finding your ground before a high-stakes conversation
 - Grounding — staying rooted when an incident escalates
-- Flowing — awareness of the whole field, not just the loudest threat
+- Flowing — awareness of the whole field
 
 ### Practice II — Opening the Heart
 **Harmonize — Blend / Join / Enhance**
 
-Relational practices for partnership: blending with engineering instead of blocking, co-designing secure features, building trust through empathetic communication.
+Relational practices for partnership: blending with engineering, co-designing secure features, building trust through empathetic communication.
 - Sensing the field — reading the room in a cross-functional review
 - Opening listening space — hearing what engineers need to build securely
-- Leading co-creation — partnering on AI governance that enables, not restricts
+- Leading co-creation — partnering on AI governance that enables
 
 ### Practice III — Opening the Mind
 **Navigate — Inquire / Not Knowing / Intuit**
@@ -135,12 +130,8 @@ Inquiry practices for strategic security intuition: suspending certainty, valuin
 - Field sensing — reading the emerging AI risk landscape
 - Mastery practice design — personal security leadership commitments
 
-## Quote
-> The mind that created the problems of today is not the mind that will solve them.
-> — paraphrasing Albert Einstein
-
 ## CTA
-**Experience it for yourself.** Reading about security leadership is like reading about swimming. Let's get in the water.
+**Experience it for yourself.** Reading about security leadership is like reading about swimming. Let's get in the water. [Book a Discovery Call]
 
 ---
 
@@ -152,10 +143,10 @@ Inquiry practices for strategic security intuition: suspending certainty, valuin
 
 ## Flagship Offering — Fractional CISO + AI Governance
 
-**Subtitle:** Our strongest integrated package. CISO-level strategy, AI-assisted security engineering, customer trust advisory, and executive coaching in one monthly engagement.
+**Subtitle:** My strongest integrated package. CISO-level strategy, AI-assisted security engineering, customer trust advisory, and executive coaching in one monthly engagement.
 
 ### Fractional CISO + AI Governance for Product Companies
-A monthly advisory service for startups, SaaS firms, and product companies that need CISO-level leadership without a full-time executive. Our lead offering — combining 20+ years of CISO experience, product-company security, customer trust and revenue impact, practical AI in security engineering, and lean executive advisory.
+A monthly advisory service for startups, SaaS firms, and product companies that need CISO-level leadership without a full-time executive. My lead offering — combining 20+ years of CISO experience, product-company security, customer trust and revenue impact, practical AI in security engineering, and lean executive advisory.
 
 **What's included:**
 - Security roadmap and risk prioritization aligned to your business stage and revenue model
@@ -172,7 +163,7 @@ A monthly advisory service for startups, SaaS firms, and product companies that 
 **Subtitle:** Practical security operating models for companies that need structure without bureaucracy.
 
 ### Lean Security Program Buildout
-A practical security operating model for companies that can't afford a large security department. The 80/20 approach — the minimum viable security program that covers your real risks without enterprise overhead. Security left-shifted into the development budget, not carried as a separate line item.
+A practical security operating model for companies that can't afford a large security department. The 80/20 approach — the minimum viable security program that covers your real risks without enterprise overhead. Security left-shifted into the development budget.
 
 **What's included:**
 - 80/20 security roadmap — the critical controls that address 80% of your real risk
@@ -204,7 +195,7 @@ Workflow rearchitecture that integrates security into your CI/CD pipeline — sh
 **Subtitle:** Workshop-based consulting for teams building new products, cloud services, or customer-facing platforms.
 
 ### Threat Modeling for Product and Engineering Teams
-A workshop-based consulting offer for teams building new products, cloud services, or customer-facing platforms. We bring security into the design phase — before code is written, before customers ask. Based on experience running threat modeling across hybrid cloud and on-premise environments.
+A workshop-based consulting offer for teams building new product and customer-facing platforms. I bring security into the design phase — before code is written, before customers ask. Based on experience running threat modeling for on-prem deployment.
 
 **What's included:**
 - Threat model workshops — facilitated sessions with your engineering and product teams
@@ -220,7 +211,7 @@ A workshop-based consulting offer for teams building new products, cloud service
 **Subtitle:** A hybrid coaching and advisory offer that combines security expertise with presence-based executive coaching.
 
 ### Security Leadership Coaching for CTOs, Founders, and Engineering Leaders
-A hybrid coaching/advisory offer combining Kenneth's 20+ year security background with the AikiField executive coaching methodology. Not just security advice — it's the development of the leadership capacity to make security decisions, communicate them clearly, and lead teams through uncertainty.
+A hybrid coaching/advisory offer combining my 20+ year security background with the AikiField executive coaching methodology. The development of the leadership capacity to make security decisions, communicate them clearly, and lead teams through uncertainty.
 
 **What's included:**
 - Security decision coaching — navigating trade-offs between security, speed, and cost
@@ -242,7 +233,7 @@ A practical assessment of your current security posture — controls, gaps, and 
 A seven-dimension self-assessment measuring the leadership presence capabilities security leaders need — from grounded composure under pressure to navigating uncertainty with confidence.
 
 ## CTA
-**Let's design your engagement.** Every company's security journey is different. We'll tailor a program that fits your stage, your risks, and your aspirations.
+**Let's design your engagement.** Every company's security journey is different. I'll tailor a program that fits your stage, your risks, and your aspirations. [Book a Discovery Call]
 
 ---
 
@@ -258,24 +249,24 @@ A seven-dimension self-assessment measuring the leadership presence capabilities
 
 ### Agreement I — Aspiration: The Leadership Agreement
 Security identity, direction, and strategic awareness for the exec team.
-- Contextual awareness of your real risk landscape (not generic checklists)
+- Contextual awareness of your real risk landscape
 - Clear security posture vision — what you're protecting, why, and at what level
-- Security as a business enabler, not a blocker
+- Security as a business enabler
 - Security investment aligned to business stage and revenue goals
 
 ### Agreement II — Execution: The Management Agreement
 Operating discipline for a security program that actually runs.
 - Integrated security roadmap with clear milestones and owners
 - Open risk register — visible to leadership, updated regularly
-- Security metrics that matter, not vanity metrics
+- Security metrics that matter
 - Regular review cadence — monthly security summaries for the exec team
 
 ### Agreement III — Change: The Development Agreement
 Conditions for security capability growth across the organization.
 - Deep trust between security, engineering, and product — no blame culture
-- Collaborative security — engineers who flag vulnerabilities, not hide them
+- Collaborative security — engineers who flag vulnerabilities
 - Customer trust as a shared responsibility
-- Incidents become learning, not punishment
+- Incidents become learning
 
 ### Agreement IV — Inspiration: The Inquiry Agreement
 Conditions for adaptive security and AI governance.
@@ -286,7 +277,7 @@ Conditions for adaptive security and AI governance.
 
 ## The Security Transformation Design Cycle
 
-**Subtitle:** Six phases for designing a security program that fits your business. Not a generic framework — a collaborative process tailored to your stage, risks, and customers.
+**Subtitle:** Six phases for designing a security program that fits your business — a collaborative process tailored to your stage, risks, and customers.
 
 ### Phase I — Connecting Our Circle
 Who are we, and what does security mean for *this* business? Establishing trust, shared language, and a clear picture of the current state. What are your real risks? What do customers actually ask about?
@@ -295,7 +286,7 @@ Who are we, and what does security mean for *this* business? Establishing trust,
 Mapping your security landscape — attack surface, threat model, compliance, customer expectations, AI risk exposure. Where you're exposed, where you're strong, where the gaps are.
 
 ### Phase III — Incubating for Emergence
-Letting the picture settle. Not rushing to a roadmap. Creating space for the right priorities to emerge — the 80/20 that addresses your real risk, not a generic checklist.
+Letting the picture settle. Creating space for the right priorities to emerge — the 80/20 that addresses your real risk.
 
 ### Phase IV — Designing the Security Program
 Select priority areas. Design the minimum viable security program — policies, controls, and practices that cover your real risks without enterprise overhead. What's first, what's next, what can wait.
@@ -304,7 +295,7 @@ Select priority areas. Design the minimum viable security program — policies, 
 Agree on your security posture vision — internally and externally. Clarify goals, owners, timelines. Prepare the customer-facing narrative. This is where security becomes a trust differentiator.
 
 ### Phase VI — Cycling
-Security is not a one-time project — it's a living practice. Return to earlier phases as your business grows, the threat landscape shifts, or AI capabilities evolve.
+Security is a living practice. Return to earlier phases as your business grows, the threat landscape shifts, or AI capabilities evolve.
 
 ### Core Tools
 Three tools woven through every phase:
@@ -381,7 +372,7 @@ You don't know how to achieve it. It hasn't been done at your scale. "We'll cut 
 - Security investments that save time downstream
 
 ## CTA
-**Ready to design your security engagement?** Every breakthrough begins with a conversation. Let's talk about where you are and where you want to go.
+**Ready to design your security engagement?** Every breakthrough begins with a conversation. Let's talk about where you are and where you want to go. [Book a Discovery Call]
 
 ---
 
@@ -450,13 +441,13 @@ Allow / Accept / Adapt
 ### Dimension 3 · Vitality — Dynamic Presence
 Breathe / Sense / Enjoy
 - Practice conscious presence before high-stakes security conversations?
-- Bring energy and engagement to security discussions rather than dread?
+- Bring energy and engagement to security discussions?
 - Maintain the stamina for sustained security leadership?
 - Find genuine enjoyment in the craft of security leadership?
 
 ### Dimension 4 · Heart — Relational Harmony
 Feel / Flow / Join
-- Build genuine partnership with engineering rather than acting as a gatekeeper?
+- Build genuine partnership with engineering?
 - Demonstrate empathy for engineers who raise security concerns?
 - Collaborate creatively with product on secure feature design?
 - Listen deeply to what customers are actually asking about security?
@@ -470,8 +461,8 @@ Aspire / Engage / Dialogue
 
 ### Dimension 6 · Vision — Inspired Leadership
 Imagine / Intend / Create
-- Visualize a security program that enables business growth, not just risk reduction?
-- Set time aside for strategic security thinking, not just firefighting?
+- Visualize a security program that enables business growth?
+- Set time aside for strategic security thinking?
 - Make sound security decisions under pressure?
 - Provide generous stewardship of customer trust?
 
@@ -501,10 +492,8 @@ Enlist your leadership team and supporters to stay on track and measure effectiv
 ### V — Review
 Practice and review regularly. Adjust based on results, incidents, and changing conditions.
 
-> Practice only exists in the present. Practice diligently, for the sake of the practice. Dedicate your effort without attachment to outcomes. Love the plateaus that show no progress. Gentle perseverance pays.
-
 ## CTA
-**Want a guided assessment?** A facilitated assessment with Kenneth provides deeper insight, a tailored security roadmap, and leadership coaching to execute it.
+**Want a guided assessment?** A facilitated assessment with me provides deeper insight, a tailored security roadmap, and leadership coaching to execute it. [Book a Discovery Call]
 
 ---
 
@@ -516,7 +505,7 @@ Practice and review regularly. Adjust based on results, incidents, and changing 
 
 ## Get in Touch
 
-Whether you need a fractional CISO, a lean security program buildout, AI-assisted DevSecOps, threat modeling, or leadership coaching — we'll design an engagement that meets you where you are.
+Whether you need a fractional CISO, a lean security program buildout, AI-assisted DevSecOps, threat modeling, or leadership coaching — I'll design an engagement that meets you where you are.
 
 ### What to Expect
 - A complimentary discovery conversation (30–45 minutes)
@@ -534,8 +523,3 @@ Phone: +1 (000) 000-0000
 - Organization
 - Area of Interest (Fractional CISO + AI Governance / Lean Security Program Buildout / DevSecOps & Vulnerability Remediation / Threat Modeling Workshop / Security Leadership Coaching / Security Maturity Assessment / Other)
 - Message: What's on your mind?
-
-## Quote
-> Yield the persona to the witness.
-> Now yield this witnessing to its source.
-> — Anonymous
