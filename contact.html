@@ -9,10 +9,15 @@
 </head>
 <body>
 
+<a href="#main" class="skip-link">Skip to main content</a>
+
 <!-- NAV -->
 <nav class="nav">
   <div class="container">
-    <a href="index.html" class="nav__brand">Aiki<span>Field</span></a>
+    <a href="index.html" class="nav__brand">
+      <span class="nav__brand-icon" aria-hidden="true">A</span>
+      <span class="nav__brand-text">AikiField</span>
+    </a>
     <ul class="nav__links">
       <li><a href="index.html">Home</a></li>
       <li><a href="approach.html">Approach</a></li>
@@ -26,127 +31,115 @@
   </div>
 </nav>
 
-<!-- PAGE HEADER -->
-<section class="page-header">
-  <div class="container">
-    <h1>Start a Conversation</h1>
-    <p>Every security breakthrough begins with an inquiry.</p>
-  </div>
-</section>
+<main id="main">
+  <!-- PAGE HEADER -->
+  <section class="page-header">
+    <div class="container">
+      <h1>Start a Conversation</h1>
+      <p>Every security breakthrough begins with an inquiry.</p>
+    </div>
+  </section>
 
-<!-- GET IN TOUCH -->
-<section class="section">
-  <div class="container">
-    <h2 class="section-title">Get in Touch</h2>
-    <p class="section-subtitle">
-      Whether you need a fractional CISO, a lean security program buildout, AI-assisted DevSecOps,
-      threat modeling, or leadership coaching &mdash; I'll design an engagement that meets you
-      where you are.
-    </p>
-
-    <div class="grid grid-2">
-      <!-- WHAT TO EXPECT -->
-      <div class="card">
-        <h3>What to Expect</h3>
-        <ul>
-          <li>A complimentary discovery conversation (30&ndash;45 minutes)</li>
-          <li>An assessment of your current security posture and leadership context</li>
-          <li>A tailored proposal for an engagement that fits your stage and needs</li>
-          <li>No obligation</li>
-        </ul>
+  <!-- GET IN TOUCH -->
+  <section class="section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Get in Touch</h2>
+        <p class="section-subtitle" style="margin-bottom:0;">
+          Whether you need a fractional CISO, a lean security program buildout, AI-assisted DevSecOps,
+          threat modeling, or leadership coaching &mdash; I'll design an engagement that meets you
+          where you are.
+        </p>
       </div>
+      <div class="grid grid-2" style="margin-top:56px;">
+        <!-- WHAT TO EXPECT -->
+        <article class="card">
+          <span class="card__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+          </span>
+          <h3>What to Expect</h3>
+          <ul>
+            <li>A complimentary discovery conversation (30&ndash;45 minutes)</li>
+            <li>An assessment of your current security posture and leadership context</li>
+            <li>A tailored proposal for an engagement that fits your stage and needs</li>
+            <li>No obligation</li>
+          </ul>
+        </article>
 
-      <!-- DIRECT CONTACT -->
-      <div class="card" style="border-top: 4px solid var(--gold);">
-        <span class="tag">Direct Contact</span>
-        <h3>Reach Out Directly</h3>
-        <p style="font-size: 1.05rem; margin-bottom: 12px;">
-          Email: <a href="mailto:hello@aikifield.com">hello@aikifield.com</a>
-        </p>
-        <p style="font-size: 1.05rem; margin-bottom: 0;">
-          Phone: +1 (000) 000-0000
-        </p>
+        <!-- DIRECT CONTACT -->
+        <article class="card" style="border-top:4px solid var(--gold);">
+          <span class="card__icon" aria-hidden="true" style="background:var(--gold);">
+            <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16v12H4z"/><path d="M4 7l8 6 8-6"/></svg>
+          </span>
+          <h3>Direct Contact</h3>
+          <p>Email: <a href="mailto:hello@aikifield.com">hello@aikifield.com</a></p>
+          <p>Phone: +1 (000) 000-0000</p>
+        </article>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- INQUIRY FORM -->
-<section class="section section--alt">
-  <div class="container">
-    <h2 class="section-title">Inquiry Form</h2>
-    <p class="section-subtitle">
-      Tell me a bit about your organization and what you're looking for. I'll get back to you
-      within two business days.
-    </p>
-
-    <form action="mailto:hello@aikifield.com" method="post" enctype="text/plain" style="max-width: 640px; margin: 0 auto;">
-      <div style="margin-bottom: 20px;">
-        <label for="name" style="display:block; font-weight:600; margin-bottom:6px; color:var(--ink);">Name</label>
-        <input type="text" id="name" name="name" required
-          style="width:100%; padding:12px 14px; border:1px solid var(--line); border-radius:var(--radius); font-size:1rem; font-family:var(--font-body); background:var(--white); color:var(--ink); transition:border-color 0.2s;"
-          onfocus="this.style.borderColor='var(--accent)';"
-          onblur="this.style.borderColor='var(--line)';">
+  <!-- INQUIRY FORM -->
+  <section class="section section--alt">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Inquiry Form</h2>
+        <p class="section-subtitle" style="margin-bottom:0;">
+          Tell me a bit about your organization and what you're looking for. I'll get back to you
+          within two business days.
+        </p>
       </div>
-
-      <div style="margin-bottom: 20px;">
-        <label for="email" style="display:block; font-weight:600; margin-bottom:6px; color:var(--ink);">Email</label>
-        <input type="email" id="email" name="email" required
-          style="width:100%; padding:12px 14px; border:1px solid var(--line); border-radius:var(--radius); font-size:1rem; font-family:var(--font-body); background:var(--white); color:var(--ink); transition:border-color 0.2s;"
-          onfocus="this.style.borderColor='var(--accent)';"
-          onblur="this.style.borderColor='var(--line)';">
-      </div>
-
-      <div style="margin-bottom: 20px;">
-        <label for="organization" style="display:block; font-weight:600; margin-bottom:6px; color:var(--ink);">Organization</label>
-        <input type="text" id="organization" name="organization"
-          style="width:100%; padding:12px 14px; border:1px solid var(--line); border-radius:var(--radius); font-size:1rem; font-family:var(--font-body); background:var(--white); color:var(--ink); transition:border-color 0.2s;"
-          onfocus="this.style.borderColor='var(--accent)';"
-          onblur="this.style.borderColor='var(--line)';">
-      </div>
-
-      <div style="margin-bottom: 20px;">
-        <label for="interest" style="display:block; font-weight:600; margin-bottom:6px; color:var(--ink);">Area of Interest</label>
-        <select id="interest" name="interest"
-          style="width:100%; padding:12px 14px; border:1px solid var(--line); border-radius:var(--radius); font-size:1rem; font-family:var(--font-body); background:var(--white); color:var(--ink); transition:border-color 0.2s; cursor:pointer;"
-          onfocus="this.style.borderColor='var(--accent)';"
-          onblur="this.style.borderColor='var(--line)';">
-          <option value="" selected disabled>Select an area of interest&hellip;</option>
-          <option value="fractional-ciso">Fractional CISO + AI Governance</option>
-          <option value="lean-program">Lean Security Program Buildout</option>
-          <option value="devsecops">DevSecOps &amp; Vulnerability Remediation</option>
-          <option value="threat-modeling">Threat Modeling Workshop</option>
-          <option value="leadership-coaching">Security Leadership Coaching</option>
-          <option value="maturity-assessment">Security Maturity Assessment</option>
-          <option value="other">Other</option>
-        </select>
-      </div>
-
-      <div style="margin-bottom: 28px;">
-        <label for="message" style="display:block; font-weight:600; margin-bottom:6px; color:var(--ink);">Message</label>
-        <textarea id="message" name="message" rows="6" placeholder="What's on your mind?"
-          style="width:100%; padding:12px 14px; border:1px solid var(--line); border-radius:var(--radius); font-size:1rem; font-family:var(--font-body); background:var(--white); color:var(--ink); resize:vertical; transition:border-color 0.2s;"
-          onfocus="this.style.borderColor='var(--accent)';"
-          onblur="this.style.borderColor='var(--line)';"></textarea>
-      </div>
-
-      <div style="text-align:center;">
-        <button type="submit" class="btn btn--primary">Send Inquiry</button>
-      </div>
-    </form>
-  </div>
-</section>
+      <form action="mailto:hello@aikifield.com" method="post" enctype="text/plain" style="max-width:640px; margin:48px auto 0;">
+        <div class="form-group">
+          <label for="name">Name</label>
+          <input type="text" id="name" name="name" required>
+        </div>
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" required>
+        </div>
+        <div class="form-group">
+          <label for="organization">Organization</label>
+          <input type="text" id="organization" name="organization">
+        </div>
+        <div class="form-group">
+          <label for="interest">Area of Interest</label>
+          <select id="interest" name="interest">
+            <option value="" selected disabled>Select an area of interest&hellip;</option>
+            <option value="fractional-ciso">Fractional CISO + AI Governance</option>
+            <option value="lean-program">Lean Security Program Buildout</option>
+            <option value="devsecops">DevSecOps &amp; Vulnerability Remediation</option>
+            <option value="threat-modeling">Threat Modeling Workshop</option>
+            <option value="leadership-coaching">Security Leadership Coaching</option>
+            <option value="maturity-assessment">Security Maturity Assessment</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="message">Message</label>
+          <textarea id="message" name="message" rows="6" placeholder="What's on your mind?"></textarea>
+        </div>
+        <div style="text-align:center;">
+          <button type="submit" class="btn btn--primary">Send Inquiry</button>
+        </div>
+      </form>
+    </div>
+  </section>
+</main>
 
 <!-- FOOTER -->
 <footer class="footer">
   <div class="container">
     <div class="footer__grid">
       <div>
-        <div class="footer__brand">Aiki<span>Field</span></div>
+        <div class="footer__brand">
+          <span class="footer__brand-icon" aria-hidden="true">A</span>
+          <span class="footer__brand-text">AikiField</span>
+        </div>
         <p>Security leadership for product companies. Fractional CISO, AI-assisted security
         engineering, and presence-based executive coaching.</p>
       </div>
-      <div>
+      <nav aria-label="Explore">
         <h4>Explore</h4>
         <ul>
           <li><a href="approach.html">Our Approach</a></li>
@@ -154,14 +147,14 @@
           <li><a href="process.html">Engagement Process</a></li>
           <li><a href="assessment.html">Self-Assessment</a></li>
         </ul>
-      </div>
-      <div>
+      </nav>
+      <nav aria-label="Connect">
         <h4>Connect</h4>
         <ul>
           <li><a href="contact.html">Contact</a></li>
           <li><a href="contact.html">Inquiry</a></li>
         </ul>
-      </div>
+      </nav>
     </div>
     <div class="footer__bottom">
       &copy; 2026 AikiField. All rights reserved.

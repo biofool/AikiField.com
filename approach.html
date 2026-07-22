@@ -9,10 +9,15 @@
 </head>
 <body>
 
+<a href="#main" class="skip-link">Skip to main content</a>
+
 <!-- NAV -->
 <nav class="nav">
   <div class="container">
-    <a href="index.html" class="nav__brand">Aiki<span>Field</span></a>
+    <a href="index.html" class="nav__brand">
+      <span class="nav__brand-icon" aria-hidden="true">A</span>
+      <span class="nav__brand-text">AikiField</span>
+    </a>
     <ul class="nav__links">
       <li><a href="index.html">Home</a></li>
       <li><a href="approach.html">Approach</a></li>
@@ -26,141 +31,158 @@
   </div>
 </nav>
 
-<!-- PAGE HEADER -->
-<section class="page-header">
-  <div class="container">
-    <h1>Our Approach</h1>
-    <p>Security engineering and leadership development, integrated. I build your security program &mdash; and the leadership capacity to sustain it.</p>
-  </div>
-</section>
+<main id="main">
+  <!-- PAGE HEADER -->
+  <section class="page-header">
+    <div class="container">
+      <h1>Our Approach</h1>
+      <p>Security engineering and leadership development, integrated. I build your security program &mdash; and the leadership capacity to sustain it.</p>
+    </div>
+  </section>
 
-<!-- ONE CARDINAL ASSUMPTION -->
-<section class="section">
-  <div class="container">
-    <h2 class="section-title">One Cardinal Assumption</h2>
-    <p class="section-subtitle">Energy follows attention.</p>
-    <div class="principle-stack" style="max-width:760px; margin:0 auto;">
-      <div class="principle-item principle-item--gold">
-        <h4>Energy follows attention</h4>
-        <p>Where a leader places their attention determines the security posture of the entire organization. Before tools, before policies, before frameworks: leadership. Secure software behaves the way you expect.</p>
+  <!-- ONE CARDINAL ASSUMPTION -->
+  <section class="section">
+    <div class="container">
+      <div class="section-header section-header--center">
+        <h2 class="section-title">One Cardinal Assumption</h2>
+      </div>
+      <div class="card" style="max-width:760px; margin:0 auto; border-top:4px solid var(--gold); text-align:center;">
+        <p class="principle-card__tag" style="margin-bottom:18px;">The Assumption</p>
+        <p style="font-family:var(--font-head); font-size:clamp(26px,3vw,34px); font-weight:600; color:var(--ink); line-height:1.25; margin-bottom:20px;">
+          Energy follows attention.
+        </p>
+        <p style="font-size:19px; color:var(--ink-soft); max-width:56ch; margin:0 auto;">
+          Where a leader places their attention determines the security posture of the entire organization. Before tools, before policies, before frameworks: leadership. Secure software behaves the way you expect.
+        </p>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- SHIFTING DOMAINS -->
-<section class="section section--alt">
-  <div class="container">
-    <h2 class="section-title">Shifting Domains of Security Leadership</h2>
-    <p class="section-subtitle">The core of the work is a shift in the domain from which a security leader operates.</p>
-    <div class="feature-row">
-      <div class="feature-row__visual">
-        <h3 style="color:var(--ink-muted); margin-bottom:16px;">From: Reactive Security</h3>
-        <p style="color:var(--ink-muted); font-style:italic; margin-bottom:16px;">Fear-driven, compliance-focused, always playing catch-up.</p>
-        <ul>
-          <li>Avoidant reactions to incidents and audits</li>
-          <li>Security as a checkbox, a wall, or a "no" department</li>
-        </ul>
+  <!-- SHIFTING DOMAINS -->
+  <section class="section section--white">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Shifting Domains of Security Leadership</h2>
+        <p class="section-subtitle" style="margin-bottom:0;">The core of the work is a shift in the domain from which a security leader operates.</p>
       </div>
-      <div class="feature-row__visual" style="border-left:4px solid var(--gold);">
-        <h3 style="color:var(--accent-dark); margin-bottom:16px;">To: Proactive Security Leadership</h3>
-        <p style="color:var(--ink-soft); font-style:italic; margin-bottom:16px;">Embodied, strategic awareness &mdash; confident, compassionate decision-making.</p>
-        <ul>
-          <li>Grounded, centered response to incidents and customer concerns</li>
-          <li>Open, systemic perception of the full risk landscape</li>
-          <li>Leading from partnership, and inquiry</li>
-        </ul>
+      <div class="grid grid-2" style="margin-top:56px;">
+        <article class="card" style="opacity:0.78;">
+          <p class="principle-card__tag" style="color:var(--ink-faint);">From</p>
+          <h3 style="margin-bottom:14px; color:var(--ink-muted);">Reactive Security</h3>
+          <p style="font-style:italic; margin-bottom:20px;">Fear-driven, compliance-focused, always playing catch-up.</p>
+          <ul>
+            <li>Avoidant reactions to incidents and audits</li>
+            <li>Security as a checkbox, a wall, or a &ldquo;no&rdquo; department</li>
+          </ul>
+        </article>
+        <article class="card" style="border-top:4px solid var(--gold);">
+          <p class="principle-card__tag">To</p>
+          <h3 style="margin-bottom:14px; color:var(--accent);">Proactive Security Leadership</h3>
+          <p style="font-style:italic; margin-bottom:20px;">Embodied, strategic awareness &mdash; confident, compassionate decision-making.</p>
+          <ul>
+            <li>Grounded, centered response to incidents and customer concerns</li>
+            <li>Open, systemic perception of the full risk landscape</li>
+            <li>Leading from partnership, and inquiry</li>
+          </ul>
+        </article>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- THREE PRINCIPLES -->
-<section class="section">
-  <div class="container">
-    <h2 class="section-title">Three Principles</h2>
-    <p class="section-subtitle">The qualities of security leadership I cultivate in every engagement.</p>
-    <div class="grid grid-3">
-      <div class="card">
-        <span class="card__num">I</span>
-        <h3>Inspired Presence</h3>
-        <p>Grounded, calm authority under pressure. When a security leader is centered during an incident, composed in a board meeting, confident in a customer review &mdash; they become a stabilizing force. Presence that comes from being.</p>
+  <!-- THREE PRINCIPLES -->
+  <section class="section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Three Principles</h2>
+        <p class="section-subtitle" style="margin-bottom:0;">The qualities of security leadership I cultivate in every engagement.</p>
       </div>
-      <div class="card">
-        <span class="card__num">II</span>
-        <h3>Relational Harmony</h3>
-        <p>Security as partnership. Blending with engineering priorities, joining with product timelines, co-creating solutions that serve the whole business. Security that works with the organization.</p>
-      </div>
-      <div class="card">
-        <span class="card__num">III</span>
-        <h3>Open Inquiry</h3>
-        <p>The power of not-knowing. Questioning assumptions about threat models, sensing emerging risks before they materialize, approaching AI governance with curiosity. Adaptive security &mdash; leading from inquiry.</p>
+      <div class="grid grid-3" style="margin-top:56px;">
+        <div class="principle-card">
+          <p class="principle-card__tag">Principle I</p>
+          <h3>Inspired Presence</h3>
+          <p>Grounded, calm authority under pressure. When a security leader is centered during an incident, composed in a board meeting, confident in a customer review &mdash; they become a stabilizing force. Presence that comes from being.</p>
+        </div>
+        <div class="principle-card">
+          <p class="principle-card__tag">Principle II</p>
+          <h3>Relational Harmony</h3>
+          <p>Security as partnership. Blending with engineering priorities, joining with product timelines, co-creating solutions that serve the whole business. Security that works with the organization.</p>
+        </div>
+        <div class="principle-card">
+          <p class="principle-card__tag">Principle III</p>
+          <h3>Open Inquiry</h3>
+          <p>The power of not-knowing. Questioning assumptions about threat models, sensing emerging risks before they materialize, approaching AI governance with curiosity. Adaptive security &mdash; leading from inquiry.</p>
+        </div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- THREE PRACTICES -->
-<section class="section section--alt">
-  <div class="container">
-    <h2 class="section-title">Three Practices</h2>
-    <p class="section-subtitle">How the principles get developed &mdash; through embodied experience applied to real security challenges.</p>
-    <div class="grid grid-3">
-      <div class="card">
-        <h3>Practice I &mdash; Opening the Body</h3>
-        <span class="tag">Energize &mdash; Center / Ground / Flow</span>
-        <p>Somatic practices for grounded presence under pressure: calm during an incident, composed during a customer audit, authoritative in a board briefing.</p>
-        <ul>
-          <li>Centering &mdash; finding your ground before a high-stakes conversation</li>
-          <li>Grounding &mdash; staying rooted when an incident escalates</li>
-          <li>Flowing &mdash; awareness of the whole field</li>
-        </ul>
+  <!-- THREE PRACTICES -->
+  <section class="section section--white">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Three Practices</h2>
+        <p class="section-subtitle" style="margin-bottom:0;">How the principles get developed &mdash; through embodied experience applied to real security challenges.</p>
       </div>
-      <div class="card">
-        <h3>Practice II &mdash; Opening the Heart</h3>
-        <span class="tag">Harmonize &mdash; Blend / Join / Enhance</span>
-        <p>Relational practices for partnership: blending with engineering, co-designing secure features, building trust through empathetic communication.</p>
-        <ul>
-          <li>Sensing the field &mdash; reading the room in a cross-functional review</li>
-          <li>Opening listening space &mdash; hearing what engineers need to build securely</li>
-          <li>Leading co-creation &mdash; partnering on AI governance that enables</li>
-        </ul>
-      </div>
-      <div class="card">
-        <h3>Practice III &mdash; Opening the Mind</h3>
-        <span class="tag">Navigate &mdash; Inquire / Not Knowing / Intuit</span>
-        <p>Inquiry practices for strategic security intuition: suspending certainty, valuing paradox, sensing emerging AI risks before they become incidents.</p>
-        <ul>
-          <li>Aspirational thinking &mdash; setting security posture goals without perfect information</li>
-          <li>Field sensing &mdash; reading the emerging AI risk landscape</li>
-          <li>Mastery practice design &mdash; personal security leadership commitments</li>
-        </ul>
+      <div class="grid grid-3" style="margin-top:56px;">
+        <article class="card">
+          <h3>Practice I &mdash; Opening the Body</h3>
+          <span class="tag">Energize &mdash; Center / Ground / Flow</span>
+          <p>Somatic practices for grounded presence under pressure: calm during an incident, composed during a customer audit, authoritative in a board briefing.</p>
+          <ul>
+            <li>Centering &mdash; finding your ground before a high-stakes conversation</li>
+            <li>Grounding &mdash; staying rooted when an incident escalates</li>
+            <li>Flowing &mdash; awareness of the whole field</li>
+          </ul>
+        </article>
+        <article class="card">
+          <h3>Practice II &mdash; Opening the Heart</h3>
+          <span class="tag">Harmonize &mdash; Blend / Join / Enhance</span>
+          <p>Relational practices for partnership: blending with engineering, co-designing secure features, building trust through empathetic communication.</p>
+          <ul>
+            <li>Sensing the field &mdash; reading the room in a cross-functional review</li>
+            <li>Opening listening space &mdash; hearing what engineers need to build securely</li>
+            <li>Leading co-creation &mdash; partnering on AI governance that enables</li>
+          </ul>
+        </article>
+        <article class="card">
+          <h3>Practice III &mdash; Opening the Mind</h3>
+          <span class="tag">Navigate &mdash; Inquire / Not Knowing / Intuit</span>
+          <p>Inquiry practices for strategic security intuition: suspending certainty, valuing paradox, sensing emerging AI risks before they become incidents.</p>
+          <ul>
+            <li>Aspirational thinking &mdash; setting security posture goals without perfect information</li>
+            <li>Field sensing &mdash; reading the emerging AI risk landscape</li>
+            <li>Mastery practice design &mdash; personal security leadership commitments</li>
+          </ul>
+        </article>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- CTA -->
-<section class="section section--alt">
-  <div class="container">
-    <div class="callout">
-      <h2>Experience it for yourself.</h2>
-      <p>Reading about security leadership is like reading about swimming. Let's get in the water.</p>
-      <a href="contact.html" class="btn btn--primary">Book a Discovery Call</a>
+  <!-- CTA -->
+  <section class="section">
+    <div class="container">
+      <div class="callout">
+        <h2>Experience it for yourself.</h2>
+        <p>Reading about security leadership is like reading about swimming. Let's get in the water.</p>
+        <a href="contact.html" class="btn btn--light">Book a Discovery Call</a>
+      </div>
     </div>
-  </div>
-</section>
+  </section>
+</main>
 
 <!-- FOOTER -->
 <footer class="footer">
   <div class="container">
     <div class="footer__grid">
       <div>
-        <div class="footer__brand">Aiki<span>Field</span></div>
+        <div class="footer__brand">
+          <span class="footer__brand-icon" aria-hidden="true">A</span>
+          <span class="footer__brand-text">AikiField</span>
+        </div>
         <p>Security leadership for product companies. Fractional CISO, AI-assisted security
         engineering, and presence-based executive coaching.</p>
       </div>
-      <div>
+      <nav aria-label="Explore">
         <h4>Explore</h4>
         <ul>
           <li><a href="approach.html">Our Approach</a></li>
@@ -168,14 +190,14 @@
           <li><a href="process.html">Engagement Process</a></li>
           <li><a href="assessment.html">Self-Assessment</a></li>
         </ul>
-      </div>
-      <div>
+      </nav>
+      <nav aria-label="Connect">
         <h4>Connect</h4>
         <ul>
           <li><a href="contact.html">Contact</a></li>
           <li><a href="contact.html">Inquiry</a></li>
         </ul>
-      </div>
+      </nav>
     </div>
     <div class="footer__bottom">
       &copy; 2026 AikiField. All rights reserved.
