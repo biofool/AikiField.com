@@ -5,60 +5,61 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AikiField &mdash; Start a Conversation</title>
   <meta name="description" content="Every security breakthrough begins with an inquiry. Reach out to design an engagement that meets you where you are.">
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/redesign.css">
 </head>
 <body>
 
-<a href="#main" class="skip-link">Skip to main content</a>
+<a href="#main" class="af-skip-link">Skip to main content</a>
 
-<!-- NAV -->
-<nav class="nav">
-  <div class="container">
-    <a href="index.html" class="nav__brand">
-      <span class="nav__brand-icon" aria-hidden="true">A</span>
-      <span class="nav__brand-text">AikiField</span>
+<!-- HEADER -->
+<header class="af-header">
+  <div class="af-header__inner">
+    <a href="index.html" class="af-brand">
+      <span class="af-brand__icon" aria-hidden="true">A</span>
+      <span class="af-brand__text">AikiField</span>
     </a>
-    <ul class="nav__links">
-      <li><a href="index.html">Home</a></li>
-      <li><a href="approach.html">Approach</a></li>
-      <li><a href="services.html">Services</a></li>
-      <li><a href="process.html">Process</a></li>
-      <li><a href="assessment.html">Assessment</a></li>
-      <li><a href="contact.html">Contact</a></li>
-    </ul>
-    <a href="contact.html" class="nav__cta">Get Started</a>
-    <button class="nav__toggle" aria-label="Menu">&#9776;</button>
+    <input type="checkbox" id="af-nav-check" class="af-nav-toggle-check">
+    <label for="af-nav-check" class="af-nav__toggle" aria-label="Menu">&#9776;</label>
+    <nav aria-label="Primary" class="af-nav">
+      <a href="index.html" class="af-nav__link">Home</a>
+      <a href="approach.html" class="af-nav__link">Approach</a>
+      <a href="services.html" class="af-nav__link">Services</a>
+      <a href="process.html" class="af-nav__link">Process</a>
+      <a href="assessment.html" class="af-nav__link">Assessment</a>
+      <a href="contact.html" class="af-nav__cta af-nav__link--active" aria-current="page">Get Started</a>
+    </nav>
   </div>
-</nav>
+</header>
 
 <main id="main">
+
   <!-- PAGE HEADER -->
-  <section class="page-header">
-    <div class="container">
-      <h1>Start a Conversation</h1>
-      <p>Every security breakthrough begins with an inquiry.</p>
+  <section class="af-page-header af-page-header--tight">
+    <div class="af-container">
+      <p class="af-eyebrow">Contact</p>
+      <h1 class="af-h1">Start a Conversation</h1>
+      <p class="af-lead af-page-header__lead">Every security breakthrough begins with an inquiry.</p>
     </div>
   </section>
 
   <!-- GET IN TOUCH -->
-  <section class="section">
-    <div class="container">
-      <div class="section-header">
-        <h2 class="section-title">Get in Touch</h2>
-        <p class="section-subtitle" style="margin-bottom:0;">
-          Whether you need a fractional CISO, a lean security program buildout, AI-assisted DevSecOps,
-          threat modeling, or leadership coaching &mdash; I'll design an engagement that meets you
-          where you are.
-        </p>
+  <section class="af-section">
+    <div class="af-container">
+      <div class="af-section-header">
+        <h2 class="af-h2">Get in Touch</h2>
+        <p class="af-lead af-lead--20">Whether you need a fractional CISO, a lean security program buildout, AI-assisted DevSecOps, threat modeling, or leadership coaching &mdash; I'll design an engagement that meets you where you are.</p>
       </div>
-      <div class="grid grid-2" style="margin-top:56px;">
+      <div class="af-grid af-grid--fit af-grid--28" style="margin-top:56px;">
         <!-- WHAT TO EXPECT -->
-        <article class="card">
-          <span class="card__icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+        <article class="af-contact-card">
+          <span class="af-contact-card__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#F6F2EA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
           </span>
-          <h3>What to Expect</h3>
-          <ul>
+          <h3 class="af-contact-card__title">What to Expect</h3>
+          <ul class="af-contact-card__list">
             <li>A complimentary discovery conversation (30&ndash;45 minutes)</li>
             <li>An assessment of your current security posture and leadership context</li>
             <li>A tailored proposal for an engagement that fits your stage and needs</li>
@@ -67,42 +68,39 @@
         </article>
 
         <!-- DIRECT CONTACT -->
-        <article class="card" style="border-top:4px solid var(--gold);">
-          <span class="card__icon" aria-hidden="true" style="background:var(--gold);">
-            <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16v12H4z"/><path d="M4 7l8 6 8-6"/></svg>
+        <article class="af-contact-card af-contact-card--gold">
+          <span class="af-contact-card__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#F6F2EA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16v12H4z"/><path d="M4 7l8 6 8-6"/></svg>
           </span>
-          <h3>Direct Contact</h3>
-          <p>Email: <a href="mailto:hello@aikifield.com">hello@aikifield.com</a></p>
-          <p>Phone: +1 (000) 000-0000</p>
+          <h3 class="af-contact-card__title">Direct Contact</h3>
+          <p class="af-contact-card__body">Email: <a href="mailto:hello@aikifield.com">hello@aikifield.com</a></p>
+          <p class="af-contact-card__body">Phone: +1 (000) 000-0000</p>
         </article>
       </div>
     </div>
   </section>
 
   <!-- INQUIRY FORM -->
-  <section class="section section--alt">
-    <div class="container">
-      <div class="section-header">
-        <h2 class="section-title">Inquiry Form</h2>
-        <p class="section-subtitle" style="margin-bottom:0;">
-          Tell me a bit about your organization and what you're looking for. I'll get back to you
-          within two business days.
-        </p>
+  <section class="af-section af-section--white">
+    <div class="af-container">
+      <div class="af-section-header">
+        <h2 class="af-h2">Inquiry Form</h2>
+        <p class="af-lead af-lead--20">Tell me a bit about your organization and what you're looking for. I'll get back to you within two business days.</p>
       </div>
-      <form action="mailto:hello@aikifield.com" method="post" enctype="text/plain" style="max-width:640px; margin:48px auto 0;">
-        <div class="form-group">
+      <form class="af-form" action="mailto:hello@aikifield.com" method="post" enctype="text/plain">
+        <div class="af-form-group">
           <label for="name">Name</label>
           <input type="text" id="name" name="name" required>
         </div>
-        <div class="form-group">
+        <div class="af-form-group">
           <label for="email">Email</label>
           <input type="email" id="email" name="email" required>
         </div>
-        <div class="form-group">
+        <div class="af-form-group">
           <label for="organization">Organization</label>
           <input type="text" id="organization" name="organization">
         </div>
-        <div class="form-group">
+        <div class="af-form-group">
           <label for="interest">Area of Interest</label>
           <select id="interest" name="interest">
             <option value="" selected disabled>Select an area of interest&hellip;</option>
@@ -115,12 +113,12 @@
             <option value="other">Other</option>
           </select>
         </div>
-        <div class="form-group">
+        <div class="af-form-group">
           <label for="message">Message</label>
           <textarea id="message" name="message" rows="6" placeholder="What's on your mind?"></textarea>
         </div>
-        <div style="text-align:center;">
-          <button type="submit" class="btn btn--primary">Send Inquiry</button>
+        <div class="af-form__submit">
+          <button type="submit" class="af-btn af-btn--primary">Send Inquiry</button>
         </div>
       </form>
     </div>
@@ -128,40 +126,34 @@
 </main>
 
 <!-- FOOTER -->
-<footer class="footer">
-  <div class="container">
-    <div class="footer__grid">
-      <div>
-        <div class="footer__brand">
-          <span class="footer__brand-icon" aria-hidden="true">A</span>
-          <span class="footer__brand-text">AikiField</span>
-        </div>
-        <p>Security leadership for product companies. Fractional CISO, AI-assisted security
-        engineering, and presence-based executive coaching.</p>
+<footer class="af-footer">
+  <div class="af-footer__grid">
+    <div>
+      <div class="af-footer__brand-row">
+        <span class="af-footer__brand-icon" aria-hidden="true">A</span>
+        <span class="af-footer__brand-text">AikiField</span>
       </div>
-      <nav aria-label="Explore">
-        <h4>Explore</h4>
-        <ul>
-          <li><a href="approach.html">Our Approach</a></li>
-          <li><a href="services.html">Services</a></li>
-          <li><a href="process.html">Engagement Process</a></li>
-          <li><a href="assessment.html">Self-Assessment</a></li>
-        </ul>
-      </nav>
-      <nav aria-label="Connect">
-        <h4>Connect</h4>
-        <ul>
-          <li><a href="contact.html">Contact</a></li>
-          <li><a href="contact.html">Inquiry</a></li>
-        </ul>
-      </nav>
+      <p class="af-footer__tagline">Security leadership for product companies. Fractional CISO, AI-assisted security engineering, and presence-based executive coaching.</p>
     </div>
-    <div class="footer__bottom">
-      &copy; 2026 AikiField. All rights reserved.
-    </div>
+    <nav aria-label="Explore">
+      <h3 class="af-footer__col-title">Explore</h3>
+      <ul class="af-footer__nav">
+        <li><a href="approach.html">Our Approach</a></li>
+        <li><a href="services.html">Services</a></li>
+        <li><a href="process.html">Engagement Process</a></li>
+        <li><a href="assessment.html">Self-Assessment</a></li>
+      </ul>
+    </nav>
+    <nav aria-label="Connect">
+      <h3 class="af-footer__col-title">Connect</h3>
+      <ul class="af-footer__nav">
+        <li><a href="contact.html">Contact</a></li>
+        <li><a href="contact.html">Inquiry</a></li>
+      </ul>
+    </nav>
   </div>
+  <div class="af-footer__legal">&copy; 2026 AikiField. All rights reserved.</div>
 </footer>
 
-<script src="js/main.js"></script>
 </body>
 </html>

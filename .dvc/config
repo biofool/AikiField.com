@@ -1,0 +1,4 @@
+[core]
+    remote = aikifield-gcs
+['remote "aikifield-gcs"']
+    url = gs://aikifield-dvc/

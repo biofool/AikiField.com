@@ -452,6 +452,108 @@ button.af-focus:focus-visible,
 .af-page-header__lead { margin-top: 20px; }
 .af-page-header--tight { padding-bottom: 48px; }
 
+/* ---------- Assessment dimensions ---------- */
+.af-assess-dim {
+  background: var(--af-white);
+  border: 1px solid var(--af-border);
+  border-radius: 16px;
+  padding: 28px;
+  margin-bottom: 16px;
+}
+.af-assess-dim__label {
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--af-gold);
+  font-weight: 700;
+  display: block;
+  margin-bottom: 8px;
+}
+.af-assess-dim__title { color: var(--af-ink); margin-bottom: 4px; font-size: 20px; }
+.af-assess-dim__questions { margin-top: 14px; padding-left: 0; list-style: none; margin-bottom: 0; }
+.af-assess-dim__questions li {
+  font-size: 16px;
+  color: var(--af-faint);
+  padding: 8px 0;
+  border-bottom: 1px dashed var(--af-border);
+}
+.af-assess-dim__questions li:last-child { border-bottom: none; }
+.af-assess-dim__questions li::before { content: '___ '; color: var(--af-gold); font-weight: 700; }
+
+/* ---------- Timeline (assessment practice design) ---------- */
+.af-timeline { position: relative; padding-left: 40px; }
+.af-timeline::before { content: ''; position: absolute; left: 12px; top: 0; bottom: 0; width: 2px; background: var(--af-border); }
+.af-timeline__item { position: relative; margin-bottom: 36px; }
+.af-timeline__item:last-child { margin-bottom: 0; }
+.af-timeline__item::before {
+  content: '';
+  position: absolute;
+  left: -34px;
+  top: 4px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--af-primary);
+  border: 3px solid var(--af-bg);
+}
+.af-timeline__title { color: var(--af-ink); margin-bottom: 6px; font-size: 21px; }
+.af-timeline__body { color: var(--af-text-2); font-size: 17px; }
+
+/* ---------- Contact cards ---------- */
+.af-contact-card {
+  background: var(--af-bg);
+  border: 1px solid var(--af-border);
+  border-radius: 16px;
+  padding: 32px;
+}
+.af-contact-card--gold { border-top: 4px solid var(--af-gold); }
+.af-contact-card__icon {
+  width: 52px; height: 52px;
+  border-radius: 12px;
+  background: var(--af-primary);
+  display: grid; place-items: center;
+  margin-bottom: 22px;
+}
+.af-contact-card--gold .af-contact-card__icon { background: var(--af-gold); }
+.af-contact-card__icon svg { width: 26px; height: 26px; }
+.af-contact-card__title { font-size: 24px; line-height: 1.2; margin-bottom: 12px; }
+.af-contact-card__body { font-size: 17px; color: var(--af-text-2); line-height: 1.6; }
+.af-contact-card__list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.af-contact-card__list li { font-size: 17px; color: var(--af-text-2); padding-left: 20px; position: relative; }
+.af-contact-card__list li::before { content: ""; position: absolute; left: 0; top: 10px; width: 6px; height: 6px; border-radius: 50%; background: var(--af-primary); }
+
+/* ---------- Form ---------- */
+.af-form { max-width: 640px; margin: 48px auto 0; }
+.af-form-group { margin-bottom: 24px; }
+.af-form-group label { display: block; font-weight: 600; font-size: 16px; color: var(--af-ink); margin-bottom: 8px; }
+.af-form-group input,
+.af-form-group select,
+.af-form-group textarea {
+  width: 100%;
+  padding: 14px 16px;
+  font-size: 17px;
+  font-family: var(--af-sans);
+  border: 1px solid var(--af-border);
+  border-radius: 12px;
+  background: var(--af-white);
+  color: var(--af-ink);
+  transition: border-color 0.15s;
+}
+.af-form-group input:focus,
+.af-form-group select:focus,
+.af-form-group textarea:focus {
+  border-color: var(--af-primary);
+  outline: 3px solid var(--af-primary);
+  outline-offset: 1px;
+}
+.af-form-group textarea { min-height: 120px; resize: vertical; }
+.af-form__submit { text-align: center; }
+
+/* ---------- Section header (centered intro text) ---------- */
+.af-section-header { max-width: 64ch; margin-bottom: 48px; }
+.af-section-header--center { margin-left: auto; margin-right: auto; text-align: center; }
+.af-section-header p + p { margin-top: 12px; }
+
 /* ---------- Responsive ---------- */
 @media (max-width: 860px) {
   .af-footer__grid { grid-template-columns: 1fr; }
