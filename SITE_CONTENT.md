@@ -51,11 +51,11 @@ The work shifts from reactive security (firefighting, compliance panic, audit-dr
 ### $5M ARR — Sales Channel Recovered
 Recovered access to a blocked sales channel representing $5M ARR by executing a security roadmap that resolved security objections across multiple customers.
 
-### 87% — Remediation Time Reduced
-Workflow rearchitecture reduced average time to identify, escalate, and remediate vulnerabilities in the DevOps pipeline by 87% — from 165 days to 21 days.
+### 87% — Customer Risk Eliminated
+Eliminated 87% of customer-reported security risk in just three thirty-minute meetings with engineering leadership — workflow rearchitecture that cut average remediation time from 165 days to 21 days.
 
-### 21 → 3 Days — AI-Assisted Mitigation
-Implemented AI-assisted triage and remediation workflows with the Aikido.dev platform, reducing average vulnerability mitigation time from 21 days to 3 days across application, OS/package, cloud/infrastructure, and customer-reported vulnerabilities.
+### 18 Days Freed — Engineering Focus Reclaimed
+AI-assisted triage and remediation workflows with the Aikido.dev platform cut average vulnerability mitigation time from 21 days to 3 days — returning 18 days of engineering focus to building product.
 
 ## CTA
 **Ready to begin?** Whether you need a fractional CISO, AI-assisted security engineering, or leadership coaching for your engineering leaders — I'll design an engagement that meets you where you are. [Book a Discovery Call]

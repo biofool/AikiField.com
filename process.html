@@ -4,385 +4,157 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AikiField — Engagement Process</title>
-  <meta name="description" content="The structures and phases that guide every security engagement. Four agreements, a six-phase design cycle, and the collaboration framework for security transformation.">
-  <link rel="stylesheet" href="css/style.css">
+  <meta name="description" content="A clear path from where you are to where you want to be — four agreements and six phases that guide every engagement to a concrete result.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/redesign.css">
 </head>
 <body>
 
-<a href="#main" class="skip-link">Skip to main content</a>
+<a href="#main" class="af-skip-link">Skip to main content</a>
 
-<!-- NAV -->
-<nav class="nav">
-  <div class="container">
-    <a href="index.html" class="nav__brand">
-      <span class="nav__brand-icon" aria-hidden="true">A</span>
-      <span class="nav__brand-text">AikiField</span>
+<!-- HEADER -->
+<header class="af-header">
+  <div class="af-header__inner">
+    <a href="index.html" class="af-brand">
+      <span class="af-brand__icon" aria-hidden="true">A</span>
+      <span class="af-brand__text">AikiField</span>
     </a>
-    <ul class="nav__links">
-      <li><a href="index.html">Home</a></li>
-      <li><a href="approach.html">Approach</a></li>
-      <li><a href="services.html">Services</a></li>
-      <li><a href="process.html">Process</a></li>
-      <li><a href="assessment.html">Assessment</a></li>
-      <li><a href="contact.html">Contact</a></li>
-    </ul>
-    <a href="contact.html" class="nav__cta">Get Started</a>
-    <button class="nav__toggle" aria-label="Menu">&#9776;</button>
+    <input type="checkbox" id="af-nav-check" class="af-nav-toggle-check">
+    <label for="af-nav-check" class="af-nav__toggle" aria-label="Menu">&#9776;</label>
+    <nav aria-label="Primary" class="af-nav">
+      <a href="index.html" class="af-nav__link">Home</a>
+      <a href="approach.html" class="af-nav__link">Approach</a>
+      <a href="services.html" class="af-nav__link">Services</a>
+      <a href="process.html" class="af-nav__link af-nav__link--active" aria-current="page">Process</a>
+      <a href="assessment.html" class="af-nav__link">Assessment</a>
+      <a href="contact.html" class="af-nav__cta">Get Started</a>
+    </nav>
   </div>
-</nav>
+</header>
 
 <main id="main">
+
   <!-- PAGE HEADER -->
-  <section class="page-header">
-    <div class="container">
-      <h1>Engagement Process</h1>
-      <p>The structures and phases that guide every security engagement.</p>
+  <section class="af-page-header af-page-header--tight">
+    <div class="af-container">
+      <p class="af-eyebrow">Engagement Process</p>
+      <h1 class="af-h1">A clear path from where you are to where you want to be.</h1>
+      <p class="af-lead af-lead--wide af-page-header__lead">The structures and phases that guide every engagement &mdash; each one there to give you a concrete result, not more process.</p>
     </div>
   </section>
 
-  <!-- THE SECURITY ALIGNMENT COVENANT -->
-  <section class="section">
-    <div class="container">
-      <div class="section-header">
-        <h2 class="section-title">The Security Alignment Covenant</h2>
-        <p class="section-subtitle" style="margin-bottom:0;">
-          Four agreements that create the container for security transformation.
-        </p>
-      </div>
-      <div class="grid grid-2" style="margin-top:56px;">
-        <div class="covenant-block covenant-block--gold">
-          <span class="covenant-block__tag">Agreement I &mdash; Aspiration</span>
-          <h4>The Leadership Agreement</h4>
-          <p>Security identity, direction, and strategic awareness for the exec team.</p>
-          <ul>
-            <li>Contextual awareness of your real risk landscape</li>
-            <li>Clear security posture vision &mdash; what you're protecting, why, and at what level</li>
-            <li>Security as a business enabler</li>
-            <li>Security investment aligned to business stage and revenue goals</li>
-          </ul>
+  <!-- FOUR AGREEMENTS -->
+  <section class="af-section af-section--white">
+    <div class="af-container">
+      <h2 class="af-h2">Four agreements that make it stick</h2>
+      <p class="af-lead af-lead--19" style="margin:8px 0 40px;">The container for security transformation &mdash; what each agreement gives your team.</p>
+      <div class="af-grid af-grid--fit af-grid--28">
+        <div class="af-principle">
+          <p class="af-principle__tag">Agreement I &middot; Aspiration</p>
+          <h3 class="af-principle__title">Leadership agreement</h3>
+          <p class="af-principle__benefit">A clear, shared vision of what you're protecting, why, and at what level.</p>
         </div>
-        <div class="covenant-block">
-          <span class="covenant-block__tag">Agreement II &mdash; Execution</span>
-          <h4>The Management Agreement</h4>
-          <p>Operating discipline for a security program that actually runs.</p>
-          <ul>
-            <li>Integrated security roadmap with clear milestones and owners</li>
-            <li>Open risk register &mdash; visible to leadership, updated regularly</li>
-            <li>Security metrics that matter</li>
-            <li>Regular review cadence &mdash; monthly security summaries for the exec team</li>
-          </ul>
+        <div class="af-principle">
+          <p class="af-principle__tag">Agreement II &middot; Execution</p>
+          <h3 class="af-principle__title">Management agreement</h3>
+          <p class="af-principle__benefit">A security program that actually runs &mdash; roadmap, owners, and a review cadence.</p>
         </div>
-        <div class="covenant-block">
-          <span class="covenant-block__tag">Agreement III &mdash; Change</span>
-          <h4>The Development Agreement</h4>
-          <p>Conditions for security capability growth across the organization.</p>
-          <ul>
-            <li>Deep trust between security, engineering, and product &mdash; no blame culture</li>
-            <li>Collaborative security &mdash; engineers who flag vulnerabilities</li>
-            <li>Customer trust as a shared responsibility</li>
-            <li>Incidents become learning</li>
-          </ul>
+        <div class="af-principle">
+          <p class="af-principle__tag">Agreement III &middot; Change</p>
+          <h3 class="af-principle__title">Development agreement</h3>
+          <p class="af-principle__benefit">Deep trust between security, engineering, and product &mdash; no blame culture.</p>
         </div>
-        <div class="covenant-block">
-          <span class="covenant-block__tag">Agreement IV &mdash; Inspiration</span>
-          <h4>The Inquiry Agreement</h4>
-          <p>Conditions for adaptive security and AI governance.</p>
-          <ul>
-            <li>Leadership presence &mdash; grounded composure under security pressure</li>
-            <li>Valuing not-knowing &mdash; approaching emerging threats and AI risks with curiosity</li>
-            <li>Aspirational thinking &mdash; sound security decisions without perfect information</li>
-            <li>Sensing the field &mdash; anticipating risks before they materialize</li>
-          </ul>
+        <div class="af-principle">
+          <p class="af-principle__tag">Agreement IV &middot; Inspiration</p>
+          <h3 class="af-principle__title">Inquiry agreement</h3>
+          <p class="af-principle__benefit">The composure and curiosity to adapt to emerging threats and AI risk.</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- THE SECURITY TRANSFORMATION DESIGN CYCLE -->
-  <section class="section section--alt">
-    <div class="container">
-      <div class="section-header">
-        <h2 class="section-title">The Security Transformation Design Cycle</h2>
-        <p class="section-subtitle" style="margin-bottom:0;">
-          Six phases for designing a security program that fits your business &mdash; a collaborative
-          process tailored to your stage, risks, and customers.
-        </p>
-      </div>
-      <div class="timeline" style="margin-top:56px;">
-        <div class="timeline__item">
-          <h4>Phase I &mdash; Connecting Our Circle</h4>
-          <p>
-            Who are we, and what does security mean for <em>this</em> business? Establishing trust,
-            shared language, and a clear picture of the current state. What are your real risks? What
-            do customers actually ask about?
-          </p>
+  <!-- SIX PHASES -->
+  <section class="af-section">
+    <div class="af-container">
+      <h2 class="af-h2">Six phases to a program that fits</h2>
+      <p class="af-lead af-lead--19" style="margin:8px 0 40px;">A collaborative design cycle tailored to your stage, risks, and customers.</p>
+      <div class="af-stack">
+        <div class="af-phase">
+          <span class="af-phase__num" aria-hidden="true">I</span>
+          <div>
+            <h3 class="af-phase__title">Connecting our circle</h3>
+            <p class="af-phase__benefit">Get aligned on what security means for your business.</p>
+            <p class="af-phase__body">Establish trust, shared language, and a clear picture of the current state &mdash; your real risks and what customers actually ask about.</p>
+          </div>
         </div>
-        <div class="timeline__item">
-          <h4>Phase II &mdash; Sensing the Field of Play</h4>
-          <p>
-            Mapping your security landscape &mdash; attack surface, threat model, compliance,
-            customer expectations, AI risk exposure. Where you're exposed, where you're strong, where
-            the gaps are.
-          </p>
+        <div class="af-phase">
+          <span class="af-phase__num" aria-hidden="true">II</span>
+          <div>
+            <h3 class="af-phase__title">Sensing the field</h3>
+            <p class="af-phase__benefit">Map where you're exposed, strong, and gapped.</p>
+            <p class="af-phase__body">Your attack surface, threat model, compliance obligations, customer expectations, and AI risk exposure.</p>
+          </div>
         </div>
-        <div class="timeline__item">
-          <h4>Phase III &mdash; Incubating for Emergence</h4>
-          <p>
-            Letting the picture settle. Creating space for the right priorities to emerge &mdash; the
-            80/20 that addresses your real risk.
-          </p>
+        <div class="af-phase">
+          <span class="af-phase__num" aria-hidden="true">III</span>
+          <div>
+            <h3 class="af-phase__title">Finding the priorities</h3>
+            <p class="af-phase__benefit">Surface the 20% of work that removes 80% of your risk.</p>
+            <p class="af-phase__body">Let the picture settle and create space for the right priorities to emerge &mdash; the highest-leverage moves first.</p>
+          </div>
         </div>
-        <div class="timeline__item">
-          <h4>Phase IV &mdash; Designing the Security Program</h4>
-          <p>
-            Select priority areas. Design the minimum viable security program &mdash; policies,
-            controls, and practices that cover your real risks without enterprise overhead. What's
-            first, what's next, what can wait.
-          </p>
+        <div class="af-phase">
+          <span class="af-phase__num" aria-hidden="true">IV</span>
+          <div>
+            <h3 class="af-phase__title">Designing the program</h3>
+            <p class="af-phase__benefit">Build the minimum viable program that covers real risk.</p>
+            <p class="af-phase__body">Policies, controls, and practices without enterprise overhead &mdash; what's first, what's next, what can wait.</p>
+          </div>
         </div>
-        <div class="timeline__item">
-          <h4>Phase V &mdash; Aspiring to the Security Posture</h4>
-          <p>
-            Agree on your security posture vision &mdash; internally and externally. Clarify goals,
-            owners, timelines. Prepare the customer-facing narrative. This is where security becomes a
-            trust differentiator.
-          </p>
+        <div class="af-phase">
+          <span class="af-phase__num" aria-hidden="true">V</span>
+          <div>
+            <h3 class="af-phase__title">Setting the posture</h3>
+            <p class="af-phase__benefit">Turn security into a customer-trust differentiator.</p>
+            <p class="af-phase__body">Agree the posture vision internally and externally, clarify goals and owners, and prepare the customer-facing narrative.</p>
+          </div>
         </div>
-        <div class="timeline__item">
-          <h4>Phase VI &mdash; Cycling</h4>
-          <p>
-            Security is a living practice. Return to earlier phases as your business grows, the threat
-            landscape shifts, or AI capabilities evolve.
-          </p>
+        <div class="af-phase">
+          <span class="af-phase__num" aria-hidden="true">VI</span>
+          <div>
+            <h3 class="af-phase__title">Cycling</h3>
+            <p class="af-phase__benefit">Keep the program alive as you grow and threats shift.</p>
+            <p class="af-phase__body">Security is a living practice &mdash; return to earlier phases as your business, the threat landscape, and AI capabilities evolve.</p>
+          </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- CORE TOOLS -->
-  <section class="section">
-    <div class="container">
-      <div class="section-header">
-        <h2 class="section-title">Core Tools</h2>
-        <p class="section-subtitle" style="margin-bottom:0;">
-          Three tools woven through every phase.
-        </p>
-      </div>
-      <div class="grid grid-3" style="margin-top:56px;">
-        <article class="card">
-          <span class="card__icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a8 8 0 0 0-8 8c0 6 8 12 8 12s8-6 8-12a8 8 0 0 0-8-8z"/><circle cx="12" cy="10" r="3"/></svg>
-          </span>
-          <h3>Grounded Presence</h3>
-          <p>
-            The leader's composure is the foundation. A calm exec team makes sound decisions. A
-            panicked one makes reactive ones.
-          </p>
-        </article>
-        <article class="card">
-          <span class="card__icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
-          </span>
-          <h3>Strategic Dialogue</h3>
-          <p>
-            Four levels of attention: content (what are the risks), process (how are we deciding),
-            inner (what am I feeling), and systemic (what is the whole system telling us).
-          </p>
-        </article>
-        <article class="card">
-          <span class="card__icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.5 6.5L21 9l-5 4.5L17.5 21 12 17l-5.5 4L8 13.5 3 9l6.5-.5L12 2z"/></svg>
-          </span>
-          <h3>Aspirational Thinking</h3>
-          <p>
-            Setting security posture goals without perfect information. &ldquo;We will be SOC 2 ready
-            by Q3.&rdquo; Aspiration, then execution.
-          </p>
-        </article>
-      </div>
-    </div>
-  </section>
-
-  <!-- THE COLLABORATION FRAMEWORK -->
-  <section class="section section--alt">
-    <div class="container">
-      <div class="section-header">
-        <h2 class="section-title">The Collaboration Framework</h2>
-        <p class="section-subtitle" style="margin-bottom:0;">
-          Communication tools for navigating security decisions together.
-        </p>
-      </div>
-
-      <h3 class="text-center mb-2" style="margin-top:56px;">The Discourse Spectrum</h3>
-      <p>
-        Effective teams know when to dialogue (to explore openly) and when to discuss (to decide and
-        move forward). Maintaining consciousness of where you are on the spectrum &mdash; especially
-        during incidents.
-      </p>
-      <div class="spectrum">
-        <div class="spectrum__end spectrum__end--left">Dialogue</div>
-        <div class="spectrum__bar">
-          <span>Open</span>
-          <span>Generate</span>
-          <span>Reflect</span>
-          <span>Strategize</span>
-          <span>Negotiate</span>
-          <span>Debate</span>
-          <span>Decide</span>
-        </div>
-        <div class="spectrum__end spectrum__end--right">Discussion</div>
-      </div>
-
-      <h3 class="text-center mb-2">Dialogue vs. Discussion</h3>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Dialogue</th>
-              <th>Discussion</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Deepen understanding</td>
-              <td>Argue positions</td>
-            </tr>
-            <tr>
-              <td>Explore the unknown</td>
-              <td>Promote the known</td>
-            </tr>
-            <tr>
-              <td>Raise questions</td>
-              <td>Answer questions</td>
-            </tr>
-            <tr>
-              <td>Listening</td>
-              <td>Speaking</td>
-            </tr>
-            <tr>
-              <td>Inquire / Sense / Learn</td>
-              <td>Advocate / Sell / Persuade</td>
-            </tr>
-            <tr>
-              <td>Consider the trade-offs</td>
-              <td>Decide and move</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </section>
-
-  <!-- FOUR LEVELS OF ATTENTION -->
-  <section class="section">
-    <div class="container">
-      <div class="section-header">
-        <h2 class="section-title">Four Levels of Attention in Security Dialogue</h2>
-        <p class="section-subtitle" style="margin-bottom:0;">
-          Holding attention at multiple levels separates reactive firefighting from strategic security
-          leadership.
-        </p>
-      </div>
-      <div class="grid grid-2" style="margin-top:56px;">
-        <article class="card">
-          <span class="card__icon" aria-hidden="true" style="font-family:var(--font-head); font-weight:700; font-size:22px; color:var(--bg);">I</span>
-          <h3>Content Attention</h3>
-          <p>
-            The specific vulnerability, compliance gap, or customer requirement. Clarity on the actual
-            issue.
-          </p>
-        </article>
-        <article class="card">
-          <span class="card__icon" aria-hidden="true" style="font-family:var(--font-head); font-weight:700; font-size:22px; color:var(--bg);">II</span>
-          <h3>Process Attention</h3>
-          <p>
-            Are we dialoguing to understand, or discussing to decide? Incident response mode or
-            strategic planning mode? Consciousness of process prevents thrashing.
-          </p>
-        </article>
-        <article class="card">
-          <span class="card__icon" aria-hidden="true" style="font-family:var(--font-head); font-weight:700; font-size:22px; color:var(--bg);">III</span>
-          <h3>Inner Attention</h3>
-          <p>
-            Am I reacting from fear? Dismissing a risk because it's inconvenient? Noticing my own
-            reactivity patterns.
-          </p>
-        </article>
-        <article class="card">
-          <span class="card__icon" aria-hidden="true" style="font-family:var(--font-head); font-weight:700; font-size:22px; color:var(--bg);">IV</span>
-          <h3>Systemic Attention</h3>
-          <p>
-            What are customers signaling? What is the threat landscape indicating? Listening beyond the
-            immediate issue.
-          </p>
-        </article>
-      </div>
-    </div>
-  </section>
-
-  <!-- THREE LEVELS OF SECURITY COMMITMENT -->
-  <section class="section section--alt">
-    <div class="container">
-      <div class="section-header">
-        <h2 class="section-title">Three Levels of Security Commitment</h2>
-        <p class="section-subtitle" style="margin-bottom:0;">
-          How teams contract for security outcomes &mdash; from the known to the impossible.
-        </p>
-      </div>
-      <div class="grid grid-3" style="margin-top:56px;">
-        <div class="principle-card">
-          <p class="principle-card__tag">Level 1</p>
-          <h3>Promise</h3>
-          <p>
-            You know how to achieve this based on past experience. &ldquo;We'll implement MFA by end of
-            quarter.&rdquo; Linear extrapolation from known practice.
-          </p>
-        </div>
-        <div class="principle-card">
-          <p class="principle-card__tag">Level 2</p>
-          <h3>Stretch</h3>
-          <p>
-            You're not sure how to achieve this. Minimal past experience. &ldquo;We'll achieve SOC 2
-            Type II within six months.&rdquo; Extended effort beyond current comfort.
-          </p>
-        </div>
-        <div class="principle-card">
-          <p class="principle-card__tag">Level 3</p>
-          <h3>Breakthrough</h3>
-          <p>
-            You don't know how to achieve it. It hasn't been done at your scale. &ldquo;We'll cut
-            vulnerability remediation from 21 days to 3.&rdquo; Non-linear &mdash; aspiring to what
-            seems impossible.
-          </p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- FINITE & INFINITE GAMES -->
-  <section class="section section--dark">
-    <div class="container">
-      <h2 class="section-title">Finite &amp; Infinite Games in Security</h2>
-      <p class="section-subtitle">
-        Are you playing to pass the audit, or playing to build lasting trust?
-      </p>
-      <div class="grid grid-2">
-        <div class="stat-card">
-          <h3>Finite Security Players</h3>
-          <ul style="color:var(--dark-body); font-size:16px; line-height:1.55; padding-left:1.2rem;">
-            <li>Play to pass the audit</li>
+  <!-- LONG GAME -->
+  <section class="af-section af-section--dark">
+    <div class="af-container">
+      <h2 class="af-h2">Playing the long game</h2>
+      <p class="af-lead af-lead--19 af-lead--dark" style="margin:8px 0 40px;">Are you playing to pass the audit, or to build lasting trust? The difference decides your outcomes.</p>
+      <div class="af-grid af-grid--fit300">
+        <div class="af-game af-game--finite">
+          <h3 class="af-game__title">Playing to pass the audit</h3>
+          <ul class="af-game__list">
             <li>Same checklist every year</li>
-            <li>Security is a burden, a gatekeeper</li>
+            <li>Security as a burden and gatekeeper</li>
             <li>Security theater without real risk reduction</li>
+            <li>Effort resets after every audit</li>
           </ul>
         </div>
-        <div class="stat-card">
-          <h3>Infinite Security Players</h3>
-          <ul style="color:var(--dark-body); font-size:16px; line-height:1.55; padding-left:1.2rem;">
-            <li>Play to build lasting customer trust</li>
-            <li>Adapt to new threats, AI risks, and customer expectations</li>
-            <li>Security as a creative challenge and business enabler</li>
-            <li>Security investments that save time downstream</li>
+        <div class="af-game af-game--infinite">
+          <h3 class="af-game__title">Playing to build trust</h3>
+          <ul class="af-game__list">
+            <li>Lasting customer trust that wins deals</li>
+            <li>Adapts to new threats and AI risk</li>
+            <li>Security as a business enabler</li>
+            <li>Investments that save time downstream</li>
           </ul>
         </div>
       </div>
@@ -390,53 +162,46 @@
   </section>
 
   <!-- CTA -->
-  <section class="section">
-    <div class="container">
-      <div class="callout">
-        <h2>Ready to design your security engagement?</h2>
-        <p>Every breakthrough begins with a conversation. Let's talk about where you are and where you
-        want to go.</p>
-        <a href="contact.html" class="btn btn--light">Book a Discovery Call</a>
+  <section class="af-section af-section--lg" style="padding-top:16px;">
+    <div class="af-container">
+      <div class="af-callout af-callout--sm">
+        <h2 class="af-callout__title af-callout__title--sm">Ready to design your engagement?</h2>
+        <p class="af-callout__body af-callout__body--sm af-callout__body--52">Every breakthrough begins with a conversation. Let's talk about where you are and where you want to go.</p>
+        <a href="contact.html" class="af-btn af-btn--light">Book a Discovery Call</a>
       </div>
     </div>
   </section>
 </main>
 
 <!-- FOOTER -->
-<footer class="footer">
-  <div class="container">
-    <div class="footer__grid">
-      <div>
-        <div class="footer__brand">
-          <span class="footer__brand-icon" aria-hidden="true">A</span>
-          <span class="footer__brand-text">AikiField</span>
-        </div>
-        <p>Security leadership for product companies. Fractional CISO, AI-assisted security
-        engineering, and presence-based executive coaching.</p>
+<footer class="af-footer">
+  <div class="af-footer__grid">
+    <div>
+      <div class="af-footer__brand-row">
+        <span class="af-footer__brand-icon" aria-hidden="true">A</span>
+        <span class="af-footer__brand-text">AikiField</span>
       </div>
-      <nav aria-label="Explore">
-        <h4>Explore</h4>
-        <ul>
-          <li><a href="approach.html">Our Approach</a></li>
-          <li><a href="services.html">Services</a></li>
-          <li><a href="process.html">Engagement Process</a></li>
-          <li><a href="assessment.html">Self-Assessment</a></li>
-        </ul>
-      </nav>
-      <nav aria-label="Connect">
-        <h4>Connect</h4>
-        <ul>
-          <li><a href="contact.html">Contact</a></li>
-          <li><a href="contact.html">Inquiry</a></li>
-        </ul>
-      </nav>
+      <p class="af-footer__tagline">Security leadership for product companies. Fractional CISO, AI-assisted security engineering, and presence-based executive coaching.</p>
     </div>
-    <div class="footer__bottom">
-      &copy; 2026 AikiField. All rights reserved.
-    </div>
+    <nav aria-label="Explore">
+      <h3 class="af-footer__col-title">Explore</h3>
+      <ul class="af-footer__nav">
+        <li><a href="approach.html">Our Approach</a></li>
+        <li><a href="services.html">Services</a></li>
+        <li><a href="process.html">Engagement Process</a></li>
+        <li><a href="assessment.html">Self-Assessment</a></li>
+      </ul>
+    </nav>
+    <nav aria-label="Connect">
+      <h3 class="af-footer__col-title">Connect</h3>
+      <ul class="af-footer__nav">
+        <li><a href="contact.html">Contact</a></li>
+        <li><a href="contact.html">Inquiry</a></li>
+      </ul>
+    </nav>
   </div>
+  <div class="af-footer__legal">&copy; 2026 AikiField. All rights reserved.</div>
 </footer>
 
-<script src="js/main.js"></script>
 </body>
 </html>

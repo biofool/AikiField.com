@@ -4,252 +4,206 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AikiField — Services</title>
-  <meta name="description" content="Engagements designed to meet your security maturity and business stage. Fractional CISO, AI governance, DevSecOps, threat modeling, and leadership coaching.">
-  <link rel="stylesheet" href="css/style.css">
+  <meta name="description" content="Fractional CISO, security program buildout, DevSecOps, threat modeling, and leadership coaching — engagements built around the outcome you need.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/redesign.css">
 </head>
 <body>
 
-<a href="#main" class="skip-link">Skip to main content</a>
+<a href="#main" class="af-skip-link">Skip to main content</a>
 
-<!-- NAV -->
-<nav class="nav">
-  <div class="container">
-    <a href="index.html" class="nav__brand">
-      <span class="nav__brand-icon" aria-hidden="true">A</span>
-      <span class="nav__brand-text">AikiField</span>
+<!-- HEADER -->
+<header class="af-header">
+  <div class="af-header__inner">
+    <a href="index.html" class="af-brand">
+      <span class="af-brand__icon" aria-hidden="true">A</span>
+      <span class="af-brand__text">AikiField</span>
     </a>
-    <ul class="nav__links">
-      <li><a href="index.html">Home</a></li>
-      <li><a href="approach.html">Approach</a></li>
-      <li><a href="services.html">Services</a></li>
-      <li><a href="process.html">Process</a></li>
-      <li><a href="assessment.html">Assessment</a></li>
-      <li><a href="contact.html">Contact</a></li>
-    </ul>
-    <a href="contact.html" class="nav__cta">Get Started</a>
-    <button class="nav__toggle" aria-label="Menu">&#9776;</button>
+    <input type="checkbox" id="af-nav-check" class="af-nav-toggle-check">
+    <label for="af-nav-check" class="af-nav__toggle" aria-label="Menu">&#9776;</label>
+    <nav aria-label="Primary" class="af-nav">
+      <a href="index.html" class="af-nav__link">Home</a>
+      <a href="approach.html" class="af-nav__link">Approach</a>
+      <a href="services.html" class="af-nav__link af-nav__link--active" aria-current="page">Services</a>
+      <a href="process.html" class="af-nav__link">Process</a>
+      <a href="assessment.html" class="af-nav__link">Assessment</a>
+      <a href="contact.html" class="af-nav__cta">Get Started</a>
+    </nav>
   </div>
-</nav>
+</header>
 
 <main id="main">
+
   <!-- PAGE HEADER -->
-  <section class="page-header">
-    <div class="container">
-      <h1>Services</h1>
-      <p>Engagements designed to meet your security maturity and business stage.</p>
+  <section class="af-page-header">
+    <div class="af-container">
+      <p class="af-eyebrow">Services</p>
+      <h1 class="af-h1">Engagements built around the outcome you need.</h1>
+      <p class="af-lead af-page-header__lead">Every engagement is designed to meet your security maturity and business stage &mdash; and to move a metric your business actually cares about.</p>
     </div>
   </section>
 
-  <!-- FLAGSHIP OFFERING -->
-  <section class="section section--white">
-    <div class="container">
-      <div class="section-header">
-        <h2 class="section-title">Flagship Offering</h2>
-        <p class="section-subtitle" style="margin-bottom:0;">My strongest integrated package. CISO-level strategy, AI-assisted security engineering, customer trust advisory, and executive coaching in one monthly engagement.</p>
-      </div>
-      <div class="card" style="max-width:880px; margin:48px auto 0; border-top:6px solid var(--gold);">
-        <span class="tag tag--gold">Flagship</span>
-        <h3 style="margin-bottom:16px;">Fractional CISO + AI Governance for Product Companies</h3>
-        <p style="color:var(--ink-soft); margin-bottom:28px;">
-          A monthly advisory service for startups, SaaS firms, and product companies that need CISO-level leadership without a full-time executive. My lead offering &mdash; combining 20+ years of CISO experience, product-company security, customer trust and revenue impact, practical AI in security engineering, and lean executive advisory.
-        </p>
-        <h4 style="margin-bottom:14px;">What's included:</h4>
-        <ul style="margin-bottom:24px;">
-          <li>Security roadmap and risk prioritization aligned to your business stage and revenue model</li>
-          <li>AI governance framework &mdash; model security, data handling policies, AI risk assessment</li>
-          <li>AI-assisted security engineering &mdash; triage and remediation workflows that cut mitigation time from 21 days to 3</li>
-          <li>Customer trust advisory &mdash; security questionnaire support, enterprise deal enablement, compliance readiness</li>
-          <li>Security decision coaching &mdash; helping founders and CTOs make sound trade-offs under pressure</li>
-          <li>Monthly cadence &mdash; strategy sessions, async support, incident availability</li>
+  <!-- OFFERINGS -->
+  <section class="af-section" style="padding-top:24px;">
+    <div class="af-container">
+
+      <!-- Flagship: Fractional CISO -->
+      <article class="af-svc af-svc--flagship">
+        <div class="af-svc__tag-row">
+          <span class="af-svc__tag af-svc__tag--flagship">Flagship</span>
+        </div>
+        <h2 class="af-svc__title">CISO-level leadership without a full-time hire</h2>
+        <p class="af-svc__lead">Get executive security leadership that wins enterprise deals and keeps pace with your roadmap &mdash; 20+ years of CISO experience, practical AI in security engineering, and customer-trust advisory in one monthly engagement.</p>
+        <p class="af-svc__bestfor">Best for: Series A&ndash;C startups, SaaS companies, AI-powered product teams, and anyone facing enterprise security requirements.</p>
+        <h3 class="af-svc__bullets-label">What you get</h3>
+        <ul class="af-svc__bullets">
+          <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Win enterprise deals</strong> &mdash; a security roadmap and risk prioritization aligned to your stage and revenue model.</span></li>
+          <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Ship AI features safely</strong> &mdash; a governance framework covering model security, data handling, and AI risk.</span></li>
+          <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Fix vulnerabilities in days, not weeks</strong> &mdash; AI-assisted triage and remediation workflows (21 days &rarr; 3).</span></li>
+          <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Clear questionnaires without panic</strong> &mdash; customer-trust advisory, deal enablement, and compliance readiness.</span></li>
+          <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Make sound calls under pressure</strong> &mdash; security decision coaching for founders and CTOs.</span></li>
+          <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Always-on support</strong> &mdash; monthly strategy, async help, and incident availability.</span></li>
         </ul>
-        <p style="margin:0;"><span class="tag">Best for: Series A&ndash;C startups, SaaS companies, AI-powered product companies, and any product team facing enterprise security requirements.</span></p>
-      </div>
+      </article>
+
+      <!-- Program buildout -->
+      <article class="af-svc">
+        <div class="af-svc__tag-row">
+          <span class="af-svc__tag">Program buildout</span>
+        </div>
+        <h2 class="af-svc__title">A security program right-sized to your risk</h2>
+        <p class="af-svc__lead">Cover your real risks without an enterprise-sized budget &mdash; the 80/20 security program that protects the business, left-shifted into your development budget.</p>
+        <p class="af-svc__bestfor">Best for: Companies that have outgrown "we'll do security when we need it" but aren't ready for a full-time hire.</p>
+        <h3 class="af-svc__bullets-label">What you get</h3>
+        <ul class="af-svc__bullets">
+          <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Address 80% of your risk</strong> &mdash; the critical controls that matter, ranked and prioritized.</span></li>
+          <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Scale without chaos</strong> &mdash; policies, procedures, and practices that grow with you.</span></li>
+          <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Respond confidently</strong> &mdash; an incident playbook, defined roles, and a tabletop exercise.</span></li>
+          <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Keep risk visible</strong> &mdash; a living register of top risks, owners, and status.</span></li>
+          <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Harden your infrastructure</strong> &mdash; custom baselines and tooling for your stack.</span></li>
+        </ul>
+      </article>
+
+      <!-- DevSecOps -->
+      <article class="af-svc">
+        <div class="af-svc__tag-row">
+          <span class="af-svc__tag">DevSecOps</span>
+        </div>
+        <h2 class="af-svc__title">Clear the security backlog blocking your enterprise deals</h2>
+        <p class="af-svc__lead">Turn a growing vulnerability backlog into rapid, demonstrable remediation &mdash; security shifted left into your CI/CD pipeline, cutting remediation from months to days (a proven 87% reduction: 165 &rarr; 21 days).</p>
+        <p class="af-svc__bestfor">Best for: Engineering teams whose backlog is growing faster than they can fix it, or who must prove rapid remediation to enterprise customers.</p>
+        <h3 class="af-svc__bullets-label">What you get</h3>
+        <ul class="af-svc__bullets">
+          <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Find gaps fast</strong> &mdash; a DevOps pipeline security assessment and rearchitecture.</span></li>
+          <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Never lose a vulnerability</strong> &mdash; triage workflows across app, OS, cloud, and customer-reported issues.</span></li>
+          <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Fix in days, not weeks</strong> &mdash; AI-assisted triage and remediation with prompts and validation.</span></li>
+          <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Prove it to customers</strong> &mdash; Aikido.dev (or equivalent) platform implementation and tuning.</span></li>
+          <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Make it stick</strong> &mdash; team training on the new workflows.</span></li>
+        </ul>
+      </article>
+
+      <!-- Threat modeling -->
+      <article class="af-svc">
+        <div class="af-svc__tag-row">
+          <span class="af-svc__tag">Threat modeling</span>
+        </div>
+        <h2 class="af-svc__title">Catch security flaws before you write the code</h2>
+        <p class="af-svc__lead">Bring security into the design phase &mdash; before code ships, before customers ask &mdash; so you avoid costly rework and pass enterprise security reviews the first time.</p>
+        <p class="af-svc__bestfor">Best for: Teams building new products, shipping cloud services, or preparing for enterprise security reviews.</p>
+        <h3 class="af-svc__bullets-label">What you get</h3>
+        <ul class="af-svc__bullets">
+          <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Align the team early</strong> &mdash; facilitated threat-model workshops with engineering and product.</span></li>
+          <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>See where you're exposed</strong> &mdash; attack-surface mapping across your product.</span></li>
+          <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Focus on what matters</strong> &mdash; threats ranked by likelihood and impact.</span></li>
+          <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Design securely</strong> &mdash; architecture and cloud-infrastructure review.</span></li>
+          <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Ship the fixes</strong> &mdash; developer-friendly mitigation plans engineers can actually implement.</span></li>
+        </ul>
+      </article>
+
+      <!-- Coaching -->
+      <article class="af-svc">
+        <div class="af-svc__tag-row">
+          <span class="af-svc__tag">Coaching</span>
+        </div>
+        <h2 class="af-svc__title">Make confident security calls under pressure</h2>
+        <p class="af-svc__lead">Develop the leadership capacity to own security decisions, communicate them clearly, and lead your team through uncertainty &mdash; 20+ years of security experience paired with presence-based executive coaching.</p>
+        <p class="af-svc__bestfor">Best for: CTOs, founders, VP Engineering, and senior leaders who own security but aren't security specialists.</p>
+        <h3 class="af-svc__bullets-label">What you get</h3>
+        <ul class="af-svc__bullets">
+          <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Navigate trade-offs</strong> &mdash; coaching across security, speed, and cost.</span></li>
+          <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Win customer confidence</strong> &mdash; support for founder-led enterprise security conversations.</span></li>
+          <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Speak the board's language</strong> &mdash; translating technical risk into business terms.</span></li>
+          <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Know what to fix now</strong> &mdash; practical prioritization &mdash; fix, accept, or defer.</span></li>
+          <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Lead calmly</strong> &mdash; grounded composure for incidents, audits, and reviews.</span></li>
+        </ul>
+      </article>
+
     </div>
   </section>
 
-  <!-- SECURITY PROGRAM BUILDOUT -->
-  <section class="section">
-    <div class="container">
-      <div class="section-header">
-        <h2 class="section-title">Security Program Buildout</h2>
-        <p class="section-subtitle" style="margin-bottom:0;">Practical security operating models for companies that need structure without bureaucracy.</p>
-      </div>
-      <div class="feature-row" style="margin-top:56px;">
-        <div class="feature-row__text">
-          <h2>Lean Security Program Buildout</h2>
-          <p>A practical security operating model for companies that can't afford a large security department. The 80/20 approach &mdash; the minimum viable security program that covers your real risks without enterprise overhead. Security left-shifted into the development budget.</p>
-          <p style="margin-top:24px;"><span class="tag">Best for: Companies that have outgrown &ldquo;we'll do security when we need it&rdquo; but aren't ready for a full-time security hire.</span></p>
+  <!-- ASSESSMENTS -->
+  <section class="af-section" style="padding-top:16px;">
+    <div class="af-container">
+      <h2 class="af-h2--sm">Know where you stand first</h2>
+      <p class="af-lead af-lead--19" style="margin:8px 0 28px;">Two diagnostics that show you exactly where to focus before you spend a dollar.</p>
+      <div class="af-grid af-grid--fit300">
+        <div class="af-assess-card">
+          <h3 class="af-assess-card__title">Security Maturity Assessment</h3>
+          <p class="af-assess-card__body">A practical read on your current posture &mdash; controls, gaps, and priorities &mdash; benchmarked against what enterprise customers actually ask about.</p>
+          <a href="assessment.html" class="af-assess-card__link">Take the assessment &rarr;</a>
         </div>
-        <div class="card">
-          <h4 style="margin-bottom:14px;">What's included:</h4>
-          <ul style="margin-bottom:0;">
-            <li>80/20 security roadmap &mdash; the critical controls that address 80% of your real risk</li>
-            <li>Minimum viable security program &mdash; policies, procedures, and practices that scale</li>
-            <li>Incident response basics &mdash; playbook, roles, communication plan, tabletop exercise</li>
-            <li>Risk register &mdash; a living document of your top risks, owners, and mitigation status</li>
-            <li>OS hardening &mdash; custom tooling and baselines for your infrastructure</li>
-          </ul>
+        <div class="af-assess-card">
+          <h3 class="af-assess-card__title">Leadership Presence Assessment</h3>
+          <p class="af-assess-card__body">A seven-dimension self-assessment of the leadership capabilities security leaders need, from grounded composure to navigating uncertainty.</p>
+          <a href="assessment.html" class="af-assess-card__link">Take the assessment &rarr;</a>
         </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- DEVSECOPS & VULNERABILITY REMEDIATION -->
-  <section class="section section--white">
-    <div class="container">
-      <div class="section-header">
-        <h2 class="section-title">DevSecOps &amp; Vulnerability Remediation</h2>
-        <p class="section-subtitle" style="margin-bottom:0;">AI-assisted workflows that cut remediation time from weeks to days.</p>
-      </div>
-      <div class="feature-row feature-row--reverse" style="margin-top:56px;">
-        <div class="feature-row__text">
-          <h2>DevSecOps Pipeline Integration</h2>
-          <p>Workflow rearchitecture that integrates security into your CI/CD pipeline &mdash; shifting vulnerability detection left, reducing remediation from months to days. Based on real production experience reducing remediation time by 87% (165 days &rarr; 21 days).</p>
-          <p style="margin-top:24px;"><span class="tag">Best for: Engineering teams whose vulnerability backlog is growing faster than they can fix it, or who need to demonstrate rapid remediation to enterprise customers.</span></p>
-        </div>
-        <div class="card">
-          <h4 style="margin-bottom:14px;">What's included:</h4>
-          <ul style="margin-bottom:0;">
-            <li>DevOps pipeline security assessment and rearchitecture</li>
-            <li>Vulnerability triage workflow design &mdash; application, OS/package, cloud/infrastructure, customer-reported</li>
-            <li>AI-assisted triage and remediation implementation &mdash; prompts and validation procedures</li>
-            <li>Aikido.dev or equivalent platform implementation and tuning</li>
-            <li>Team training on the new workflows</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- THREAT MODELING -->
-  <section class="section">
-    <div class="container">
-      <div class="section-header">
-        <h2 class="section-title">Threat Modeling</h2>
-        <p class="section-subtitle" style="margin-bottom:0;">Workshop-based consulting for teams building new products, cloud services, or customer-facing platforms.</p>
-      </div>
-      <div class="feature-row" style="margin-top:56px;">
-        <div class="feature-row__text">
-          <h2>Threat Modeling for Product and Engineering Teams</h2>
-          <p>A workshop-based consulting offer for teams building new product and customer-facing platforms. I bring security into the design phase &mdash; before code is written, before customers ask. Based on experience running threat modeling for on-prem deployment.</p>
-          <p style="margin-top:24px;"><span class="tag">Best for: Teams building new products, shipping cloud services, or preparing for enterprise security reviews.</span></p>
-        </div>
-        <div class="card">
-          <h4 style="margin-bottom:14px;">What's included:</h4>
-          <ul style="margin-bottom:0;">
-            <li>Threat model workshops &mdash; facilitated sessions with your engineering and product teams</li>
-            <li>Attack-surface mapping &mdash; visualizing where your product is exposed</li>
-            <li>Risk ranking &mdash; prioritizing threats by likelihood and impact</li>
-            <li>Architecture review &mdash; security assessment of your system design and cloud infrastructure</li>
-            <li>Developer-friendly mitigation plans &mdash; security recommendations engineers can actually implement</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- SECURITY LEADERSHIP COACHING -->
-  <section class="section section--white">
-    <div class="container">
-      <div class="section-header">
-        <h2 class="section-title">Security Leadership Coaching</h2>
-        <p class="section-subtitle" style="margin-bottom:0;">A hybrid coaching and advisory offer that combines security expertise with presence-based executive coaching.</p>
-      </div>
-      <div class="feature-row feature-row--reverse" style="margin-top:56px;">
-        <div class="feature-row__text">
-          <h2>Security Leadership Coaching for CTOs, Founders, and Engineering Leaders</h2>
-          <p>A hybrid coaching/advisory offer combining my 20+ year security background with the AikiField executive coaching methodology. The development of the leadership capacity to make security decisions, communicate them clearly, and lead teams through uncertainty.</p>
-          <p style="margin-top:24px;"><span class="tag">Best for: CTOs, founders, VP Engineering, and senior engineering leaders who own security but aren't security specialists.</span></p>
-        </div>
-        <div class="card">
-          <h4 style="margin-bottom:14px;">What's included:</h4>
-          <ul style="margin-bottom:0;">
-            <li>Security decision coaching &mdash; navigating trade-offs between security, speed, and cost</li>
-            <li>Customer-risk conversations &mdash; coaching for founder-led security discussions with enterprise customers</li>
-            <li>Board-level security communication &mdash; translating technical risk into business language</li>
-            <li>Practical prioritization &mdash; what to fix now, what to accept, what to defer</li>
-            <li>Presence under pressure &mdash; grounded composure to lead incidents, audits, and customer reviews</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ASSESSMENT INSTRUMENTS -->
-  <section class="section">
-    <div class="container">
-      <div class="section-header">
-        <h2 class="section-title">Assessment Instruments</h2>
-        <p class="section-subtitle" style="margin-bottom:0;">Diagnostic tools for measuring your security readiness and leadership maturity.</p>
-      </div>
-      <div class="grid grid-2" style="margin-top:56px;">
-        <article class="card">
-          <span class="card__icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-          </span>
-          <h3>Security Maturity Assessment</h3>
-          <p>A practical assessment of your current security posture &mdash; controls, gaps, and priorities &mdash; benchmarked against what enterprise customers actually ask about.</p>
-          <a href="assessment.html" class="btn btn--primary mt-2">Take the Assessment</a>
-        </article>
-        <article class="card">
-          <span class="card__icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 10 10"/><path d="M12 6v6l4 2"/></svg>
-          </span>
-          <h3>Leadership Presence Assessment</h3>
-          <p>A seven-dimension self-assessment measuring the leadership presence capabilities security leaders need &mdash; from grounded composure under pressure to navigating uncertainty with confidence.</p>
-          <a href="assessment.html" class="btn btn--primary mt-2">Take the Assessment</a>
-        </article>
       </div>
     </div>
   </section>
 
   <!-- CTA -->
-  <section class="section">
-    <div class="container">
-      <div class="callout">
-        <h2>Let's design your engagement.</h2>
-        <p>Every company's security journey is different. I'll tailor a program that fits your stage, your risks, and your aspirations.</p>
-        <a href="contact.html" class="btn btn--light">Book a Discovery Call</a>
+  <section class="af-section af-section--lg" style="padding-top:40px;">
+    <div class="af-container">
+      <div class="af-callout af-callout--sm">
+        <h2 class="af-callout__title af-callout__title--sm">Let's design your engagement.</h2>
+        <p class="af-callout__body af-callout__body--sm">Every company's security journey is different. I'll tailor a program that fits your stage, your risks, and your aspirations.</p>
+        <a href="contact.html" class="af-btn af-btn--light">Book a Discovery Call</a>
       </div>
     </div>
   </section>
 </main>
 
 <!-- FOOTER -->
-<footer class="footer">
-  <div class="container">
-    <div class="footer__grid">
-      <div>
-        <div class="footer__brand">
-          <span class="footer__brand-icon" aria-hidden="true">A</span>
-          <span class="footer__brand-text">AikiField</span>
-        </div>
-        <p>Security leadership for product companies. Fractional CISO, AI-assisted security
-        engineering, and presence-based executive coaching.</p>
+<footer class="af-footer">
+  <div class="af-footer__grid">
+    <div>
+      <div class="af-footer__brand-row">
+        <span class="af-footer__brand-icon" aria-hidden="true">A</span>
+        <span class="af-footer__brand-text">AikiField</span>
       </div>
-      <nav aria-label="Explore">
-        <h4>Explore</h4>
-        <ul>
-          <li><a href="approach.html">Our Approach</a></li>
-          <li><a href="services.html">Services</a></li>
-          <li><a href="process.html">Engagement Process</a></li>
-          <li><a href="assessment.html">Self-Assessment</a></li>
-        </ul>
-      </nav>
-      <nav aria-label="Connect">
-        <h4>Connect</h4>
-        <ul>
-          <li><a href="contact.html">Contact</a></li>
-          <li><a href="contact.html">Inquiry</a></li>
-        </ul>
-      </nav>
+      <p class="af-footer__tagline">Security leadership for product companies. Fractional CISO, AI-assisted security engineering, and presence-based executive coaching.</p>
     </div>
-    <div class="footer__bottom">
-      &copy; 2026 AikiField. All rights reserved.
-    </div>
+    <nav aria-label="Explore">
+      <h3 class="af-footer__col-title">Explore</h3>
+      <ul class="af-footer__nav">
+        <li><a href="approach.html">Our Approach</a></li>
+        <li><a href="services.html">Services</a></li>
+        <li><a href="process.html">Engagement Process</a></li>
+        <li><a href="assessment.html">Self-Assessment</a></li>
+      </ul>
+    </nav>
+    <nav aria-label="Connect">
+      <h3 class="af-footer__col-title">Connect</h3>
+      <ul class="af-footer__nav">
+        <li><a href="contact.html">Contact</a></li>
+        <li><a href="contact.html">Inquiry</a></li>
+      </ul>
+    </nav>
   </div>
+  <div class="af-footer__legal">&copy; 2026 AikiField. All rights reserved.</div>
 </footer>
 
-<script src="js/main.js"></script>
 </body>
 </html>

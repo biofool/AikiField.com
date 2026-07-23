@@ -1,0 +1,491 @@
+/* ============================================================
+   AikiField — Redesign stylesheet
+   Extracted from "AikiField homepage accessibility redesign"
+   Design tokens + shared components used by index, services,
+   approach, and process pages.
+   ============================================================ */
+
+/* ---------- Design tokens ---------- */
+:root {
+  --af-bg:        #F6F2EA;  /* warm paper */
+  --af-white:     #ffffff;
+  --af-ink:       #16201C;  /* darkest text */
+  --af-text:      #2C3833;  /* body text */
+  --af-text-2:    #3A4742;  /* secondary body */
+  --af-muted:     #5A655F;
+  --af-faint:     #6A756F;
+  --af-primary:   #0E4E44;  /* deep green */
+  --af-primary-dk:#0A3A33;
+  --af-mint:      #5FD3B2;
+  --af-mint-dk:   #8FE6C9;
+  --af-gold:      #9A6B14;
+  --af-border:    #E0D9CB;
+  --af-hover-bg:  #EBE4D6;
+  --af-dark-bg:   #12211D;
+  --af-dark-card: #1A2E28;
+  --af-dark-border:#2C443C;
+  --af-dark-text: #EDE7DA;
+  --af-dark-muted:#B7C4BD;
+  --af-dark-card-text:#C4D0C9;
+  --af-dark-finite:#9FB0A8;
+  --af-inf-bg:    #123c33;
+  --af-inf-border:#2C6B5B;
+  --af-inf-text:  #DCEAE4;
+  --af-cta-on-dark:#CDE3DC;
+
+  --af-serif: 'Source Serif 4', Georgia, serif;
+  --af-sans:  'Public Sans', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+
+  --af-container: 1180px;
+}
+
+/* ---------- Reset / base ---------- */
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--af-bg);
+  color: var(--af-ink);
+  font-family: var(--af-sans);
+  font-size: 18px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+::selection { background: var(--af-primary); color: #fff; }
+h1, h2, h3, h4 { margin: 0; font-family: var(--af-serif); font-weight: 600; color: var(--af-ink); letter-spacing: -0.015em; }
+p { margin: 0; }
+a { color: var(--af-primary); }
+
+/* Focus visibility for keyboard users */
+a.af-focus:focus-visible,
+button.af-focus:focus-visible,
+.af-btn:focus-visible,
+.af-nav__cta:focus-visible,
+.af-skip-link:focus-visible {
+  outline: 3px solid var(--af-primary);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+@keyframes af-pop { from { transform: scale(0.6); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+/* ---------- Layout primitives ---------- */
+.af-container {
+  max-width: var(--af-container);
+  margin: 0 auto;
+  padding-left: 40px;
+  padding-right: 40px;
+}
+.af-section        { padding: 80px 0; }
+.af-section--tight { padding: 56px 0; }
+.af-section--lg    { padding: 88px 0; }
+.af-section--white { background: var(--af-white); border-top: 1px solid var(--af-border); border-bottom: 1px solid var(--af-border); }
+.af-section--dark  { background: var(--af-dark-bg); color: var(--af-dark-text); }
+.af-section--dark h1, .af-section--dark h2, .af-section--dark h3 { color: #fff; }
+
+.af-grid { display: grid; gap: 24px; }
+.af-grid--fit   { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+.af-grid--fit260{ grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+.af-grid--fit300{ grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+.af-grid--28    { gap: 28px; }
+.af-grid--32    { gap: 32px; }
+.af-stack { display: grid; gap: 18px; }
+
+/* ---------- Skip link ---------- */
+.af-skip-link {
+  position: absolute;
+  left: 16px;
+  top: -60px;
+  z-index: 200;
+  background: var(--af-primary);
+  color: #fff;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: top .15s ease;
+}
+.af-skip-link:focus { top: 16px; }
+
+/* ---------- Header / nav ---------- */
+.af-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(246, 242, 234, 0.92);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--af-border);
+}
+.af-header__inner {
+  max-width: var(--af-container);
+  margin: 0 auto;
+  padding: 16px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.af-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  color: var(--af-ink);
+  flex: none;
+}
+.af-brand__icon {
+  width: 38px; height: 38px;
+  border-radius: 10px;
+  background: var(--af-primary);
+  display: grid; place-items: center;
+  color: var(--af-bg);
+  font-family: var(--af-serif);
+  font-weight: 700;
+  font-size: 22px;
+}
+.af-brand__text {
+  font-family: var(--af-serif);
+  font-weight: 600;
+  font-size: 22px;
+  letter-spacing: -0.01em;
+}
+.af-nav {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 2px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.af-nav__link {
+  padding: 10px 13px;
+  text-decoration: none;
+  white-space: nowrap;
+  font-weight: 500;
+  font-size: 16px;
+  border-radius: 8px;
+  color: var(--af-text);
+  background: transparent;
+}
+.af-nav__link:hover { background: var(--af-hover-bg); }
+.af-nav__link--active { font-weight: 700; color: var(--af-primary); background: var(--af-hover-bg); }
+.af-nav__cta {
+  margin-left: 10px;
+  padding: 13px 22px;
+  background: var(--af-primary);
+  color: #fff;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 16px;
+  border-radius: 10px;
+  min-height: 48px;
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+  flex: none;
+}
+.af-nav__cta:hover { background: var(--af-primary-dk); }
+.af-nav__toggle { display: none; }
+
+/* ---------- Typography helpers ---------- */
+.af-kicker, .af-eyebrow {
+  color: var(--af-primary);
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.af-h1 {
+  font-size: clamp(38px, 5vw, 60px);
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  max-width: 18ch;
+  text-wrap: balance;
+}
+.af-h2 {
+  font-size: clamp(28px, 3.6vw, 42px);
+  line-height: 1.15;
+  text-wrap: balance;
+}
+.af-h2--sm { font-size: clamp(26px, 3vw, 34px); line-height: 1.14; }
+.af-h3 { font-size: 24px; line-height: 1.2; }
+.af-lead { font-size: 21px; line-height: 1.6; color: var(--af-text); max-width: 60ch; }
+.af-lead--wide { max-width: 62ch; }
+.af-lead--20  { font-size: 20px; }
+.af-lead--19  { font-size: 19px; }
+.af-body { font-size: 17px; color: var(--af-text-2); line-height: 1.6; }
+.af-lead--dark { color: var(--af-dark-muted); }
+.af-intro { max-width: 64ch; margin-bottom: 48px; }
+.af-intro p { font-size: 20px; color: var(--af-text); }
+
+/* ---------- Buttons ---------- */
+.af-btn {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+  font-weight: 600;
+  border-radius: 12px;
+  min-height: 52px;
+  padding: 16px 30px;
+  font-size: 18px;
+}
+.af-btn--primary { background: var(--af-primary); color: #fff; }
+.af-btn--primary:hover { background: var(--af-primary-dk); }
+.af-btn--ghost {
+  background: transparent;
+  color: var(--af-primary);
+  border: 2px solid var(--af-primary);
+}
+.af-btn--ghost:hover { background: var(--af-hover-bg); }
+.af-btn--light { background: var(--af-bg); color: var(--af-primary); font-weight: 700; }
+.af-btn--light:hover { background: #fff; }
+.af-btn--ondark { background: var(--af-bg); color: var(--af-primary); font-weight: 700; }
+.af-btn--ondark:hover { background: #fff; }
+.af-btn--sm { padding: 13px 22px; font-size: 16px; min-height: 48px; border-radius: 10px; }
+.af-btn-row { display: flex; flex-wrap: wrap; gap: 16px; }
+
+/* ---------- Hero ---------- */
+.af-hero { padding: 88px 0 72px; }
+.af-hero__eyebrow { margin-bottom: 20px; }
+.af-hero__title {
+  font-size: clamp(40px, 5.4vw, 68px);
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  max-width: 16ch;
+  text-wrap: balance;
+  margin-bottom: 28px;
+}
+.af-hero__lead { margin-bottom: 40px; font-size: 21px; line-height: 1.6; max-width: 60ch; color: var(--af-text); }
+
+/* ---------- Cards: pillars (home "Why AikiField") ---------- */
+.af-card {
+  background: var(--af-bg);
+  border: 1px solid var(--af-border);
+  border-radius: 16px;
+  padding: 32px;
+}
+.af-card__icon {
+  width: 52px; height: 52px;
+  border-radius: 12px;
+  background: var(--af-primary);
+  display: grid; place-items: center;
+  margin-bottom: 22px;
+}
+.af-card__icon svg { width: 26px; height: 26px; }
+.af-card__title { font-size: 24px; line-height: 1.2; margin-bottom: 12px; }
+.af-card__body { font-size: 17px; color: var(--af-text-2); line-height: 1.6; }
+
+/* ---------- Principle strip (top-border cards) ---------- */
+.af-principle { border-top: 3px solid var(--af-primary); padding-top: 22px; }
+.af-principle__tag {
+  margin-bottom: 10px;
+  color: var(--af-gold);
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.af-principle__title { font-size: 21px; margin-bottom: 10px; }
+.af-principle__body { font-size: 16px; color: var(--af-text-2); }
+.af-principle__benefit { font-weight: 600; font-size: 16px; color: var(--af-primary); margin-bottom: 12px; line-height: 1.5; }
+.af-principle--approach .af-principle__title { font-size: 22px; margin-bottom: 6px; }
+
+/* ---------- Stat cards (Results) ---------- */
+.af-stat {
+  background: var(--af-dark-card);
+  border: 1px solid var(--af-dark-border);
+  border-radius: 16px;
+  padding: 34px;
+}
+.af-stat__figure {
+  font-family: var(--af-serif);
+  font-weight: 700;
+  font-size: 52px;
+  line-height: 1;
+  color: var(--af-mint);
+  margin-bottom: 14px;
+}
+.af-stat__title { font-family: var(--af-sans); font-weight: 700; font-size: 19px; color: #fff; margin-bottom: 12px; }
+.af-stat__body { font-size: 16px; color: var(--af-dark-card-text); line-height: 1.55; }
+
+/* ---------- CTA callout ---------- */
+.af-callout {
+  background: var(--af-primary);
+  border-radius: 24px;
+  padding: 64px 56px;
+  text-align: center;
+}
+.af-callout--sm { padding: 56px; }
+.af-callout__title { font-size: clamp(30px, 4vw, 46px); line-height: 1.12; color: #fff; margin-bottom: 18px; text-wrap: balance; }
+.af-callout__title--sm { font-size: clamp(28px, 3.6vw, 42px); }
+.af-callout__body { font-size: 20px; color: var(--af-cta-on-dark); max-width: 56ch; margin: 0 auto 36px; }
+.af-callout__body--sm { font-size: 19px; max-width: 54ch; }
+.af-callout__body--52 { max-width: 52ch; }
+
+/* ---------- Footer ---------- */
+.af-footer {
+  background: var(--af-bg);
+  border-top: 1px solid var(--af-border);
+}
+.af-footer__grid {
+  max-width: var(--af-container);
+  margin: 0 auto;
+  padding: 56px 40px;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 40px;
+}
+.af-footer__brand-row { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+.af-footer__brand-icon { width: 34px; height: 34px; border-radius: 9px; background: var(--af-primary); display: grid; place-items: center; color: var(--af-bg); font-family: var(--af-serif); font-weight: 700; font-size: 19px; }
+.af-footer__brand-text { font-family: var(--af-serif); font-weight: 600; font-size: 20px; }
+.af-footer__tagline { font-size: 16px; color: var(--af-text-2); max-width: 42ch; }
+.af-footer__col-title { font-family: var(--af-sans); font-size: 14px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--af-ink); margin-bottom: 14px; }
+.af-footer__nav { list-style: none; margin: 0; padding: 0; }
+.af-footer__nav a {
+  display: block;
+  padding: 6px 0;
+  color: var(--af-text);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  font-size: 16px;
+}
+.af-footer__nav a:hover { color: var(--af-primary); }
+.af-footer__legal { max-width: var(--af-container); margin: 0 auto; padding: 0 40px 40px; color: var(--af-faint); font-size: 15px; }
+
+/* ---------- Services: offering cards ---------- */
+.af-svc {
+  background: var(--af-white);
+  border: 1px solid var(--af-border);
+  border-radius: 20px;
+  padding: 40px;
+  margin-bottom: 24px;
+}
+.af-svc--flagship { border: 2px solid var(--af-primary); }
+.af-svc__tag-row { display: flex; flex-wrap: wrap; align-items: baseline; gap: 14px; margin-bottom: 14px; }
+.af-svc__tag {
+  display: inline-block;
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  background: var(--af-hover-bg);
+  color: var(--af-primary);
+}
+.af-svc__tag--flagship { background: var(--af-primary); color: #fff; }
+.af-svc__title { font-size: clamp(26px, 3vw, 34px); line-height: 1.14; margin-bottom: 16px; max-width: 22ch; text-wrap: balance; }
+.af-svc__lead { font-size: 19px; line-height: 1.6; color: var(--af-text); max-width: 64ch; margin-bottom: 20px; }
+.af-svc__bestfor { font-size: 16px; font-style: italic; color: var(--af-muted); max-width: 60ch; margin-bottom: 26px; }
+.af-svc__bullets-label { font-size: 14px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--af-gold); margin-bottom: 16px; }
+.af-svc__bullets { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 14px 32px; }
+.af-svc__bullet { display: flex; gap: 12px; font-size: 16px; line-height: 1.5; color: var(--af-text-2); }
+.af-svc__bullet svg { flex: none; margin-top: 2px; width: 22px; height: 22px; }
+.af-svc__bullet strong { color: var(--af-ink); font-weight: 600; }
+
+/* ---------- Assessment cards (services page) ---------- */
+.af-assess-card { background: var(--af-white); border: 1px solid var(--af-border); border-radius: 16px; padding: 30px; }
+.af-assess-card__title { font-size: 22px; margin-bottom: 10px; }
+.af-assess-card__body { font-size: 16px; color: var(--af-text-2); line-height: 1.6; margin-bottom: 20px; }
+.af-assess-card__link { font-weight: 600; color: var(--af-primary); text-decoration: underline; text-underline-offset: 3px; font-size: 16px; }
+
+/* ---------- Approach: shift cards ---------- */
+.af-shift { border-radius: 16px; padding: 30px; }
+.af-shift--from { background: var(--af-bg); border: 1px solid var(--af-border); }
+.af-shift--to   { background: var(--af-primary); border: 1px solid var(--af-primary); }
+.af-shift__tag { margin-bottom: 8px; font-weight: 700; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; }
+.af-shift--from .af-shift__tag { color: var(--af-gold); }
+.af-shift--to   .af-shift__tag { color: var(--af-mint-dk); }
+.af-shift__title { font-size: 24px; margin-bottom: 8px; }
+.af-shift--from .af-shift__title { color: var(--af-ink); }
+.af-shift--to   .af-shift__title { color: #fff; }
+.af-shift__body { font-size: 17px; margin-bottom: 16px; }
+.af-shift--from .af-shift__body { color: var(--af-muted); }
+.af-shift--to   .af-shift__body { color: var(--af-cta-on-dark); }
+.af-shift__list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.af-shift__list li { font-size: 15px; padding-left: 16px; position: relative; }
+.af-shift__list li::before { content: ""; position: absolute; left: 0; top: 9px; width: 6px; height: 6px; border-radius: 50%; }
+.af-shift--from .af-shift__list li { color: var(--af-muted); }
+.af-shift--from .af-shift__list li::before { background: var(--af-muted); }
+.af-shift--to   .af-shift__list li { color: var(--af-cta-on-dark); }
+.af-shift--to   .af-shift__list li::before { background: var(--af-mint); }
+
+/* ---------- Approach: practice cards ---------- */
+.af-practice { background: var(--af-bg); border: 1px solid var(--af-border); border-radius: 16px; padding: 30px; }
+.af-practice__tag { margin-bottom: 8px; color: var(--af-gold); font-weight: 700; font-size: 14px; letter-spacing: 0.08em; text-transform: uppercase; }
+.af-practice__title { font-size: 22px; margin-bottom: 6px; }
+.af-practice__benefit { font-weight: 600; font-size: 16px; color: var(--af-primary); line-height: 1.5; }
+
+/* ---------- Process: phase rows ---------- */
+.af-phase { display: flex; gap: 24px; background: var(--af-white); border: 1px solid var(--af-border); border-radius: 16px; padding: 26px 30px; }
+.af-phase__num {
+  flex: none;
+  font-family: var(--af-serif);
+  font-weight: 700;
+  font-size: 34px;
+  color: var(--af-mint);
+  -webkit-text-stroke: 1px var(--af-primary);
+  min-width: 56px;
+  line-height: 1;
+}
+.af-phase__title { font-size: 21px; margin-bottom: 4px; }
+.af-phase__benefit { font-weight: 600; font-size: 16px; color: var(--af-primary); margin-bottom: 8px; }
+.af-phase__body { font-size: 16px; color: var(--af-text-2); line-height: 1.6; max-width: 70ch; }
+
+/* ---------- Process: long-game comparison ---------- */
+.af-game { border-radius: 16px; padding: 30px; }
+.af-game--finite { background: var(--af-dark-card); border: 1px solid var(--af-dark-border); }
+.af-game--infinite { background: var(--af-inf-bg); border: 1px solid var(--af-inf-border); }
+.af-game__title { font-family: var(--af-sans); font-weight: 700; font-size: 18px; margin-bottom: 16px; }
+.af-game--finite .af-game__title { color: var(--af-dark-card-text); }
+.af-game--infinite .af-game__title { color: var(--af-mint); }
+.af-game__list { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.af-game__list li { font-size: 16px; line-height: 1.5; }
+.af-game--finite .af-game__list li { color: var(--af-dark-finite); }
+.af-game--infinite .af-game__list li { color: var(--af-inf-text); }
+
+/* ---------- Page header (interior pages) ---------- */
+.af-page-header { padding: 72px 0 40px; }
+.af-page-header__lead { margin-top: 20px; }
+.af-page-header--tight { padding-bottom: 48px; }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 860px) {
+  .af-footer__grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 720px) {
+  .af-header__inner { padding: 14px 24px; }
+  .af-container { padding-left: 24px; padding-right: 24px; }
+  .af-section, .af-section--tight, .af-section--lg { padding: 56px 0; }
+  .af-hero { padding: 56px 0 48px; }
+  .af-callout, .af-callout--sm { padding: 40px 28px; }
+  .af-card, .af-svc, .af-practice, .af-assess-card, .af-shift, .af-game { padding: 24px; }
+  .af-phase { padding: 22px 20px; gap: 16px; }
+  .af-nav { display: none; }
+  .af-nav__toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px; height: 44px;
+    background: transparent;
+    border: 1px solid var(--af-border);
+    border-radius: 10px;
+    font-size: 20px;
+    color: var(--af-ink);
+    cursor: pointer;
+  }
+  /* Simple toggle: show nav as a column when toggle is :checked via sibling */
+  .af-nav-toggle-check { display: none; }
+  .af-nav-toggle-check:checked ~ .af-nav {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    padding: 12px 0 4px;
+  }
+  .af-nav__cta { margin-left: 0; margin-top: 8px; text-align: center; }
+  .af-svc__bullets { grid-template-columns: 1fr; }
+}
