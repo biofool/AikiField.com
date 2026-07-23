@@ -397,16 +397,16 @@ The composure and curiosity to adapt to emerging threats and AI risk.
 
 **Tag:** AI Coaching
 **Title:** Quantum Aikido — AI Coaching Backend
-**Lead:** An AI coaching system that answers questions grounded in Richard Moon's teaching corpus — bringing the principles of presence, inquiry, and relational harmony to an always-available chat interface. Built free-tier-first on Google Cloud with the Gemini API.
+**Lead:** An AI coaching system that answers questions grounded in Richard Moon's teaching corpus — bringing the principles of presence, inquiry, and relational harmony to an always-available chat interface. Built on proscribed programmable budgets on Google Cloud with the Gemini API.
 **Live at:** quantumaikido.com — public chat plus a password-protected members area with email and Google OAuth login.
 
 **What it does:**
-- **Corpus-grounded answers** — retrieval from 25 Markdown documents (1,800+ chunks) via SQLite FTS5, with source citations on every response.
-- **Human escalation** — Pub/Sub handoffs to human coaches with email/SMS notifications and a Jitsi Meet video link for live sessions.
-- **Cost-tracked API calls** — every Gemini token and cloud infrastructure operation is tracked per-call, with budget guardrails and free-tier monitoring.
-- **Multi-user fairness** — global rate limiting (10 RPM) with a frontend queue so the free tier serves everyone equitably.
-- **Provider-agnostic** — a single env var switches between GCP, Azure, AWS, and Oracle Cloud free-tier adapters.
-- **Secure auth** — email confirmation, invitation codes, Google OAuth, password reset, and self-service profile management.
+- **Answers grounded in the source teachings** — every response draws from the collected published and unpublished works of the PoyManth Somatic school of Quantum Aikido, with citations so you can trace each insight back to its origin.
+- **A live coach when it matters** — when a question needs a human touch, the system connects you to a real coach with a video link, so no one is left alone at the edge of their inquiry.
+- **Sustainable at no cost** — the system runs within proscribed programmable budgets on every call, so the coaching stays free and available without surprise bills.
+- **Fair access for everyone** — no single user can crowd out the rest; the system queues questions so each person gets their turn.
+- **Portable across clouds** — the system can move to any major cloud provider's proscribed programmable budgets without rewriting code, so it's never locked in.
+- **Your account is yours to control** — register, log in, reset your password, or delete your account on your own terms, with invitation-only access to keep the community intentional.
 
 **Tech stack:** Python · FastAPI · Gemini Developer API · Google Cloud Run · Firestore · Pub/Sub · Cloud Functions · SQLite FTS5 · Docker · OpenTofu · DVC
 
@@ -434,7 +434,7 @@ Aristotle called it *phronesis* — practical wisdom, the virtue of discerning r
 
 Quantum Leadership draws from the same well. Where classical leadership seeks certainty and control, quantum leadership embraces uncertainty, entanglement, and the observer effect — the recognition that the leader is not separate from the system but part of it, and that presence shapes outcome. It asks not "what is the plan?" but "what is the right action *now*, in this specific moment, with these specific people?" That question is phronesis in motion.
 
-The aikido tradition embodies this bridge. The practitioner does not memorize responses — they cultivate the capacity to sense, blend, and redirect whatever arrives. Practice develops the judgment that no framework can encode. These projects extend that cultivation into technology: one brings AI-grounded coaching to the aikido community, the other connects that community across the globe. Both are built free-tier-first, with disciplined cost tracking and rate limiting — the same lean, revenue-aware engineering we bring to every security engagement.
+The aikido tradition embodies this bridge. The practitioner does not memorize responses — they cultivate the capacity to sense, blend, and redirect whatever arrives. Practice develops the judgment that no framework can encode. These projects extend that cultivation into technology: one brings AI-grounded coaching to the aikido community, the other connects that community across the globe. Both are built on proscribed programmable budgets, with disciplined cost tracking and rate limiting — the same lean, revenue-aware engineering we bring to every security engagement.
 
 **Phronesis in practice — Inspired presence**
 The AI coaching system embodies the quantum leader's capacity for calm, grounded response under uncertainty — available 24/7, sensing when a question exceeds its scope and escalating to human coaches with composure rather than rigid refusal.
