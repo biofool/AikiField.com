@@ -601,6 +601,16 @@ button.af-focus:focus-visible,
 .af-page-header__lead { margin-top: 20px; }
 .af-page-header--tight { padding-bottom: 48px; }
 
+/* Green hero variant — matches carousel background */
+.af-page-header--green {
+  background: var(--af-primary);
+  padding: 88px 0 72px;
+}
+.af-page-header--green .af-eyebrow { color: var(--af-mint); }
+.af-page-header--green .af-h1 { color: #fff; }
+.af-page-header--green .af-lead,
+.af-page-header--green .af-page-header__lead { color: var(--af-dark-card-text); }
+
 /* ---------- Assessment dimensions ---------- */
 .af-assess-dim {
   background: var(--af-white);
