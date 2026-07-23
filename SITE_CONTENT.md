@@ -39,7 +39,7 @@
 **Slide 1 — Home**
 - Eyebrow: Fractional CISO · Product Companies
 - Title: Security leadership that keeps pace with your business.
-- Lead: AikiField is a fractional CISO practice for product companies — 20+ years building and running security programs, from CISO of a venture-backed product company to executive coaching. Together we'll find the 20% of the work that brings 80% of the results.
+- Lead: AikiField provides fractional CISO services for product companies — 20+ years building and running security programs, from CISO of a venture-backed product company to executive coaching. Together we'll find the 20% of the work that brings 80% of the results.
 - CTAs: Book a Discovery Call | Explore Services
 
 **Slide 2 — Our Approach**
