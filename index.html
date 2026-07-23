@@ -37,16 +37,106 @@
 
 <main id="main">
 
-  <!-- HERO -->
-  <section class="af-hero">
-    <div class="af-container">
-      <p class="af-eyebrow af-hero__eyebrow">Fractional CISO &middot; Product Companies</p>
-      <h1 class="af-hero__title">Security leadership that keeps pace with your business.</h1>
-      <p class="af-hero__lead">I'm a fractional CISO for product companies &mdash; 20+ years building and running security programs, from CISO of a venture-backed product company to executive coach. Together we'll find the 20% of the work that brings 80% of the results.</p>
-      <div class="af-btn-row">
-        <a href="contact.html" class="af-btn af-btn--primary">Book a Discovery Call</a>
-        <a href="services.html" class="af-btn af-btn--ghost">Explore Services</a>
+  <!-- HERO CAROUSEL -->
+  <section class="af-carousel" aria-label="Featured pages" aria-roledescription="carousel">
+    <div class="af-carousel__viewport">
+      <div class="af-carousel__track">
+
+        <!-- Slide 1: Home -->
+        <div class="af-carousel__slide af-carousel__slide--active" role="group" aria-roledescription="slide" aria-label="1 of 7: Home">
+          <p class="af-carousel__eyebrow">Fractional CISO &middot; Product Companies</p>
+          <h1 class="af-carousel__title">Security leadership that keeps pace with your business.</h1>
+          <p class="af-carousel__lead">I'm a fractional CISO for product companies &mdash; 20+ years building and running security programs, from CISO of a venture-backed product company to executive coach. Together we'll find the 20% of the work that brings 80% of the results.</p>
+          <div class="af-btn-row">
+            <a href="contact.html" class="af-btn af-btn--primary">Book a Discovery Call</a>
+            <a href="services.html" class="af-btn af-btn--ghost">Explore Services</a>
+          </div>
+        </div>
+
+        <!-- Slide 2: Approach -->
+        <div class="af-carousel__slide" role="group" aria-roledescription="slide" aria-label="2 of 7: Our Approach">
+          <p class="af-carousel__eyebrow">Our Approach</p>
+          <h2 class="af-carousel__title">Security engineering and leadership, working as one.</h2>
+          <p class="af-carousel__lead">I build your security program &mdash; and the leadership capacity to sustain it, so the results outlast the engagement. Energy follows attention: where a leader places focus determines the security posture of the entire organization.</p>
+          <div class="af-btn-row">
+            <a href="approach.html" class="af-btn af-btn--primary">Explore the Approach</a>
+          </div>
+        </div>
+
+        <!-- Slide 3: Services -->
+        <div class="af-carousel__slide" role="group" aria-roledescription="slide" aria-label="3 of 7: Services">
+          <p class="af-carousel__eyebrow">Services</p>
+          <h2 class="af-carousel__title">Engagements built around the outcome you need.</h2>
+          <p class="af-carousel__lead">Fractional CISO, security program buildout, DevSecOps, threat modeling, and leadership coaching &mdash; every engagement designed to meet your security maturity and business stage, and to move a metric your business actually cares about.</p>
+          <div class="af-btn-row">
+            <a href="services.html" class="af-btn af-btn--primary">View All Services</a>
+          </div>
+        </div>
+
+        <!-- Slide 4: Process -->
+        <div class="af-carousel__slide" role="group" aria-roledescription="slide" aria-label="4 of 7: Engagement Process">
+          <p class="af-carousel__eyebrow">Engagement Process</p>
+          <h2 class="af-carousel__title">A clear path from where you are to where you want to be.</h2>
+          <p class="af-carousel__lead">Four agreements that make it stick, and six phases to a program that fits &mdash; a collaborative design cycle tailored to your stage, risks, and customers. Each phase gives you a concrete result, not more process.</p>
+          <div class="af-btn-row">
+            <a href="process.html" class="af-btn af-btn--primary">See the Process</a>
+          </div>
+        </div>
+
+        <!-- Slide 5: Sponsored Projects -->
+        <div class="af-carousel__slide" role="group" aria-roledescription="slide" aria-label="5 of 7: Sponsored Projects">
+          <p class="af-carousel__eyebrow">Sponsored Projects</p>
+          <h2 class="af-carousel__title">Where security leadership meets the martial arts community.</h2>
+          <p class="af-carousel__lead">AikiField sponsors projects at the intersection of AI, security, and the movement arts &mdash; an AI coaching system grounded in Richard Moon's teachings, and a global studio discovery pipeline connecting the aikido community worldwide.</p>
+          <div class="af-btn-row">
+            <a href="projects.html" class="af-btn af-btn--primary">View Projects</a>
+          </div>
+        </div>
+
+        <!-- Slide 6: Assessment -->
+        <div class="af-carousel__slide" role="group" aria-roledescription="slide" aria-label="6 of 7: Self-Assessment">
+          <p class="af-carousel__eyebrow">Self-Assessment</p>
+          <h2 class="af-carousel__title">Measure your security maturity and leadership presence.</h2>
+          <p class="af-carousel__lead">Two assessments in one: your organization's security posture across five categories, and the seven leadership presence dimensions that determine whether your program holds up under pressure. Honest self-inquiry &mdash; no right answers.</p>
+          <div class="af-btn-row">
+            <a href="assessment.html" class="af-btn af-btn--primary">Take the Assessment</a>
+          </div>
+        </div>
+
+        <!-- Slide 7: Contact -->
+        <div class="af-carousel__slide" role="group" aria-roledescription="slide" aria-label="7 of 7: Contact">
+          <p class="af-carousel__eyebrow">Contact</p>
+          <h2 class="af-carousel__title">Start a conversation.</h2>
+          <p class="af-carousel__lead">Every security breakthrough begins with an inquiry. Whether you need a fractional CISO, AI-assisted DevSecOps, or leadership coaching &mdash; I'll design an engagement that meets you where you are. Complimentary discovery call, no obligation.</p>
+          <div class="af-btn-row">
+            <a href="contact.html" class="af-btn af-btn--primary">Book a Discovery Call</a>
+          </div>
+        </div>
+
       </div>
+
+      <!-- Progress bar -->
+      <div class="af-carousel__progress" aria-hidden="true">
+        <div class="af-carousel__progress-bar"></div>
+      </div>
+
+      <!-- Dots + arrows -->
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-top:24px;">
+        <div class="af-carousel__dots" role="tablist" aria-label="Choose slide">
+          <button class="af-carousel__dot af-carousel__dot--active" role="tab" aria-selected="true" aria-label="Slide 1: Home"></button>
+          <button class="af-carousel__dot" role="tab" aria-selected="false" aria-label="Slide 2: Our Approach"></button>
+          <button class="af-carousel__dot" role="tab" aria-selected="false" aria-label="Slide 3: Services"></button>
+          <button class="af-carousel__dot" role="tab" aria-selected="false" aria-label="Slide 4: Engagement Process"></button>
+          <button class="af-carousel__dot" role="tab" aria-selected="false" aria-label="Slide 5: Sponsored Projects"></button>
+          <button class="af-carousel__dot" role="tab" aria-selected="false" aria-label="Slide 6: Self-Assessment"></button>
+          <button class="af-carousel__dot" role="tab" aria-selected="false" aria-label="Slide 7: Contact"></button>
+        </div>
+        <div class="af-carousel__arrows">
+          <button class="af-carousel__arrow af-carousel__arrow--prev" aria-label="Previous slide">&larr;</button>
+          <button class="af-carousel__arrow af-carousel__arrow--next" aria-label="Next slide">&rarr;</button>
+        </div>
+      </div>
+
     </div>
   </section>
 
@@ -183,5 +273,6 @@
   <div class="af-footer__legal">&copy; 2026 AikiField. All rights reserved.</div>
 </footer>
 
+<script src="js/carousel.js"></script>
 </body>
 </html>

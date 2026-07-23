@@ -260,6 +260,136 @@ button.af-focus:focus-visible,
 }
 .af-hero__lead { margin-bottom: 40px; font-size: 21px; line-height: 1.6; max-width: 60ch; color: var(--af-text); }
 
+/* ---------- Hero carousel ---------- */
+.af-carousel {
+  position: relative;
+  padding: 88px 0 72px;
+  overflow: hidden;
+}
+.af-carousel__viewport {
+  position: relative;
+  max-width: var(--af-container);
+  margin: 0 auto;
+  padding: 0 40px;
+}
+.af-carousel__track {
+  position: relative;
+  min-height: 320px;
+}
+.af-carousel__slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transform: translateX(24px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+  pointer-events: none;
+}
+.af-carousel__slide--active {
+  opacity: 1;
+  transform: translateX(0);
+  pointer-events: auto;
+  position: relative;
+}
+.af-carousel__eyebrow {
+  margin-bottom: 20px;
+  color: var(--af-primary);
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.af-carousel__title {
+  font-family: var(--af-serif);
+  font-weight: 600;
+  font-size: clamp(36px, 4.8vw, 60px);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  max-width: 18ch;
+  text-wrap: balance;
+  margin-bottom: 24px;
+  color: var(--af-ink);
+}
+.af-carousel__lead {
+  font-size: 20px;
+  line-height: 1.6;
+  max-width: 58ch;
+  color: var(--af-text);
+  margin-bottom: 36px;
+}
+
+/* Carousel controls */
+.af-carousel__dots {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+}
+.af-carousel__dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid var(--af-primary);
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+.af-carousel__dot:hover { transform: scale(1.15); }
+.af-carousel__dot--active { background: var(--af-primary); }
+
+.af-carousel__arrows {
+  position: absolute;
+  bottom: 0;
+  right: 40px;
+  display: flex;
+  gap: 8px;
+}
+.af-carousel__arrow {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  border: 1px solid var(--af-border);
+  background: var(--af-white);
+  color: var(--af-primary);
+  font-size: 20px;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+.af-carousel__arrow:hover {
+  background: var(--af-hover-bg);
+  border-color: var(--af-primary);
+}
+.af-carousel__arrow:focus-visible {
+  outline: 3px solid var(--af-primary);
+  outline-offset: 3px;
+}
+
+.af-carousel__progress {
+  position: absolute;
+  bottom: -2px;
+  left: 40px;
+  width: 120px;
+  height: 3px;
+  background: var(--af-border);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.af-carousel__progress-bar {
+  height: 100%;
+  width: 0;
+  background: var(--af-primary);
+  transition: width 0.1s linear;
+}
+
+@media (max-width: 720px) {
+  .af-carousel { padding: 56px 0 48px; }
+  .af-carousel__viewport { padding: 0 24px; }
+  .af-carousel__arrows { right: 24px; }
+  .af-carousel__progress { left: 24px; width: 80px; }
+  .af-carousel__track { min-height: 380px; }
+}
+
 /* ---------- Cards: pillars (home "Why AikiField") ---------- */
 .af-card {
   background: var(--af-bg);
