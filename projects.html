@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AikiField — Sponsored Projects</title>
+  <meta name="description" content="Projects AikiField sponsors at the intersection of security leadership, AI, and the martial arts community — Quantum Aikido AI coaching and global studio outreach.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/redesign.css">
+</head>
+<body>
+
+<a href="#main" class="af-skip-link">Skip to main content</a>
+
+<!-- HEADER -->
+<header class="af-header">
+  <div class="af-header__inner">
+    <a href="index.html" class="af-brand">
+      <span class="af-brand__icon" aria-hidden="true">A</span>
+      <span class="af-brand__text">AikiField</span>
+    </a>
+    <input type="checkbox" id="af-nav-check" class="af-nav-toggle-check">
+    <label for="af-nav-check" class="af-nav__toggle" aria-label="Menu">&#9776;</label>
+    <nav aria-label="Primary" class="af-nav">
+      <a href="index.html" class="af-nav__link">Home</a>
+      <a href="approach.html" class="af-nav__link">Approach</a>
+      <a href="services.html" class="af-nav__link">Services</a>
+      <a href="process.html" class="af-nav__link">Process</a>
+      <a href="projects.html" class="af-nav__link af-nav__link--active" aria-current="page">Projects</a>
+      <a href="assessment.html" class="af-nav__link">Assessment</a>
+      <a href="contact.html" class="af-nav__cta">Get Started</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+
+  <!-- PAGE HEADER -->
+  <section class="af-page-header af-page-header--tight">
+    <div class="af-container">
+      <p class="af-eyebrow">Sponsored Projects</p>
+      <h1 class="af-h1">Where security leadership meets the martial arts community.</h1>
+      <p class="af-lead af-lead--wide af-page-header__lead">AikiField sponsors projects at the intersection of AI, security, and the movement arts &mdash; extending the principles of grounded leadership and open inquiry into real-world systems.</p>
+    </div>
+  </section>
+
+  <!-- PROJECT 1: QUANTUM AIKIDO COACHING -->
+  <section class="af-section">
+    <div class="af-container">
+
+      <article class="af-svc af-svc--flagship">
+        <div class="af-svc__tag-row">
+          <span class="af-svc__tag af-svc__tag--flagship">AI Coaching</span>
+        </div>
+        <h2 class="af-svc__title">Quantum Aikido &mdash; AI Coaching Backend</h2>
+        <p class="af-svc__lead">An AI coaching system that answers questions grounded in Richard Moon's teaching corpus &mdash; bringing the principles of presence, inquiry, and relational harmony to an always-available chat interface. Built free-tier-first on Google Cloud with the Gemini API.</p>
+        <p class="af-svc__bestfor">Live at <a href="https://quantumaikido.com">quantumaikido.com</a> &mdash; public chat plus a password-protected members area with email and Google OAuth login.</p>
+        <h3 class="af-svc__bullets-label">What it does</h3>
+        <ul class="af-svc__bullets">
+          <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Corpus-grounded answers</strong> &mdash; retrieval from 25 Markdown documents (1,800+ chunks) via SQLite FTS5, with source citations on every response.</span></li>
+          <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Human escalation</strong> &mdash; Pub/Sub handoffs to human coaches with email/SMS notifications and a Jitsi Meet video link for live sessions.</span></li>
+          <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Cost-tracked API calls</strong> &mdash; every Gemini token and cloud infrastructure operation is tracked per-call, with budget guardrails and free-tier monitoring.</span></li>
+          <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Multi-user fairness</strong> &mdash; global rate limiting (10 RPM) with a frontend queue so the free tier serves everyone equitably.</span></li>
+          <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Provider-agnostic</strong> &mdash; a single env var switches between GCP, Azure, AWS, and Oracle Cloud free-tier adapters.</span></li>
+          <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Secure auth</strong> &mdash; email confirmation, invitation codes, Google OAuth, password reset, and self-service profile management.</span></li>
+        </ul>
+        <h3 class="af-svc__bullets-label" style="margin-top:28px;">Tech stack</h3>
+        <p class="af-body">Python &middot; FastAPI &middot; Gemini Developer API &middot; Google Cloud Run &middot; Firestore &middot; Pub/Sub &middot; Cloud Functions &middot; SQLite FTS5 &middot; Docker &middot; OpenTofu &middot; DVC</p>
+      </article>
+
+      <!-- PROJECT 2: STUDIO DISCOVERY -->
+      <article class="af-svc">
+        <div class="af-svc__tag-row">
+          <span class="af-svc__tag">Outreach Pipeline</span>
+        </div>
+        <h2 class="af-svc__title">World Studio Finder &mdash; Global Studio Discovery</h2>
+        <p class="af-svc__lead">An automated pipeline that discovers yoga, tai chi, capoeira, and aikido studios worldwide via Google Maps &mdash; then finds and verifies their contact emails for outreach campaigns promoting the Quantum Aikido book.</p>
+        <p class="af-svc__bestfor">Two outreach paths: email campaigns via YAMM mail merge, and automated web contact form submission for studios with a website but no listed email.</p>
+        <h3 class="af-svc__bullets-label">What it does</h3>
+        <ul class="af-svc__bullets">
+          <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Global Google Maps scraping</strong> &mdash; Playwright browser automation with anti-detection, 2&times;2 grid search, and Google Places API fallback for high-failure terms.</span></li>
+          <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Email discovery &amp; verification</strong> &mdash; Hunter.io integration plus direct website scraping, with deliverability validation and junk-domain filtering.</span></li>
+          <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Google Sheets sync</strong> &mdash; all results and pipeline state synced to Sheets as the authoritative record, with live column-order reads for YAMM compatibility.</span></li>
+          <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Geo-filtered campaigns</strong> &mdash; filter by country, US state, timezone, or continent; hexagonal grid search for dense city coverage.</span></li>
+          <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Resume &amp; reprocess</strong> &mdash; crash-safe JSONL checkpointing, date-window reprocessing, and algorithm-version tracking for data quality.</span></li>
+        </ul>
+        <h3 class="af-svc__bullets-label" style="margin-top:28px;">Tech stack</h3>
+        <p class="af-body">Python &middot; Playwright &middot; Google Places API &middot; Google Sheets API &middot; Hunter.io &middot; GCP Compute Engine &middot; Terraform/OpenTofu &middot; SQLite (SCD Type 2 data quality)</p>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- WHY WE SPONSOR -->
+  <section class="af-section af-section--white">
+    <div class="af-container">
+      <div class="af-intro">
+        <h2 class="af-h2">Why these projects</h2>
+        <p>AikiField's approach to security leadership draws from the martial arts tradition &mdash; grounded presence, relational harmony, and open inquiry. These projects extend those principles into technology: one brings AI-grounded coaching to the aikido community, the other connects that community across the globe. Both are built free-tier-first, with disciplined cost tracking and rate limiting &mdash; the same lean, revenue-aware engineering we bring to every security engagement.</p>
+      </div>
+      <div class="af-grid af-grid--fit af-grid--28">
+        <div class="af-principle">
+          <p class="af-principle__tag">Principle in practice</p>
+          <h3 class="af-principle__title">Inspired presence</h3>
+          <p class="af-principle__body">The AI coaching system embodies calm, grounded response &mdash; available 24/7, escalating to human coaches with composure when a question exceeds its scope.</p>
+        </div>
+        <div class="af-principle">
+          <p class="af-principle__tag">Principle in practice</p>
+          <h3 class="af-principle__title">Relational harmony</h3>
+          <p class="af-principle__body">The studio discovery pipeline builds connection across the global movement-arts community &mdash; finding the studios, reaching out, and extending the conversation.</p>
+        </div>
+        <div class="af-principle">
+          <p class="af-principle__tag">Principle in practice</p>
+          <h3 class="af-principle__title">Open inquiry</h3>
+          <p class="af-principle__body">Both systems are built to sense and adapt &mdash; cost monitoring, rate limiting, and data quality architecture that question assumptions and surface emerging issues.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="af-section af-section--lg">
+    <div class="af-container">
+      <div class="af-callout af-callout--sm">
+        <h2 class="af-callout__title af-callout__title--sm">Interested in the methodology behind these projects?</h2>
+        <p class="af-callout__body af-callout__body--sm af-callout__body--52">The same principles &mdash; lean engineering, cost discipline, and leadership capacity &mdash; drive every AikiField engagement. Let's talk about your security program.</p>
+        <a href="contact.html" class="af-btn af-btn--light">Book a Discovery Call</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- FOOTER -->
+<footer class="af-footer">
+  <div class="af-footer__grid">
+    <div>
+      <div class="af-footer__brand-row">
+        <span class="af-footer__brand-icon" aria-hidden="true">A</span>
+        <span class="af-footer__brand-text">AikiField</span>
+      </div>
+      <p class="af-footer__tagline">Security leadership for product companies. Fractional CISO, AI-assisted security engineering, and presence-based executive coaching.</p>
+    </div>
+    <nav aria-label="Explore">
+      <h3 class="af-footer__col-title">Explore</h3>
+      <ul class="af-footer__nav">
+        <li><a href="approach.html">Our Approach</a></li>
+        <li><a href="services.html">Services</a></li>
+        <li><a href="process.html">Engagement Process</a></li>
+        <li><a href="projects.html">Sponsored Projects</a></li>
+        <li><a href="assessment.html">Self-Assessment</a></li>
+      </ul>
+    </nav>
+    <nav aria-label="Connect">
+      <h3 class="af-footer__col-title">Connect</h3>
+      <ul class="af-footer__nav">
+        <li><a href="contact.html">Contact</a></li>
+        <li><a href="contact.html">Inquiry</a></li>
+      </ul>
+    </nav>
+  </div>
+  <div class="af-footer__legal">&copy; 2026 AikiField. All rights reserved.</div>
+</footer>
+
+</body>
+</html>
