@@ -265,6 +265,7 @@ button.af-focus:focus-visible,
   position: relative;
   padding: 88px 0 72px;
   overflow: hidden;
+  background: var(--af-primary);
 }
 .af-carousel__viewport {
   position: relative;
@@ -292,7 +293,7 @@ button.af-focus:focus-visible,
 }
 .af-carousel__eyebrow {
   margin-bottom: 20px;
-  color: var(--af-primary);
+  color: var(--af-mint);
   font-weight: 700;
   font-size: 15px;
   letter-spacing: 0.12em;
@@ -307,13 +308,13 @@ button.af-focus:focus-visible,
   max-width: 18ch;
   text-wrap: balance;
   margin-bottom: 24px;
-  color: var(--af-ink);
+  color: #fff;
 }
 .af-carousel__lead {
   font-size: 20px;
   line-height: 1.6;
   max-width: 58ch;
-  color: var(--af-text);
+  color: var(--af-dark-card-text);
   margin-bottom: 36px;
 }
 
@@ -327,14 +328,14 @@ button.af-focus:focus-visible,
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  border: 2px solid var(--af-primary);
+  border: 2px solid var(--af-mint);
   background: transparent;
   cursor: pointer;
   padding: 0;
   transition: background 0.2s ease, transform 0.2s ease;
 }
 .af-carousel__dot:hover { transform: scale(1.15); }
-.af-carousel__dot--active { background: var(--af-primary); }
+.af-carousel__dot--active { background: var(--af-mint); }
 
 .af-carousel__arrows {
   position: absolute;
@@ -347,9 +348,9 @@ button.af-focus:focus-visible,
   width: 44px;
   height: 44px;
   border-radius: 10px;
-  border: 1px solid var(--af-border);
-  background: var(--af-white);
-  color: var(--af-primary);
+  border: 1px solid rgba(255,255,255,0.25);
+  background: rgba(255,255,255,0.08);
+  color: #fff;
   font-size: 20px;
   cursor: pointer;
   display: grid;
@@ -357,11 +358,11 @@ button.af-focus:focus-visible,
   transition: background 0.2s ease, border-color 0.2s ease;
 }
 .af-carousel__arrow:hover {
-  background: var(--af-hover-bg);
-  border-color: var(--af-primary);
+  background: rgba(255,255,255,0.18);
+  border-color: var(--af-mint);
 }
 .af-carousel__arrow:focus-visible {
-  outline: 3px solid var(--af-primary);
+  outline: 3px solid var(--af-mint);
   outline-offset: 3px;
 }
 
@@ -371,14 +372,14 @@ button.af-focus:focus-visible,
   left: 40px;
   width: 120px;
   height: 3px;
-  background: var(--af-border);
+  background: rgba(255,255,255,0.2);
   border-radius: 2px;
   overflow: hidden;
 }
 .af-carousel__progress-bar {
   height: 100%;
   width: 0;
-  background: var(--af-primary);
+  background: var(--af-mint);
   transition: width 0.1s linear;
 }
 
@@ -388,6 +389,24 @@ button.af-focus:focus-visible,
   .af-carousel__arrows { right: 24px; }
   .af-carousel__progress { left: 24px; width: 80px; }
   .af-carousel__track { min-height: 380px; }
+}
+
+/* Carousel button overrides (on green background) */
+.af-carousel .af-btn--primary {
+  background: #fff;
+  color: var(--af-primary);
+}
+.af-carousel .af-btn--primary:hover {
+  background: var(--af-mint-dk);
+}
+.af-carousel .af-btn--ghost {
+  background: transparent;
+  color: #fff;
+  border: 2px solid rgba(255,255,255,0.5);
+}
+.af-carousel .af-btn--ghost:hover {
+  background: rgba(255,255,255,0.12);
+  border-color: #fff;
 }
 
 /* ---------- Cards: pillars (home "Why AikiField") ---------- */
