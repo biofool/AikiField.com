@@ -1,3 +1,9 @@
 input/
-.devin/
 /AikiField homepage accessibility redesign.zip
+
+# AI coding config / secrets
+.env
+*.key
+*.pem
+credentials.json
+.devin/config.local.json
