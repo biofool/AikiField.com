@@ -34,94 +34,77 @@
 **Meta title:** AikiField — Security Leadership for Product Companies
 **Meta description:** Fractional CISO for product companies. 20+ years building and running security programs — from CISO of a venture-backed product company to executive coach.
 
-### Hero Carousel (7 slides, auto-rotating, green background)
+### Hero (static, green background, two-column: copy + "Why AikiField" panel)
 
-**Slide 1 — Home**
 - Eyebrow: Fractional CISO · Product Companies
 - Title: Security leadership that keeps pace with your business.
 - Lead: AikiField provides fractional CISO services for product companies — 20+ years building and running security programs, from CISO of a venture-backed product company to executive coaching. Together we'll find the 20% of the work that brings 80% of the results.
 - CTAs: Book a Discovery Call | Explore Services
 
-**Slide 2 — Our Approach**
-- Eyebrow: Our Approach
-- Title: Security engineering and leadership, working as one.
-- Lead: We build your security program — and the leadership capacity to sustain it, so the results outlast the engagement. Energy follows attention: where a leader places focus determines the security posture of the entire organization.
-- CTA: Explore the Approach
+**Proof metrics (3):**
+- $5M — Blocked sales channel recovered by resolving customer security objections.
+- 87% — Customer-reported security risk eliminated in three thirty-minute meetings.
+- 21 → 3 days — Vulnerability remediation time cut with AI-assisted triage workflows.
 
-**Slide 3 — Services**
-- Eyebrow: Services
-- Title: Engagements built around the outcome you need.
-- Lead: Fractional CISO, security program buildout, DevSecOps, threat modeling, and leadership coaching — every engagement designed to meet your security maturity and business stage, and to move a metric your business actually cares about.
-- CTA: View All Services
+**Side panel — Why AikiField (3 signals):**
+- Protection that doesn't slow you down — Security left-shifted into your development budget and aligned to your revenue model — lean, without dragging on velocity.
+- Vulnerabilities fixed in days, not weeks — AI-assisted triage and remediation across application, cloud, infrastructure, and customer-reported issues.
+- Leadership that sticks — Security advisory paired with presence-based coaching, so your leaders can carry the program for the long haul.
 
-**Slide 4 — Engagement Process**
-- Eyebrow: Engagement Process
-- Title: A clear path from where you are to where you want to be.
-- Lead: Four agreements that make it stick, and six phases to a program that fits — a collaborative design cycle tailored to your stage, risks, and customers. Each phase gives you a concrete result, not more process.
-- CTA: See the Process
+### Client strip (5 chips)
 
-**Slide 5 — Sponsored Projects**
-- Eyebrow: Sponsored Projects
-- Title: Where security leadership meets phronesis.
-- Lead: Phronesis — practical wisdom — is what Quantum Leadership demands. AikiField sponsors projects that embody this bridge: an AI coaching system grounded in Richard Moon's teachings, and a global studio discovery pipeline connecting the aikido community worldwide.
-- CTA: View Projects
+Series A–C startups | SaaS companies | AI-powered product teams | Venture-backed companies | Engineering-led organizations
 
-**Slide 6 — Self-Assessment**
-- Eyebrow: Self-Assessment
-- Title: Measure your security maturity and leadership presence.
-- Lead: Two assessments in one: your organization's security posture across five categories, and the seven leadership presence dimensions that determine whether your program holds up under pressure. Honest self-inquiry — no right answers.
-- CTA: Take the Assessment
+### Who We Help
 
-**Slide 7 — Contact**
-- Eyebrow: Contact
-- Title: Start a conversation.
-- Lead: Every security breakthrough begins with an inquiry. Whether you need a fractional CISO, AI-assisted DevSecOps, or leadership coaching — we'll design an engagement that meets you where you are. Complimentary discovery call, no obligation.
-- CTA: Book a Discovery Call
+**Heading:** Built for leaders who own security but can't hire a full-time CISO.
+**Intro:** Enterprise customers are asking hard questions, the backlog is growing, and security keeps landing on someone's already-full plate. We meet each of those leaders where they are.
 
-### Why AikiField
+**Founder / CEO — Turn security from deal-blocker into differentiator.**
+Win enterprise deals with a credible security story — clear questionnaires without panic, and a posture that builds customer trust instead of stalling revenue.
 
-**Heading:** Why AikiField
-**Intro:** Many consultants hand you a roadmap and leave, or bill you for a massive program. We integrate security into your business process — right-sized, revenue-aware, and built to last.
+**CTO / VP Engineering — Get senior support on architecture and delivery.**
+Threat modeling in the design phase, security in the CI/CD pipeline, and a remediation workflow that clears the backlog without derailing the roadmap.
 
-**Card 1 — Protection that doesn't slow you down**
-Security shouldn't be a separate line item. We left-shift it into your development budget and align it to your revenue model — a lean program that protects the business without dragging on velocity.
+**Board / Investors — Gain a defensible view of risk and readiness.**
+Concise reporting on exposure, capability gaps, and priorities — technical risk translated into the business language governance actually needs.
 
-**Card 2 — Vulnerabilities fixed in days, not weeks**
-Your team clears its backlog fast: AI-assisted triage and remediation workflows cut mitigation time from 21 days to 3, across application, cloud, infrastructure, and customer-reported issues.
+### Services (staggered two-column teaser, links to services.html)
 
-**Card 3 — Leadership that sticks**
-Programs fail when leadership capacity is missing. We pair security advisory with presence-based coaching, so your leaders develop the judgment to lead security for the long haul.
+**Heading:** Engagements built around the outcome you need.
+**Intro:** Every engagement is designed to meet your security maturity and business stage — and to move a metric your business actually cares about. Leadership coaching runs through all of them.
 
-### From roadmap to reality
+- **Fractional CISO (Flagship)** — CISO-level leadership without a full-time hire. Bullets: roadmap and risk prioritization aligned to revenue model; AI governance; monthly strategy, async help, incident availability.
+- **Program buildout** — A security program right-sized to your risk. Bullets: critical controls ranked; incident playbook and tabletop; living risk register.
+- **DevSecOps** — Clear the backlog blocking your enterprise deals. Bullets: pipeline assessment and rearchitecture; AI-assisted triage and remediation; team training.
+- **Threat modeling** — Catch security flaws before you write the code. Bullets: facilitated workshops; attack-surface mapping ranked by likelihood and impact; implementable mitigation plans.
 
-**Heading:** From roadmap to reality
-**Intro:** Most security engagements produce a document. Mine produce a capability — pairing 20+ years of CISO-level experience with a presence-based coaching methodology that develops the leadership capacity to execute under pressure.
+CTA: View All Services
 
-**Cardinal assumption — Energy follows attention**
-Where a leader places attention determines the security posture of the whole organization — the starting point before tools or frameworks.
+### Engagement Process (4-step strip, links to process.html)
 
-**Principle 1 — Inspired presence**
-The grounded, calm authority a leader projects in a breach, a board meeting, or a customer security review. Presence is trainable.
+**Heading:** Four agreements that make it stick.
+**Intro:** The container for security transformation — a clear path from where you are to where you want to be, with a concrete result at every step.
 
-**Principle 2 — Relational harmony**
-Security is a conversation. Partnering with engineering, aligning with product, and building customer trust is what makes programs work.
+- Agreement I · Aspiration — Leadership agreement — A clear, shared vision of what you're protecting, why, and at what level.
+- Agreement II · Execution — Management agreement — A security program that actually runs — roadmap, owners, and a review cadence.
+- Agreement III · Change — Development agreement — Deep trust between security, engineering, and product — no blame culture.
+- Agreement IV · Inspiration — Inquiry agreement — The composure and curiosity to adapt to emerging threats and AI risk.
 
-**Principle 3 — Open inquiry**
-The capacity to not-know, question assumptions, and sense emerging risk before it materializes is the essence of security leadership.
+CTA: See the Six Phases
 
-### Results that speak
+### How We Think (dark section: featured insight + 3 mini links)
 
-**Heading:** Results that speak
-**Subhead:** Real outcomes from real engagements.
+**Heading:** From roadmap to reality.
+**Subhead:** Most security engagements produce a document. Ours produce a capability — here's the thinking behind it.
 
-**Stat 1 — $5M: Sales channel recovered**
-Recovered a blocked sales channel worth $5M ARR by executing a roadmap that resolved security objections across multiple customers.
+**Featured — Cardinal assumption: Energy follows attention.**
+Where a leader places attention determines the security posture of the whole organization — the starting point before tools, before policies, before frameworks. Focus the leaders, and secure software follows. → Explore the Approach
 
-**Stat 2 — 87%: Customer risk eliminated**
-Eliminated 87% of customer-reported security risk in just three thirty-minute meetings with engineering leadership — workflow rearchitecture that cut average remediation time from 165 days to 21 days.
-
-**Stat 3 — 18 days freed: Engineering focus reclaimed**
-AI-assisted triage and remediation with the Aikido.dev platform cut average vulnerability mitigation time from 21 days to 3 days — returning 18 days of engineering focus to building product.
+**Mini links:**
+- Self-Assessment — Measure your security maturity and leadership presence — Two assessments in one — honest self-inquiry across five security categories and seven presence dimensions. (→ assessment.html)
+- Engagement Process — Six phases to a program that fits — A collaborative design cycle tailored to your stage, risks, and customers. (→ process.html)
+- Sponsored Projects — Where security leadership meets phronesis — An AI coaching system grounded in Richard Moon's teachings, and a global studio discovery pipeline. (→ projects.html)
 
 ### CTA
 
@@ -628,7 +611,7 @@ Practice and review regularly. Adjust based on results, incidents, and changing 
 ## Design System
 
 **Stylesheet:** `css/redesign.css`
-**JavaScript:** `js/carousel.js` (hero carousel on home page)
+**JavaScript:** none on the home page (`js/carousel.js` retained but unused since the static-hero rearchitecture)
 
 ### Color tokens
 - `--af-bg`: #F6F2EA (warm paper)
@@ -644,6 +627,6 @@ Practice and review regularly. Adjust based on results, incidents, and changing 
 
 ### Hero background
 All pages use the deep green (`--af-primary`) hero background:
-- Home: `.af-carousel` with green background
+- Home: `.af-hero-home` — static two-column hero (copy + proof metrics, "Why AikiField" side panel)
 - Interior pages: `.af-page-header--green` modifier
 - White text on green, mint accents for eyebrows/controls
