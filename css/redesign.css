@@ -737,6 +737,7 @@ button.af-focus:focus-visible,
 .af-metric { padding: 18px 20px; border: 1px solid var(--af-inf-border); border-radius: 16px; background: var(--af-inf-bg); }
 .af-metric strong { display: block; font-family: var(--af-serif); font-weight: 700; font-size: 26px; color: var(--af-mint); margin-bottom: 4px; }
 .af-metric span { display: block; font-size: 15px; color: var(--af-inf-text); line-height: 1.5; }
+.af-metric .af-metric__sub { margin-top: 6px; font-size: 13px; color: var(--af-inf-text); opacity: 0.85; line-height: 1.45; }
 .af-hero-home__panel { border: 1px solid var(--af-inf-border); border-radius: 20px; padding: 28px; background: var(--af-inf-bg); }
 .af-hero-home__panel-title {
   font-family: var(--af-sans);

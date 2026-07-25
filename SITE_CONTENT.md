@@ -1,16 +1,16 @@
 # AikiField.com — Site Content
 
 > Source of truth for all text content on aikifield.com.
-> Last updated: 2026-07-23
+> Last updated: 2026-07-25
 
 ---
 
 ## Navigation
 
 - Home (`index.html`)
+- Process (`process.html`)
 - Approach (`approach.html`)
 - Services (`services.html`)
-- Process (`process.html`)
 - Sponsored Projects (`projects.html`)
 - Assessment (`assessment.html`)
 - Get Started (`contact.html`)
@@ -21,7 +21,7 @@
 
 **Brand tagline:** Security leadership for product companies. Fractional CISO, AI-assisted security engineering, and presence-based executive coaching.
 
-**Explore:** Our Approach | Services | Engagement Process | Sponsored Projects | Self-Assessment
+**Explore:** Engagement Process | Our Approach | Services | Sponsored Projects | Self-Assessment
 
 **Connect:** Contact | Inquiry
 
@@ -42,9 +42,9 @@
 - CTAs: Book a Discovery Call | Explore Services
 
 **Proof metrics (3):**
-- $5M — Blocked sales channel recovered by resolving customer security objections.
-- 87% — Customer-reported security risk eliminated in three thirty-minute meetings.
-- 21 → 3 days — Vulnerability remediation time cut with AI-assisted triage workflows.
+- $5M — Blocked sales channel recovered by resolving customer security objections. _Sub: Engagement cost under $25K — delivered as planned._
+- 87% — Customer-reported security risk eliminated in three thirty-minute meetings. _Sub: Optimized existing workflows and eliminated unnecessary activities._
+- 21 → 3 days — Vulnerability remediation time cut with AI-assisted triage workflows. _Sub: Same team, less engineering effort — 7× faster with AI-assisted triage workflows._
 
 **Side panel — Why AikiField (3 signals):**
 - Protection that doesn't slow you down — Security left-shifted into your development budget and aligned to your revenue model — lean, without dragging on velocity.
