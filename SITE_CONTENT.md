@@ -43,8 +43,8 @@
 
 **Proof metrics (3):**
 - $5M — Blocked sales channel recovered by resolving customer security objections. _Sub: Engagement cost under $25K — delivered as planned._
-- 87% — Customer-reported security risk eliminated in three thirty-minute meetings. _Sub: Optimized existing workflows and eliminated unnecessary activities._
-- 21 → 3 days — Vulnerability remediation time cut with AI-assisted triage workflows. _Sub: Same team, less engineering effort — 7× faster with AI-assisted triage workflows._
+- 87% — Customer-reported security risk eliminated in three thirty-minute meetings. _Sub: Achieve more by doing less._
+- 21 → 3 days — Vulnerability remediation time cut 7× faster with AI-assisted triage workflows. _Sub: Same team, less engineering effort._
 
 **Side panel — Why AikiField (3 signals):**
 - Protection that doesn't slow you down — Security left-shifted into your development budget and aligned to your revenue model — lean, without dragging on velocity.
