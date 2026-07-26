@@ -235,7 +235,7 @@ Strategic intuition for emerging AI and threat risks.
 - **Find gaps fast** — a DevOps pipeline security assessment and rearchitecture.
 - **Never lose a vulnerability** — triage workflows across app, OS, cloud, and customer-reported issues.
 - **Fix in days, not weeks** — AI-assisted triage and remediation with prompts and validation.
-- **Prove it to customers** — Aikido.dev (or equivalent) platform implementation and tuning.
+- **Prove it to customers** — vulnerability management platform implementation and tuning (e.g. Aikido.dev or equivalent).
 - **Make it stick** — team training on the new workflows.
 
 ### Threat modeling
@@ -369,22 +369,22 @@ The composure and curiosity to adapt to emerging threats and AI risk.
 ## Sponsored Projects (`projects.html`)
 
 **Meta title:** AikiField — Sponsored Projects
-**Meta description:** Projects AikiField sponsors at the intersection of security leadership, AI, and the martial arts community — Quantum Aikido AI coaching and global studio outreach.
+**Meta description:** Projects AikiField sponsors at the intersection of security leadership, AI, and the somatic practice community — somatic-informed AI coaching and global studio outreach.
 
 ### Hero
 - Eyebrow: Sponsored Projects
 - Title: Where security leadership meets phronesis.
 - Lead: Phronesis — the Aristotelian capacity for practical wisdom, discerning right action in the full complexity of a lived moment — is what Quantum Leadership demands. Not rigid frameworks, but the practiced judgment to navigate uncertainty, hold paradox, and respond appropriately to whatever arises. AikiField sponsors projects that embody this bridge: AI coaching that cultivates presence under pressure, and outreach that builds relational connection across the global movement-arts community.
 
-### Project 1: Quantum Aikido — AI Coaching Backend
+### Project 1: Somatic-Informed AI Coaching Backend
 
 **Tag:** AI Coaching
-**Title:** Quantum Aikido — AI Coaching Backend
+**Title:** Somatic-Informed AI Coaching Backend
 **Lead:** An AI coaching system that answers questions grounded in Richard Moon's teaching corpus — bringing the principles of presence, inquiry, and relational harmony to an always-available chat interface. Built on proscribed programmable budgets on Google Cloud with the Gemini API.
 **Live at:** quantumaikido.com — public chat plus a password-protected members area with email and Google OAuth login.
 
 **What it does:**
-- **Answers grounded in the source teachings** — every response draws from the collected published and unpublished works of the PoyManth Somatic school of Quantum Aikido, with citations so you can trace each insight back to its origin.
+- **Answers grounded in the source teachings** — every response draws from the collected published and unpublished works of the PoyManth Somatic school, with citations so you can trace each insight back to its origin.
 - **A live coach when it matters** — when a question needs a human touch, the system connects you to a real coach with a video link, so no one is left alone at the edge of their inquiry.
 - **Sustainable at no cost** — the system runs within proscribed programmable budgets on every call, so the coaching stays free and available without surprise bills.
 - **Fair access for everyone** — no single user can crowd out the rest; the system queues questions so each person gets their turn.
@@ -397,7 +397,7 @@ The composure and curiosity to adapt to emerging threats and AI risk.
 
 **Tag:** Outreach Pipeline
 **Title:** World Studio Finder — Global Studio Discovery
-**Lead:** An automated pipeline that discovers yoga, tai chi, capoeira, and aikido studios worldwide via Google Maps — then finds and verifies their contact emails for outreach campaigns promoting the Quantum Aikido book.
+**Lead:** An automated pipeline that discovers yoga, tai chi, capoeira, and somatic practice studios worldwide via Google Maps — then finds and verifies their contact emails for outreach campaigns promoting somatic-informed practice.
 **Outreach:** Two outreach paths: email campaigns via YAMM mail merge, and automated web contact form submission for studios with a website but no listed email.
 
 **What it does:**
@@ -417,7 +417,7 @@ Aristotle called it *phronesis* — practical wisdom, the virtue of discerning r
 
 Quantum Leadership draws from the same well. Where classical leadership seeks certainty and control, quantum leadership embraces uncertainty, entanglement, and the observer effect — the recognition that the leader is not separate from the system but part of it, and that presence shapes outcome. It asks not "what is the plan?" but "what is the right action *now*, in this specific moment, with these specific people?" That question is phronesis in motion.
 
-The aikido tradition embodies this bridge. The practitioner does not memorize responses — they cultivate the capacity to sense, blend, and redirect whatever arrives. Practice develops the judgment that no framework can encode. These projects extend that cultivation into technology: one brings AI-grounded coaching to the aikido community, the other connects that community across the globe. Both are built on proscribed programmable budgets, with disciplined cost tracking and rate limiting — the same lean, revenue-aware engineering we bring to every security engagement.
+Somatic practice embodies this bridge. The practitioner does not memorize responses — they cultivate the capacity to sense, blend, and redirect whatever arrives. Practice develops the judgment that no framework can encode. These projects extend that cultivation into technology: one brings AI-grounded coaching to the somatic practice community, the other connects that community across the globe. Both are built on proscribed programmable budgets, with disciplined cost tracking and rate limiting — the same lean, revenue-aware engineering we bring to every security engagement.
 
 **Phronesis in practice — Inspired presence**
 The AI coaching system embodies the quantum leader's capacity for calm, grounded response under uncertainty — available 24/7, sensing when a question exceeds its scope and escalating to human coaches with composure rather than rigid refusal.
@@ -583,7 +583,7 @@ Practice and review regularly. Adjust based on results, incidents, and changing 
 - No obligation
 
 **Direct Contact**
-- Email: hello@aikifield.com
+- Email: kenneth@aikifield.com
 - Phone: +1 (000) 000-0000
 
 ### Inquiry Form

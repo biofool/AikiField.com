@@ -148,3 +148,17 @@ alongside the HTML when text changes. `sync.sh` handles deploy/dry-run
 `input/` directory holds source materials and is gitignored.
 
 This is a standalone repo (no paired sister repo).
+
+### Cloud strategy — CloudManagement coordination
+
+**CloudManagement** (`biofool/CloudManagement`, formerly `biofool/CloudBilling`) is the
+canonical source for cloud strategy across all biofool repos. When this repo
+changes where data is stored, where jobs run, adds/removes cloud resources, or
+changes its cloud provider/region/project, it MUST update:
+1. The CloudManagement inventory (`config/accounts.yaml` or Firestore)
+2. The CloudManagement PRD (`docs/PRD.md`) if the job-placement policy changes
+3. The `biofool/starter` template's cloud-strategy section
+
+This repo has no paid APIs (static HTML on peec.biz shared hosting), so the
+coordination rule rarely applies — but if a cloud resource is ever added
+(e.g. CDN, R2 bucket), update CloudManagement.
