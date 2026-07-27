@@ -1,14 +1,14 @@
 # AikiField Project Portfolio — Technical Marketing Summary
 
-> **One-line positioning:** A portfolio of 43 active projects spanning NGO
-> field-data collection, multi-cloud cost control, web scraping &
-> lead generation, media processing, wellness websites, security tooling,
-> system administration, and content processing — built and operated by
+> **One-line positioning:** A portfolio of 29 active projects spanning NGO
+> field-data collection, multi-cloud cost control, cloud-based OSInt,
+> media processing, wellness websites, security tooling, system
+> administration, and content processing — built and operated by
 > a single developer across the `biofool` GitHub account and the
 > `DaanMatch` organization.
 
 <!-- exec-summary: begin -->
-This document categorizes and summarizes the 43 active (non-placeholder)
+This document categorizes and summarizes the 29 active (non-placeholder)
 repositories in the biofool / DaanMatch project portfolio. Each category
 groups repos by domain, with a one-line description of what each project
 does. This serves as a technical marketing overview of the entire portfolio
@@ -42,7 +42,7 @@ a multi-cloud portfolio (GCP, OpenStack, Cloudflare).
 | Repo | What it does |
 |------|-------------|
 | **CloudManagement** | Central cloud inventory + kill switch across the biofool portfolio |
-| **MultiCloud-MultiPass** (open source version of CloudManagement 2026-07)| Multi-cloud cost kill switch with intent/actual reporting (GCP, OpenStack, Cloudflare) |
+| **MultiCloud-MultiPass** (open source version of CloudManagement 2026-07) | Multi-cloud cost kill switch with intent/actual reporting (GCP, OpenStack, Cloudflare) |
 | **VaultsshCA** | Vault SSH Certificate Authority initialization scripts |
 
 **Portfolio value:** Maximizes free-tier usage across multiple cloud
@@ -195,15 +195,16 @@ provenance.
 
 | Category | Repos | Primary Domain |
 |----------|-------|----------------|
-| DaanMatch / NGO Field Platform | 4 | Field data collection for rural India |
-| Cloud Cost & Infrastructure Management | 4 | Multi-cloud cost control & secrets |
-| Web Scraping & Lead Generation | 4 | Studio discovery & email verification |
+| DaanMatch / NGO Field Platform | 3 | Field data collection for rural India |
+| Cloud Cost & Infrastructure Management | 3 | Multi-cloud cost control & secrets |
+| Cloud Based OSInt | 1 | Studio discovery & contact verification |
 | Media & Video Processing | 5 | Video download, conversion, tracking |
-| Quantum Aikido / Wellness Websites | 6 | Book marketing, coaching, consulting |
+| Quantum Aikido / Wellness Websites | 4 | Book marketing, coaching, consulting |
 | Security & Threat Intelligence | 4 | Defensive security tooling |
-| System Administration & OS Analysis | 4 | Linux bloat detection & networking |
-| Text & Content Processing | 4 | Caption correction, document conversion |
-| Web Apps & Legacy Projects | 6 | Experimental & predecessor projects |
+| System Administration & OS Analysis | 1 | Linux bloat detection & networking |
+| Text & Content Processing | 1 | Caption correction, document conversion |
+| Web Apps & Legacy Projects | 4 | Experimental & predecessor projects |
 | Templates & Concepts | 3 | Project template & conceptual work |
-| **Total** | **43** | |
+| **Total** | **29** | |
 
+*Placeholder/empty repos and dropped repos are excluded from this summary.*
