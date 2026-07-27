@@ -1,4 +1,4 @@
-# biofool Project Portfolio — Technical Marketing Summary
+# AikiField Project Portfolio — Technical Marketing Summary
 
 > **One-line positioning:** A portfolio of 43 active projects spanning NGO
 > field-data collection, multi-cloud cost control, web scraping &
@@ -27,7 +27,6 @@ mobile capture, geo-tagged media, biometric auth, and a Flask backend.
 | **DaanMatch/FieldWorker** | Flask backend for NGO field updates with GPS, biometric auth, admin panel |
 | **DaanMatch/FieldAppAndroid** | Offline-first Android client that syncs to FieldWorker |
 | **PHP_DL** | PHP/SQLite DataLogger for NGO field worker registration & login |
-| **NGOAgentGOAPIV2** | Go/Gin NGO data collection app with EXIF GPS, SQLite, bcrypt auth |
 
 **Portfolio value:** Replaces paper-based field workflows with durable
 digital data collection in disconnected environments, giving program
@@ -43,8 +42,7 @@ a multi-cloud portfolio (GCP, OpenStack, Cloudflare).
 | Repo | What it does |
 |------|-------------|
 | **CloudManagement** | Central cloud inventory + kill switch across the biofool portfolio |
-| **MultiCloud-MultiPass** | Multi-cloud cost kill switch with intent/actual reporting (GCP, OpenStack, Cloudflare) |
-| **CloudBilling** | GCP-only cost kill switch (predecessor to MultiCloud-MultiPass) |
+| **MultiCloud-MultiPass** (open source version of CloudManagement 2026-07)| Multi-cloud cost kill switch with intent/actual reporting (GCP, OpenStack, Cloudflare) |
 | **VaultsshCA** | Vault SSH Certificate Authority initialization scripts |
 
 **Portfolio value:** Maximizes free-tier usage across multiple cloud
@@ -54,7 +52,7 @@ without sacrificing control.
 
 ---
 
-## 3. Web Scraping & Lead Generation
+## 3. Cloud Based OSInt
 
 Automated discovery and verification of business contact information for
 outreach campaigns, using Google Places API, Playwright browser automation,
@@ -62,10 +60,7 @@ and multi-source API routing.
 
 | Repo | What it does |
 |------|-------------|
-| **scraper-intl** | Production studio email discovery pipeline (Google Places + Playwright + Sheets sync) |
-| **scraper** | Playwright Google Maps scraper + email extractor (predecessor to scraper-intl) |
-| **WorldStudioFinder** | Studio finder with multi-source API routing (Google Places, OpenCage, HERE) |
-| **CABWAddresses** | Parses Aikido dojo addresses from text file into structured CSV |
+| **WorldStudioFinder** | Studio finder with multi-source API routing (Google Places, OpenCage) |
 
 **Portfolio value:** Builds comprehensive, verified contact lists for
 movement-arts studio outreach across multiple countries — with free-tier
@@ -85,7 +80,7 @@ content.
 | **VidConverter** | ffmpeg-based video crop/scale/encode for martial arts technique videos |
 | **PlayListDownloader** | YouTube playlist bulk downloader (Data API + pytube) |
 | **Pano2Movie** | Converts panoramic photos into panning movies (ffmpeg + ImageMagick) |
-| **youtube_endscreen_extension** | Chrome extension for bulk YouTube end screen management |
+| **ClipQuotes** | Quote extraction and processing pipeline |
 
 **Portfolio value:** Automates video content production workflows — from
 raw footage cropping and motion tracking to playlist archiving and YouTube
@@ -102,8 +97,6 @@ platform, and wellness consulting.
 |------|-------------|
 | **AIRichardMoon** | FastAPI backend for Quantum Aikido coaching system (auth, invitations, mail) |
 | **quantumaikido.com** | Quantum Aikido website (PHP, members portal, coach dashboard) |
-| **quantuamaikido.com** | Quantum Aikido marketing website (10 pages, SEO, blog, Instagram videos) |
-| **quantumaikido** | Book landing page for "Quantum Aikido: The Power of Harmony" by Richard Moon |
 | **AikiField.com** | Presence-based leadership consulting website |
 | **neurowellnessdojo.com** | Neuro wellness dojo website |
 
@@ -140,9 +133,6 @@ processing utilities.
 | Repo | What it does |
 |------|-------------|
 | **UnUsedOS** | Identifies unused files/packages on SCS Linux appliances via access timestamps |
-| **BloatDetector** | Linux system bloat analysis via filesystem access timestamps + pandas |
-| **bin** | Personal networking scripts (private LAN router, DHCP, AnyConnect scanner) |
-| **scripts** | ffmpeg video processing scripts (crop, overlay, split, concat) |
 
 **Portfolio value:** Reduces OS image bloat and attack surface through
 data-driven file/package usage analysis, plus practical networking and
@@ -158,9 +148,6 @@ clouds, and extracting quotes.
 | Repo | What it does |
 |------|-------------|
 | **closedcaption_spellchecker** | Bulk-corrects YouTube auto-captions with specialized terminology dictionary |
-| **blog2html** | Converts Word .docx blog posts into styled HTML with collapsible sections |
-| **my_word_cloud_app** | Flask word cloud generator from quote keywords + CVSS spider chart |
-| **ClipQuotes** | Quote extraction and processing pipeline |
 
 **Portfolio value:** Automates content transformation workflows — from
 caption correction to document conversion to quote extraction — reducing
@@ -178,8 +165,6 @@ evolved.
 | **GPS-PWA** | Footfall tracking PWA (geolocation + Leaflet.js + service worker) |
 | **PHP** | React Native app scaffold with Vagrant |
 | **BeBold** | Browser-based bold-text extractor → Slick Carousel slide show |
-| **BB** | Python 2 BeautifulSoup extractor + HTML carousel (predecessor to BeBold) |
-| **BB_carousel** | Slick Carousel fork bundled with BeBold |
 | **Egbert** | Roll smoothness analyzer (device sensors) + Tetris + mind map |
 
 **Portfolio value:** Experimental and legacy projects that informed later
@@ -222,4 +207,3 @@ provenance.
 | Templates & Concepts | 3 | Project template & conceptual work |
 | **Total** | **43** | |
 
-*15 placeholder/empty repos are excluded from this summary.*
