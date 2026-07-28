@@ -38,6 +38,7 @@ RSYNC_REMOTE="${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_PATH}"
 # Always-excluded files — non-web content stays local
 EXCLUDES=(
     --exclude='.git/'
+    --exclude='.dvc/'
     --exclude='.devin/'
     --exclude='.well-known/'
     --exclude='cgi-bin/'
