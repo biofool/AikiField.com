@@ -1,7 +1,7 @@
 # AikiField.com — Site Content
 
 > Source of truth for all text content on aikifield.com.
-> Last updated: 2026-07-25
+> Last updated: 2026-07-28
 
 ---
 
@@ -43,8 +43,8 @@
 
 **Proof metrics (3):**
 - $5M — Blocked sales channel recovered by resolving customer security objections. _Sub: Engagement cost under $25K — delivered as planned._
-- 87% — Customer-reported security risk eliminated in three thirty-minute meetings. _Sub: Achieve more by doing less._
-- 21 → 3 days — Vulnerability remediation time cut 7× faster with AI-assisted triage workflows. _Sub: Same team, less engineering effort._
+- 87% — Customer-reported security risk eliminated in three thirty-minute meetings. _Sub: Optimized existing workflows and eliminated unnecessary activities._
+- 21 → 3 days — Vulnerability remediation time cut with AI-assisted triage workflows. _Sub: Same team, less engineering effort — 7× faster with AI-assisted triage workflows._
 
 **Side panel — Why AikiField (3 signals):**
 - Protection that doesn't slow you down — Security left-shifted into your development budget and aligned to your revenue model — lean, without dragging on velocity.
@@ -391,7 +391,7 @@ The composure and curiosity to adapt to emerging threats and AI risk.
 - **Portable across clouds** — the system can move to any major cloud provider's proscribed programmable budgets without rewriting code, so it's never locked in.
 - **Your account is yours to control** — register, log in, reset your password, or delete your account on your own terms, with invitation-only access to keep the community intentional.
 
-**Tech stack:** Python · FastAPI · Gemini Developer API · Google Cloud Run · Firestore · Pub/Sub · Cloud Functions · SQLite FTS5 · Docker · OpenTofu · DVC
+**Tech stack:** Python · FastAPI · Gemini Developer API · Google Cloud Run · Firestore · Secret Manager · Pub/Sub · Cloud Functions · Cloudflare Turnstile · SQLite FTS5 · Docker · OpenTofu · DVC + GCS
 
 ### Project 2: World Studio Finder — Global Studio Discovery
 
@@ -407,7 +407,7 @@ The composure and curiosity to adapt to emerging threats and AI risk.
 - **Geo-filtered campaigns** — filter by country, US state, timezone, or continent; hexagonal grid search for dense city coverage.
 - **Resume & reprocess** — crash-safe JSONL checkpointing, date-window reprocessing, and algorithm-version tracking for data quality.
 
-**Tech stack:** Python · Playwright · Google Places API · Google Sheets API · Hunter.io · GCP Compute Engine · Terraform/OpenTofu · SQLite (SCD Type 2 data quality)
+**Tech stack:** Python · Playwright · Flask · Google Places API · Geocoding · Hunter.io · NeverBounce · Google Sheets API · GCP Compute Engine (systemd) · GCS · SQLite (SCD Type 2 data quality) · Terraform/OpenTofu
 
 ### From phronesis to Quantum Leadership
 
