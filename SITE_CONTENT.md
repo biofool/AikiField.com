@@ -51,14 +51,14 @@
 - Vulnerabilities fixed in days, not weeks — AI-assisted triage and remediation across application, cloud, infrastructure, and customer-reported issues.
 - Leadership that sticks — Security advisory paired with presence-based coaching, so your leaders can carry the program for the long haul.
 
-### Client strip (5 chips)
+### Client strip (10 chips)
 
-Series A–C startups | SaaS companies | AI-powered product teams | Venture-backed companies | Engineering-led organizations
+Series A–C startups | SaaS companies | AI-powered product teams | Venture-backed companies | Engineering-led organizations | Mid-market NZ enterprises | Professional services firms | Critical service providers | Boards & audit committees | Mission-driven organisations
 
 ### Who We Help
 
 **Heading:** Built for leaders who own security but can't hire a full-time CISO.
-**Intro:** Enterprise customers are asking hard questions, the backlog is growing, and security keeps landing on someone's already-full plate. We meet each of those leaders where they are.
+**Intro:** Enterprise customers are asking hard questions, the backlog is growing, and security keeps landing on someone's already-full plate. We meet each of those leaders where they are — from venture-backed product teams to Aotearoa New Zealand mid-market organisations.
 
 **Founder / CEO — Turn security from deal-blocker into differentiator.**
 Win enterprise deals with a credible security story — clear questionnaires without panic, and a posture that builds customer trust instead of stalling revenue.
@@ -68,6 +68,15 @@ Threat modeling in the design phase, security in the CI/CD pipeline, and a remed
 
 **Board / Investors — Gain a defensible view of risk and readiness.**
 Concise reporting on exposure, capability gaps, and priorities — technical risk translated into the business language governance actually needs.
+
+**CEO / GM · NZ mid-market — Translate cyber risk into business decisions.**
+Show how security supports continuity, reputation, and strategic growth without overwhelming non-technical stakeholders — framed for the NZ mid-market and its regulatory landscape.
+
+**Board / Audit committee · NZ — Gain a clearer view of resilience and readiness.**
+Concise, defensible reporting on exposure, capability gaps, and practical next steps for governance — aligned to the NZ Privacy Act 2020 and critical-service obligations.
+
+**Mission-driven organisation — Security that fits your mission, not a corporate template.**
+Practical security for NGOs, iwi-owned enterprises, and community organisations — right-sized to your risk, your budget, and the trust your community places in you.
 
 ### Services (staggered two-column teaser, links to services.html)
 
@@ -584,7 +593,8 @@ Practice and review regularly. Adjust based on results, incidents, and changing 
 
 **Direct Contact**
 - Email: kenneth@aikifield.com
-- Phone: +1 (000) 000-0000
+- Phone: +64 022 384 1347
+- Based in Aotearoa New Zealand — serving clients globally.
 
 ### Inquiry Form
 
@@ -602,6 +612,8 @@ Practice and review regularly. Adjust based on results, incidents, and changing 
   - Threat Modeling Workshop
   - Security Leadership Coaching
   - Security Maturity Assessment
+  - Readiness & Resilience Program (NZ)
+  - Board / Governance Security Briefing (NZ)
   - Other
 - Message
 - Submit button: Send Inquiry
