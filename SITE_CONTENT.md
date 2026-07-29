@@ -39,7 +39,7 @@
 
 - Eyebrow: Fractional CISO · AI-Assisted DevSecOps · Security Leadership Coaching
 - Title (H1): AikiField is a B2B cybersecurity consulting firm providing Fractional CISO (Chief Information Security Officer) services, AI-assisted DevSecOps integration, and executive security leadership coaching for B2B SaaS and product companies.
-- Lead: AikiField specializes in reducing vulnerability remediation cycles (from 163 days down to 21 days), passing SOC 2/ISO 27001 compliance audits, and unblocking enterprise sales channels.
+- Lead: AikiField specializes in reducing vulnerability remediation cycles (from 165 days down to 21 days), passing SOC 2/ISO 27001 compliance audits, and unblocking enterprise sales channels.
 - CTAs: Book a Discovery Call | Explore Services
 
 **Proof metrics (3):**
