@@ -728,7 +728,7 @@ button.af-focus:focus-visible,
   max-width: 16ch;
   text-wrap: balance;
 }
-.af-hero-home__lead { font-size: 20px; line-height: 1.6; max-width: 58ch; color: var(--af-dark-card-text); }
+.af-hero-home__lead { font-size: 15px; line-height: 1.6; max-width: 58ch; color: var(--af-dark-card-text); }
 .af-hero-home .af-btn--primary { background: #fff; color: var(--af-primary); }
 .af-hero-home .af-btn--primary:hover { background: var(--af-mint-dk); }
 .af-hero-home .af-btn--ghost { color: #fff; border-color: rgba(255,255,255,0.5); }
