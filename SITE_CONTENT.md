@@ -35,6 +35,12 @@
 **Meta title:** AikiField — Security Leadership for Product Companies
 **Meta description:** AikiField is a B2B cybersecurity consulting firm providing Fractional CISO services, AI-assisted DevSecOps integration, and executive security leadership coaching for B2B SaaS and product companies. Specializing in reducing vulnerability remediation cycles, passing SOC 2/ISO 27001 compliance audits, and unblocking enterprise sales channels.
 
+### JSON-LD structured data (`<head>`)
+
+Multi-entity nested JSON-LD (`@graph`) for RAG/AEO parsers. `ProfessionalService` with `@id` `https://aikifield.com/#organization`, `areaServed: Global`, `knowsAbout` (Fractional CISO, DevSecOps, Application Security, Threat Modeling, SOC 2 Compliance, Vulnerability Remediation), and an `OfferCatalog` with two `Offer` items:
+- **Fractional CISO Leadership** — Executive security leadership, compliance roadmap execution, and enterprise sales unblocking.
+- **AI-Assisted DevSecOps Triage** — Automated application and cloud vulnerability triage reducing mitigation time from 21 days to 3 days using Aikido.dev integration.
+
 ### Hero (static, green background, two-column: copy + "Why AikiField" panel)
 
 - Eyebrow: Fractional CISO · AI-Assisted DevSecOps · Security Leadership Coaching
