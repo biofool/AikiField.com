@@ -1,7 +1,7 @@
 # AikiField.com — Site Content
 
 > Source of truth for all text content on aikifield.com.
-> Last updated: 2026-07-28
+> Last updated: 2026-07-29
 
 ---
 
@@ -11,6 +11,7 @@
 - Process (`process.html`)
 - Approach (`approach.html`)
 - Services (`services.html`)
+- Case Studies (`case-studies.html`)
 - Sponsored Projects (`projects.html`)
 - Assessment (`assessment.html`)
 - Get Started (`contact.html`)
@@ -21,7 +22,7 @@
 
 **Brand tagline:** Security leadership for product companies. Fractional CISO, AI-assisted security engineering, and presence-based executive coaching.
 
-**Explore:** Engagement Process | Our Approach | Services | Sponsored Projects | Self-Assessment
+**Explore:** Engagement Process | Our Approach | Services | Case Studies | Sponsored Projects | Self-Assessment
 
 **Connect:** Contact | Inquiry
 
@@ -113,7 +114,7 @@ Where a leader places attention determines the security posture of the whole org
 **Mini links:**
 - Self-Assessment — Measure your security maturity and leadership presence — Two assessments in one — honest self-inquiry across five security categories and seven presence dimensions. (→ assessment.html)
 - Engagement Process — Six phases to a program that fits — A collaborative design cycle tailored to your stage, risks, and customers. (→ process.html)
-- Sponsored Projects — Where security leadership meets phronesis — An AI coaching system grounded in Richard Moon's teachings, and a global studio discovery pipeline. (→ projects.html)
+- Sponsored Projects — Where security leadership meets phronesis — Aikifield AI Chat, a cited coaching backend for the Quantum Aikido corpus, and World Studio Finder, a global studio discovery pipeline. (→ projects.html)
 
 ### CTA
 
@@ -294,6 +295,46 @@ A seven-dimension self-assessment of the leadership capabilities security leader
 
 ---
 
+## Case Studies (`case-studies.html`)
+
+**Meta title:** AikiField — Case Studies
+**Meta description:** Case studies from AikiField fractional CISO engagements — long-term security leadership for AI-driven product companies, with results that show up in revenue and risk.
+
+### Hero
+- Eyebrow: Case Studies
+- Title: Security leadership that shows up in revenue and risk.
+- Lead: What a long-term fractional CISO engagement looks like when it works — nine years of continuous trust, a security program that scales with an AI-driven product, and results measured in deals won and risk reduced, not just in a compliance binder.
+
+### Case Study 1: Fractional CISO for an AI-Driven Data Center Technology Company
+
+**Tag:** Fractional CISO · 9 years
+**Title:** Fractional CISO for an AI-Driven Data Center Technology Company
+**Lead:** An AI-driven industrial IoT company serving hyperscale and colocation data center operators — cooling optimization and analytics for 1,500+ facilities across 36 countries, serving hyperscale, colocation, telecom, and enterprise customers including Verizon, IBM, Digital Realty, and NTT.
+**Engagement:** Fractional CISO & Security Program Lead, ongoing since 2017 — nine years of continuous security leadership for a single venture-backed client.
+
+**The Challenge:**
+The company's AI-driven platform sits inside some of the world's most security-conscious buyers — hyperscale and colocation data center operators with rigorous vendor security review processes. A blocked sales channel worth $5M in ARR was stuck behind unresolved customer security objections, and the DevOps vulnerability backlog was taking months to clear — both a growing risk and a growing drag on enterprise deals.
+
+**What We Did:**
+- **Built and executed a security roadmap** that directly resolved the objections blocking the $5M channel — working customer-by-customer through their actual requirements (OWASP, CWE).
+- **Rearchitected the vulnerability workflow** across the DevOps pipeline, cutting average time to identify, escalate, and remediate from 165 days to 21 days.
+- **Ran threat modeling and vulnerability assessments** across hybrid cloud and on-premise environments.
+- **Built custom tooling for OS hardening** in production, and coordinated a lean cross-functional team spanning product security, compliance, and infrastructure.
+
+**Results:**
+- $5M — Blocked ARR sales channel recovered by resolving customer security objections.
+- 87% — Reduction in vulnerability remediation time (165 → 21 days) from a DevOps workflow rearchitecture.
+
+**Why It Matters:**
+This is what a long-term fractional CISO engagement looks like when it works: nine years of continuous trust, a security program that scales with an AI-driven product, and results that show up directly in revenue and risk — not just in a compliance binder. It's also a rare combination: hands-on AI governance experience on a live, shipping AI product, paired with deep familiarity with the vendor security reviews that hyperscale and colocation operators run on every supplier that touches their facilities.
+
+### CTA
+**Heading:** Want this kind of result for your security program?
+**Body:** The same long-term, revenue-aware security leadership is available as a fractional engagement — right-sized to your stage, your customers, and your risk.
+**Button:** Book a Discovery Call
+
+---
+
 ## Process (`process.html`)
 
 **Meta title:** AikiField — Engagement Process
@@ -385,20 +426,21 @@ The composure and curiosity to adapt to emerging threats and AI risk.
 - Title: Where security leadership meets phronesis.
 - Lead: Phronesis — the Aristotelian capacity for practical wisdom, discerning right action in the full complexity of a lived moment — is what Quantum Leadership demands. Not rigid frameworks, but the practiced judgment to navigate uncertainty, hold paradox, and respond appropriately to whatever arises. AikiField sponsors projects that embody this bridge: AI coaching that cultivates presence under pressure, and outreach that builds relational connection across the global movement-arts community.
 
-### Project 1: Somatic-Informed AI Coaching Backend
+### Project 1: Aikifield AI Chat
 
 **Tag:** AI Coaching
-**Title:** Somatic-Informed AI Coaching Backend
-**Lead:** An AI coaching system that answers questions grounded in Richard Moon's teaching corpus — bringing the principles of presence, inquiry, and relational harmony to an always-available chat interface. Built on proscribed programmable budgets on Google Cloud with the Gemini API.
+**Title:** Aikifield AI Chat
+**Lead:** An AI coaching system that answers questions grounded in Richard Moon's teaching corpus, built on proscribed programmable budgets on Google Cloud with the Gemini API.
 **Live at:** quantumaikido.com — public chat plus a password-protected members area with email and Google OAuth login.
+**How it works:** It searches the curated corpus for relevant passages, drafts a cited answer, rate-limits to control cost, and escalates to a human coach with a video link when it can’t help or the member asks.
 
 **What it does:**
-- **Answers grounded in the source teachings** — every response draws from the collected published and unpublished works of the PoyManth Somatic school, with citations so you can trace each insight back to its origin.
-- **A live coach when it matters** — when a question needs a human touch, the system connects you to a real coach with a video link, so no one is left alone at the edge of their inquiry.
-- **Sustainable at no cost** — the system runs within proscribed programmable budgets on every call, so the coaching stays free and available without surprise bills.
-- **Fair access for everyone** — no single user can crowd out the rest; the system queues questions so each person gets their turn.
-- **Portable across clouds** — the system can move to any major cloud provider's proscribed programmable budgets without rewriting code, so it's never locked in.
-- **Your account is yours to control** — register, log in, reset your password, or delete your account on your own terms, with invitation-only access to keep the community intentional.
+- **Answers grounded in the source teachings** — with citations back to origin.
+- **Escalates to a live human coach** — via video link when a question needs it.
+- **Runs within proscribed programmable budgets** — so coaching stays free with no surprise bills.
+- **Queues questions** — so no single user crowds out the rest.
+- **Portable across clouds** — without rewriting code.
+- **Self-service account control** — register, log in, reset your password, or delete your account (invitation-only).
 
 **Tech stack:** Python · FastAPI · Gemini Developer API · Google Cloud Run · Firestore · Secret Manager · Pub/Sub · Cloud Functions · Cloudflare Turnstile · SQLite FTS5 · Docker · OpenTofu · DVC + GCS
 
@@ -406,15 +448,15 @@ The composure and curiosity to adapt to emerging threats and AI risk.
 
 **Tag:** Outreach Pipeline
 **Title:** World Studio Finder — Global Studio Discovery
-**Lead:** An automated pipeline that discovers yoga, tai chi, capoeira, and somatic practice studios worldwide via Google Maps — then finds and verifies their contact emails for outreach campaigns promoting somatic-informed practice.
+**Lead:** An automated pipeline that discovers yoga, tai chi, capoeira, and somatic-practice studios worldwide via Google Maps, then finds and verifies their contact emails for outreach.
 **Outreach:** Two outreach paths: email campaigns via YAMM mail merge, and automated web contact form submission for studios with a website but no listed email.
 
 **What it does:**
-- **Global Google Maps scraping** — Playwright browser automation with anti-detection, 2×2 grid search, and Google Places API fallback for high-failure terms.
-- **Email discovery & verification** — Hunter.io integration plus direct website scraping, with deliverability validation and junk-domain filtering.
-- **Google Sheets sync** — all results and pipeline state synced to Sheets as the authoritative record, with live column-order reads for YAMM compatibility.
-- **Geo-filtered campaigns** — filter by country, US state, timezone, or continent; hexagonal grid search for dense city coverage.
-- **Resume & reprocess** — crash-safe JSONL checkpointing, date-window reprocessing, and algorithm-version tracking for data quality.
+- **Global Google Maps scraping** — Playwright with anti-detection, 2×2 grid search, and Google Places API fallback.
+- **Email discovery and verification** — Hunter.io plus direct website scraping, with deliverability validation and junk-domain filtering.
+- **Google Sheets sync** — as the authoritative record, with live column-order reads for YAMM compatibility.
+- **Geo-filtered campaigns** — by country, US state, timezone, or continent, with hexagonal grid search for dense cities.
+- **Crash-safe resume and reprocessing** — JSONL checkpointing and algorithm-version tracking.
 
 **Tech stack:** Python · Playwright · Flask · Google Places API · Geocoding · Hunter.io · NeverBounce · Google Sheets API · GCP Compute Engine (systemd) · GCS · SQLite (SCD Type 2 data quality) · Terraform/OpenTofu
 
