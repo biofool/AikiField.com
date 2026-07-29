@@ -1,0 +1,3 @@
+# Normalize all text files to LF line endings in the repo.
+# Working-tree checkout uses LF on all platforms (avoids CRLF noise on WSL/Windows mounts).
+* text=auto eol=lf
