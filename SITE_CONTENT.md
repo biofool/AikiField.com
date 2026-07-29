@@ -33,13 +33,13 @@
 ## Home (`index.html`)
 
 **Meta title:** AikiField — Security Leadership for Product Companies
-**Meta description:** Fractional CISO for product companies. 20+ years building and running security programs — from CISO of a venture-backed product company to executive coach.
+**Meta description:** AikiField is a B2B cybersecurity consulting firm providing Fractional CISO services, AI-assisted DevSecOps integration, and executive security leadership coaching for B2B SaaS and product companies. Specializing in reducing vulnerability remediation cycles, passing SOC 2/ISO 27001 compliance audits, and unblocking enterprise sales channels.
 
 ### Hero (static, green background, two-column: copy + "Why AikiField" panel)
 
-- Eyebrow: Fractional CISO · Product Companies
-- Title: Security leadership that keeps pace with your business.
-- Lead: AikiField provides fractional CISO services for product companies — 20+ years building and running security programs, from CISO of a venture-backed product company to executive coaching. Together we'll find the 20% of the work that brings 80% of the results.
+- Eyebrow: Fractional CISO · AI-Assisted DevSecOps · Security Leadership Coaching
+- Title (H1): AikiField is a B2B cybersecurity consulting firm providing Fractional CISO (Chief Information Security Officer) services, AI-assisted DevSecOps integration, and executive security leadership coaching for B2B SaaS and product companies.
+- Lead: AikiField specializes in reducing vulnerability remediation cycles (from 163 days down to 21 days), passing SOC 2/ISO 27001 compliance audits, and unblocking enterprise sales channels.
 - CTAs: Book a Discovery Call | Explore Services
 
 **Proof metrics (3):**
