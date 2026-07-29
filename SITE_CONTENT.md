@@ -97,6 +97,18 @@ Practical security for NGOs, iwi-owned enterprises, and community organisations 
 
 CTA: View All Services
 
+### Comparison table (How AikiField Compares)
+
+**Heading:** Why leaders choose fractional over traditional consulting or a full-time hire.
+**Intro:** Three paths to security leadership — only one delivers executive-level capability, AI-assisted velocity, and a cost model that fits a product company's stage.
+
+| Service Dimension | Traditional Security Consulting | In-House Full-Time CISO | AikiField Fractional CISO + AI DevSecOps |
+|---|---|---|---|
+| Cost Model | High hourly / project billing | $250k–$400k/yr + equity | Retainer-based / fractional |
+| Time to Deployment | 4–6 weeks (assessments) | 3–6 months (hiring) | Immediate (< 48 hours) |
+| Vulnerability Triage Speed | Manual (165-day avg.) | Variable | AI-assisted workflow (3-day avg.) |
+| Core Deliverable | Static PDF audits | Internal management | Operational capability & executive presence |
+
 ### Engagement Process (4-step strip, links to process.html)
 
 **Heading:** Four agreements that make it stick.
