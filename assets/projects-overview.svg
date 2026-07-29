@@ -1,0 +1,169 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 760" font-family="'Public Sans', system-ui, sans-serif" role="img" aria-labelledby="ov-title ov-desc">
+  <title id="ov-title">AikiField Sponsored Projects — Overview</title>
+  <desc id="ov-desc">Two sponsored projects branching from AikiField: AikiField AI Chat (AI coaching) and World Studio Finder (global studio discovery and outreach).</desc>
+
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#0E4E44"/>
+    </marker>
+    <marker id="arrow-mint" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#5FD3B2"/>
+    </marker>
+  </defs>
+
+  <!-- background -->
+  <rect width="1120" height="760" fill="#F6F2EA"/>
+
+  <!-- sponsor node -->
+  <rect x="460" y="28" width="200" height="64" rx="14" fill="#0E4E44"/>
+  <text x="560" y="56" text-anchor="middle" fill="#fff" font-family="'Source Serif 4', Georgia, serif" font-size="20" font-weight="600">AikiField</text>
+  <text x="560" y="78" text-anchor="middle" fill="#8FE6C9" font-size="12" letter-spacing="0.06em">SPONSOR · PHRONESIS IN PRACTICE</text>
+
+  <!-- branch lines -->
+  <path d="M560,92 C560,130 280,130 280,168" stroke="#0E4E44" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+  <path d="M560,92 C560,130 840,130 840,168" stroke="#0E4E44" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+
+  <!-- ============ PROJECT 1: AI CHAT ============ -->
+  <g id="proj-ai">
+    <rect x="40" y="170" width="480" height="560" rx="18" fill="#ffffff" stroke="#E0D9CB" stroke-width="1.5"/>
+    <rect x="40" y="170" width="480" height="56" rx="18" fill="#0E4E44"/>
+    <rect x="40" y="200" width="480" height="26" fill="#0E4E44"/>
+    <text x="280" y="198" text-anchor="middle" fill="#fff" font-family="'Source Serif 4', Georgia, serif" font-size="19" font-weight="600">AikiField AI Chat</text>
+    <text x="280" y="216" text-anchor="middle" fill="#8FE6C9" font-size="11" letter-spacing="0.08em">AI COACHING · quantumaikido.com</text>
+
+    <!-- INPUTS -->
+    <text x="64" y="252" fill="#5A655F" font-size="11" letter-spacing="0.1em">INPUTS</text>
+    <g font-size="13" fill="#2C3833">
+      <rect x="64" y="262" width="200" height="34" rx="8" fill="#F6F2EA" stroke="#E0D9CB"/>
+      <text x="164" y="284" text-anchor="middle">Member question</text>
+      <rect x="276" y="262" width="220" height="34" rx="8" fill="#F6F2EA" stroke="#E0D9CB"/>
+      <text x="386" y="284" text-anchor="middle">Teaching corpus (R. Moon)</text>
+    </g>
+
+    <!-- arrow down -->
+    <path d="M280,296 L280,318" stroke="#0E4E44" stroke-width="2" marker-end="url(#arrow)"/>
+
+    <!-- COMPONENTS -->
+    <text x="64" y="334" fill="#5A655F" font-size="11" letter-spacing="0.1em">CORE SYSTEM</text>
+    <g font-size="12.5" fill="#16201C">
+      <rect x="64" y="344" width="220" height="40" rx="8" fill="#ffffff" stroke="#5FD3B2" stroke-width="1.5"/>
+      <text x="174" y="362" text-anchor="middle" font-weight="600">Gemini API</text>
+      <text x="174" y="377" text-anchor="middle" font-size="11" fill="#5A655F">drafts cited answer</text>
+
+      <rect x="296" y="344" width="200" height="40" rx="8" fill="#ffffff" stroke="#5FD3B2" stroke-width="1.5"/>
+      <text x="396" y="362" text-anchor="middle" font-weight="600">SQLite FTS5</text>
+      <text x="396" y="377" text-anchor="middle" font-size="11" fill="#5A655F">corpus search</text>
+
+      <rect x="64" y="394" width="200" height="40" rx="8" fill="#ffffff" stroke="#5FD3B2" stroke-width="1.5"/>
+      <text x="164" y="412" text-anchor="middle" font-weight="600">Cloud Run</text>
+      <text x="164" y="427" text-anchor="middle" font-size="11" fill="#5A655F">FastAPI · Python</text>
+
+      <rect x="276" y="394" width="220" height="40" rx="8" fill="#ffffff" stroke="#5FD3B2" stroke-width="1.5"/>
+      <text x="386" y="412" text-anchor="middle" font-weight="600">Firestore</text>
+      <text x="386" y="427" text-anchor="middle" font-size="11" fill="#5A655F">sessions · accounts</text>
+
+      <rect x="64" y="444" width="200" height="40" rx="8" fill="#ffffff" stroke="#5FD3B2" stroke-width="1.5"/>
+      <text x="164" y="462" text-anchor="middle" font-weight="600">Rate limiter</text>
+      <text x="164" y="477" text-anchor="middle" font-size="11" fill="#5A655F">queue · cost control</text>
+
+      <rect x="276" y="444" width="220" height="40" rx="8" fill="#ffffff" stroke="#5FD3B2" stroke-width="1.5"/>
+      <text x="386" y="462" text-anchor="middle" font-weight="600">Auth</text>
+      <text x="386" y="477" text-anchor="middle" font-size="11" fill="#5A655F">email · Google OAuth</text>
+    </g>
+
+    <!-- arrow down -->
+    <path d="M280,484 L280,506" stroke="#0E4E44" stroke-width="2" marker-end="url(#arrow)"/>
+
+    <!-- OUTPUTS -->
+    <text x="64" y="522" fill="#5A655F" font-size="11" letter-spacing="0.1em">OUTPUTS</text>
+    <g font-size="13" fill="#2C3833">
+      <rect x="64" y="532" width="200" height="40" rx="8" fill="#E6F5EF" stroke="#5FD3B2" stroke-width="1.5"/>
+      <text x="164" y="550" text-anchor="middle" font-weight="600">Cited answer</text>
+      <text x="164" y="565" text-anchor="middle" font-size="11" fill="#5A655F">24/7 · free</text>
+
+      <rect x="276" y="532" width="220" height="40" rx="8" fill="#E6F5EF" stroke="#5FD3B2" stroke-width="1.5"/>
+      <text x="386" y="550" text-anchor="middle" font-weight="600">Human coach escalation</text>
+      <text x="386" y="565" text-anchor="middle" font-size="11" fill="#5A655F">video link handoff</text>
+    </g>
+
+    <!-- principle footer -->
+    <line x1="64" y1="600" x2="496" y2="600" stroke="#E0D9CB"/>
+    <text x="280" y="624" text-anchor="middle" fill="#0E4E44" font-family="'Source Serif 4', Georgia, serif" font-size="14" font-style="italic">Inspired presence</text>
+    <text x="280" y="648" text-anchor="middle" fill="#5A655F" font-size="12">Calm, grounded response under uncertainty —</text>
+    <text x="280" y="666" text-anchor="middle" fill="#5A655F" font-size="12">senses when a question exceeds its scope.</text>
+    <text x="280" y="704" text-anchor="middle" fill="#9A6B14" font-size="11" letter-spacing="0.06em">BUDGET-BOUNDED · GCP · PORTABLE</text>
+  </g>
+
+  <!-- ============ PROJECT 2: STUDIO FINDER ============ -->
+  <g id="proj-studio">
+    <rect x="600" y="170" width="480" height="560" rx="18" fill="#ffffff" stroke="#E0D9CB" stroke-width="1.5"/>
+    <rect x="600" y="170" width="480" height="56" rx="18" fill="#0A3A33"/>
+    <rect x="600" y="200" width="480" height="26" fill="#0A3A33"/>
+    <text x="840" y="198" text-anchor="middle" fill="#fff" font-family="'Source Serif 4', Georgia, serif" font-size="19" font-weight="600">World Studio Finder</text>
+    <text x="840" y="216" text-anchor="middle" fill="#8FE6C9" font-size="11" letter-spacing="0.08em">OUTREACH PIPELINE · GLOBAL DISCOVERY</text>
+
+    <!-- INPUTS -->
+    <text x="624" y="252" fill="#5A655F" font-size="11" letter-spacing="0.1em">INPUTS</text>
+    <g font-size="13" fill="#2C3833">
+      <rect x="624" y="262" width="140" height="34" rx="8" fill="#F6F2EA" stroke="#E0D9CB"/>
+      <text x="694" y="284" text-anchor="middle">Google Maps</text>
+      <rect x="774" y="262" width="140" height="34" rx="8" fill="#F6F2EA" stroke="#E0D9CB"/>
+      <text x="844" y="284" text-anchor="middle">Places API</text>
+      <rect x="924" y="262" width="140" height="34" rx="8" fill="#F6F2EA" stroke="#E0D9CB"/>
+      <text x="994" y="284" text-anchor="middle">Hunter.io</text>
+    </g>
+
+    <!-- arrow down -->
+    <path d="M840,296 L840,318" stroke="#0E4E44" stroke-width="2" marker-end="url(#arrow)"/>
+
+    <!-- COMPONENTS -->
+    <text x="624" y="334" fill="#5A655F" font-size="11" letter-spacing="0.1em">CORE PIPELINE</text>
+    <g font-size="12.5" fill="#16201C">
+      <rect x="624" y="344" width="220" height="40" rx="8" fill="#ffffff" stroke="#5FD3B2" stroke-width="1.5"/>
+      <text x="734" y="362" text-anchor="middle" font-weight="600">Playwright scraper</text>
+      <text x="734" y="377" text-anchor="middle" font-size="11" fill="#5A655F">2×2 grid · anti-detect</text>
+
+      <rect x="856" y="344" width="208" height="40" rx="8" fill="#ffffff" stroke="#5FD3B2" stroke-width="1.5"/>
+      <text x="960" y="362" text-anchor="middle" font-weight="600">Email verifier</text>
+      <text x="960" y="377" text-anchor="middle" font-size="11" fill="#5A655F">NeverBounce · junk filter</text>
+
+      <rect x="624" y="394" width="220" height="40" rx="8" fill="#ffffff" stroke="#5FD3B2" stroke-width="1.5"/>
+      <text x="734" y="412" text-anchor="middle" font-weight="600">SQLite (SCD Type 2)</text>
+      <text x="734" y="427" text-anchor="middle" font-size="11" fill="#5A655F">data quality · checkpoints</text>
+
+      <rect x="856" y="394" width="208" height="40" rx="8" fill="#ffffff" stroke="#5FD3B2" stroke-width="1.5"/>
+      <text x="960" y="412" text-anchor="middle" font-weight="600">Google Sheets sync</text>
+      <text x="960" y="427" text-anchor="middle" font-size="11" fill="#5A655F">authoritative record</text>
+
+      <rect x="624" y="444" width="220" height="40" rx="8" fill="#ffffff" stroke="#5FD3B2" stroke-width="1.5"/>
+      <text x="734" y="462" text-anchor="middle" font-weight="600">Geo-filter</text>
+      <text x="734" y="477" text-anchor="middle" font-size="11" fill="#5A655F">country · state · continent</text>
+
+      <rect x="856" y="444" width="208" height="40" rx="8" fill="#ffffff" stroke="#5FD3B2" stroke-width="1.5"/>
+      <text x="960" y="462" text-anchor="middle" font-weight="600">Compute Engine</text>
+      <text x="960" y="477" text-anchor="middle" font-size="11" fill="#5A655F">systemd · GCS</text>
+    </g>
+
+    <!-- arrow down -->
+    <path d="M840,484 L840,506" stroke="#0E4E44" stroke-width="2" marker-end="url(#arrow)"/>
+
+    <!-- OUTPUTS -->
+    <text x="624" y="522" fill="#5A655F" font-size="11" letter-spacing="0.1em">OUTPUTS</text>
+    <g font-size="13" fill="#2C3833">
+      <rect x="624" y="532" width="220" height="40" rx="8" fill="#E6F5EF" stroke="#5FD3B2" stroke-width="1.5"/>
+      <text x="734" y="550" text-anchor="middle" font-weight="600">YAMM email campaigns</text>
+      <text x="734" y="565" text-anchor="middle" font-size="11" fill="#5A655F">mail merge</text>
+
+      <rect x="856" y="532" width="208" height="40" rx="8" fill="#E6F5EF" stroke="#5FD3B2" stroke-width="1.5"/>
+      <text x="960" y="550" text-anchor="middle" font-weight="600">Web form submission</text>
+      <text x="960" y="565" text-anchor="middle" font-size="11" fill="#5A655F">no-email studios</text>
+    </g>
+
+    <!-- principle footer -->
+    <line x1="624" y1="600" x2="1056" y2="600" stroke="#E0D9CB"/>
+    <text x="840" y="624" text-anchor="middle" fill="#0E4E44" font-family="'Source Serif 4', Georgia, serif" font-size="14" font-style="italic">Relational entanglement</text>
+    <text x="840" y="648" text-anchor="middle" fill="#5A655F" font-size="12">Building connection across the global</text>
+    <text x="840" y="666" text-anchor="middle" fill="#5A655F" font-size="12">movement-arts community at scale.</text>
+    <text x="840" y="704" text-anchor="middle" fill="#9A6B14" font-size="11" letter-spacing="0.06em">CRASH-SAFE · RESUMABLE · OPENTOFU</text>
+  </g>
+</svg>

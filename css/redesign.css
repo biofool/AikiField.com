@@ -1052,3 +1052,37 @@ button.af-focus:focus-visible,
 @media (max-width: 640px) {
   .af-cluster-cards { grid-template-columns: 1fr; }
 }
+
+/* ---------- Project diagrams ---------- */
+.af-diagram { margin: 36px 0 8px; }
+.af-diagram__figure { margin: 0; }
+.af-diagram__img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--af-border);
+  border-radius: 14px;
+  background: var(--af-bg);
+}
+.af-diagram__caption {
+  font-family: var(--af-sans);
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--af-text-2);
+  margin: 12px 0 0;
+  max-width: 72ch;
+}
+.af-diagram__caption strong { color: var(--af-ink); }
+.af-diagram__download {
+  display: inline-block;
+  margin-top: 10px;
+  font-family: var(--af-sans);
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--af-primary);
+  text-decoration: none;
+}
+.af-diagram__download:hover { text-decoration: underline; }
+@media (max-width: 640px) {
+  .af-diagram__img { border-radius: 10px; }
+}
