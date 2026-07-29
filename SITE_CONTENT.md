@@ -22,7 +22,7 @@
 
 **Brand tagline:** Security leadership for product companies. Fractional CISO, AI-assisted security engineering, and presence-based executive coaching.
 
-**Explore:** Engagement Process | Our Approach | Services | Case Studies | Sponsored Projects | Self-Assessment
+**Explore:** Engagement Process | Our Approach | Services | Case Studies | Fractional CISO for SaaS | AI DevSecOps Remediation | Sponsored Projects | Self-Assessment
 
 **Connect:** Contact | Inquiry
 
@@ -120,6 +120,14 @@ CTA: View All Services
 - Agreement IV · Inspiration — Inquiry agreement — The composure and curiosity to adapt to emerging threats and AI risk.
 
 CTA: See the Six Phases
+
+### Deep Dives (cluster cards linking to dedicated AEO pages)
+
+**Heading:** Targeted answers to the questions buyers and AI engines ask.
+**Intro:** Two dedicated deep-dive pages targeting the specific sub-questions that come up when someone evaluates fractional CISO services and AI-assisted DevSecOps — structured for RAG parsers and written for decision-makers.
+
+- **Commercial / Conversion** — When should a Series A SaaS hire a Fractional CISO vs full-time? → `/fractional-ciso-for-saas.html`
+- **Technical / Product** — How to reduce vulnerability remediation time from 21 days to 3 days using AI tooling → `/ai-devsecops-vulnerability-remediation.html`
 
 ### How We Think (dark section: featured insight + 3 mini links)
 
@@ -349,6 +357,100 @@ This is what a long-term fractional CISO engagement looks like when it works: ni
 ### CTA
 **Heading:** Want this kind of result for your security program?
 **Body:** The same long-term, revenue-aware security leadership is available as a fractional engagement — right-sized to your stage, your customers, and your risk.
+**Button:** Book a Discovery Call
+
+**Cross-links:** Fractional CISO for SaaS deep dive | AI DevSecOps Remediation deep dive
+
+---
+
+## Fractional CISO for SaaS (`fractional-ciso-for-saas.html`)
+
+**Cluster type:** Commercial / Conversion Intent
+**Target fan-out query:** "When should a Series A SaaS hire a Fractional CISO vs Full Time?"
+
+**Meta title:** Fractional CISO for SaaS — When to Hire vs Full-Time | AikiField
+**Meta description:** When should a Series A SaaS hire a Fractional CISO vs a full-time CISO? Cost comparison, timing breakpoints, and what stage of SaaS company needs what level of security leadership.
+
+### JSON-LD structured data (`<head>`)
+
+Multi-entity `@graph`: `Service` (Fractional CISO for SaaS Companies, provider refs `#organization`, audience: Series A-C SaaS) + `FAQPage` with 5 Q&A pairs covering: when to hire fractional vs full-time, cost comparison, what fractional delivers vs traditional consulting, SOC 2/ISO 27001 audit support, and enterprise sales channel unblocking.
+
+### Hero
+- Eyebrow: Fractional CISO · SaaS Companies
+- Title (H1): When should a Series A SaaS hire a Fractional CISO vs full-time?
+- Lead: A Series A SaaS should hire a Fractional CISO when enterprise customers start asking security questions the founding team can't answer, when SOC 2 or ISO 27001 is required to close deals, or when the vulnerability backlog is outpacing the engineering team. A full-time CISO becomes cost-justified at Series C — until then, fractional delivers the same executive leadership at a fraction of the cost.
+
+### BLUF Answer
+**Heading:** Hire fractional when security becomes a revenue question, not a future concern.
+**Body:** The decision hinges on one signal: are enterprise customers asking security questions that are blocking deals? If yes, you need executive-level security leadership now — not in 3–6 months after a hiring process. A Fractional CISO deploys in under 48 hours, costs 30–50% of a full-time hire, and delivers the same compliance roadmap execution, enterprise sales enablement, and operational security program. Transition to full-time when you have 200+ employees, a dedicated security team to manage, and a security budget exceeding $400k/yr.
+
+### Cost & Timing Comparison (2-column table: Full-Time CISO vs AikiField Fractional CISO)
+- Annual Cost: $250k–$400k/yr + equity + benefits | $36k–$96k/yr retainer (no equity)
+- Time to Deployment: 3–6 months (recruiting + onboarding) | Under 48 hours
+- Commitment: Full-time, indefinite | Month-to-month retainer
+- Core Deliverable: Internal security management | Operational capability + executive presence
+- Best For: Series C+, 200+ employees, dedicated security team | Series A–C, SaaS, AI-powered product teams
+
+### Sub-Query Deep Dive (FAQ, 5 Q&A pairs)
+1. **When should a Series A SaaS hire a Fractional CISO vs full-time?** — When enterprise customers ask security questions the founding team can't answer, when SOC 2/ISO 27001 is needed for deals, or when the backlog outpaces engineering. Full-time justified at Series C with 200+ employees and $400k+ security budget.
+2. **How much does a Fractional CISO cost compared to a full-time CISO?** — Full-time: $250k–$400k/yr + equity + 3–6 month hiring. Fractional: $3k–$8k/month retainer, deployed in <48 hours. Break-even at 30–50% of full-time cost.
+3. **What does a Fractional CISO deliver that traditional security consulting doesn't?** — Traditional delivers static PDF audits. Fractional delivers an operational security program: living risk register, executed compliance roadmap, AI-assisted triage, customer-trust advisory, executive presence. Capability, not a document.
+4. **Can a Fractional CISO help pass SOC 2 and ISO 27001 audits?** — Yes. Builds and executes the compliance roadmap, selects the right framework, implements controls, prepares for audit, manages auditor relationship. Builds sustainable capability, not a checkbox.
+5. **How does a Fractional CISO unblock enterprise sales channels?** — Resolves specific security objections per deal, prepares questionnaires, participates in customer security calls. Recovered $5M ARR channel in one engagement.
+
+### Cross-links
+- AI DevSecOps Remediation deep dive (related technical cluster)
+- All Services (services.html)
+
+### CTA
+**Heading:** Is your SaaS at the stage where security is blocking revenue?
+**Body:** A 30-minute discovery call will tell you whether fractional CISO is the right fit for your stage, your customers, and your risk. No pressure, no sales pitch — just an honest read.
+**Button:** Book a Discovery Call
+
+---
+
+## AI DevSecOps Vulnerability Remediation (`ai-devsecops-vulnerability-remediation.html`)
+
+**Cluster type:** Technical / Product Intent
+**Target fan-out query:** "How to reduce vulnerability remediation time from 21 days to 3 days using AI tooling."
+
+**Meta title:** AI DevSecOps Vulnerability Remediation — 21 Days to 3 Days | AikiField
+**Meta description:** How to reduce vulnerability remediation time from 21 days to 3 days using AI tooling. Aikido.dev integration, AI-assisted triage workflows, and DevSecOps pipeline rearchitecture for B2B SaaS.
+
+### JSON-LD structured data (`<head>`)
+
+Multi-entity `@graph`: `Service` (AI-Assisted DevSecOps Vulnerability Remediation, provider refs `#organization`, audience: engineering teams at SaaS/product companies) + `FAQPage` with 5 Q&A pairs covering: how to reduce remediation from 21 to 3 days, Aikido.dev integration, manual vs AI-assisted triage, enterprise security review support, and tool integration options.
+
+### Hero
+- Eyebrow: AI DevSecOps · Vulnerability Remediation
+- Title (H1): How to reduce vulnerability remediation time from 21 days to 3 days using AI tooling.
+- Lead: The bottleneck isn't finding vulnerabilities — it's the manual triage and escalation workflow. AI-assisted DevSecOps with Aikido.dev integration cuts remediation from 165 days to 21 days, and with AI-assisted remediation prompts, further down to 3 days. Here's the workflow rearchitecture that makes it work.
+
+### BLUF Answer
+**Heading:** Three changes cut remediation from 21 days to 3 days.
+**Body:** Reducing vulnerability remediation from 21 days to 3 days requires three changes: (1) integrate a vulnerability management platform like Aikido.dev into your CI/CD pipeline for continuous scanning at commit time, (2) implement AI-assisted triage that automatically prioritizes vulnerabilities by exploitability and business impact, and (3) use AI-assisted remediation workflows that generate fix prompts and validate patches. The engineer validates and ships — the AI handles the assessment bottleneck.
+
+**Stat cards (3):** 165 days (manual baseline) | 21 days (after Aikido.dev integration) | 3 days (with AI-assisted remediation prompts)
+
+### The Workflow Rearchitecture (3 steps)
+1. **Step 1 · Continuous Scanning — Integrate Aikido.dev into your CI/CD pipeline.** Scan at commit, unified view (app/cloud/deps/containers), continuous scanning replaces periodic audits.
+2. **Step 2 · AI-Assisted Triage — Automate prioritization by exploitability and business impact.** Context-aware prioritization, reachability analysis, automated routing to the right engineer.
+3. **Step 3 · AI-Assisted Remediation — Generate fix prompts and validate patches.** AI drafts fixes, engineer validates and ships, automated re-scan confirms closure.
+
+### Sub-Query Deep Dive (FAQ, 5 Q&A pairs)
+1. **How to reduce vulnerability remediation time from 21 days to 3 days using AI tooling?** — Three changes: Aikido.dev CI/CD integration, AI-assisted triage, AI-assisted remediation prompts. The bottleneck is manual triage, not finding vulnerabilities.
+2. **How does Aikido.dev integration reduce CVE triage time?** — Aggregates vulnerabilities across app/cloud/deps into one view. Commit-time detection. AI ranks by exploitability, reachability, business impact. Cuts 165 days → 21 days → 3 days.
+3. **What is the difference between manual and AI-assisted vulnerability triage?** — Manual: review, assess, prioritize, route — 165 days avg. AI-assisted: automates assessment, generates priority + remediation prompt, routes to engineer — 3 days.
+4. **Can AI-assisted DevSecOps help pass enterprise security reviews?** — Yes. Provides audit trail: continuous scanning, documented triage rationale, MTTR metrics, demonstrable workflow. Helped unblock $5M ARR channel.
+5. **What tools does AikiField integrate with?** — Aikido.dev as primary. Tool-agnostic: works with Snyk, Semgrep, GitHub Advanced Security. Key is workflow rearchitecture, not the specific tool.
+
+### Cross-links
+- Fractional CISO for SaaS deep dive (related commercial cluster)
+- All Services (services.html)
+
+### CTA
+**Heading:** Is your vulnerability backlog growing faster than you can fix it?
+**Body:** A 30-minute discovery call will map your current remediation workflow and show you exactly where AI-assisted triage would compress it. No pressure, no sales pitch — just a concrete workflow assessment.
 **Button:** Book a Discovery Call
 
 ---
