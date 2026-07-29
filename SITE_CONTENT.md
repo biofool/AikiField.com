@@ -550,17 +550,17 @@ The composure and curiosity to adapt to emerging threats and AI risk.
 
 **Tag:** AI Coaching
 **Title:** Aikifield AI Chat
-**Lead:** An AI coaching system that answers questions grounded in Richard Moon's teaching corpus, built on proscribed programmable budgets on Google Cloud with the Gemini API.
-**Live at:** quantumaikido.com — public chat plus a password-protected members area with email and Google OAuth login.
-**How it works:** It searches the curated corpus for relevant passages, drafts a cited answer, rate-limits to control cost, and escalates to a human coach with a video link when it can’t help or the member asks.
+**Lead:** An AI coaching chat that answers questions from Richard Moon's teachings, with tight cost controls so it stays free.
+**Live at:** quantumaikido.com — a public chat plus a members area (invitation-only, with email or Google login).
+**How it works:** It searches the teaching archive for relevant passages, drafts an answer with citations, keeps costs under control, and hands off to a human coach by video when it can't help or the member asks.
 
 **What it does:**
 - **Answers grounded in the source teachings** — with citations back to origin.
 - **Escalates to a live human coach** — via video link when a question needs it.
-- **Runs within proscribed programmable budgets** — so coaching stays free with no surprise bills.
+- **Runs on a fixed budget** — so coaching stays free, with no surprise bills.
 - **Queues questions** — so no single user crowds out the rest.
-- **Portable across clouds** — without rewriting code.
-- **Self-service account control** — register, log in, reset your password, or delete your account (invitation-only).
+- **Works on any cloud** — without rewriting the code.
+- **Self-service accounts** — register, log in, reset your password, or delete your account (invitation-only).
 
 **Tech stack:** Python · FastAPI · Gemini Developer API · Google Cloud Run · Firestore · Secret Manager · Pub/Sub · Cloud Functions · Cloudflare Turnstile · SQLite FTS5 · Docker · OpenTofu · DVC + GCS
 
@@ -568,15 +568,15 @@ The composure and curiosity to adapt to emerging threats and AI risk.
 
 **Tag:** Outreach Pipeline
 **Title:** World Studio Finder — Global Studio Discovery
-**Lead:** An automated pipeline that discovers yoga, tai chi, capoeira, and somatic-practice studios worldwide via Google Maps, then finds and verifies their contact emails for outreach.
-**Outreach:** Two outreach paths: email campaigns via YAMM mail merge, and automated web contact form submission for studios with a website but no listed email.
+**Lead:** A tool that finds yoga, tai chi, capoeira, and somatic-practice studios worldwide on Google Maps, then locates and verifies their contact emails for outreach.
+**Outreach:** Two ways to reach out: email campaigns via mail merge, and automatic contact-form submission for studios with a website but no listed email.
 
 **What it does:**
-- **Global Google Maps scraping** — Playwright with anti-detection, 2×2 grid search, and Google Places API fallback.
-- **Email discovery and verification** — Hunter.io plus direct website scraping, with deliverability validation and junk-domain filtering.
-- **Google Sheets sync** — as the authoritative record, with live column-order reads for YAMM compatibility.
-- **Geo-filtered campaigns** — by country, US state, timezone, or continent, with hexagonal grid search for dense cities.
-- **Crash-safe resume and reprocessing** — JSONL checkpointing and algorithm-version tracking.
+- **Searches Google Maps worldwide** — covering every region, with a fallback to the Google Places API when needed.
+- **Finds and verifies emails** — using Hunter.io and direct website lookups, filtering out junk and undeliverable addresses.
+- **Syncs to Google Sheets** — as the single source of truth, ready for mail-merge outreach.
+- **Geo-filtered campaigns** — by country, US state, timezone, or continent, with finer-grained search for dense cities.
+- **Resumes after interruptions** — picks up where it left off, and reprocesses records when the algorithm improves.
 
 **Tech stack:** Python · Playwright · Flask · Google Places API · Geocoding · Hunter.io · NeverBounce · Google Sheets API · GCP Compute Engine (systemd) · GCS · SQLite (SCD Type 2 data quality) · Terraform/OpenTofu
 
@@ -588,7 +588,7 @@ Aristotle called it *phronesis* — practical wisdom, the virtue of discerning r
 
 Quantum Leadership draws from the same well. Where classical leadership seeks certainty and control, quantum leadership embraces uncertainty, entanglement, and the observer effect — the recognition that the leader is not separate from the system but part of it, and that presence shapes outcome. It asks not "what is the plan?" but "what is the right action *now*, in this specific moment, with these specific people?" That question is phronesis in motion.
 
-Somatic practice embodies this bridge. The practitioner does not memorize responses — they cultivate the capacity to sense, blend, and redirect whatever arrives. Practice develops the judgment that no framework can encode. These projects extend that cultivation into technology: one brings AI-grounded coaching to the somatic practice community, the other connects that community across the globe. Both are built on proscribed programmable budgets, with disciplined cost tracking and rate limiting — the same lean, revenue-aware engineering we bring to every security engagement.
+Somatic practice embodies this bridge. The practitioner does not memorize responses — they cultivate the capacity to sense, blend, and redirect whatever arrives. Practice develops the judgment that no framework can encode. These projects extend that cultivation into technology: one brings AI-grounded coaching to the somatic practice community, the other connects that community across the globe. Both are built on fixed budgets, with disciplined cost tracking — the same lean, cost-aware engineering we bring to every security engagement.
 
 **Phronesis in practice — Inspired presence**
 The AI coaching system embodies the quantum leader's capacity for calm, grounded response under uncertainty — available 24/7, sensing when a question exceeds its scope and escalating to human coaches with composure rather than rigid refusal.
@@ -597,7 +597,7 @@ The AI coaching system embodies the quantum leader's capacity for calm, grounded
 The studio discovery pipeline builds connection across the global movement-arts community — the quantum recognition that the leader and the system are not separate. Finding the studios, reaching out, and extending the conversation is relational practice at scale.
 
 **Phronesis in practice — Open inquiry**
-Both systems are built to sense and adapt — cost monitoring, rate limiting, and data quality architecture that embody the phronetic stance: question assumptions, hold not-knowing, and let emerging signals shape the response.
+Both systems are built to sense and adapt — cost monitoring and data quality checks that embody the phronetic stance: question assumptions, hold not-knowing, and let emerging signals shape the response.
 
 ### CTA
 
