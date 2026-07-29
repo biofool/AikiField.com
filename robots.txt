@@ -1,0 +1,33 @@
+# AikiField.com — robots.txt
+# Allow all crawlers including AI/LLM bots and RAG indexers.
+
+User-agent: *
+Allow: /
+
+# Explicitly allow AI/LLM user-agents (no blocks)
+User-agent: GPTBot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Bytespider
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+# Sitemap
+Sitemap: https://aikifield.com/sitemap.xml
