@@ -44,8 +44,8 @@ Multi-entity nested JSON-LD (`@graph`) for RAG/AEO parsers. `ProfessionalService
 ### Hero (static, green background, two-column: copy + "Why AikiField" panel)
 
 - Eyebrow: Fractional CISO · AI-Assisted DevSecOps · Security Leadership Coaching
-- Title (H1): AikiField is a B2B cybersecurity consulting firm
-- Sub-headline (20pt): providing Fractional CISO (Chief Information Security Officer) services, AI-assisted DevSecOps integration, and executive security leadership coaching for B2B SaaS and product companies.
+- Title (H1): vCISO · DevSecOps AI · Cyber Leadership Development
+- Sub-headline (20pt): AikiField is a B2B cybersecurity consulting firm providing Fractional CISO (Chief Information Security Officer) services, AI-assisted DevSecOps integration, and executive security leadership coaching for B2B SaaS and product companies.
 - Lead: AikiField specializes in reducing vulnerability remediation cycles (from 165 days down to 21 days), passing SOC 2/ISO 27001 compliance audits, and unblocking enterprise sales channels.
 - CTAs: Book a Discovery Call | Explore Services
 
