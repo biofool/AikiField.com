@@ -203,7 +203,7 @@ button.af-focus:focus-visible,
   font-size: clamp(38px, 5vw, 60px);
   line-height: 1.08;
   letter-spacing: -0.02em;
-  max-width: 18ch;
+  max-width: none;
   text-wrap: balance;
 }
 .af-h2 {
@@ -213,13 +213,13 @@ button.af-focus:focus-visible,
 }
 .af-h2--sm { font-size: clamp(26px, 3vw, 34px); line-height: 1.14; }
 .af-h3 { font-size: 24px; line-height: 1.2; }
-.af-lead { font-size: 21px; line-height: 1.6; color: var(--af-text); max-width: 60ch; }
-.af-lead--wide { max-width: 62ch; }
+.af-lead { font-size: 21px; line-height: 1.6; color: var(--af-text); max-width: none; }
+.af-lead--wide { max-width: none; }
 .af-lead--20  { font-size: 20px; }
 .af-lead--19  { font-size: 19px; }
 .af-body { font-size: 17px; color: var(--af-text-2); line-height: 1.6; }
 .af-lead--dark { color: var(--af-dark-muted); }
-.af-intro { max-width: 64ch; margin-bottom: 48px; }
+.af-intro { max-width: none; margin-bottom: 48px; }
 .af-intro p { font-size: 20px; color: var(--af-text); }
 .af-section--dark .af-intro p { color: var(--af-dark-muted); }
 
@@ -256,11 +256,11 @@ button.af-focus:focus-visible,
   font-size: clamp(40px, 5.4vw, 68px);
   line-height: 1.08;
   letter-spacing: -0.02em;
-  max-width: 16ch;
+  max-width: none;
   text-wrap: balance;
   margin-bottom: 28px;
 }
-.af-hero__lead { margin-bottom: 40px; font-size: 21px; line-height: 1.6; max-width: 60ch; color: var(--af-text); }
+.af-hero__lead { margin-bottom: 40px; font-size: 21px; line-height: 1.6; max-width: none; color: var(--af-text); }
 
 /* ---------- Hero carousel ---------- */
 .af-carousel {
@@ -307,7 +307,7 @@ button.af-focus:focus-visible,
   font-size: clamp(36px, 4.8vw, 60px);
   line-height: 1.1;
   letter-spacing: -0.02em;
-  max-width: 18ch;
+  max-width: none;
   text-wrap: balance;
   margin-bottom: 24px;
   color: #fff;
@@ -315,7 +315,7 @@ button.af-focus:focus-visible,
 .af-carousel__lead {
   font-size: 20px;
   line-height: 1.6;
-  max-width: 58ch;
+  max-width: none;
   color: var(--af-dark-card-text);
   margin-bottom: 36px;
 }
@@ -709,27 +709,32 @@ button.af-focus:focus-visible,
 }
 .af-form-group textarea { min-height: 120px; resize: vertical; }
 .af-form__submit { text-align: center; }
+.af-form-status { max-width: 640px; margin: 0 auto 24px; padding: 20px 24px; border-radius: 12px; font-size: 17px; line-height: 1.5; }
+.af-form-status--success { background: #E8F5E9; border: 1px solid #4CAF50; color: #1B5E20; }
+.af-form-status--error { background: #FFF3E0; border: 1px solid #FF9800; color: #E65100; }
+.af-form-status a { font-weight: 600; }
 
 /* ---------- Section header (centered intro text) ---------- */
-.af-section-header { max-width: 64ch; margin-bottom: 48px; }
+.af-section-header { max-width: none; margin-bottom: 48px; }
 .af-section-header--center { margin-left: auto; margin-right: auto; text-align: center; }
 .af-section-header p + p { margin-top: 12px; }
 
 /* ---------- Home hero (static, green) ---------- */
 .af-hero-home { background: var(--af-primary); padding: 80px 0 72px; }
-.af-hero-home__grid { display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 48px; align-items: end; }
+.af-hero-home__intro { display: grid; gap: 20px; justify-items: stretch; margin-bottom: 40px; }
+.af-hero-home__grid { display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 48px; align-items: start; }
 .af-hero-home__copy { display: grid; gap: 24px; justify-items: start; }
-.af-hero-home .af-eyebrow { color: var(--af-mint); }
+.af-hero-home .af-eyebrow { color: #4EC0A0; }
 .af-hero-home__title {
   font-size: clamp(38px, 5vw, 62px);
   line-height: 1.08;
   letter-spacing: -0.02em;
   color: #fff;
-  max-width: 16ch;
+  max-width: none;
   text-wrap: balance;
 }
-.af-hero-home__lead { font-size: 20px; line-height: 1.6; max-width: 58ch; color: var(--af-dark-card-text); }
-.af-hero-home__sub { font-size: 20pt; line-height: 1.35; font-family: var(--af-serif); font-weight: 500; color: #fff; max-width: 40ch; margin: 12px 0 0; text-wrap: balance; }
+.af-hero-home__body { font-size: 20px; line-height: 1.6; max-width: none; color: var(--af-dark-card-text); text-wrap: pretty; }
+.af-hero-home__body + .af-hero-home__body { margin-top: 4px; }
 .af-hero-home .af-btn--primary { background: #fff; color: var(--af-primary); }
 .af-hero-home .af-btn--primary:hover { background: var(--af-mint-dk); }
 .af-hero-home .af-btn--ghost { color: #fff; border-color: rgba(255,255,255,0.5); }

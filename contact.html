@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AikiField &mdash; Start a Conversation</title>
-  <meta name="description" content="Every security breakthrough begins with an inquiry. Reach out to design an engagement that meets you where you are.">
+  <meta name="description" content="Every security breakthrough begins with an inquiry. Book a discovery call or send a message to design an engagement that meets you where you are.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -38,23 +38,23 @@
 
 <main id="main">
 
-  <!-- PAGE HEADER -->
+  <!-- PAGE HEADER with CTAs -->
   <section class="af-page-header af-page-header--tight af-page-header--green">
     <div class="af-container">
       <p class="af-eyebrow">Contact</p>
       <h1 class="af-h1">Start a Conversation</h1>
       <p class="af-lead af-page-header__lead">Every security breakthrough begins with an inquiry.</p>
+      <div class="af-btn-row" style="margin-top:28px;">
+        <a href="#" class="af-btn af-btn--primary">Book My Discovery Call</a>
+        <a href="#inquiry-form" class="af-btn af-btn--ghost">Send a Message</a>
+      </div>
     </div>
   </section>
 
-  <!-- GET IN TOUCH -->
+  <!-- WHAT TO EXPECT + DIRECT CONTACT -->
   <section class="af-section">
     <div class="af-container">
-      <div class="af-section-header">
-        <h2 class="af-h2">Get in Touch</h2>
-        <p class="af-lead af-lead--20">Whether you need a fractional CISO, a lean security program buildout, AI-assisted DevSecOps, threat modeling, or leadership coaching &mdash; we'll design an engagement that meets you where you are.</p>
-      </div>
-      <div class="af-grid af-grid--fit af-grid--28" style="margin-top:56px;">
+      <div class="af-grid af-grid--fit af-grid--28">
         <!-- WHAT TO EXPECT -->
         <article class="af-contact-card">
           <span class="af-contact-card__icon" aria-hidden="true">
@@ -76,7 +76,7 @@
           </span>
           <h3 class="af-contact-card__title">Direct Contact</h3>
           <p class="af-contact-card__body">Email: <a href="mailto:kenneth@aikifield.com">kenneth@aikifield.com</a></p>
-          <p class="af-contact-card__body">Phone: +64 022 384 1347</p>
+          <p class="af-contact-card__body">Phone: <a href="tel:+64223841347">+64 022 384 1347</a></p>
           <p class="af-contact-card__body">Based in Aotearoa New Zealand &mdash; serving clients globally.</p>
         </article>
       </div>
@@ -84,48 +84,67 @@
   </section>
 
   <!-- INQUIRY FORM -->
-  <section class="af-section af-section--white">
+  <section class="af-section af-section--white" id="inquiry-form">
     <div class="af-container">
       <div class="af-section-header">
-        <h2 class="af-h2">Inquiry Form</h2>
-        <p class="af-lead af-lead--20">Tell us a bit about your organization and what you're looking for. We'll get back to you within two business days.</p>
+        <h2 class="af-h2">Send a Message</h2>
+        <p class="af-lead af-lead--20">Tell us a bit about your organization and what you're looking for. We'll get back to you within one business day.</p>
       </div>
-      <form class="af-form" action="mailto:kenneth@aikifield.com" method="post" enctype="text/plain">
+
+      <!-- Status messages (populated by query param from contact-handler.php) -->
+      <div id="form-success" class="af-form-status af-form-status--success" hidden role="status">
+        <strong>Thank you &mdash; your message has been sent.</strong> We'll get back to you within one business day.
+      </div>
+      <div id="form-error" class="af-form-status af-form-status--error" hidden role="alert">
+        <strong>Sorry, something went wrong.</strong> <span id="form-error-msg"></span> You can also email <a href="mailto:kenneth@aikifield.com">kenneth@aikifield.com</a> directly.
+      </div>
+
+      <form class="af-form" action="contact-handler.php" method="post">
+        <!-- Honeypot field (hidden from humans, bots fill it) -->
+        <div style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden;" aria-hidden="true">
+          <label for="website">Website (leave empty)</label>
+          <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
+        </div>
+
         <div class="af-form-group">
           <label for="name">Name</label>
-          <input type="text" id="name" name="name" required>
+          <input type="text" id="name" name="name" required autocomplete="name">
         </div>
         <div class="af-form-group">
           <label for="email">Email</label>
-          <input type="email" id="email" name="email" required>
+          <input type="email" id="email" name="email" required autocomplete="email">
         </div>
         <div class="af-form-group">
           <label for="organization">Organization</label>
-          <input type="text" id="organization" name="organization">
+          <input type="text" id="organization" name="organization" autocomplete="organization">
         </div>
         <div class="af-form-group">
           <label for="interest">Area of Interest</label>
           <select id="interest" name="interest">
             <option value="" selected disabled>Select an area of interest&hellip;</option>
-            <option value="fractional-ciso">Fractional CISO + AI Governance</option>
-            <option value="lean-program">Lean Security Program Buildout</option>
+            <option value="fractional-ciso">Fractional CISO</option>
             <option value="devsecops">DevSecOps &amp; Vulnerability Remediation</option>
-            <option value="threat-modeling">Threat Modeling Workshop</option>
+            <option value="threat-modeling">Threat Modeling</option>
             <option value="leadership-coaching">Security Leadership Coaching</option>
-            <option value="maturity-assessment">Security Maturity Assessment</option>
-            <option value="readiness-resilience">Readiness &amp; Resilience Program (NZ)</option>
-            <option value="board-briefing">Board / Governance Security Briefing (NZ)</option>
+            <option value="assessment">Security Maturity Assessment</option>
             <option value="other">Other</option>
           </select>
         </div>
         <div class="af-form-group">
           <label for="message">Message</label>
-          <textarea id="message" name="message" rows="6" placeholder="What's on your mind?"></textarea>
+          <textarea id="message" name="message" rows="6" required placeholder="What's on your mind?"></textarea>
         </div>
         <div class="af-form__submit">
-          <button type="submit" class="af-btn af-btn--primary">Send Inquiry</button>
+          <button type="submit" class="af-btn af-btn--primary">Book My Discovery Call</button>
         </div>
       </form>
+
+      <!-- Trust signals -->
+      <div class="af-hero-home__proof" style="margin-top:48px;" aria-label="Results from real engagements">
+        <div class="af-metric"><strong>$5M</strong><span>Blocked sales channel recovered by resolving customer security objections.</span></div>
+        <div class="af-metric"><strong>87%</strong><span>Customer-reported security risk eliminated in three thirty-minute meetings.</span></div>
+        <div class="af-metric"><strong>21 &rarr; 3 days</strong><span>Vulnerability remediation time cut with AI-assisted triage workflows.</span></div>
+      </div>
     </div>
   </section>
 </main>
@@ -157,12 +176,38 @@
       <h3 class="af-footer__col-title">Connect</h3>
       <ul class="af-footer__nav">
         <li><a href="contact.html">Contact</a></li>
-        <li><a href="contact.html">Inquiry</a></li>
       </ul>
     </nav>
   </div>
   <div class="af-footer__legal">&copy; 2026 AikiField. All rights reserved.</div>
 </footer>
+
+<script>
+// Show success/error messages based on query params from contact-handler.php redirect
+(function() {
+  var params = new URLSearchParams(window.location.search);
+  var status = params.get('status');
+  if (status === 'success') {
+    var el = document.getElementById('form-success');
+    if (el) { el.hidden = false; el.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+  } else if (status === 'error') {
+    var el = document.getElementById('form-error');
+    var msg = params.get('msg');
+    if (el) {
+      el.hidden = false;
+      if (msg) {
+        var msgSpan = document.getElementById('form-error-msg');
+        if (msgSpan) msgSpan.textContent = msg;
+      }
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }
+  // Clean up the URL
+  if (status) {
+    history.replaceState(null, '', window.location.pathname);
+  }
+})();
+</script>
 
 </body>
 </html>

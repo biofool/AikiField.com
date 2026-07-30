@@ -43,10 +43,10 @@ Multi-entity nested JSON-LD (`@graph`) for RAG/AEO parsers. `ProfessionalService
 
 ### Hero (static, green background, two-column: copy + "Why AikiField" panel)
 
-- Eyebrow: Fractional CISO · AI-Assisted DevSecOps · Security Leadership Coaching
-- Title (H1): vCISO · DevSecOps AI · Cyber Leadership Development
-- Sub-headline (20pt): AikiField is a B2B cybersecurity consulting firm providing Fractional CISO (Chief Information Security Officer) services, AI-assisted DevSecOps integration, and executive security leadership coaching for B2B SaaS and product companies.
-- Lead: AikiField specializes in reducing vulnerability remediation cycles (from 165 days down to 21 days), passing SOC 2/ISO 27001 compliance audits, and unblocking enterprise sales channels.
+- Eyebrow: B2B Cybersecurity Consulting
+- Title (H1): vCISO, DevSecOps AI & Cyber Leadership Development
+- Body para 1 (20px, full container width): AikiField is a B2B cybersecurity consulting firm providing Fractional CISO services, AI-assisted DevSecOps integration, and security leadership coaching for SaaS and product companies.
+- Body para 2 (20px, full container width): Fractional CISO leadership experienced in AI adoption, data center technology, and IoT. We specialize in cutting vulnerability remediation cycles (from 165 days down to 21), passing SOC 2/ISO 27001 audits, and unblocking enterprise sales channels.
 - CTAs: Book a Discovery Call | Explore Services
 
 **Proof metrics (3):**
@@ -736,17 +736,15 @@ Practice and review regularly. Adjust based on results, incidents, and changing 
 ## Contact (`contact.html`)
 
 **Meta title:** AikiField — Start a Conversation
-**Meta description:** Every security breakthrough begins with an inquiry. Reach out to design an engagement that meets you where you are.
+**Meta description:** Every security breakthrough begins with an inquiry. Book a discovery call or send a message to design an engagement that meets you where you are.
 
-### Hero
+### Hero (with CTAs at top)
 - Eyebrow: Contact
 - Title: Start a Conversation
 - Lead: Every security breakthrough begins with an inquiry.
+- CTAs: Book My Discovery Call (placeholder href — replace with scheduling tool URL) | Send a Message (scrolls to form)
 
-### Get in Touch
-
-**Heading:** Get in Touch
-**Lead:** Whether you need a fractional CISO, a lean security program buildout, AI-assisted DevSecOps, threat modeling, or leadership coaching — we'll design an engagement that meets you where you are.
+### What to Expect + Direct Contact
 
 **What to Expect**
 - A complimentary discovery conversation (30–45 minutes)
@@ -755,31 +753,33 @@ Practice and review regularly. Adjust based on results, incidents, and changing 
 - No obligation
 
 **Direct Contact**
-- Email: kenneth@aikifield.com
-- Phone: +64 022 384 1347
+- Email: kenneth@aikifield.com (mailto link)
+- Phone: +64 022 384 1347 (clickable tel: link)
 - Based in Aotearoa New Zealand — serving clients globally.
 
-### Inquiry Form
+### Send a Message (Inquiry Form)
 
-**Heading:** Inquiry Form
-**Lead:** Tell us a bit about your organization and what you're looking for. We'll get back to you within two business days.
+**Heading:** Send a Message
+**Lead:** Tell us a bit about your organization and what you're looking for. We'll get back to you within one business day.
+**Form handler:** `contact-handler.php` (PHP mail() — validates, sends to kenneth@aikifield.com, redirects back with ?status=success|error)
+**Anti-spam:** Honeypot field (hidden "website" input — bots fill it, humans don't)
+**Status messages:** Success/error banners shown via JS reading ?status= query param
 
 **Fields:**
 - Name (required)
 - Email (required)
 - Organization
 - Area of Interest (select):
-  - Fractional CISO + AI Governance
-  - Lean Security Program Buildout
+  - Fractional CISO
   - DevSecOps & Vulnerability Remediation
-  - Threat Modeling Workshop
+  - Threat Modeling
   - Security Leadership Coaching
   - Security Maturity Assessment
-  - Readiness & Resilience Program (NZ)
-  - Board / Governance Security Briefing (NZ)
   - Other
-- Message
-- Submit button: Send Inquiry
+- Message (required)
+- Submit button: Book My Discovery Call
+
+**Trust signals (below form):** $5M recovered, 87% risk eliminated, 21→3 days remediation
 
 ---
 
