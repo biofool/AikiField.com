@@ -17,6 +17,11 @@ KNOWN_REMOTES=(
     "peec.biz|peecbiz|public_html/aikifield/|Production server (peec.biz)"
 )
 
+# VNC tunnel target (SSH tunnel to forward VNC display :1)
+VNC_HOST="10.3.0.122"
+VNC_USER="$USER"
+VNC_PORT=5901
+
 SCP_KEY_ARGS=(-i "$SSH_KEY" -o LogLevel=ERROR)
 
 if [[ "$(uname -s)" == "Linux" ]]; then
@@ -85,7 +90,7 @@ for arg in "$@"; do
         -p) _next_p=1 ;;
         --remote) _next_remote=1 ;;
         -y|--yes) YES=1 ;;
-        upload|download|dryrun|deploy|sftp|ftp|help)
+        upload|download|dryrun|deploy|sftp|ftp|vnc|help)
             [ -z "$CMD" ] && CMD="$arg"
             ;;
         *)
@@ -222,6 +227,20 @@ case "$CMD" in
         sftp -i "$SSH_KEY" -o IdentitiesOnly=yes -o StrictHostKeyChecking=no "${REMOTE_USER}@${REMOTE_HOST}"
         ;;
 
+    vnc)
+        echo ""
+        echo "========================================"
+        echo "  Opening SSH tunnel for VNC"
+        echo "  Host: $VNC_HOST"
+        echo "  User: $VNC_USER"
+        echo "  Port: $VNC_PORT (display :1)"
+        echo "  Key:  $SSH_KEY"
+        echo "  Connect your VNC viewer to: localhost:$VNC_PORT"
+        echo "========================================"
+        echo ""
+        ssh -i "$SSH_KEY" -o IdentitiesOnly=yes -o StrictHostKeyChecking=no -o LogLevel=ERROR -L "${VNC_PORT}:localhost:${VNC_PORT}" "${VNC_USER}@${VNC_HOST}"
+        ;;
+
     help)
         echo "Usage: $0 [command] [options]"
         echo ""
@@ -232,6 +251,7 @@ case "$CMD" in
         echo "  dryrun       - Show what upload would do (no prompt)"
         echo "  dryrun download - Show what download would do (no prompt)"
         echo "  sftp         - Open an interactive SFTP session"
+        echo "  vnc          - Open an SSH tunnel for VNC to $VNC_HOST (display :1)"
         echo "  help         - Show this help message"
         echo ""
         echo "Options:"
