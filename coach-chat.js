@@ -569,7 +569,28 @@
         if (messagesDiv) messagesDiv.innerHTML = "";
         userMessageCount = 0;
         updateEnvUI();
-        addMessage("ai", "Welcome. I'm here as a guide grounded in Sensei Richard Moon's teachings — his books, recorded seminars, and conversations.\n\nTo help me meet you where you are, could you describe your learning style? For example, do you prefer concise summaries, detailed explanations, practical exercises, or philosophical exploration?");
+        addMessage("ai", "Welcome. I'm here as a guide grounded in the Quantum Aikido school. Care to describe your learning style? Don't worry — you can change it along the way.\n\nFYI, my dataset includes books, videos, and private coaching writings — including material on How to Get Luckier.");
+        showDokuOfTheHour();
+    }
+
+    // Issue #236: fetch the rotating "doku of the hour" — a real excerpt
+    // from the corpus, refreshed once per hour — and show it as a second
+    // welcome bubble. Best-effort: the chat works fine without it, so a
+    // failure here is logged and swallowed rather than shown to the user.
+    async function showDokuOfTheHour() {
+        try {
+            const resp = await fetchWithTimeout(API + "/v1/doku/current", { headers: authHeaders() });
+            if (!resp.ok) {
+                console.error("coach-chat: doku of the hour request failed with status", resp.status);
+                return;
+            }
+            const data = await resp.json();
+            if (data && data.excerpt) {
+                addMessage("ai", "Today's teaching: " + data.excerpt);
+            }
+        } catch (err) {
+            console.error("coach-chat: could not load doku of the hour:", err);
+        }
     }
 
     // --- Short-message gate (start of conversation) ---
