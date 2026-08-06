@@ -1,0 +1,13 @@
+# AikiField.com — Apache rewrite rules
+# The site is static HTML; the only rewrite needed is the coach API proxy,
+# which forwards /coach-api/* to coach-proxy.php (PHP proxy to the Quantum
+# Aikido coaching backend on Cloud Run). See docs/coach-auth-prd.md.
+
+RewriteEngine On
+
+# Coach API proxy — forward /coach-api/* to coach-proxy.php
+RewriteRule ^coach-api(/.*)?$ coach-proxy.php [L]
+
+# Sponsored Projects is now a PHP page (login integration). Permanently
+# redirect the old static URL so existing internal/external links keep working.
+RewriteRule ^projects\.html$ /projects.php [R=301,L]

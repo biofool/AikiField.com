@@ -1,0 +1,217 @@
+<?php
+/**
+ * Coach API Proxy for AikiField — forwards /coach-api/* requests to the
+ * Quantum Aikido coaching backend (AIRichardMoon on Cloud Run).
+ *
+ * Ported from quantumaikido.com/web/coach-proxy.php, trimmed for AikiField:
+ *   - No staging folder (AikiField has no /staging/ wrapper).
+ *   - No dev mock OAuth block (not used here).
+ *   - OAuth Location rewriting targets /projects.php (AikiField's login page)
+ *     instead of QA's /members.php / /for-review/members.php / /dojos.php.
+ *
+ * URL mapping:
+ *   /coach-api/v1/auth/verify        →  BACKEND/v1/auth/verify
+ *   /coach-api/v1/auth/register-with-password
+ *                                     →  BACKEND/v1/auth/register-with-password
+ *   /coach-api/v1/chat-secure        →  BACKEND/v1/chat-secure
+ *   /coach-api/v1/auth/google/callback → BACKEND/v1/auth/google/callback
+ *
+ * Requirements: PHP 8.0+ with cURL. Apache mod_rewrite routes /coach-api/* to
+ * this file via .htaccess (see .htaccess at the web root).
+ */
+
+// Load config — coach-config.local.php (gitignored) → coach-config.php.
+require __DIR__ . '/includes/coach-config.load.php';
+if (!defined('COACH_TIMEOUT')) {
+    define('COACH_TIMEOUT', 30);
+}
+
+// Proxy shared secret — when set, sent as X-Proxy-Secret on every request so
+// the backend can reject direct access to the Cloud Run URL and waive the
+// registration captcha. Must match PROXY_SECRET in GCP Secret Manager.
+if (!defined('COACH_PROXY_SECRET')) {
+    define('COACH_PROXY_SECRET', '');
+}
+if (COACH_PROXY_SECRET === '' && PHP_SAPI !== 'cli') {
+    error_log('WARNING: COACH_PROXY_SECRET is empty — proxy verification is disabled. Set it in coach-config.local.php to match PROXY_SECRET in GCP Secret Manager.');
+}
+
+// OAuth redirect URI — must point back to this proxy. Social login is
+// currently disabled in coach-login.js, but keep this so enabling it later
+// only requires backend/Google config, not proxy changes.
+if (!defined('COACH_OAUTH_REDIRECT_URI')) {
+    $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+    $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+    define('COACH_OAUTH_REDIRECT_URI', $scheme . '://' . $host . '/coach-api/v1/auth/google/callback');
+}
+
+// --- Headers to forward ---
+$FORWARD_REQ_HEADERS = [
+    'content-type',
+    'x-auth-email',
+    'x-auth-session',
+    'x-request-id',
+    'authorization',
+];
+
+$FORWARD_RESP_HEADERS = [
+    'content-type',
+    'set-cookie',
+    'location',       // OAuth redirects
+    'retry-after',    // Rate limiting
+    'x-request-id',
+];
+
+// --- Main ---
+$method = $_SERVER['REQUEST_METHOD'];
+$uri = $_SERVER['REQUEST_URI'] ?? '/';
+
+// Strip /coach-api prefix.
+$path = $uri;
+$prefix = '/coach-api';
+if (str_starts_with($path, $prefix)) {
+    $path = substr($path, strlen($prefix));
+}
+if ($path === '' || $path[0] !== '/') {
+    $path = '/' . $path;
+}
+
+// Build backend URL. AikiField has no staging wrapper, so always use
+// COACH_BACKEND_URL (honour X-Target-Environment only if a staging URL is
+// configured, for forward compatibility).
+$targetEnv = $_SERVER['HTTP_X_TARGET_ENVIRONMENT'] ?? '';
+$selectedBackend = COACH_BACKEND_URL;
+if ($targetEnv === 'staging' && defined('COACH_STAGING_URL') && COACH_STAGING_URL !== '') {
+    $selectedBackend = COACH_STAGING_URL;
+}
+$backendUrl = rtrim($selectedBackend, '/') . $path;
+
+// Build headers to forward
+$headers = [];
+foreach (getallheaders() as $name => $value) {
+    if (in_array(strtolower($name), $FORWARD_REQ_HEADERS)) {
+        $headers[] = "$name: $value";
+    }
+}
+
+// Add proxy secret header so the backend knows this came through the proxy
+if (COACH_PROXY_SECRET !== '') {
+    $headers[] = 'X-Proxy-Secret: ' . COACH_PROXY_SECRET;
+}
+
+// For any OAuth authorize endpoint, pass the local redirect_uri to the
+// backend so it constructs the OAuth URL with the correct callback address.
+// Matches /v1/auth/{provider}/authorize for any provider.
+if ($method === 'GET' && preg_match('#/v1/auth/([^/]+)/authorize$#', $path, $providerMatch)) {
+    $provider = $providerMatch[1];
+    $redirectUri = str_replace('/google/callback', '/' . $provider . '/callback', COACH_OAUTH_REDIRECT_URI);
+    $sep = str_contains($backendUrl, '?') ? '&' : '?';
+    $backendUrl .= $sep . 'redirect_uri=' . urlencode($redirectUri);
+}
+
+// Get request body
+$body = '';
+if (in_array($method, ['POST', 'PUT', 'PATCH', 'DELETE'])) {
+    $contentType = $_SERVER['CONTENT_TYPE'] ?? '';
+    if (str_starts_with($contentType, 'multipart/form-data')) {
+        $body = file_get_contents('php://input');
+        if ($body === false || $body === '') {
+            // Fallback: reconstruct from $_FILES
+            $body = '';
+            $boundary = '';
+            if (preg_match('/boundary=(.*)$/', $contentType, $m)) {
+                $boundary = $m[1];
+            }
+            foreach ($_FILES as $key => $file) {
+                if ($file['error'] === UPLOAD_ERR_OK) {
+                    $content = file_get_contents($file['tmp_name']);
+                    $body .= "--{$boundary}\r\n";
+                    $body .= "Content-Disposition: form-data; name=\"{$key}\"; filename=\"{$file['name']}\"\r\n";
+                    $body .= "Content-Type: {$file['type']}\r\n\r\n";
+                    $body .= $content . "\r\n";
+                }
+            }
+            if ($body) {
+                $body .= "--{$boundary}--\r\n";
+            }
+        }
+    } else {
+        $body = file_get_contents('php://input');
+        if ($body === false) $body = '';
+    }
+}
+
+// cURL request
+$ch = curl_init($backendUrl);
+curl_setopt_array($ch, [
+    CURLOPT_CUSTOMREQUEST  => $method,
+    CURLOPT_HTTPHEADER     => $headers,
+    CURLOPT_RETURNTRANSFER => true,
+    CURLOPT_HEADER         => true,
+    CURLOPT_FOLLOWLOCATION => false,
+    CURLOPT_TIMEOUT        => COACH_TIMEOUT,
+    CURLOPT_SSL_VERIFYPEER => COACH_VERIFY_TLS,
+    CURLOPT_SSL_VERIFYHOST => COACH_VERIFY_TLS ? 2 : 0,
+    CURLOPT_HTTP_VERSION   => CURL_HTTP_VERSION_1_1,
+]);
+
+if ($body !== '') {
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $body);
+}
+
+$response   = curl_exec($ch);
+$httpCode   = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+$headerSize = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+$error      = curl_error($ch);
+curl_close($ch);
+
+if ($response === false) {
+    http_response_code(502);
+    header('Content-Type: application/json');
+    echo json_encode([
+        'detail' => 'Coach backend unavailable: ' . $error,
+        'backendUrl' => COACH_BACKEND_URL,
+    ]);
+    exit;
+}
+
+// Split response
+$rawHeaders = substr($response, 0, $headerSize);
+$responseBody = substr($response, $headerSize);
+
+// Parse and forward response headers
+$headerLines = explode("\r\n", trim($rawHeaders));
+foreach ($headerLines as $line) {
+    if (str_starts_with($line, 'HTTP/')) continue;
+    if (trim($line) === '') continue;
+    $colonPos = strpos($line, ':');
+    if ($colonPos === false) continue;
+    $headerName  = substr($line, 0, $colonPos);
+    $headerValue = trim(substr($line, $colonPos + 1));
+    if (in_array(strtolower($headerName), $FORWARD_RESP_HEADERS)) {
+        header("$headerName: $headerValue", false);
+    }
+}
+
+// Rewrite OAuth Location header to send the user back to AikiField's login
+// page (projects.php). The backend redirects to /login.html?oauth_code=<OTC>;
+// we rewrite that to /projects.php so coach-login.js can complete the OTC
+// exchange. Social login is currently disabled, but this keeps the proxy
+// correct if it is re-enabled.
+foreach ($headerLines as $line) {
+    if (str_starts_with($line, 'HTTP/')) continue;
+    if (trim($line) === '') continue;
+    $colonPos = strpos($line, ':');
+    if ($colonPos === false) continue;
+    $headerName  = substr($line, 0, $colonPos);
+    $headerValue = trim(substr($line, $colonPos + 1));
+    if (strtolower($headerName) === 'location') {
+        $rewritten = str_replace('/login.html', '/projects.php', $headerValue);
+        if ($rewritten !== $headerValue) {
+            header('Location: ' . $rewritten);
+        }
+    }
+}
+
+http_response_code($httpCode);
+echo $responseBody;

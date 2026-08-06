@@ -38,9 +38,18 @@ site. Validate changes by visual review and accessibility checks.
 ## Architecture
 
 - **Pages (root):** `index.html`, `approach.html`, `services.html`,
-  `process.html`, `projects.html`, `assessment.html`, `contact.html`.
-- **Styles:** `css/` (e.g. `css/redesign.css`).
-- **Scripts:** `js/`.
+  `process.html`, `projects.php`, `assessment.html`, `contact.html`.
+  (`projects.html` is now `projects.php` — it hosts the coaching login and
+  301-redirects via `.htaccess`.)
+- **Styles:** `css/` (e.g. `css/redesign.css`) + `coach-auth.css` (login form).
+- **Scripts:** `js/` + `coach-login.js` (login/register/reset/confirm).
+- **Coaching auth + chat (PHP):** `projects.php` (inline login when
+  unauthed + AI Chat when authed + session POST handlers), `coach-proxy.php`
+  (`/coach-api/*` → AIRichardMoon backend), `coach-login.js` (unauthed),
+  `coach-chat.js` (authed), `includes/coach-config.load.php`,
+  `coach-config.php` (non-secret template), `coach-config.local.php`
+  (gitignored — `COACH_PROXY_SECRET` / `TURNSTILE_SITE_KEY`), `.htaccess`.
+  See `docs/coach-auth-prd.md`.
 - **Content source of truth:** `SITE_CONTENT.md` -- update this alongside HTML
   when any site copy changes.
 - **Binary assets:** `AikiField.pdf` and redesign zips are DVC-tracked
@@ -59,6 +68,14 @@ site. Validate changes by visual review and accessibility checks.
   DVC (`.dvc` file + `dvc push`).
 - **`input/` is gitignored** -- it holds working/source materials only.
 - **`sync.sh` is production-sensitive.** Always run `dryrun` before `deploy`.
+- **Coaching auth + chat = shared flow (triple-PRD rule).** `projects.php`
+  hosts the login (when unauthed) and the AI Chat (when authed), both
+  authenticating against the AIRichardMoon backend (same as
+  quantumaikido.com). The chat is same-origin on aikifield.com, so no
+  cross-domain redirect. Changes to login/registration/auth/chat/session/
+  invitation flow MUST update all three PRDs (`docs/coach-auth-prd.md` here,
+  `docs/coach-dashboard-prd.md` in QA, `backend/PRD.md` in AIRichardMoon) and
+  deploy all affected repos together. Never commit `coach-config.local.php`.
 
 ## Global conventions (apply to every project)
 
