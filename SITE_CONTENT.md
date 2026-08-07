@@ -90,20 +90,17 @@ Series A–C startups | SaaS companies | AI-powered product teams | Venture-back
 **Heading:** Built for leaders who own security but can't hire a full-time CISO.
 **Intro:** Enterprise customers are asking hard questions, the backlog is growing, and security keeps landing on someone's already-full plate. We meet each of those leaders where they are — from venture-backed product teams to mid-market organisations.
 
-**Founder / CEO — Turn security from deal-blocker into differentiator.**
-Win enterprise deals with a credible security story — clear questionnaires without panic, and a posture that builds customer trust instead of stalling revenue.
+Four cards. Two pairs were merged after the geography was removed, because
+the place name had been the only thing distinguishing them.
 
-**CTO / VP Engineering — Get senior support on architecture and delivery.**
+**Founder / CEO / GM — Turn security from deal-blocker into business advantage.**  (→ fractional-ciso-for-saas.html)
+Win enterprise deals with a credible security story — clear questionnaires without panic, and a posture that builds customer trust instead of stalling revenue. Translate cyber risk into decisions about continuity, reputation, and growth, without overwhelming non-technical stakeholders.
+
+**CTO / VP Engineering — Get senior support on architecture and delivery.**  (→ ai-devsecops-vulnerability-remediation.html)
 Threat modeling in the design phase, security in the CI/CD pipeline, and a remediation workflow that clears the backlog without derailing the roadmap.
 
-**Board / Investors — Gain a defensible view of risk and readiness.**
-Concise reporting on exposure, capability gaps, and priorities — technical risk translated into the business language governance actually needs.
-
-**CEO / GM · Mid-market — Translate cyber risk into business decisions.**
-Show how security supports continuity, reputation, and strategic growth without overwhelming non-technical stakeholders — framed for the mid-market and its regulatory landscape.
-
-**Board / Audit committee — Gain a clearer view of resilience and readiness.**
-Concise, defensible reporting on exposure, capability gaps, and practical next steps for governance — aligned to privacy legislation and critical-service obligations.
+**Board / Investors / Audit committee — Gain a defensible view of risk, resilience, and readiness.**  (→ services.html)
+Concise, defensible reporting on exposure, capability gaps, and practical next steps — technical risk translated into the business language governance actually needs, aligned to privacy legislation and critical-service obligations.
 
 **Mission-driven organisation — Security that fits your mission, not a corporate template.**
 Practical security for NGOs and community organisations — right-sized to your risk, your budget, and the trust your community places in you.
