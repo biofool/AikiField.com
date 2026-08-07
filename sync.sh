@@ -49,6 +49,7 @@ EXCLUDES=(
     --exclude='Thumbs.db'
     --exclude='*.tmp'
     --exclude='sync.sh'
+    --exclude='_*preview*.html'
     --exclude='SITE_CONTENT.md'
     --exclude='*.md'
     --exclude='*.py'
