@@ -1,5 +1,33 @@
-/* Coach auth + chat styles — members.php */
+/* Coach auth + chat styles — ported from quantumaikido.com/web members.php.
+   That file's dark theme (styles.css) defines --primary-bg, --secondary-bg,
+   --accent, --text-primary/-secondary/-muted, --border, --warn,
+   --coach-accent. AikiField loads only css/redesign.css (light "paper" +
+   deep-green theme, --af-* tokens) — none of those names exist here, so
+   every rule below that reads them was resolving to nothing (invisible
+   backgrounds/borders) or to hardcoded dark-navy inline fallbacks (e.g.
+   "var(--secondary-bg, #1e293b)"), which is why the login/chat boxes were
+   hard to see or looked visually disconnected from the rest of the site.
+   Bridge the generic names onto AikiField's own tokens so every rule in
+   this file renders consistently with the AikiField brand. */
 :root {
+    --primary-bg: var(--af-white, #fff);
+    --secondary-bg: var(--af-bg, #F6F2EA);
+    --border: var(--af-border, #E0D9CB);
+    --accent: var(--af-primary, #0E4E44);
+    /* NOTE: on QA's dark theme, --accent-light (#a78bfa) is a *lighter*
+       shade used as readable link/text color against a dark background.
+       AikiField is a light "paper" theme, so the readable-as-text accent
+       here is the primary green itself (contrast ~8.6:1 on --af-bg) — the
+       actual mint token (--af-mint) is reserved for text/accents placed on
+       top of a solid green background (see the chat treatment below) and
+       fails contrast (~1.6:1) against the paper background. */
+    --accent-light: var(--af-primary, #0E4E44);
+    --coach-accent: var(--af-primary, #0E4E44);
+    --text-primary: var(--af-ink, #16201C);
+    --text-secondary: var(--af-text, #2C3833);
+    --text-muted: var(--af-muted, #5A655F);
+    --warn: var(--af-gold, #9A6B14);
+
     --coach-surface: var(--secondary-bg);
     --coach-border: var(--border);
     --coach-radius: 0.75rem;
@@ -32,6 +60,52 @@
     color: var(--text-muted);
     line-height: 1.6;
     margin: 0 0 1rem;
+}
+
+/* Base .btn / .btn-primary / .btn-secondary — the coach markup (ported
+   from quantumaikido.com/web) uses these class names, but AikiField only
+   loads css/redesign.css (which defines .af-btn / .af-btn--primary, a
+   different naming convention) and css/style.css (which defines .btn--
+   primary with a double-dash, also different, and isn't even loaded on
+   projects.php). Neither one styles ".btn"/"btn-primary"/"btn-secondary",
+   so every coach button (Sign in, Sign out, Clear, Send, social login)
+   was rendering as a bare unstyled <button> — no color, no padding, no
+   border-radius. Define them here, sized like the ported QA source but
+   colored with AikiField's own tokens. */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    border: none;
+    font: inherit;
+    font-weight: 600;
+    font-size: 1rem;
+    min-height: 44px;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.btn-primary {
+    background-color: var(--accent);
+    color: #fff;
+}
+
+.btn-primary:hover {
+    background-color: var(--af-primary-dk, #0A3A33);
+}
+
+.btn-secondary {
+    background: transparent;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+}
+
+.btn-secondary:hover {
+    background-color: var(--af-hover-bg, #EBE4D6);
 }
 
 .coach-intro-features {
@@ -205,19 +279,27 @@
     margin-top: 0.75rem;
 }
 
+/* NOTE: the QA source used pastel colors (#81c784, #ef9a9a) tuned for a
+   dark navy background. On AikiField's light theme those have ~2:1
+   contrast against the card background (fails WCAG AA's 4.5:1) — swapped
+   for the same success/error palette already used by the AikiField
+   contact form (.af-form-status--success/--error in redesign.css) so this
+   matches both accessibility requirements and existing site conventions. */
 .coach-status.status-loading {
-    background: rgba(139, 92, 246, 0.1);
+    background: var(--af-hover-bg, #EBE4D6);
     color: var(--accent-light);
 }
 
 .coach-status.status-success {
-    background: rgba(46, 125, 50, 0.15);
-    color: #81c784;
+    background: #E8F5E9;
+    border: 1px solid #4CAF50;
+    color: #1B5E20;
 }
 
 .coach-status.status-error {
-    background: rgba(198, 40, 40, 0.15);
-    color: #ef9a9a;
+    background: #FFF3E0;
+    border: 1px solid #FF9800;
+    color: #E65100;
 }
 
 /* Choices */
@@ -263,14 +345,18 @@
     padding: 0.4rem 0.8rem;
 }
 
+/* AikiField chat background: use the brand's deep green (same green as
+   the homepage hero/CTA sections) instead of a plain white/paper panel,
+   so the conversation reads as a clearly branded, clearly bounded box
+   rather than blending into the page. */
 .coach-messages {
     max-height: 400px;
     overflow-y: auto;
-    border: 1px solid var(--coach-border);
+    border: 1px solid var(--af-primary-dk, #0A3A33);
     border-radius: 0.5rem;
     padding: 1rem;
     margin-bottom: 1rem;
-    background: var(--primary-bg);
+    background: var(--af-primary, #0E4E44);
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
@@ -284,15 +370,23 @@
     max-width: 85%;
 }
 
+/* User bubble: mint pill, high contrast against the green backdrop
+   (mint bg / dark-green text ≈ 6.9:1). */
 .coach-msg-user {
-    background: var(--accent);
-    color: white;
+    background: var(--af-mint, #5FD3B2);
+    color: var(--af-primary-dk, #0A3A33);
     align-self: flex-end;
 }
 
+/* AI bubble: a near-white "paper" card floating on the green, matching
+   the white-card-on-green idiom used elsewhere on the site (e.g. carousel
+   CTA buttons). Nested text (sources, timestamps, feedback chips, etc.)
+   keeps using --text-muted/--text-primary, both tuned for light
+   backgrounds, so no further per-element overrides are needed. */
 .coach-msg-ai {
-    background: var(--secondary-bg);
-    border: 1px solid var(--coach-border);
+    background: rgba(255, 255, 255, 0.96);
+    color: var(--text-primary);
+    border: 1px solid rgba(255, 255, 255, 0.6);
     align-self: flex-start;
 }
 
@@ -460,10 +554,15 @@
     margin-top: 0.5rem;
     padding-top: 0.4rem;
 }
+/* NOTE: the original (QA dark-theme) rules here used raw white rgba()
+   values, assuming these controls sit inside a dark .coach-msg-ai bubble.
+   AikiField's .coach-msg-ai bubble is a light "paper" card (see above), so
+   those are inverted here to dark-on-light equivalents — otherwise these
+   chips render as near-invisible white-on-white controls. */
 .coach-fb-chip {
     background: none;
-    border: 1px solid rgba(255,255,255,0.15);
-    color: rgba(255,255,255,0.5);
+    border: 1px solid var(--af-border, #E0D9CB);
+    color: var(--af-muted, #5A655F);
     padding: 0.25rem 0.5rem;
     border-radius: 1rem;
     font-size: 1rem;
@@ -472,10 +571,11 @@
     font-family: inherit;
     line-height: 1;
 }
-.coach-fb-chip:hover { border-color: rgba(255,255,255,0.4); }
+.coach-fb-chip:hover { border-color: var(--af-primary, #0E4E44); }
 .coach-fb-chip.coach-fb-selected {
-    background: var(--coach-accent, #4fc3f7);
-    border-color: var(--coach-accent, #4fc3f7);
+    background: var(--coach-accent, #0E4E44);
+    border-color: var(--coach-accent, #0E4E44);
+    color: #fff;
 }
 .coach-fb-detail {
     display: flex;
@@ -487,7 +587,7 @@
 }
 .coach-fb-detail-prompt {
     font-size: 0.8rem;
-    color: rgba(255,255,255,0.6);
+    color: var(--af-muted, #5A655F);
     font-style: italic;
     width: 100%;
 }
@@ -499,25 +599,25 @@
     flex: 1;
     min-width: 12rem;
     padding: 0.3rem 0.6rem;
-    border: 1px solid rgba(255,255,255,0.15);
+    border: 1px solid var(--af-border, #E0D9CB);
     border-radius: 0.3rem;
     font-size: 0.85rem;
     font-family: inherit;
-    color: #fff;
-    background: rgba(0,0,0,0.3);
+    color: var(--text-primary);
+    background: var(--af-white, #fff);
 }
-.coach-fb-detail-input:focus { outline: none; border-color: var(--coach-accent, #4fc3f7); }
+.coach-fb-detail-input:focus { outline: none; border-color: var(--coach-accent, #0E4E44); }
 .coach-fb-detail-submit {
     padding: 0.3rem 0.8rem;
-    border: 1px solid rgba(255,255,255,0.15);
+    border: 1px solid var(--af-border, #E0D9CB);
     border-radius: 0.3rem;
     font-size: 0.85rem;
     cursor: pointer;
     font-family: inherit;
-    background: rgba(0,0,0,0.3);
-    color: #fff;
+    background: var(--af-white, #fff);
+    color: var(--text-primary);
 }
-.coach-fb-detail-submit:hover { border-color: var(--coach-accent, #4fc3f7); }
+.coach-fb-detail-submit:hover { border-color: var(--coach-accent, #0E4E44); }
 
 .coach-queue-banner {
     background: rgba(245, 127, 23, 0.15);
@@ -726,7 +826,7 @@
 }
 
 .coach-char-counter.over-limit #coach-char-count {
-    color: #ef9a9a;
+    color: #C62828;
 }
 
 /* Toggle row (login ↔ register) */
@@ -811,17 +911,17 @@
 }
 
 .coach-danger-zone {
-    border-top-color: rgba(198, 40, 40, 0.3);
+    border-top-color: #C62828;
 }
 
 .coach-danger-zone h3 {
-    color: #ef9a9a;
+    color: #C62828;
 }
 
 .btn-danger {
-    background: rgba(198, 40, 40, 0.15);
-    border: 1px solid rgba(198, 40, 40, 0.4);
-    color: #ef9a9a;
+    background: #FDECEA;
+    border: 1px solid #C62828;
+    color: #C62828;
     border-radius: 0.5rem;
     padding: 0.65rem 1rem;
     font: inherit;
@@ -831,11 +931,11 @@
 }
 
 .btn-danger:hover {
-    background: rgba(198, 40, 40, 0.25);
+    background: #FBDADA;
 }
 
 .status-info {
-    background: rgba(139, 92, 246, 0.1);
+    background: var(--af-hover-bg, #EBE4D6);
     color: var(--accent-light);
 }
 

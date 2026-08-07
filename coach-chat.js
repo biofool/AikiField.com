@@ -569,7 +569,7 @@
         if (messagesDiv) messagesDiv.innerHTML = "";
         userMessageCount = 0;
         updateEnvUI();
-        addMessage("ai", "Welcome. I'm here as a guide grounded in the Quantum Aikido school. Care to describe your learning style? Don't worry — you can change it along the way.\n\nFYI, my dataset includes books, videos, and private coaching writings — including material on How to Get Luckier.");
+        addMessage("ai", "Welcome. I'm here as a guide grounded in the Quantum Aikido school. Care to describe your learning style? Don't worry — you can change it along the way.\n\nFYI, my dataset includes books, videos, and private coaching writings — How to get luckier!");
         showDokuOfTheHour();
     }
 
@@ -586,7 +586,7 @@
             }
             const data = await resp.json();
             if (data && data.excerpt) {
-                addMessage("ai", "Today's teaching: " + data.excerpt);
+                addMessage("ai", data.excerpt);
             }
         } catch (err) {
             console.error("coach-chat: could not load doku of the hour:", err);
