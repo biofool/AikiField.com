@@ -1,33 +1,43 @@
 # AikiField.com — robots.txt
 # Allow all crawlers including AI/LLM bots and RAG indexers.
+# /beta/ holds unreleased previews and is excluded from every group.
 
 User-agent: *
 Allow: /
+Disallow: /beta/
 
 # Explicitly allow AI/LLM user-agents (no blocks)
 User-agent: GPTBot
 Allow: /
+Disallow: /beta/
 
 User-agent: OAI-SearchBot
 Allow: /
+Disallow: /beta/
 
 User-agent: PerplexityBot
 Allow: /
+Disallow: /beta/
 
 User-agent: ClaudeBot
 Allow: /
+Disallow: /beta/
 
 User-agent: anthropic-ai
 Allow: /
+Disallow: /beta/
 
 User-agent: Google-Extended
 Allow: /
+Disallow: /beta/
 
 User-agent: Bytespider
 Allow: /
+Disallow: /beta/
 
 User-agent: CCBot
 Allow: /
+Disallow: /beta/
 
 # Sitemap
 Sitemap: https://aikifield.com/sitemap.xml

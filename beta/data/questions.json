@@ -1,0 +1,204 @@
+{
+  "version": 1,
+  "note": "Question text is reproduced verbatim from assessment.html. Update SITE_CONTENT.md alongside any change here.",
+  "scale": {
+    "min": 1,
+    "max": 6,
+    "stem": "On a scale of 1–6 (6 being high), how well, how much, or how often do you…",
+    "labels": {
+      "1": "Not at all / never",
+      "2": "Rarely",
+      "3": "Sometimes",
+      "4": "Often",
+      "5": "Consistently",
+      "6": "Fully / always"
+    },
+    "lowAnchor": "Not at all",
+    "highAnchor": "Fully"
+  },
+  "assessments": {
+    "organisation": {
+      "id": "organisation",
+      "kind": "organisational",
+      "title": "Organisational Security Posture",
+      "shortTitle": "Organisational",
+      "lead": "Five categories describing the security conditions your organisation currently maintains — its posture, controls, and readiness.",
+      "page": "assessment-organisation.html",
+      "groups": [
+        {
+          "id": "governance",
+          "name": "Governance & Strategy",
+          "short": "Governance",
+          "questions": [
+            { "id": "gov-1", "text": "Have a documented security posture aligned to your business stage?" },
+            { "id": "gov-2", "text": "Have a security roadmap with clear priorities and owners?" },
+            { "id": "gov-3", "text": "Review security metrics with the leadership team regularly?" },
+            { "id": "gov-4", "text": "Have a risk register that's actively maintained and visible?" }
+          ]
+        },
+        {
+          "id": "product",
+          "name": "Product & Engineering Security",
+          "short": "Product",
+          "questions": [
+            { "id": "prd-1", "text": "Conduct threat modeling for new products and features?" },
+            { "id": "prd-2", "text": "Have documented secure development practices your team follows?" },
+            { "id": "prd-3", "text": "Have an AI governance framework for AI-powered features?" },
+            { "id": "prd-4", "text": "Integrate security into your CI/CD pipeline?" }
+          ]
+        },
+        {
+          "id": "devsecops",
+          "name": "DevSecOps & Vulnerability Remediation",
+          "short": "DevSecOps",
+          "questions": [
+            { "id": "dso-1", "text": "Track average time to identify, escalate, and remediate vulnerabilities?" },
+            { "id": "dso-2", "text": "Use AI-assisted triage workflows for vulnerability management?" },
+            { "id": "dso-3", "text": "Have a defined vulnerability severity ranking and SLA?" },
+            { "id": "dso-4", "text": "Monitor your DevOps pipeline for security issues?" }
+          ]
+        },
+        {
+          "id": "trust",
+          "name": "Customer Trust & Compliance",
+          "short": "Trust",
+          "questions": [
+            { "id": "trs-1", "text": "Can complete enterprise security questionnaires without panic?" },
+            { "id": "trs-2", "text": "Have a clear narrative for how you protect customer data?" },
+            { "id": "trs-3", "text": "Are SOC 2 (or equivalent) ready or certified?" },
+            { "id": "trs-4", "text": "Turn security from a deal-blocker into a differentiator?" }
+          ]
+        },
+        {
+          "id": "incident",
+          "name": "Incident Readiness",
+          "short": "Incident",
+          "questions": [
+            { "id": "inc-1", "text": "Have an incident response playbook with defined roles?" },
+            { "id": "inc-2", "text": "Conduct tabletop exercises to test your incident response?" },
+            { "id": "inc-3", "text": "Have a customer communication plan for security incidents?" },
+            { "id": "inc-4", "text": "Feel confident in your team's ability to lead through a breach?" }
+          ]
+        }
+      ]
+    },
+    "leadership": {
+      "id": "leadership",
+      "kind": "individual",
+      "title": "Leadership Presence Profile",
+      "shortTitle": "Leadership",
+      "lead": "Seven dimensions describing how you tend to show up in the security conditions you lead — under load, in conflict, and in uncertainty.",
+      "page": "assessment-leadership.html",
+      "groups": [
+        {
+          "id": "balance",
+          "name": "Balance",
+          "short": "Balance",
+          "subtitle": "Aligned Action — Center / Relax / Ground",
+          "cluster": "steadiness",
+          "questions": [
+            { "id": "bal-1", "text": "Maintain balance between security urgency and business priorities?" },
+            { "id": "bal-2", "text": "Hold yourself and your team accountable for security commitments?" },
+            { "id": "bal-3", "text": "Center and relax when in high-pressure security situations?" },
+            { "id": "bal-4", "text": "Keep security decisions simple and grounded in business reality?" }
+          ]
+        },
+        {
+          "id": "flexibility",
+          "name": "Flexibility",
+          "short": "Flexibility",
+          "subtitle": "Non-Resistance — Allow / Accept / Adapt",
+          "cluster": "steadiness",
+          "questions": [
+            { "id": "flx-1", "text": "Accept extended periods of uncertainty about emerging threats?" },
+            { "id": "flx-2", "text": "Let go of security approaches that no longer serve?" },
+            { "id": "flx-3", "text": "Approach security conflicts with engineering as creative opportunities?" },
+            { "id": "flx-4", "text": "Adapt to sudden security challenges without freezing?" }
+          ]
+        },
+        {
+          "id": "vitality",
+          "name": "Vitality",
+          "short": "Vitality",
+          "subtitle": "Dynamic Presence — Breathe / Sense / Enjoy",
+          "cluster": "steadiness",
+          "questions": [
+            { "id": "vit-1", "text": "Practice conscious presence before high-stakes security conversations?" },
+            { "id": "vit-2", "text": "Bring energy and engagement to security discussions?" },
+            { "id": "vit-3", "text": "Maintain the stamina for sustained security leadership?" },
+            { "id": "vit-4", "text": "Find genuine enjoyment in the craft of security leadership?" }
+          ]
+        },
+        {
+          "id": "heart",
+          "name": "Heart",
+          "short": "Heart",
+          "subtitle": "Relational Harmony — Feel / Flow / Join",
+          "cluster": "relational",
+          "questions": [
+            { "id": "hrt-1", "text": "Build genuine partnership with engineering?" },
+            { "id": "hrt-2", "text": "Demonstrate empathy for engineers who raise security concerns?" },
+            { "id": "hrt-3", "text": "Collaborate creatively with product on secure feature design?" },
+            { "id": "hrt-4", "text": "Listen deeply to what customers are actually asking about security?" }
+          ]
+        },
+        {
+          "id": "voice",
+          "name": "Voice",
+          "short": "Voice",
+          "subtitle": "Creative Expression — Aspire / Engage / Dialogue",
+          "cluster": "relational",
+          "questions": [
+            { "id": "voc-1", "text": "Articulate your security posture and commitments clearly to others?" },
+            { "id": "voc-2", "text": "Communicate security risk in language the business can understand?" },
+            { "id": "voc-3", "text": "Advocate for security investment without using fear as a weapon?" },
+            { "id": "voc-4", "text": "Listen to your own communication patterns and adjust?" }
+          ]
+        },
+        {
+          "id": "vision",
+          "name": "Vision",
+          "short": "Vision",
+          "subtitle": "Inspired Leadership — Imagine / Intend / Create",
+          "cluster": "generative",
+          "questions": [
+            { "id": "vis-1", "text": "Visualize a security program that enables business growth?" },
+            { "id": "vis-2", "text": "Set time aside for strategic security thinking?" },
+            { "id": "vis-3", "text": "Make sound security decisions under pressure?" },
+            { "id": "vis-4", "text": "Provide generous stewardship of customer trust?" }
+          ]
+        },
+        {
+          "id": "inspiration",
+          "name": "Inspiration",
+          "short": "Inspiration",
+          "subtitle": "Not Knowing — Inquire / Listen / Intuit",
+          "cluster": "generative",
+          "questions": [
+            { "id": "isp-1", "text": "Value self-reflection and inquiry into your own security leadership?" },
+            { "id": "isp-2", "text": "Value not knowing? Value paradox? Value intuition about emerging risk?" },
+            { "id": "isp-3", "text": "Listen to signals from the threat landscape beyond the obvious?" },
+            { "id": "isp-4", "text": "Find quiet space to sense emerging risks before they materialize?" }
+          ]
+        }
+      ],
+      "clusters": {
+        "steadiness": {
+          "name": "Steadiness",
+          "description": "how you hold yourself when the load arrives",
+          "members": ["balance", "flexibility", "vitality"]
+        },
+        "relational": {
+          "name": "Relational reach",
+          "description": "how you move with the people the work depends on",
+          "members": ["heart", "voice"]
+        },
+        "generative": {
+          "name": "Generative range",
+          "description": "how you sense and shape what is coming next",
+          "members": ["vision", "inspiration"]
+        }
+      }
+    }
+  }
+}

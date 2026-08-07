@@ -1,0 +1,198 @@
+{
+  "version": 1,
+  "note": "Cross-view mapping. Every reachable combination of organisational bucket × leadership bucket has an entry; `fallback` covers any combination that cannot be resolved. Interpretations describe the interaction between conditions and leadership pattern — never competence, never a grade.",
+  "principle": "This view does not tell you whether you are a good security leader. It describes how the way you lead meets the conditions you lead in, and what that combination tends to produce.",
+  "axes": {
+    "organisation": {
+      "label": "Organisational posture",
+      "method": "level = mean of the five category means; spread = highest category mean − lowest.",
+      "levels": [
+        { "id": "emerging", "name": "Emerging", "max": 3.0 },
+        { "id": "developing", "name": "Developing", "max": 4.5 },
+        { "id": "established", "name": "Established", "max": 6.01 }
+      ],
+      "shapes": [
+        { "id": "even", "name": "even", "maxSpread": 1.5 },
+        { "id": "uneven", "name": "uneven", "maxSpread": 5.01 }
+      ],
+      "buckets": {
+        "org-emerging-even": { "name": "Emerging, evenly", "descriptor": "conditions still being built, and built at a similar pace across the board" },
+        "org-emerging-uneven": { "name": "Emerging, uneven", "descriptor": "conditions still being built, with one or two areas well ahead of the rest" },
+        "org-developing-even": { "name": "Developing, evenly", "descriptor": "conditions taking hold consistently across the categories" },
+        "org-developing-uneven": { "name": "Developing, uneven", "descriptor": "conditions taking hold in some areas and staying thin in others" },
+        "org-established-even": { "name": "Established, evenly", "descriptor": "conditions established and consistent across the categories" },
+        "org-established-uneven": { "name": "Established, uneven", "descriptor": "conditions strong overall, with one visible soft edge" }
+      }
+    },
+    "leadership": {
+      "label": "Leadership pattern",
+      "method": "Cluster means across the seven dimensions: Steadiness (Balance, Flexibility, Vitality), Relational reach (Heart, Voice), Generative range (Vision, Inspiration). If the highest and lowest cluster means sit within 0.75 the pattern is evenly distributed; otherwise the leading cluster names the pattern.",
+      "evenThreshold": 0.75,
+      "buckets": {
+        "lead-steadiness": { "name": "Steadiness-led", "descriptor": "you lead from ground — self-regulation, consistency, holding a position while others move" },
+        "lead-relational": { "name": "Relationally-led", "descriptor": "you lead through people — partnership, trust, and plain speech across functions" },
+        "lead-generative": { "name": "Generatively-led", "descriptor": "you lead from ahead — sensing what is coming, framing it, setting direction" },
+        "lead-even": { "name": "Evenly distributed", "descriptor": "no single mode dominates; you draw on ground, relationship, and direction in roughly equal measure" }
+      }
+    }
+  },
+  "levelNotes": {
+    "leadership": [
+      { "max": 3.0, "text": "Across all seven dimensions your self-rating sits low. Read this view as a description of where you are starting, not of a ceiling." },
+      { "max": 4.5, "text": "Your self-rating sits in the working middle across the dimensions — enough range to choose which mode you lead with, rather than defaulting to one." },
+      { "max": 6.01, "text": "Your self-rating sits high across the dimensions. The question is less about capability than about where you spend it." }
+    ]
+  },
+  "combinations": {
+    "org-emerging-even|lead-steadiness": {
+      "headline": "Ground without scaffolding",
+      "interpretation": "The organisation has little structure yet, and you supply the steadiness personally. That works — and it means the programme currently runs on your presence rather than on anything written down.",
+      "watch": "What happens to security decisions in the weeks you are not in the room.",
+      "lever": "Convert one thing you hold in your head into something the team can hold without you: a documented posture, an owner, a standing review."
+    },
+    "org-emerging-even|lead-relational": {
+      "headline": "Leadership can accelerate foundational improvements",
+      "interpretation": "Conditions are early but even, and you have the stakeholder trust to move quickly. Foundational work here is cheap: nothing is entrenched, and people are willing to build with you.",
+      "watch": "Goodwill spent on conversation rather than on committed, dated work.",
+      "lever": "Use the trust now, while it is unspent, to get owners named against the first three foundations."
+    },
+    "org-emerging-uneven|lead-relational": {
+      "headline": "Trust ahead of foundation",
+      "interpretation": "You have relational reach and a posture that is strong in a few places and absent in others. The organisation is likely to believe security is further along than it is, because you communicate the strong parts well.",
+      "watch": "The gap between what people believe is covered and what is actually covered.",
+      "lever": "Say the uneven part out loud to the leadership team, plainly, before an incident says it for you."
+    },
+    "org-emerging-even|lead-generative": {
+      "headline": "Direction ahead of ground",
+      "interpretation": "You see clearly where the security programme should go, and almost none of it exists yet. The vision is an asset; the distance between it and today is the risk.",
+      "watch": "A roadmap that impresses and a first quarter that never starts.",
+      "lever": "Cut the vision down to the single foundation that must exist before any of the rest is worth building, and start there."
+    },
+    "org-emerging-even|lead-even": {
+      "headline": "Open ground",
+      "interpretation": "Conditions are early and evenly so, and no single leadership mode dominates. You have unusual freedom in how you build — and no default to fall back on when the first pressure arrives.",
+      "watch": "Breadth becoming an excuse not to commit to a sequence.",
+      "lever": "Choose one category to bring clearly ahead of the others in the next quarter. Deliberate unevenness beats undifferentiated effort."
+    },
+    "org-emerging-uneven|lead-steadiness": {
+      "headline": "Holding the built part",
+      "interpretation": "One or two areas are well ahead — usually the ones closest to your own instincts — and you hold them consistently. The remaining categories have neither structure nor attention.",
+      "watch": "Depth accumulating where you are already comfortable while the thin areas stay untouched.",
+      "lever": "Give the weakest category the same standing attention you already give the strongest, for one quarter."
+    },
+    "org-emerging-uneven|lead-generative": {
+      "headline": "Sensing ahead of building",
+      "interpretation": "You read emerging risk well and the organisation has very little in place to act on what you read. The strong categories are probably the ones your attention has already found.",
+      "watch": "Insight that never converts into a control anyone else can operate.",
+      "lever": "Take the risk you are most confident about and reduce it to one concrete, owned, dated action."
+    },
+    "org-emerging-uneven|lead-even": {
+      "headline": "Uneven ground, no fixed stance",
+      "interpretation": "The posture is patchy and your leadership draws on all three modes fairly equally. Nothing about the combination forces a sequence, so the sequence has to be chosen deliberately.",
+      "watch": "Attention following whatever is loudest that week.",
+      "lever": "Write the order you intend to build the five categories in, and hold it for a quarter."
+    },
+    "org-developing-even|lead-steadiness": {
+      "headline": "Consistent conditions, consistent hand",
+      "interpretation": "The programme is taking hold evenly and you hold position well. This combination compounds quietly — it is the one most likely to still be working in two years.",
+      "watch": "Consistency hardening into procedure that nobody questions.",
+      "lever": "Deliberately test one established practice against how the work is actually done now."
+    },
+    "org-developing-even|lead-relational": {
+      "headline": "Adoption is your multiplier",
+      "interpretation": "Conditions are genuinely taking hold and you move through people. Controls introduced here tend to actually get used, because the people affected were part of shaping them.",
+      "watch": "Consensus slowing the decisions that are properly yours alone.",
+      "lever": "Name the two or three calls you will make without consultation, and tell the team which ones those are."
+    },
+    "org-developing-even|lead-generative": {
+      "headline": "Momentum with a horizon",
+      "interpretation": "The programme is building steadily and you are already looking at what comes after. That pairing produces direction — provided the horizon does not pull attention off the work in progress.",
+      "watch": "Starting the next thing before the current thing is embedded.",
+      "lever": "Set an explicit finish line for the work already in flight before you introduce anything new."
+    },
+    "org-developing-even|lead-even": {
+      "headline": "Even and even",
+      "interpretation": "Conditions and leadership are both broadly distributed. Nothing is failing and nothing is distinctive; progress will be steady and unremarkable, which for a security programme is often correct.",
+      "watch": "Steady progress mistaken for sufficient progress as the company's stage changes.",
+      "lever": "Re-check the posture against your current business stage, not the one it was designed for."
+    },
+    "org-developing-uneven|lead-steadiness": {
+      "headline": "Held together at the strong end",
+      "interpretation": "Some categories have taken hold and others have not, and your steadiness is keeping the whole thing coherent. That works until the thin category is the one that gets tested.",
+      "watch": "Personal reliability compensating for a structural gap.",
+      "lever": "Pick the thinnest category and put a named owner other than you against it."
+    },
+    "org-developing-uneven|lead-relational": {
+      "headline": "Influence where structure is missing",
+      "interpretation": "Where the posture is thin, you are covering it with relationship — asking people directly, getting things done through goodwill. It is effective and it does not scale past the people who know you.",
+      "watch": "Coverage that depends on specific individuals staying in post.",
+      "lever": "Convert the most-used favour into a documented, owned process."
+    },
+    "org-developing-uneven|lead-generative": {
+      "headline": "Reaching forward over a gap",
+      "interpretation": "Parts of the posture are solid, parts are not, and your attention is on what is next rather than on the gap. Emerging risk is well-sensed; the known, unglamorous gap stays open.",
+      "watch": "The uninteresting category that nobody has picked up.",
+      "lever": "Spend one cycle on the least interesting weak area. Nothing about it will feel like leadership, and it is."
+    },
+    "org-developing-uneven|lead-even": {
+      "headline": "Mixed conditions, flexible hand",
+      "interpretation": "The posture is uneven and you can meet it in several ways. The combination is workable; what it lacks is a forcing function to close the specific gaps.",
+      "watch": "Adaptability applied evenly instead of pointedly.",
+      "lever": "Name the single weakest category and give it disproportionate attention for one quarter."
+    },
+    "org-established-even|lead-steadiness": {
+      "headline": "The organisation may struggle with changing threats",
+      "interpretation": "Posture is mature and consistent, and you lead by holding position. Together this produces a programme that is reliable and slow to change — well-defended against the threats it was designed for.",
+      "watch": "Controls that are followed because they exist rather than because they still fit.",
+      "lever": "Retire or rebuild one control this quarter. Practising change while nothing is on fire is the only cheap time to do it."
+    },
+    "org-established-even|lead-relational": {
+      "headline": "Mature and adopted",
+      "interpretation": "Conditions are established and you lead through the people who operate them. This is the combination where security stops being a separate function and becomes part of how the company works.",
+      "watch": "Maturity read as completeness; the questions stop being asked.",
+      "lever": "Ask the teams what the controls now cost them. A mature programme should be getting cheaper to run, not more expensive."
+    },
+    "org-established-even|lead-generative": {
+      "headline": "Solid base, forward attention",
+      "interpretation": "The posture holds and your attention is already on what is next. This is the strongest position from which to take on genuinely new risk — new products, new markets, AI-shaped exposure.",
+      "watch": "The base quietly eroding while attention is elsewhere.",
+      "lever": "Set one measure that would tell you the established parts are slipping, and review it on a schedule."
+    },
+    "org-established-even|lead-even": {
+      "headline": "Established and balanced",
+      "interpretation": "Both the posture and your leadership pattern are consistent and undramatic. This is a stable field. Its risk is not failure, it is stasis.",
+      "watch": "Nothing changing because nothing appears to need to.",
+      "lever": "Introduce a real stressor deliberately — a hard tabletop, an external review, a red team — before the environment introduces one."
+    },
+    "org-established-uneven|lead-steadiness": {
+      "headline": "Controls may exist but lack adoption",
+      "interpretation": "The posture is strong on paper with one visible soft edge, and you lead by holding position rather than by moving through people. The most common shape of that soft edge is adoption: the controls are real, and they are being routed around.",
+      "watch": "Compliance on the dashboard and workarounds in the workflow.",
+      "lever": "Go and watch one control being used in the real workflow. Ask what it costs, then change the control rather than restating it."
+    },
+    "org-established-uneven|lead-relational": {
+      "headline": "Strong programme, one open seam",
+      "interpretation": "Most of the posture is established and your relational reach keeps it adopted. The one weak category is likely one your influence does not extend into — a function or a system that sits outside your usual conversations.",
+      "watch": "The area you have no natural relationship with.",
+      "lever": "Identify who owns the weak category and build the relationship you do not currently have there."
+    },
+    "org-established-uneven|lead-generative": {
+      "headline": "Ahead of a known gap",
+      "interpretation": "The posture is largely mature with one clear weak point, and your attention is on emerging risk rather than on the known one. New risk is well-anticipated; the old, documented gap remains documented.",
+      "watch": "A weak area that has been on the list long enough to have stopped being read.",
+      "lever": "Close the oldest item on your risk register before adding a new one."
+    },
+    "org-established-uneven|lead-even": {
+      "headline": "Mature, with one thing outstanding",
+      "interpretation": "The programme is established apart from a single soft edge, and your leadership pattern is balanced enough to address it in whichever way the gap requires.",
+      "watch": "The gap staying open precisely because nothing about it is urgent.",
+      "lever": "Give the weak category a date and an owner this quarter. It is the only thing between this posture and a consistent one."
+    }
+  },
+  "fallback": {
+    "headline": "Two readings, one field",
+    "interpretation": "Your organisational posture and your leadership pattern have been recorded, but this particular combination does not resolve to a specific reading. Both radars below still hold — read them alongside each other.",
+    "watch": "Treating either reading on its own as the whole picture.",
+    "lever": "Compare your lowest organisational category against your lowest leadership dimension and ask whether one is producing the other."
+  }
+}

@@ -1,0 +1,67 @@
+{
+  "version": 1,
+  "note": "30-day practices keyed by group id from questions.json. The plan is assembled from the visitor's lowest-scoring groups (their development edges). These are practices, not remediation tickets.",
+  "framing": "A thirty-day plan is short on purpose. Two or three practices, done, beat a roadmap nobody starts.",
+  "groups": {
+    "governance": {
+      "label": "Governance & Strategy",
+      "week1": "Write your security posture on one page: what you protect, what you have accepted, and who owns each. One page, no appendix.",
+      "month": "Put a standing fifteen-minute security item on the leadership meeting with three numbers you will report every time."
+    },
+    "product": {
+      "label": "Product & Engineering Security",
+      "week1": "Threat-model one feature currently in build — the next one to ship, not a hypothetical. One hour, with the engineers who are building it.",
+      "month": "Turn what that session surfaced into the first two entries of a secure-development checklist the team actually uses."
+    },
+    "devsecops": {
+      "label": "DevSecOps & Vulnerability Remediation",
+      "week1": "Measure one number honestly: median days from vulnerability disclosure to production fix, over the last quarter.",
+      "month": "Set a severity ranking and an SLA against that measured baseline — not against an aspirational one."
+    },
+    "trust": {
+      "label": "Customer Trust & Compliance",
+      "week1": "Take the last enterprise security questionnaire you received and mark every answer that cost more than ten minutes to produce.",
+      "month": "Write the standing answers to those questions once, so the next questionnaire is assembly rather than authorship."
+    },
+    "incident": {
+      "label": "Incident Readiness",
+      "week1": "Name the roles: who declares an incident, who talks to customers, who talks to engineering. Three names, written down.",
+      "month": "Run one ninety-minute tabletop on a realistic scenario. The output is the list of things that did not work."
+    },
+    "balance": {
+      "label": "Balance",
+      "week1": "Before your next high-pressure security conversation, take sixty seconds to settle and decide the one thing you need the meeting to establish.",
+      "month": "Pick the one security commitment you have quietly let slip and close it — or formally let it go, out loud."
+    },
+    "flexibility": {
+      "label": "Flexibility",
+      "week1": "Name one security approach you are carrying out of habit rather than need. Just name it this week.",
+      "month": "Retire it, or rebuild it around how the work is actually done now."
+    },
+    "vitality": {
+      "label": "Vitality",
+      "week1": "Notice where in the week your security attention actually runs out, and write down what precedes it.",
+      "month": "Protect one recurring block of unfragmented time and defend it for four weeks. Note what changes."
+    },
+    "heart": {
+      "label": "Heart",
+      "week1": "Ask one engineer what security costs them in an ordinary week. Ask, then stay quiet long enough to hear the second answer.",
+      "month": "Change one thing they named. Tell them you changed it and why."
+    },
+    "voice": {
+      "label": "Voice",
+      "week1": "Rewrite your current top security risk in one sentence a non-technical director could repeat accurately.",
+      "month": "Use it in a real forum — board, leadership, all-hands — and notice which part gets misheard. Fix that part."
+    },
+    "vision": {
+      "label": "Vision",
+      "week1": "Take thirty minutes with no agenda and no laptop, and write what a security programme that clearly enabled growth would look like here in a year.",
+      "month": "Turn that into three priorities with owners, and delete everything on your current list that does not serve them."
+    },
+    "inspiration": {
+      "label": "Inspiration",
+      "week1": "Write down the security question you do not currently have an answer to and have been avoiding.",
+      "month": "Spend one hour a week on it, with no requirement to resolve it. Record what you notice."
+    }
+  }
+}

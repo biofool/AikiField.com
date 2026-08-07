@@ -1,0 +1,77 @@
+{
+  "version": 1,
+  "note": "Pressure scenarios for the leadership assessment. Responses are NOT scored into the radar — they produce a separate qualitative 'under pressure' reading. There is no correct answer.",
+  "intro": "Four situations security leaders actually meet. Choose the response closest to what you would genuinely do — not the one that sounds best.",
+  "tendencies": {
+    "stabilise": {
+      "name": "Stabilise first",
+      "reading": "Under pressure you reach first for ground: slow the situation down, name what is known, and hold a steady centre while others react.",
+      "strength": "You keep the room from spiralling, and decisions made from that ground tend to hold.",
+      "edge": "Steadiness can read as slowness to people already moving. Say what you are doing and why, or the pause looks like a stall."
+    },
+    "adapt": {
+      "name": "Adapt first",
+      "reading": "Under pressure you reach first for movement: change the shape of the problem, trade a constraint, find the path that is actually open.",
+      "strength": "You rarely get stuck, and you find options other people have written off.",
+      "edge": "Constant re-shaping can leave the team without a fixed point. Name what will not move, so the flexibility reads as choice rather than drift."
+    },
+    "connect": {
+      "name": "Connect first",
+      "reading": "Under pressure you reach first for people: get the right parties in the room, surface what each actually needs, and move the situation through relationship.",
+      "strength": "Your decisions get adopted, because the people who have to live with them helped shape them.",
+      "edge": "Consultation costs time you may not have. Decide in advance which calls are yours alone to make."
+    },
+    "envision": {
+      "name": "Reframe first",
+      "reading": "Under pressure you reach first for the wider frame: what this incident means, what it reveals, what it should change.",
+      "strength": "You convert pressure into direction, and the same failure rarely arrives twice.",
+      "edge": "The wider frame does not close today's ticket. Pair the reframe with a concrete next action inside the hour."
+    }
+  },
+  "scenarios": [
+    {
+      "id": "sc-deal",
+      "title": "The blocked deal",
+      "text": "A customer security review is blocking your largest deal. The deadline is Friday. Your CTO is in an all-hands and Sales has already promised the questionnaire will be back today.",
+      "options": [
+        { "id": "sc-deal-a", "tendency": "stabilise", "text": "Stop the promising. Establish what can truthfully be answered today, answer that, and put a dated commitment against the rest." },
+        { "id": "sc-deal-b", "tendency": "adapt", "text": "Find another route to the same outcome — a compensating control, a scoped exception, a conditional sign-off that unblocks Friday." },
+        { "id": "sc-deal-c", "tendency": "connect", "text": "Get Sales and the customer's security reviewer into one call and find out which answers actually matter to them." },
+        { "id": "sc-deal-d", "tendency": "envision", "text": "Answer it, then treat this review as the specification for the trust story you should have had ready before the deal existed." }
+      ]
+    },
+    {
+      "id": "sc-vuln",
+      "title": "The 48-hour vulnerability",
+      "text": "A critical vulnerability is disclosed in a dependency you ship. Engineering says a safe fix takes three weeks. Your largest customer is asking for 48 hours.",
+      "options": [
+        { "id": "sc-vuln-a", "tendency": "stabilise", "text": "Establish the real exposure before anyone commits to a date — reachability, blast radius, what is actually exploitable in your deployment." },
+        { "id": "sc-vuln-b", "tendency": "adapt", "text": "Ship mitigation now and the fix later — pin, patch at the edge, or disable the affected path while the real work proceeds." },
+        { "id": "sc-vuln-c", "tendency": "connect", "text": "Call the customer yourself, tell them what you know and do not know, and agree a schedule you can actually meet." },
+        { "id": "sc-vuln-d", "tendency": "envision", "text": "Handle it, then ask why a three-week fix was the fastest option available and change that." }
+      ]
+    },
+    {
+      "id": "sc-adoption",
+      "title": "The control nobody uses",
+      "text": "A control you introduced six months ago is being routed around. Engineering has a shared workaround. Nobody raised it with you.",
+      "options": [
+        { "id": "sc-adoption-a", "tendency": "stabilise", "text": "Re-state the requirement and the reason behind it, then hold the line consistently until it is met." },
+        { "id": "sc-adoption-b", "tendency": "adapt", "text": "Assume the control is wrong for the workflow and redesign it around how the team actually works." },
+        { "id": "sc-adoption-c", "tendency": "connect", "text": "Ask the engineers who built the workaround what the control costs them — and why they did not tell you." },
+        { "id": "sc-adoption-d", "tendency": "envision", "text": "Treat the silence as the finding, not the workaround, and address why security problems are not surfacing to you." }
+      ]
+    },
+    {
+      "id": "sc-board",
+      "title": "The board question",
+      "text": "In a board meeting a director asks, without warning, whether the company is secure. The honest answer is complicated and you have about ninety seconds.",
+      "options": [
+        { "id": "sc-board-a", "tendency": "stabilise", "text": "Give the plain position: what is protected, what is not yet, and what you are doing about the gap." },
+        { "id": "sc-board-b", "tendency": "adapt", "text": "Reframe the question into one you can answer usefully — which risks are accepted, and by whom." },
+        { "id": "sc-board-c", "tendency": "connect", "text": "Find out what prompted the question before answering it — the concern behind it is the real question." },
+        { "id": "sc-board-d", "tendency": "envision", "text": "Answer briefly, then use the moment to set the standing measure the board should be tracking every quarter." }
+      ]
+    }
+  ]
+}
