@@ -284,12 +284,11 @@ Strategic intuition for emerging AI and threat risks.
 
 **Tag:** DevSecOps
 **Title:** Clear the security backlog blocking your enterprise deals
-**Lead:** Turn a growing vulnerability backlog into rapid, demonstrable remediation — security shifted left into your CI/CD pipeline, cutting remediation from months to days (a proven 87% reduction: 165 → 21 days).
+**Lead:** Stop your security debt from growing. Security shifted left into your CI/CD pipeline, cutting remediation from months to days (a proven 87% reduction: 165 → 21 days).
 **Best for:** Engineering teams whose backlog is growing faster than they can fix it, or who must prove rapid remediation to enterprise customers.
 
 **What you get:**
 - **Find gaps fast** — a DevOps pipeline security assessment and rearchitecture.
-- **Never lose a vulnerability** — triage workflows across app, OS, cloud, and customer-reported issues.
 - **Fix in days, not weeks** — AI-assisted triage and remediation with prompts and validation.
 - **Prove it to customers** — vulnerability management platform implementation and tuning (e.g. Aikido.dev or equivalent).
 - **Make it stick** — team training on the new workflows.
@@ -306,13 +305,11 @@ Strategic intuition for emerging AI and threat risks.
 - **See where you're exposed** — attack-surface mapping across your product.
 - **Focus on what matters** — threats ranked by likelihood and impact.
 - **Design securely** — architecture and cloud-infrastructure review.
-- **Ship the fixes** — developer-friendly mitigation plans engineers can actually implement.
 
 ### Coaching
 
 **Tag:** Coaching
 **Title:** Make confident security calls under pressure
-**Lead:** Develop the leadership capacity to own security decisions, communicate them clearly, and lead your team through uncertainty — 20+ years of security experience paired with presence-based executive coaching.
 **Best for:** CTOs, founders, VP Engineering, and senior leaders who own security but aren't security specialists.
 
 **What you get:**
@@ -849,7 +846,7 @@ All pages use the deep green (`--af-primary`) hero background:
 > live `assessment.html`. If you change a question, change it in three places:
 > the live page, the JSON, and the Assessment section above.
 
-## Beta hub (`beta/assessment.html`)
+## Beta hub (`beta/assessment.php`)
 
 **Eyebrow:** Beta preview
 **H1:** The Security Leadership Assessment
@@ -887,7 +884,7 @@ All pages use the deep green (`--af-primary`) hero background:
 **Body:** A guided assessment gives you the version of this conversation that a form cannot: the follow-up questions, the disagreement, and a roadmap you did not write alone.
 **CTA:** Book a discovery call → `contact.html`
 
-## Organisational flow (`beta/assessment-organisation.html`)
+## Organisational flow (`beta/assessment-organisation.php`)
 
 **Eyebrow:** Beta preview · Part one
 **H1:** Organisational Security Posture
@@ -911,7 +908,7 @@ four questions each). Source of truth: `beta/data/questions.json`.
 
 **CTA:** Explore your leadership presence
 
-## Leadership flow (`beta/assessment-leadership.html`)
+## Leadership flow (`beta/assessment-leadership.php`)
 
 **Eyebrow:** Beta preview · Part two
 **H1:** Leadership Presence Profile
@@ -938,7 +935,7 @@ Full text: `beta/data/scenarios.json`.
 
 **CTA:** Explore organisational security posture
 
-## Cross-view (`beta/assessment-crossview.html`)
+## Cross-view (`beta/assessment-crossview.php`)
 
 **Eyebrow:** Beta preview · The cross-view
 **H1:** Where the two readings meet

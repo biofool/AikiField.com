@@ -1,3 +1,4 @@
+<?php require dirname(__DIR__) . '/includes/beta-gate.load.php'; ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -31,7 +32,7 @@
       <a href="../services.html" class="af-nav__link">Services</a>
       <a href="../case-studies.html" class="af-nav__link">Case Studies</a>
       <a href="../projects.php" class="af-nav__link">Sponsored Projects</a>
-      <a href="assessment.html" class="af-nav__link af-nav__link--active" aria-current="page">Assessment</a>
+      <a href="assessment.php" class="af-nav__link af-nav__link--active" aria-current="page">Assessment</a>
       <a href="../contact.html" class="af-nav__cta">Get Started</a>
     </nav>
   </div>
@@ -57,7 +58,7 @@
       <p class="bta-eyebrow">Beta preview · The cross-view</p>
       <h1 class="bta-h1">Where the two readings meet</h1>
       <p class="bta-lead">Your organisational posture describes the conditions. Your leadership profile describes how you move inside them. This page is about what the two produce together.</p>
-      <p class="bta-body bta-muted"><a href="assessment.html">Back to the assessment overview</a></p>
+      <p class="bta-body bta-muted"><a href="assessment.php">Back to the assessment overview</a></p>
     </div>
   </section>
 
@@ -71,7 +72,7 @@
       <div class="bta-card">
         <h2 class="bta-h2">Not yet — one reading is missing</h2>
         <div data-bta-xview-missing></div>
-        <p class="bta-btn-row"><a class="bta-btn bta-btn--ghost" href="assessment.html">Assessment overview</a></p>
+        <p class="bta-btn-row"><a class="bta-btn bta-btn--ghost" href="assessment.php">Assessment overview</a></p>
       </div>
     </div>
   </section>
@@ -174,7 +175,7 @@
         <li><a href="../fractional-ciso-for-saas.html">Fractional CISO for SaaS</a></li>
         <li><a href="../ai-devsecops-vulnerability-remediation.html">AI DevSecOps Remediation</a></li>
         <li><a href="../projects.php">Sponsored Projects</a></li>
-        <li><a href="assessment.html">Self-Assessment (beta)</a></li>
+        <li><a href="assessment.php">Self-Assessment (beta)</a></li>
       </ul>
     </nav>
     <nav aria-label="Connect">

@@ -114,24 +114,29 @@ if [[ -n "$REMOTE_HOST_ARG" ]]; then
 elif [[ "$CMD" == "help" ]]; then
     REMOTE_HOST="peec.biz"
 else
-    echo ""
-    echo "No remote server specified. Select one:"
-    echo ""
-    for i in "${!KNOWN_REMOTES[@]}"; do
-        IFS='|' read -r rh ru rp rd <<< "${KNOWN_REMOTES[$i]}"
-        printf "  %d) %-38s [%s@%s:%s]\n" "$((i+1))" "$rd" "$ru" "$rh" "$rp"
-    done
-    echo ""
-    read -p "Choice [1-${#KNOWN_REMOTES[@]}] or --remote hostname: " _REMOTE_CHOICE
-    if [[ "$_REMOTE_CHOICE" =~ ^[0-9]+$ ]] && (( _REMOTE_CHOICE >= 1 && _REMOTE_CHOICE <= ${#KNOWN_REMOTES[@]} )); then
-        IFS='|' read -r REMOTE_HOST REMOTE_USER REMOTE_PATH _rd <<< "${KNOWN_REMOTES[$((_REMOTE_CHOICE-1))]}"
-    elif [[ -n "$_REMOTE_CHOICE" ]]; then
-        _apply_known_remote "$_REMOTE_CHOICE"
+    if (( ${#KNOWN_REMOTES[@]} == 1 )); then
+        # Only one known remote — auto-select it, no prompt
+        IFS='|' read -r REMOTE_HOST REMOTE_USER REMOTE_PATH _rd <<< "${KNOWN_REMOTES[0]}"
     else
-        echo "No remote specified. Exiting."
-        exit 1
+        echo ""
+        echo "No remote server specified. Select one:"
+        echo ""
+        for i in "${!KNOWN_REMOTES[@]}"; do
+            IFS='|' read -r rh ru rp rd <<< "${KNOWN_REMOTES[$i]}"
+            printf "  %d) %-38s [%s@%s:%s]\n" "$((i+1))" "$rd" "$ru" "$rh" "$rp"
+        done
+        echo ""
+        read -p "Choice [1-${#KNOWN_REMOTES[@]}] or --remote hostname: " _REMOTE_CHOICE
+        if [[ "$_REMOTE_CHOICE" =~ ^[0-9]+$ ]] && (( _REMOTE_CHOICE >= 1 && _REMOTE_CHOICE <= ${#KNOWN_REMOTES[@]} )); then
+            IFS='|' read -r REMOTE_HOST REMOTE_USER REMOTE_PATH _rd <<< "${KNOWN_REMOTES[$((_REMOTE_CHOICE-1))]}"
+        elif [[ -n "$_REMOTE_CHOICE" ]]; then
+            _apply_known_remote "$_REMOTE_CHOICE"
+        else
+            echo "No remote specified. Exiting."
+            exit 1
+        fi
+        unset _REMOTE_CHOICE
     fi
-    unset _REMOTE_CHOICE
 fi
 unset -f _apply_known_remote
 
@@ -245,6 +250,10 @@ case "$CMD" in
         echo "Excluded from sync: .git/, input/, .devin/, *.md, *.py, *.sh, sync.sh, SITE_CONTENT.md"
         ;;
 
+    "")
+        # No command given — show help instead of an error
+        exec "$0" help
+        ;;
     *)
         echo "Unknown command: ${CMD:-(none)}"
         echo "Run '$0 help' for usage."

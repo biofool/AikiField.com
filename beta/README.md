@@ -4,25 +4,31 @@ Unreleased preview implementing GitHub issue **#13** (connect both assessments:
 hand-off + cross-view) and the UI direction from issue **#11** (dark theme,
 radar visualization, pressure scenarios, 30-day plan).
 
-**This folder is blind.** Every page carries `noindex,nofollow`, `/beta/` is
-disallowed for every user-agent group in `robots.txt`, and nothing here is
-linked from the site nav, footer, or `sitemap.xml`. It is reachable only by
-typing the URL.
+**This folder is blind, and gated.** Every page carries `noindex,nofollow`,
+`/beta/` is disallowed for every user-agent group in `robots.txt`, and
+nothing here is linked from the site nav, footer, or `sitemap.xml`. On top of
+that, every page now requires the same coaching-chat login as
+`projects.php` — an unauthenticated request to any `beta/*.php` page or to
+`beta/data.php` redirects to `/projects.php#coach-login` (see
+`includes/beta-gate.load.php` and `docs/coach-auth-prd.md`). The raw files
+under `beta/data/` are also blocked at the server (`beta/data/.htaccess`) so
+the gate can't be bypassed by fetching a `.json` file directly.
 
 ## Files
 
 | Path | What it is |
 |---|---|
-| `assessment.html` | Hub — explains both assessments, shows completion state, unlocks the cross-view, privacy notice, clear control |
-| `assessment-organisation.html` | Organisational flow: 5 categories × 4 questions |
-| `assessment-leadership.html` | Leadership flow: 7 dimensions × 4 questions + 4 pressure scenarios |
-| `assessment-crossview.html` | The org × leadership cross-view |
+| `assessment.php` | Hub — explains both assessments, shows completion state, unlocks the cross-view, privacy notice, clear control. Gated (require `beta-gate.load.php`). |
+| `assessment-organisation.php` | Organisational flow: 5 categories × 4 questions. Gated. |
+| `assessment-leadership.php` | Leadership flow: 7 dimensions × 4 questions + 4 pressure scenarios. Gated. |
+| `assessment-crossview.php` | The org × leadership cross-view. Gated. |
 | `css/assessment.css` | Scoped dark theme, `--bta-*` / `.bta-*` namespace |
-| `js/assessment.js` | Scoring, localStorage, SVG radar, cross-view lookup |
-| `data/questions.json` | All 48 questions (verbatim from `assessment.html`) |
-| `data/crossview.json` | Axis definitions + 24 interpretations + fallback |
-| `data/scenarios.json` | 4 pressure scenarios and the tendency readings |
-| `data/practices.json` | 30-day practices, keyed by group id |
+| `js/assessment.js` | Scoring, localStorage, SVG radar, cross-view lookup. Fetches data via `data.php?f=<name>`, not `data/<name>.json` directly. |
+| `data.php` | Session-gated JSON delivery — whitelists filenames, re-checks the login, then streams the file from `data/` |
+| `data/questions.json` | All 48 questions (verbatim from `assessment.php`). Not directly fetchable — see `data.php`. |
+| `data/crossview.json` | Axis definitions + 24 interpretations + fallback. Not directly fetchable. |
+| `data/scenarios.json` | 4 pressure scenarios and the tendency readings. Not directly fetchable. |
+| `data/practices.json` | 30-day practices, keyed by group id. Not directly fetchable. |
 
 The site header and footer keep their normal light styling from
 `css/redesign.css`. Only `<main class="bta-main">` becomes the dark field, so
@@ -30,16 +36,17 @@ the assessment reads as a distinct working space without a separate chrome.
 
 ## Running it
 
-The pages fetch their data at runtime, so `file://` will not work. From the
-repository root:
+The pages are PHP and session-gated, so `file://` and a plain static server
+(`python3 -m http.server`) will not work — you need PHP, and a logged-in
+session. From the repository root:
 
 ```
-python3 -m http.server
+php -S localhost:8000
 ```
 
-then open `http://localhost:8000/beta/assessment.html`. If the data cannot be
-fetched the pages show an explicit error explaining why — they do not fail
-silently.
+then log in via `http://localhost:8000/projects.php#coach-login` and open
+`http://localhost:8000/beta/assessment.php`. If the data cannot be fetched
+the pages show an explicit error explaining why — they do not fail silently.
 
 ## Storage
 

@@ -151,6 +151,17 @@ button.af-focus:focus-visible,
   font-size: 22px;
   letter-spacing: -0.01em;
 }
+.af-brand__tagline {
+  font-family: var(--af-sans);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--af-muted, #6b7280);
+  border-left: 1px solid var(--af-border);
+  padding-left: 12px;
+  margin-left: 4px;
+}
 .af-nav {
   display: flex;
   align-items: center;
@@ -682,6 +693,52 @@ a.af-card:hover .af-card__arrow { text-decoration: underline; }
 .af-page-header--green .af-lead,
 .af-page-header--green .af-page-header__lead { color: var(--af-dark-card-text); }
 
+/* Chat CTA — points at the sticky login/chat rail (#ai-chat) so the AI Chat
+   isn't just one card among the project cards; the page header calls it out. */
+.af-page-header__chat-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 28px;
+  padding: 12px 20px;
+  border-radius: 999px;
+  background: var(--af-mint);
+  color: var(--af-primary-dk, #0A3A33);
+  font-family: var(--af-sans);
+  font-weight: 700;
+  font-size: 15px;
+  text-decoration: none;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.af-page-header__chat-cta:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+}
+.af-page-header__chat-cta-badge {
+  background: var(--af-primary-dk, #0A3A33);
+  color: var(--af-mint);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 3px 8px;
+  border-radius: 999px;
+}
+.af-page-header__chat-cta-arrow {
+  animation: af-chat-cta-bounce 1.6s ease-in-out infinite;
+}
+@keyframes af-chat-cta-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(3px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .af-page-header__chat-cta-arrow { animation: none; }
+}
+
+/* Scroll target: offset for the sticky header so #ai-chat doesn't land
+   flush under it when the CTA above jumps here. */
+#ai-chat { scroll-margin-top: 96px; }
+
 /* ---------- Assessment dimensions ---------- */
 .af-assess-dim {
   background: var(--af-white);
@@ -735,6 +792,9 @@ a.af-card:hover .af-card__arrow { text-decoration: underline; }
   border-bottom: 1px solid var(--af-border);
   padding: 56px 0 64px;
 }
+/* Leads the homepage now (above the hero) — needs its own top breathing
+   room since there's no hero above it providing that spacing. */
+.af-gateway--lead { padding-top: 72px; }
 .af-gateway__header {
   text-align: center;
   margin-bottom: 36px;
@@ -765,11 +825,10 @@ a.af-card:hover .af-card__arrow { text-decoration: underline; }
   background: var(--af-bg);
   border: 1px solid var(--af-border);
   border-radius: 16px;
-  padding: 28px 24px;
+  padding: 24px;
   text-decoration: none;
   color: inherit;
   transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
-  min-height: 180px;
 }
 .af-gateway__option:hover {
   border-color: var(--af-primary);
@@ -780,12 +839,16 @@ a.af-card:hover .af-card__arrow { text-decoration: underline; }
   outline: 3px solid var(--af-primary);
   outline-offset: 3px;
 }
+/* Sans, not serif: these are controls, not prose. Serif at 20px in a narrow
+   four-up column wraps to three lines and the row reads as a block of text. */
 .af-gateway__option-text {
-  font-family: var(--af-serif);
-  font-weight: 600;
-  font-size: 20px;
-  line-height: 1.3;
+  font-family: var(--af-sans);
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
   color: var(--af-ink);
+  text-wrap: balance;
 }
 .af-gateway__option-arrow {
   font-family: var(--af-sans);
@@ -882,10 +945,10 @@ a.af-card:hover .af-card__arrow { text-decoration: underline; }
 
 /* ---------- Home hero (static, green) ---------- */
 .af-hero-home { background: var(--af-primary); padding: 80px 0 72px; }
-.af-hero-home__intro { display: grid; gap: 20px; justify-items: stretch; margin-bottom: 40px; }
-.af-hero-home__grid { display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 48px; align-items: start; }
-.af-hero-home__copy { display: grid; gap: 24px; justify-items: start; }
-.af-hero-home .af-eyebrow { color: #4EC0A0; }
+.af-hero-home__grid { display: grid; grid-template-columns: 1fr; gap: 48px; align-items: center; }
+.af-hero-home__copy { display: grid; gap: 24px; justify-items: start; align-content: center; }
+
+.af-hero-home .af-eyebrow { color: #4EC0A0; margin-bottom: -12px; }
 .af-hero-home__title {
   font-size: clamp(38px, 5vw, 62px);
   line-height: 1.08;
@@ -894,18 +957,24 @@ a.af-card:hover .af-card__arrow { text-decoration: underline; }
   max-width: none;
   text-wrap: balance;
 }
-.af-hero-home__body { font-size: 20px; line-height: 1.6; max-width: none; color: var(--af-dark-card-text); text-wrap: pretty; }
-.af-hero-home__body + .af-hero-home__body { margin-top: 4px; }
+.af-hero-home__body { font-size: 20px; line-height: 1.6; max-width: 46ch; color: var(--af-dark-card-text); text-wrap: pretty; }
 .af-hero-home .af-btn--primary { background: #fff; color: var(--af-primary); }
 .af-hero-home .af-btn--primary:hover { background: var(--af-mint-dk); }
 .af-hero-home .af-btn--ghost { color: #fff; border-color: rgba(255,255,255,0.5); }
 .af-hero-home .af-btn--ghost:hover { background: rgba(255,255,255,0.12); border-color: #fff; }
-.af-hero-home__proof { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 8px; width: 100%; }
+.af-hero-home__proof { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 48px; width: 100%; }
 .af-metric { padding: 18px 20px; border: 1px solid var(--af-inf-border); border-radius: 16px; background: var(--af-inf-bg); }
 .af-metric strong { display: block; font-family: var(--af-serif); font-weight: 700; font-size: 26px; color: var(--af-mint); margin-bottom: 4px; }
 .af-metric span { display: block; font-size: 15px; color: var(--af-inf-text); line-height: 1.5; }
-.af-metric .af-metric__sub { margin-top: 6px; font-size: 13px; color: var(--af-inf-text); opacity: 0.85; line-height: 1.45; }
 .af-hero-home__panel { border: 1px solid var(--af-inf-border); border-radius: 20px; padding: 28px; background: var(--af-inf-bg); }
+
+/* "Why AikiField" now runs full width below the gateway, so its three signals
+   sit side by side instead of stacking in a narrow hero column. */
+.af-why__grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0 28px; }
+.af-why__grid .af-signal { border-top: 1px solid var(--af-inf-border); }
+@media (max-width: 860px) {
+  .af-why__grid { grid-template-columns: 1fr; gap: 0; }
+}
 .af-hero-home__panel-title {
   font-family: var(--af-sans);
   font-weight: 700;
@@ -1026,6 +1095,7 @@ a.af-card:hover .af-card__arrow { text-decoration: underline; }
 }
 @media (max-width: 720px) {
   .af-header__inner { padding: 14px 24px; }
+  .af-brand__tagline { display: none; }
   .af-container { padding-left: 24px; padding-right: 24px; }
   .af-section, .af-section--tight, .af-section--lg { padding: 56px 0; }
   .af-hero { padding: 56px 0 48px; }

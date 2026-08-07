@@ -1,3 +1,4 @@
+<?php require dirname(__DIR__) . '/includes/beta-gate.load.php'; ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -31,7 +32,7 @@
       <a href="../services.html" class="af-nav__link">Services</a>
       <a href="../case-studies.html" class="af-nav__link">Case Studies</a>
       <a href="../projects.php" class="af-nav__link">Sponsored Projects</a>
-      <a href="assessment.html" class="af-nav__link af-nav__link--active" aria-current="page">Assessment</a>
+      <a href="assessment.php" class="af-nav__link af-nav__link--active" aria-current="page">Assessment</a>
       <a href="../contact.html" class="af-nav__cta">Get Started</a>
     </nav>
   </div>
@@ -57,7 +58,7 @@
       <p class="bta-eyebrow">Beta preview · Part two</p>
       <h1 class="bta-h1">Leadership Presence Profile</h1>
       <p class="bta-lead">Seven dimensions describing how you tend to show up in the security conditions you lead — under load, in conflict, and in uncertainty.</p>
-      <p class="bta-body bta-muted"><a href="assessment.html">Back to the assessment overview</a></p>
+      <p class="bta-body bta-muted"><a href="assessment.php">Back to the assessment overview</a></p>
     </div>
   </section>
 
@@ -136,7 +137,7 @@
           <span>Your leadership profile is one part of the field.</span>
           <span>Continue with the organisational assessment to explore the conditions in which your leadership operates.</span>
         </p>
-        <a class="bta-btn bta-btn--primary" href="assessment-organisation.html">Explore organisational security posture</a>
+        <a class="bta-btn bta-btn--primary" href="assessment-organisation.php">Explore organisational security posture</a>
       </div>
     </div>
 
@@ -146,7 +147,7 @@
           <span>Both assessments are complete.</span>
           <span>The cross-view describes what this profile and your organisational posture produce together.</span>
         </p>
-        <a class="bta-btn bta-btn--primary" href="assessment-crossview.html">Open your cross-view</a>
+        <a class="bta-btn bta-btn--primary" href="assessment-crossview.php">Open your cross-view</a>
       </div>
     </div>
   </section>
@@ -185,7 +186,7 @@
         <li><a href="../fractional-ciso-for-saas.html">Fractional CISO for SaaS</a></li>
         <li><a href="../ai-devsecops-vulnerability-remediation.html">AI DevSecOps Remediation</a></li>
         <li><a href="../projects.php">Sponsored Projects</a></li>
-        <li><a href="assessment.html">Self-Assessment (beta)</a></li>
+        <li><a href="assessment.php">Self-Assessment (beta)</a></li>
       </ul>
     </nav>
     <nav aria-label="Connect">

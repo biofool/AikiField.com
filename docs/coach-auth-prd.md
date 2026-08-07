@@ -69,13 +69,17 @@ enablement; social login is currently disabled in `coach-login.js`).
 | `includes/coach-config.load.php` | Config loader (local override → production) | ported from QA |
 | `coach-config.php` | Non-secret production config (backend URL, empty secret placeholders) | new template |
 | `coach-config.local.php` | **gitignored** — holds the real `COACH_PROXY_SECRET` / Turnstile key | operator-provided |
-| `.htaccess` | Routes `/coach-api/*` → `coach-proxy.php`; 301 `projects.html` → `projects.php` | new |
+| `.htaccess` | Routes `/coach-api/*` → `coach-proxy.php`; 301 `projects.html` → `projects.php`; 301s for the old `/beta/*.html` URLs → `/beta/*.php` | new |
+| `includes/beta-gate.load.php` | Page gate for `/beta/*.php` — re-establishes the same `qa_email` / `qa_session_token` session as `projects.php` (identical `session_set_cookie_params`) and redirects to `/projects.php#coach-login` if absent. No new auth endpoint, session model, or proxy route — reuses the session `projects.php` already sets. | new (issue: gate `/beta/` behind the coach login) |
+| `beta/data.php` | Session-gated JSON delivery for the beta assessment pages (`beta/js/assessment.js` fetches `data.php?f=<name>` instead of `data/<name>.json` directly); `beta/data/.htaccess` denies direct access to the raw JSON so the gate can't be bypassed by fetching the file straight | new |
 
 ### What was NOT ported (intentionally)
 
 - `coach-auth-check.php` (page gate) — `projects.php` is a **public** page;
   the login form is a CTA, not a gate. The sponsored-projects content stays
-  visible to all visitors.
+  visible to all visitors. A page gate was later added, but scoped to
+  `/beta/` only (see `includes/beta-gate.load.php` above) — `/beta/` content
+  is unfinished/pre-release, unlike the public Sponsored Projects page.
 - `dashboard-env.php` / staging wrappers — AikiField has no dashboard and no
   `/staging/` folder.
 - The environment-toggle UI (`#coach-env-controls`) and the profile link

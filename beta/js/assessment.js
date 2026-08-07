@@ -2,8 +2,9 @@
    AikiField — BETA assessment engine
    Drives all four /beta/ assessment pages. No framework, no build step.
 
-   Data lives in beta/data/*.json and is fetched at runtime — nothing that
-   resembles a question bank or a lookup table is hardcoded here.
+   Data lives in beta/data/*.json and is fetched at runtime via data.php
+   (session-gated — beta/data/ itself is blocked at the server) — nothing
+   that resembles a question bank or a lookup table is hardcoded here.
 
    Storage: localStorage only. Nothing is transmitted anywhere.
    ========================================================================== */
@@ -12,7 +13,7 @@
   'use strict';
 
   var STORAGE_KEY = 'aikifield.beta.assessment.v1';
-  var DATA_DIR = 'data/';
+  var DATA_DIR = 'data.php?f=';
 
   /* ---------------------------------------------------------------- utils */
 

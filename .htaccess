@@ -11,3 +11,10 @@ RewriteRule ^coach-api(/.*)?$ coach-proxy.php [L]
 # Sponsored Projects is now a PHP page (login integration). Permanently
 # redirect the old static URL so existing internal/external links keep working.
 RewriteRule ^projects\.html$ /projects.php [R=301,L]
+
+# /beta/ assessment pages are now session-gated PHP (same coach login as
+# projects.php). Redirect the old static URLs so existing links keep working.
+RewriteRule ^beta/assessment\.html$ /beta/assessment.php [R=301,L]
+RewriteRule ^beta/assessment-organisation\.html$ /beta/assessment-organisation.php [R=301,L]
+RewriteRule ^beta/assessment-leadership\.html$ /beta/assessment-leadership.php [R=301,L]
+RewriteRule ^beta/assessment-crossview\.html$ /beta/assessment-crossview.php [R=301,L]

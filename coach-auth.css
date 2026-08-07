@@ -10,8 +10,13 @@
    Bridge the generic names onto AikiField's own tokens so every rule in
    this file renders consistently with the AikiField brand. */
 :root {
-    --primary-bg: var(--af-white, #fff);
-    --secondary-bg: var(--af-bg, #F6F2EA);
+    /* Flipped from the QA source's dark-theme mapping: the page now reads
+       dark-green header -> paper (--af-bg) section -> white cards, instead
+       of white section -> paper cards. So the card surface (--secondary-bg,
+       used by --coach-surface) is white, and the recessed surface inside a
+       card (--primary-bg, used by inputs/buttons) is the paper tone. */
+    --primary-bg: var(--af-bg, #F6F2EA);
+    --secondary-bg: var(--af-white, #fff);
     --border: var(--af-border, #E0D9CB);
     --accent: var(--af-primary, #0E4E44);
     /* NOTE: on QA's dark theme, --accent-light (#a78bfa) is a *lighter*
@@ -53,6 +58,55 @@
     margin: 0 0 0.75rem;
     font-size: 1.3rem;
     font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+/* Give the login/chat rail more visual weight than a plain content card —
+   issue: highlight the chat login on the Sponsored Projects page. */
+.coach-intro-panel--highlight {
+    border-color: var(--af-mint, #5FD3B2);
+    border-width: 2px;
+    box-shadow: 0 4px 20px rgba(14, 78, 68, 0.12);
+}
+
+/* Callout banner above the login form — draws the eye to the chat login
+   on the Sponsored Projects page (issue #15). Uses the brand's deep-green
+   background with mint text, matching the page-header CTA idiom. */
+.coach-login-callout {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    background: var(--af-primary, #0E4E44);
+    color: var(--af-mint, #5FD3B2);
+    border-radius: var(--coach-radius);
+    padding: 0.75rem 1.25rem;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.coach-login-callout__icon {
+    font-size: 1.1rem;
+    line-height: 1;
+    flex-shrink: 0;
+}
+
+.coach-login-callout__text {
+    margin: 0;
+    line-height: 1.5;
+}
+
+.coach-free-badge {
+    background: var(--af-mint, #5FD3B2);
+    color: var(--af-primary-dk, #0A3A33);
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 0.2rem 0.55rem;
+    border-radius: 999px;
 }
 
 .coach-intro-text {
@@ -141,6 +195,18 @@
     font-size: 1.75rem;
     margin-bottom: 0.5rem;
 }
+
+/* Give the login card more visual weight (issue #15) — a mint border ring
+   and subtle shadow, matching the intro-panel highlight treatment. */
+.coach-card--highlight {
+    border-color: var(--af-mint, #5FD3B2);
+    border-width: 2px;
+    box-shadow: 0 4px 20px rgba(14, 78, 68, 0.12);
+}
+
+/* Scroll target: offset for the sticky header so #coach-login (the /beta/
+   gate redirect target) doesn't land flush under it. */
+#coach-login { scroll-margin-top: 96px; }
 
 .coach-intro {
     color: var(--text-muted);

@@ -66,6 +66,7 @@
     <a href="index.html" class="af-brand">
       <span class="af-brand__icon" aria-hidden="true">A</span>
       <span class="af-brand__text">AikiField</span>
+      <span class="af-brand__tagline">B2B Cybersecurity Consulting</span>
     </a>
     <input type="checkbox" id="af-nav-check" class="af-nav-toggle-check">
     <label for="af-nav-check" class="af-nav__toggle" aria-label="Menu">&#9776;</label>
@@ -75,7 +76,7 @@
       <a href="approach.html" class="af-nav__link">Approach</a>
       <a href="services.html" class="af-nav__link">Services</a>
       <a href="case-studies.html" class="af-nav__link">Case Studies</a>
-      <a href="projects.html" class="af-nav__link">Sponsored Projects</a>
+      <a href="projects.php" class="af-nav__link">Sponsored Projects</a>
       <a href="assessment.html" class="af-nav__link">Assessment</a>
       <a href="contact.html" class="af-nav__cta">Get Started</a>
     </nav>
@@ -84,29 +85,62 @@
 
 <main id="main">
 
+  <!-- ROLE-AND-OUTCOME GATEWAY (leads the page, above the vCISO hero, so the
+       outcome picker is the first thing a visitor decides on) -->
+  <section class="af-gateway af-gateway--lead" aria-label="What brings you here">
+    <div class="af-container">
+      <div class="af-gateway__header">
+        <h2 class="af-gateway__question">What brings you here?</h2>
+        <p class="af-gateway__sub">Pick the outcome you need &mdash; we&rsquo;ll take you straight to it.</p>
+      </div>
+      <div class="af-gateway__grid">
+        <a href="fractional-ciso-for-saas.html" class="af-gateway__option">
+          <span class="af-gateway__option-text">Win enterprise deals</span>
+          <span class="af-gateway__option-arrow">Fractional CISO &rarr;</span>
+        </a>
+        <a href="ai-devsecops-vulnerability-remediation.html" class="af-gateway__option">
+          <span class="af-gateway__option-text">Reduce security risk</span>
+          <span class="af-gateway__option-arrow">AI DevSecOps &rarr;</span>
+        </a>
+        <a href="services.html" class="af-gateway__option">
+          <span class="af-gateway__option-text">Get security leadership</span>
+          <span class="af-gateway__option-arrow">Services &rarr;</span>
+        </a>
+        <a href="case-studies.html" class="af-gateway__option">
+          <span class="af-gateway__option-text">Give the board clarity</span>
+          <span class="af-gateway__option-arrow">Case Studies &rarr;</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
   <!-- HERO -->
   <section class="af-hero-home" aria-label="Introduction">
     <div class="af-container">
-      <div class="af-hero-home__intro">
-        <p class="af-eyebrow">B2B Cybersecurity Consulting</p>
-        <h1 class="af-hero-home__title">vCISO, DevSecOps AI<br>& Cyber Leadership Development</h1>
-        <p class="af-hero-home__body">AikiField is a B2B cybersecurity consulting firm providing Fractional CISO services, AI-assisted DevSecOps integration, and security leadership coaching for SaaS and product companies.</p>
-        <p class="af-hero-home__body">Fractional CISO leadership experienced in AI adoption, data center technology, and IoT. We specialize in cutting vulnerability remediation cycles (from 165 days down to 21), passing SOC 2/ISO 27001 audits, and unblocking enterprise sales channels.</p>
-      </div>
       <div class="af-hero-home__grid">
         <div class="af-hero-home__copy">
+          <h1 class="af-hero-home__title">vCISO, DevSecOps AI<br>& Cyber Leadership Development</h1>
+          <p class="af-hero-home__body">Fractional CISO services, AI-assisted DevSecOps, and security leadership coaching for SaaS and product companies.</p>
           <div class="af-btn-row">
             <a href="contact.html" class="af-btn af-btn--primary">Book a Discovery Call</a>
             <a href="services.html" class="af-btn af-btn--ghost">Explore Services</a>
           </div>
-          <div class="af-hero-home__proof" aria-label="Results from real engagements">
-            <div class="af-metric"><strong>$5M</strong><span>Blocked sales channel recovered by resolving customer security objections.</span><span class="af-metric__sub">Engagement cost under $25K &mdash; delivered as planned.</span></div>
-            <div class="af-metric"><strong>87%</strong><span>Customer-reported security risk eliminated in three thirty-minute meetings.</span><span class="af-metric__sub">Optimized existing workflows and eliminated unnecessary activities.</span></div>
-            <div class="af-metric"><strong>21 &rarr; 3 days</strong><span>Vulnerability remediation time cut with AI-assisted triage workflows.</span><span class="af-metric__sub">Same team, less engineering effort &mdash; 7&times; faster with AI-assisted triage workflows.</span></div>
-          </div>
         </div>
-        <aside class="af-hero-home__panel" aria-label="Why AikiField">
-          <h2 class="af-hero-home__panel-title">Why AikiField</h2>
+      </div>
+      <div class="af-hero-home__proof" aria-label="Results from real engagements">
+        <div class="af-metric"><strong>$5M</strong><span>Blocked sales channel recovered by resolving customer security objections.</span></div>
+        <div class="af-metric"><strong>87%</strong><span>Customer-reported security risk eliminated in three thirty-minute meetings.</span></div>
+        <div class="af-metric"><strong>21 &rarr; 3 days</strong><span>Vulnerability remediation time cut with AI-assisted triage workflows.</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHY AIKIFIELD (moved out of the hero so the gateway sits closer to the fold) -->
+  <section class="af-section af-section--white af-why" aria-label="Why AikiField">
+    <div class="af-container">
+      <aside class="af-hero-home__panel">
+        <h2 class="af-hero-home__panel-title">Why AikiField</h2>
+        <div class="af-why__grid">
           <div class="af-signal">
             <strong>Protection that doesn't slow you down</strong>
             <p>Security left-shifted into your development budget and aligned to your revenue model &mdash; lean, without dragging on velocity.</p>
@@ -119,36 +153,8 @@
             <strong>Leadership that sticks</strong>
             <p>Security advisory paired with presence-based coaching, so your leaders can carry the program for the long haul.</p>
           </div>
-        </aside>
-      </div>
-    </div>
-  </section>
-
-  <!-- ROLE-AND-OUTCOME GATEWAY -->
-  <section class="af-gateway" aria-label="What brings you here">
-    <div class="af-container">
-      <div class="af-gateway__header">
-        <h2 class="af-gateway__question">What brings you here?</h2>
-        <p class="af-gateway__sub">Pick the outcome you need &mdash; we&rsquo;ll take you straight to it.</p>
-      </div>
-      <div class="af-gateway__grid">
-        <a href="fractional-ciso-for-saas.html" class="af-gateway__option">
-          <span class="af-gateway__option-text">&ldquo;I need to win enterprise deals&rdquo;</span>
-          <span class="af-gateway__option-arrow">Fractional CISO &rarr;</span>
-        </a>
-        <a href="ai-devsecops-vulnerability-remediation.html" class="af-gateway__option">
-          <span class="af-gateway__option-text">&ldquo;I need to reduce security risk&rdquo;</span>
-          <span class="af-gateway__option-arrow">AI DevSecOps &rarr;</span>
-        </a>
-        <a href="services.html" class="af-gateway__option">
-          <span class="af-gateway__option-text">&ldquo;I need security leadership&rdquo;</span>
-          <span class="af-gateway__option-arrow">Services &rarr;</span>
-        </a>
-        <a href="case-studies.html" class="af-gateway__option">
-          <span class="af-gateway__option-text">&ldquo;I need board-level clarity&rdquo;</span>
-          <span class="af-gateway__option-arrow">Case Studies &rarr;</span>
-        </a>
-      </div>
+        </div>
+      </aside>
     </div>
   </section>
 
@@ -178,7 +184,7 @@
           <p class="af-carousel__eyebrow">Sponsored Projects</p>
           <h2 class="af-carousel__title">Where security leadership meets phronesis.</h2>
           <p class="af-carousel__lead">Aikifield AI Chat and World Studio Finder &mdash; two projects at the intersection of security leadership, AI, and the somatic practice community.</p>
-          <a href="projects.html" class="af-btn af-btn--light">See the Projects</a>
+          <a href="projects.php" class="af-btn af-btn--light">See the Projects</a>
         </div>
         <div class="af-carousel__slide" role="group" aria-roledescription="slide" aria-label="Self-Assessment">
           <p class="af-carousel__eyebrow">Self-Assessment</p>
@@ -452,7 +458,7 @@
             <h3 class="af-mini__title">Six phases to a program that fits</h3>
             <p>A collaborative design cycle tailored to your stage, risks, and customers.</p>
           </a>
-          <a class="af-mini" href="projects.html">
+          <a class="af-mini" href="projects.php">
             <span class="af-mini__kicker">Sponsored Projects</span>
             <h3 class="af-mini__title">Where security leadership meets phronesis</h3>
             <p>Aikifield AI Chat, a cited coaching backend for the Quantum Aikido corpus, and World Studio Finder, a global studio discovery pipeline.</p>
@@ -493,7 +499,7 @@
         <li><a href="case-studies.html">Case Studies</a></li>
         <li><a href="fractional-ciso-for-saas.html">Fractional CISO for SaaS</a></li>
         <li><a href="ai-devsecops-vulnerability-remediation.html">AI DevSecOps Remediation</a></li>
-        <li><a href="projects.html">Sponsored Projects</a></li>
+        <li><a href="projects.php">Sponsored Projects</a></li>
         <li><a href="assessment.html">Self-Assessment</a></li>
       </ul>
     </nav>

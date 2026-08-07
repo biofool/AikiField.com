@@ -190,6 +190,11 @@ $coachLoginUrl = $_SERVER['SCRIPT_NAME'] ?? '/projects.php';
       <p class="af-eyebrow">Sponsored Projects</p>
       <h1 class="af-h1">Where security leadership meets phronesis.</h1>
       <p class="af-lead af-lead--wide af-page-header__lead">Phronesis &mdash; the Aristotelian capacity for practical wisdom, discerning right action in the full complexity of a lived moment &mdash; is what Quantum Leadership demands. Not rigid frameworks, but the practiced judgment to navigate uncertainty, hold paradox, and respond appropriately to whatever arises. AikiField sponsors projects that embody this bridge: AI coaching that cultivates presence under pressure, and outreach that builds relational connection across the global movement-arts community.</p>
+      <a href="#ai-chat" class="af-page-header__chat-cta">
+        <span class="af-page-header__chat-cta-badge">Free</span>
+        Try the AikiField AI Chat &mdash; sign in below
+        <span class="af-page-header__chat-cta-arrow" aria-hidden="true">&darr;</span>
+      </a>
     </div>
   </section>
 
@@ -197,8 +202,11 @@ $coachLoginUrl = $_SERVER['SCRIPT_NAME'] ?? '/projects.php';
   <!-- PROJECTS + AI CHAT LOGIN — two-column split                   -->
   <!-- Left: both sponsored project cards.                           -->
   <!-- Right: AI Chat login (unauthed) or chat (authed), sticky.     -->
+  <!-- No --white modifier: falls through to body's --af-bg (warm    -->
+  <!-- paper), so the page reads dark green header -> paper section  -->
+  <!-- -> white cards, instead of white section -> paper cards.      -->
   <!-- ============================================================ -->
-  <section class="af-section af-section--white">
+  <section class="af-section">
     <div class="af-container">
       <div class="af-projects-split">
 
@@ -264,12 +272,12 @@ $coachLoginUrl = $_SERVER['SCRIPT_NAME'] ?? '/projects.php';
         </div><!-- /.af-projects-split__projects -->
 
         <!-- RIGHT COLUMN: AI Chat login (unauthed) or chat (authed) — sticky -->
-        <div class="af-projects-split__chat">
+        <div class="af-projects-split__chat" id="ai-chat">
           <div class="coach-shell">
 
           <!-- Intro / CTA panel -->
-          <div class="coach-intro-panel">
-            <h2>AikiField AI Chat</h2>
+          <div class="coach-intro-panel coach-intro-panel--highlight">
+            <h2>AikiField AI Chat <span class="coach-free-badge">Free</span></h2>
             <p class="coach-intro-text">
               An AI coaching chat grounded in Richard Moon&rsquo;s teachings &mdash;
               presence under pressure, breathing, mental focus, and the art of
@@ -355,8 +363,14 @@ $coachLoginUrl = $_SERVER['SCRIPT_NAME'] ?? '/projects.php';
             <p class="coach-privacy-ack">By logging in you acknowledge this notice.</p>
           </details>
 
+          <!-- Callout banner pointing at the login form (issue #15) -->
+          <div class="coach-login-callout" role="note">
+            <span class="coach-login-callout__icon" aria-hidden="true">&darr;</span>
+            <p class="coach-login-callout__text">Sign in below to access the AI coaching chat &mdash; free for invited members.</p>
+          </div>
+
           <!-- Login step -->
-          <div id="coach-login" class="coach-card">
+          <div id="coach-login" class="coach-card coach-card--highlight">
             <h2>Sign in to the AI Chat</h2>
             <p class="coach-intro">Have an invitation code? Sign in, or register below to create your account and start chatting.</p>
 

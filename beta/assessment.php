@@ -1,3 +1,4 @@
+<?php require dirname(__DIR__) . '/includes/beta-gate.load.php'; ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -31,7 +32,7 @@
       <a href="../services.html" class="af-nav__link">Services</a>
       <a href="../case-studies.html" class="af-nav__link">Case Studies</a>
       <a href="../projects.php" class="af-nav__link">Sponsored Projects</a>
-      <a href="assessment.html" class="af-nav__link af-nav__link--active" aria-current="page">Assessment</a>
+      <a href="assessment.php" class="af-nav__link af-nav__link--active" aria-current="page">Assessment</a>
       <a href="../contact.html" class="af-nav__cta">Get Started</a>
     </nav>
   </div>
@@ -76,7 +77,7 @@
           <p class="bta-body bta-small bta-muted">20 questions · about 8 minutes</p>
           <p><span class="bta-chip bta-chip--todo" data-bta-status="organisation">Not started</span></p>
           <p class="bta-btn-row">
-            <a class="bta-btn bta-btn--primary" href="assessment-organisation.html" data-bta-cta="organisation">Begin the organisational assessment</a>
+            <a class="bta-btn bta-btn--primary" href="assessment-organisation.php" data-bta-cta="organisation">Begin the organisational assessment</a>
           </p>
         </article>
 
@@ -87,7 +88,7 @@
           <p class="bta-body bta-small bta-muted">28 questions and 4 scenarios · about 12 minutes</p>
           <p><span class="bta-chip bta-chip--todo" data-bta-status="leadership">Not started</span></p>
           <p class="bta-btn-row">
-            <a class="bta-btn bta-btn--primary" href="assessment-leadership.html" data-bta-cta="leadership">Begin the leadership assessment</a>
+            <a class="bta-btn bta-btn--primary" href="assessment-leadership.php" data-bta-cta="leadership">Begin the leadership assessment</a>
           </p>
         </article>
 
@@ -104,7 +105,7 @@
         <p class="bta-body">It does not tell you whether you are a good security leader. It describes how the way you lead meets the conditions you lead in.</p>
 
         <div data-bta-crossview-ready hidden>
-          <p class="bta-btn-row"><a class="bta-btn bta-btn--onpanel" href="assessment-crossview.html">Open your cross-view</a></p>
+          <p class="bta-btn-row"><a class="bta-btn bta-btn--onpanel" href="assessment-crossview.php">Open your cross-view</a></p>
         </div>
         <div data-bta-crossview-waiting>
           <p class="bta-body bta-muted"><strong>Both assessments need to be complete.</strong> Finish either one and you will be offered the other; the cross-view unlocks when both are done.</p>
@@ -157,7 +158,7 @@
         <li><a href="../fractional-ciso-for-saas.html">Fractional CISO for SaaS</a></li>
         <li><a href="../ai-devsecops-vulnerability-remediation.html">AI DevSecOps Remediation</a></li>
         <li><a href="../projects.php">Sponsored Projects</a></li>
-        <li><a href="assessment.html">Self-Assessment (beta)</a></li>
+        <li><a href="assessment.php">Self-Assessment (beta)</a></li>
       </ul>
     </nav>
     <nav aria-label="Connect">
