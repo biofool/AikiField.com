@@ -100,5 +100,5 @@ if ($sent) {
     redirect_with_status('success');
 } else {
     error_log('AikiField contact form: mail() returned false for submission from ' . $email);
-    redirect_with_status('error', 'Sorry, there was a problem sending your message. Please email kenneth@aikifield.com directly.');
+    redirect_with_status('error', 'There was a problem sending your message.');
 }

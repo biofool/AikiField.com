@@ -650,6 +650,7 @@
     // --- Clear conversation control (issue #17) ---
     if (clearBtn) {
         clearBtn.addEventListener("click", () => {
+            if (navigator.vibrate) navigator.vibrate(10);
             messagesDiv.innerHTML = "";
             userMessageCount = 0;
             if (queueBanner) queueBanner.hidden = true;
@@ -690,6 +691,7 @@
             e.preventDefault();
             const msg = chatInput.value.trim();
             if (!msg) return;
+            if (navigator.vibrate) navigator.vibrate(15);
             addMessage("user", msg);
             chatInput.value = "";
             charCount.textContent = "0";
@@ -1018,6 +1020,47 @@
 
     // --- Start ---
     applyMobileComposer();
+
+    // Measure the actual sticky header height and expose it as --nav-h so the
+    // CSS calc for .coach-shell min-height doesn't rely on a hardcoded 70px.
+    // AikiField uses .af-header; QA uses header.site-nav / header. Feature-
+    // detect and wrapped in try/catch so it can never take the chat down.
+    try {
+        const measureNav = () => {
+            const nav = document.querySelector(".af-header, header.site-nav, header");
+            if (nav) {
+                document.documentElement.style.setProperty("--nav-h", nav.offsetHeight + "px");
+            }
+        };
+        measureNav();
+        window.addEventListener("resize", measureNav);
+    } catch (err) {
+        console.warn("coach-chat: could not measure nav height:", err);
+    }
+
+    // Scroll-to-bottom button: shown when the user has scrolled up in the
+    // messages area, hidden when at/near the bottom. A standard mobile chat
+    // pattern — without it, users who scroll up to read older messages have
+    // no quick way back to the latest message.
+    try {
+        const scrollBtn = document.getElementById("coach-scroll-bottom-btn");
+        if (scrollBtn && messagesDiv) {
+            const SCROLL_THRESHOLD = 80; // px from bottom to show the button
+            const updateScrollBtn = () => {
+                const atBottom = messagesDiv.scrollHeight - messagesDiv.scrollTop - messagesDiv.clientHeight < SCROLL_THRESHOLD;
+                scrollBtn.hidden = atBottom;
+            };
+            messagesDiv.addEventListener("scroll", updateScrollBtn);
+            updateScrollBtn();
+            scrollBtn.addEventListener("click", () => {
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+                scrollBtn.hidden = true;
+                if (navigator.vibrate) navigator.vibrate(10);
+            });
+        }
+    } catch (err) {
+        console.warn("coach-chat: could not init scroll-to-bottom button:", err);
+    }
 
     // Issue #151: On-screen keyboard handling. When the soft keyboard opens
     // on iOS/Android it shrinks window.visualViewport.height. The CSS uses

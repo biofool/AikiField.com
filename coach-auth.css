@@ -360,6 +360,42 @@
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
+    /* position: relative so the scroll-to-bottom button can float inside */
+    position: relative;
+}
+
+/* Scroll-to-bottom button: floats at the bottom-right of the messages area,
+   shown only when the user has scrolled up. Standard mobile chat pattern. */
+.coach-scroll-bottom-btn {
+    position: sticky;
+    bottom: 0.5rem;
+    align-self: flex-end;
+    z-index: 10;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255, 255, 255, 0.9);
+    color: var(--af-primary, #0E4E44);
+    font-size: 1.1rem;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+    transition: opacity 0.2s, background 0.15s;
+    margin-top: auto;
+    /* Pull it out of the flex flow so it floats over messages */
+    position: absolute;
+    right: 0.75rem;
+    bottom: 0.75rem;
+}
+.coach-scroll-bottom-btn:hover {
+    background: #fff;
+}
+.coach-scroll-bottom-btn[hidden] {
+    display: none;
 }
 
 .coach-msg {
@@ -691,7 +727,10 @@
        Issue #151: 100dvh (dynamic viewport height) shrinks when the
        on-screen keyboard opens on iOS/Android, so the composer stays
        visible above the keyboard. A visualViewport listener in
-       coach-chat.js provides an additional fallback for older browsers. */
+       coach-chat.js provides an additional fallback for older browsers.
+       Safe-area insets: env(safe-area-inset-*) adds padding for notched
+       / home-indicator phones (iPhone X+) so the composer and send button
+       aren't obscured. Requires viewport-fit=cover in the meta viewport. */
     .coach-intro-panel {
         display: none;
     }
@@ -701,10 +740,12 @@
         /* 100dvh shrinks with the keyboard on modern browsers (#151).
            --vvh is set on :root by the visualViewport listener in
            coach-chat.js as a fallback for older browsers without dvh
-           support. 70px ≈ sticky nav height. */
-        min-height: calc(var(--vvh, 100dvh) - 70px);
+           support. --nav-h is set by coach-chat.js measuring the actual
+           sticky header; falls back to 70px. */
+        min-height: calc(var(--vvh, 100dvh) - var(--nav-h, 70px));
         margin: 0.5rem auto;
         padding: 0 0.5rem;
+        padding-bottom: env(safe-area-inset-bottom);
     }
     #coach-chat.coach-card {
         display: flex;
@@ -712,6 +753,7 @@
         flex: 1;
         min-height: 0;
         padding: 1rem;
+        padding-bottom: calc(1rem + env(safe-area-inset-bottom));
         margin-bottom: 0;
     }
     .coach-messages {
@@ -757,6 +799,33 @@
         align-items: center;
         justify-content: center;
     }
+
+    /* Collapse the handoff prompt on mobile: the trigger button becomes a
+       compact pill that doesn't expand the form area until tapped. This
+       prevents the handoff section from consuming vertical space that the
+       messages area needs. */
+    .coach-handoff-prompt {
+        border-top: none;
+        margin-top: 0;
+        padding-top: 0;
+    }
+    .coach-handoff-trigger {
+        font-size: 0.78rem;
+        padding: 0.3rem 0.6rem;
+    }
+    .coach-handoff-form {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 200;
+        border-radius: 0.75rem 0.75rem 0 0;
+        padding: 1rem 1rem calc(1rem + env(safe-area-inset-bottom));
+        background: var(--coach-surface, #F6F2EA);
+        box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.15);
+        max-height: 60vh;
+        overflow-y: auto;
+    }
 }
 
 .coach-input-footer {
@@ -795,6 +864,12 @@
     padding: 0.15rem 0.35rem;
     cursor: pointer;
     max-width: 160px;
+    /* Allow shrinking on narrow screens — the char counter shares the
+       footer row and both need to fit on a 320px screen. */
+    min-width: 0;
+    flex-shrink: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .coach-language-select:hover {
@@ -1001,14 +1076,45 @@
 }
 
 /* ── Privacy notice (ticket #004) ─────────────────────────────────────────── */
+/* Now a collapsible <details> to save space in the projects.php chat rail. */
 .coach-privacy-notice {
     padding: 1.25rem 1.5rem;
+}
+
+.coach-privacy-notice > summary {
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+}
+.coach-privacy-notice > summary::-webkit-details-marker { display: none; }
+.coach-privacy-notice > summary::after {
+    content: "+";
+    font-family: var(--af-sans, system-ui, sans-serif);
+    font-size: 1.3rem;
+    font-weight: 400;
+    color: var(--accent);
+    transition: transform 0.2s ease;
+}
+.coach-privacy-notice[open] > summary::after {
+    content: "\2212";
+}
+.coach-privacy-notice > summary:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 4px;
+    border-radius: 4px;
 }
 
 .coach-privacy-notice h2 {
     font-size: 1.15rem;
     font-weight: 700;
-    margin: 0 0 0.75rem;
+    margin: 0;
+    display: inline-block;
+}
+.coach-privacy-notice[open] h2 {
+    margin-bottom: 0.75rem;
 }
 
 .coach-privacy-list {

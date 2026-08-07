@@ -59,14 +59,36 @@ Multi-entity nested JSON-LD (`@graph`) for RAG/AEO parsers. `ProfessionalService
 - Vulnerabilities fixed in days, not weeks — AI-assisted triage and remediation across application, cloud, infrastructure, and customer-reported issues.
 - Leadership that sticks — Security advisory paired with presence-based coaching, so your leaders can carry the program for the long haul.
 
+### Role-and-outcome gateway ("What brings you here?")
+
+Sits directly below the hero, above the carousel — the first routing decision
+on the page. Outcome-first: the visitor picks the result they want, not their
+job title. The "Who We Help" section below the carousel then covers who those
+outcomes have been delivered for.
+
+**Heading:** What brings you here?
+**Sub:** Pick the outcome you need — we'll take you straight to it.
+
+| Outcome (visitor's voice) | Goes to |
+|---|---|
+| "I need to win enterprise deals" | Fractional CISO → `fractional-ciso-for-saas.html` |
+| "I need to reduce security risk" | AI DevSecOps → `ai-devsecops-vulnerability-remediation.html` |
+| "I need security leadership" | Services → `services.html` |
+| "I need board-level clarity" | Case Studies → `case-studies.html` |
+
 ### Client strip (10 chips)
 
-Series A–C startups | SaaS companies | AI-powered product teams | Venture-backed companies | Engineering-led organizations | Mid-market NZ enterprises | Professional services firms | Critical service providers | Boards & audit committees | Mission-driven organisations
+Series A–C startups | SaaS companies | AI-powered product teams | Venture-backed companies | Engineering-led organizations | Mid-market enterprises | Professional services firms | Critical service providers | Boards & audit committees | Mission-driven organisations
 
 ### Who We Help
 
+> **Note — no geography is specified.** References to New Zealand / NZ /
+> Aotearoa were removed site-wide by decision, not by accident. Persona
+> cards, the client strip, and regulatory references are deliberately
+> region-neutral. Do not reintroduce a place name without checking first.
+
 **Heading:** Built for leaders who own security but can't hire a full-time CISO.
-**Intro:** Enterprise customers are asking hard questions, the backlog is growing, and security keeps landing on someone's already-full plate. We meet each of those leaders where they are — from venture-backed product teams to Aotearoa New Zealand mid-market organisations.
+**Intro:** Enterprise customers are asking hard questions, the backlog is growing, and security keeps landing on someone's already-full plate. We meet each of those leaders where they are — from venture-backed product teams to mid-market organisations.
 
 **Founder / CEO — Turn security from deal-blocker into differentiator.**
 Win enterprise deals with a credible security story — clear questionnaires without panic, and a posture that builds customer trust instead of stalling revenue.
@@ -77,14 +99,14 @@ Threat modeling in the design phase, security in the CI/CD pipeline, and a remed
 **Board / Investors — Gain a defensible view of risk and readiness.**
 Concise reporting on exposure, capability gaps, and priorities — technical risk translated into the business language governance actually needs.
 
-**CEO / GM · NZ mid-market — Translate cyber risk into business decisions.**
-Show how security supports continuity, reputation, and strategic growth without overwhelming non-technical stakeholders — framed for the NZ mid-market and its regulatory landscape.
+**CEO / GM · Mid-market — Translate cyber risk into business decisions.**
+Show how security supports continuity, reputation, and strategic growth without overwhelming non-technical stakeholders — framed for the mid-market and its regulatory landscape.
 
-**Board / Audit committee · NZ — Gain a clearer view of resilience and readiness.**
-Concise, defensible reporting on exposure, capability gaps, and practical next steps for governance — aligned to the NZ Privacy Act 2020 and critical-service obligations.
+**Board / Audit committee — Gain a clearer view of resilience and readiness.**
+Concise, defensible reporting on exposure, capability gaps, and practical next steps for governance — aligned to privacy legislation and critical-service obligations.
 
 **Mission-driven organisation — Security that fits your mission, not a corporate template.**
-Practical security for NGOs, iwi-owned enterprises, and community organisations — right-sized to your risk, your budget, and the trust your community places in you.
+Practical security for NGOs and community organisations — right-sized to your risk, your budget, and the trust your community places in you.
 
 ### Services (staggered two-column teaser, links to services.html)
 
@@ -744,7 +766,7 @@ Practice and review regularly. Adjust based on results, incidents, and changing 
 - Lead: Every security breakthrough begins with an inquiry.
 - CTAs: Book My Discovery Call (placeholder href — replace with scheduling tool URL) | Send a Message (scrolls to form)
 
-### What to Expect + Direct Contact
+### What to Expect
 
 **What to Expect**
 - A complimentary discovery conversation (30–45 minutes)
@@ -752,10 +774,11 @@ Practice and review regularly. Adjust based on results, incidents, and changing 
 - A tailored proposal for an engagement that fits your stage and needs
 - No obligation
 
-**Direct Contact**
-- Email: kenneth@aikifield.com (mailto link)
-- Phone: +64 022 384 1347 (clickable tel: link)
-- Based in Aotearoa New Zealand — serving clients globally.
+> **Note — no published direct contact details.** The Direct Contact card
+> (email, phone, location) was removed deliberately: booking is the only
+> published channel. No `mailto:` or `tel:` link appears anywhere on the site.
+> If a direct channel is ever reinstated, restore it here and in `contact.html`
+> together.
 
 ### Send a Message (Inquiry Form)
 
@@ -764,6 +787,14 @@ Practice and review regularly. Adjust based on results, incidents, and changing 
 **Form handler:** `contact-handler.php` (PHP mail() — validates, sends to kenneth@aikifield.com, redirects back with ?status=success|error)
 **Anti-spam:** Honeypot field (hidden "website" input — bots fill it, humans don't)
 **Status messages:** Success/error banners shown via JS reading ?status= query param
+
+**Booking CTA (shown inside both the success and error banners):**
+- Copy: "If this is urgent, go ahead and book a time slot directly:"
+- Button: Book a time now → (Outlook Bookings link, opens in a new tab)
+
+**Success banner:** "Thank you — your message has been sent." + "We'll get back to you within one business day." + booking CTA
+**Error banner:** "Something went wrong." + handler message + booking CTA
+**Handler error message:** "There was a problem sending your message." (no email fallback — booking is the only alternative channel)
 
 **Fields:**
 - Name (required)
@@ -805,3 +836,150 @@ All pages use the deep green (`--af-primary`) hero background:
 - Home: `.af-hero-home` — static two-column hero (copy + proof metrics, "Why AikiField" side panel)
 - Interior pages: `.af-page-header--green` modifier
 - White text on green, mint accents for eyebrows/controls
+
+---
+
+# BETA — Connected Assessment (`/beta/`, unreleased)
+
+> **Not live.** Everything in this section belongs to the blind `/beta/` preview
+> implementing issues #13 and #11. It is `noindex,nofollow`, disallowed in
+> `robots.txt`, and absent from the nav, footer, and sitemap. It does **not**
+> replace `## Assessment (assessment.html)` above — that page is unchanged and
+> still canonical for the live site. Merge the two sections only when the beta
+> is promoted.
+>
+> Question text in `/beta/data/questions.json` is reproduced verbatim from the
+> live `assessment.html`. If you change a question, change it in three places:
+> the live page, the JSON, and the Assessment section above.
+
+## Beta hub (`beta/assessment.html`)
+
+**Eyebrow:** Beta preview
+**H1:** The Security Leadership Assessment
+**Lead:** Two readings of the same field. One describes the security conditions your organisation currently maintains. The other describes how you tend to lead inside them. Taken together they show something neither shows alone.
+**Beta note:** This is an unreleased preview. Nothing here is linked from the main site, and the content is still changing.
+
+### Card — Part one · Organisational
+**H2:** Organisational Security Posture
+**Body:** Five categories — governance, product and engineering security, DevSecOps, customer trust, and incident readiness — describing the conditions your organisation currently maintains.
+**Meta:** 20 questions · about 8 minutes
+**CTA:** Begin the organisational assessment (becomes "Review your organisational result" once complete)
+
+### Card — Part two · Individual
+**H2:** Leadership Presence Profile
+**Body:** Seven dimensions — balance, flexibility, vitality, heart, voice, vision, and inspiration — describing how you show up under load, in conflict, and in uncertainty. Includes four pressure scenarios.
+**Meta:** 28 questions and 4 scenarios · about 12 minutes
+**CTA:** Begin the leadership assessment (becomes "Review your leadership result" once complete)
+
+### The cross-view
+**H2:** Where the two readings meet
+**Body:** Neither assessment is the point on its own. The cross-view pairs your organisational posture with your leadership pattern and describes what that combination tends to produce — where the two reinforce each other, and where they work against each other.
+**Body:** It does not tell you whether you are a good security leader. It describes how the way you lead meets the conditions you lead in.
+**Locked state:** Both assessments need to be complete. Finish either one and you will be offered the other; the cross-view unlocks when both are done.
+**Unlocked CTA:** Open your cross-view
+
+### Privacy / purpose notice (appears on every beta page)
+**H2:** What happens to your responses
+- Your answers stay in this browser and are never sent to AikiField. They are stored in your browser's local storage on this device only. There is no account, no server, and no analytics attached to your responses.
+- Clearing your browser data, using a different device, or using private browsing will remove them. Nobody at AikiField can see what you entered unless you choose to tell us.
+- **What this is.** A structured self-reflection. It is not a certification, an audit, a grade, or a judgment of you as a leader. There are no right answers and no benchmark you are being measured against.
+**Control:** Clear my responses
+
+### Closing CTA
+**H2:** Want a facilitated version?
+**Body:** A guided assessment gives you the version of this conversation that a form cannot: the follow-up questions, the disagreement, and a roadmap you did not write alone.
+**CTA:** Book a discovery call → `contact.html`
+
+## Organisational flow (`beta/assessment-organisation.html`)
+
+**Eyebrow:** Beta preview · Part one
+**H1:** Organisational Security Posture
+**Lead:** Five categories describing the security conditions your organisation currently maintains — its posture, its controls, and its readiness.
+**Scale stem:** On a scale of 1–6 (6 being high), how well, how much, or how often do you…
+**Scale labels:** 1 Not at all / never · 2 Rarely · 3 Sometimes · 4 Often · 5 Consistently · 6 Fully / always
+**Save note:** Your answers save as you go, in this browser only. You can leave and come back.
+**Submit:** See your posture
+**Results H2:** Your organisational posture
+**Plan H3:** What to practise next (eyebrow: Thirty days)
+
+**Categories and questions:** identical to Part 1 of the live `assessment.html`
+(Governance & Strategy, Product & Engineering Security, DevSecOps &
+Vulnerability Remediation, Customer Trust & Compliance, Incident Readiness —
+four questions each). Source of truth: `beta/data/questions.json`.
+
+### Reciprocal hand-off (shown only while the leadership assessment is outstanding)
+> Your organisational posture is one part of the field.
+>
+> Continue with the leadership assessment to explore how you tend to lead inside these conditions.
+
+**CTA:** Explore your leadership presence
+
+## Leadership flow (`beta/assessment-leadership.html`)
+
+**Eyebrow:** Beta preview · Part two
+**H1:** Leadership Presence Profile
+**Lead:** Seven dimensions describing how you tend to show up in the security conditions you lead — under load, in conflict, and in uncertainty.
+**Submit:** See your profile
+**Results H2:** Your leadership profile
+
+**Dimensions and questions:** identical to Part 2 of the live `assessment.html`
+(Balance, Flexibility, Vitality, Heart, Voice, Vision, Inspiration — four
+questions each). Source of truth: `beta/data/questions.json`.
+
+### Pressure scenarios
+**H2:** Under pressure
+**Intro:** Four situations security leaders actually meet. Choose the response closest to what you would genuinely do — not the one that sounds best.
+**Note:** These four are optional and are not scored into the profile above. They produce a separate reading of what you reach for first when a situation is live.
+**Scenarios:** The blocked deal · The 48-hour vulnerability · The control nobody uses · The board question
+**Tendency readings:** Stabilise first · Adapt first · Connect first · Reframe first
+Full text: `beta/data/scenarios.json`.
+
+### Hand-off (shown only while the organisational assessment is outstanding) — verbatim from issue #13
+> Your leadership profile is one part of the field.
+>
+> Continue with the organisational assessment to explore the conditions in which your leadership operates.
+
+**CTA:** Explore organisational security posture
+
+## Cross-view (`beta/assessment-crossview.html`)
+
+**Eyebrow:** Beta preview · The cross-view
+**H1:** Where the two readings meet
+**Lead:** Your organisational posture describes the conditions. Your leadership profile describes how you move inside them. This page is about what the two produce together.
+**Waiting-state H2:** Not yet — one reading is missing
+**Comparison H2:** Both profiles, side by side
+**Plan H2:** One move on each axis
+**Closing H2:** Talk it through
+
+**Principle (rendered on the page):** This view does not tell you whether you are a good security leader. It describes how the way you lead meets the conditions you lead in, and what that combination tends to produce.
+
+**Axes.** Organisational posture resolves to one of six buckets (Emerging /
+Developing / Established × even / uneven). Leadership pattern resolves to one of
+four (Steadiness-led, Relationally-led, Generatively-led, Evenly distributed).
+All 24 combinations have written interpretations with four fields each —
+headline, interpretation, what to watch, highest-leverage move. Source of truth:
+`beta/data/crossview.json`; bucket definitions documented in `beta/README.md`.
+
+**The three seed rows from issue #13 map as follows:**
+
+| Organisational posture | Leadership pattern | Headline |
+|---|---|---|
+| Established, uneven | Steadiness-led | Controls may exist but lack adoption |
+| Emerging, evenly | Relationally-led | Leadership can accelerate foundational improvements |
+| Established, evenly | Steadiness-led | The organisation may struggle with changing threats |
+
+## Beta design tokens (`beta/css/assessment.css`)
+
+Scoped dark theme, `--bta-*` namespace. The site header and footer keep their
+normal light styling; only `<main class="bta-main">` is dark.
+
+- `--bta-bg`: #0B1520 (midnight navy — the field)
+- `--bta-surface`: #14232F (raised dark card)
+- `--bta-panel`: #F6F2EA (warm white content panel — same paper as the live site)
+- `--bta-teal`: #5FD3B2 (strength / constructive progress)
+- `--bta-amber`: #F0B849 (attention / development edge)
+- `--bta-gold`: #E0B44E (eyebrow on navy)
+- `--bta-panel-teal`: #0E4E44 and `--bta-panel-amber`: #7A4A00 — the readable
+  text variants used on the warm panel, since teal and amber fail contrast there
+
+Verified contrast ratios are documented at the top of `beta/css/assessment.css`.

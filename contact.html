@@ -51,11 +51,10 @@
     </div>
   </section>
 
-  <!-- WHAT TO EXPECT + DIRECT CONTACT -->
+  <!-- WHAT TO EXPECT -->
   <section class="af-section">
     <div class="af-container">
       <div class="af-grid af-grid--fit af-grid--28">
-        <!-- WHAT TO EXPECT -->
         <article class="af-contact-card">
           <span class="af-contact-card__icon" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none" stroke="#F6F2EA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
@@ -67,17 +66,6 @@
             <li>A tailored proposal for an engagement that fits your stage and needs</li>
             <li>No obligation</li>
           </ul>
-        </article>
-
-        <!-- DIRECT CONTACT -->
-        <article class="af-contact-card af-contact-card--gold">
-          <span class="af-contact-card__icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#F6F2EA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16v12H4z"/><path d="M4 7l8 6 8-6"/></svg>
-          </span>
-          <h3 class="af-contact-card__title">Direct Contact</h3>
-          <p class="af-contact-card__body">Email: <a href="mailto:kenneth@aikifield.com">kenneth@aikifield.com</a></p>
-          <p class="af-contact-card__body">Phone: <a href="tel:+64223841347">+64 022 384 1347</a></p>
-          <p class="af-contact-card__body">Based in Aotearoa New Zealand &mdash; serving clients globally.</p>
         </article>
       </div>
     </div>
@@ -94,9 +82,21 @@
       <!-- Status messages (populated by query param from contact-handler.php) -->
       <div id="form-success" class="af-form-status af-form-status--success" hidden role="status">
         <strong>Thank you &mdash; your message has been sent.</strong> We'll get back to you within one business day.
+        <div class="af-booking-cta">
+          <p>If this is urgent, go ahead and book a time slot directly:</p>
+          <a href="https://outlook.office.com/bookwithme/user/57e8077433f14fbba90ce41be8eb815a@vigilent.com/meetingtype/c_nGn2-J1U2rVDW7BkFQXw2?bookingcode=06baa461-3ceb-48af-847d-feb43e809a97&anonymous&ismsaljsauthenabled&ep=mlink"
+             class="af-btn af-btn--primary af-btn--sm"
+             target="_blank" rel="noopener">Book a time now &rarr;</a>
+        </div>
       </div>
       <div id="form-error" class="af-form-status af-form-status--error" hidden role="alert">
-        <strong>Sorry, something went wrong.</strong> <span id="form-error-msg"></span> You can also email <a href="mailto:kenneth@aikifield.com">kenneth@aikifield.com</a> directly.
+        <strong>Something went wrong.</strong> <span id="form-error-msg"></span>
+        <div class="af-booking-cta">
+          <p>If this is urgent, go ahead and book a time slot directly:</p>
+          <a href="https://outlook.office.com/bookwithme/user/57e8077433f14fbba90ce41be8eb815a@vigilent.com/meetingtype/c_nGn2-J1U2rVDW7BkFQXw2?bookingcode=06baa461-3ceb-48af-847d-feb43e809a97&anonymous&ismsaljsauthenabled&ep=mlink"
+             class="af-btn af-btn--primary af-btn--sm"
+             target="_blank" rel="noopener">Book a time now &rarr;</a>
+        </div>
       </div>
 
       <form class="af-form" action="contact-handler.php" method="post">

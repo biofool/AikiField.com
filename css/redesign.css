@@ -429,6 +429,75 @@ button.af-focus:focus-visible,
 .af-card__title { font-size: 24px; line-height: 1.2; margin-bottom: 12px; }
 .af-card__body { font-size: 17px; color: var(--af-text-2); line-height: 1.6; }
 
+/* Linkable card variant — persona cards as guided-router links */
+a.af-card {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+}
+a.af-card:hover {
+  border-color: var(--af-primary);
+  box-shadow: 0 4px 16px rgba(14, 78, 68, 0.10);
+  transform: translateY(-2px);
+}
+a.af-card:focus-visible {
+  outline: 3px solid var(--af-primary);
+  outline-offset: 3px;
+}
+.af-card__arrow {
+  display: inline-block;
+  margin-top: 14px;
+  font-family: var(--af-sans);
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--af-primary);
+  text-decoration: none;
+}
+a.af-card:hover .af-card__arrow { text-decoration: underline; }
+
+/* ---------- Projects + chat split (projects.php) ---------- */
+.af-projects-split {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 32px;
+  align-items: start;
+}
+.af-projects-split__projects { display: grid; gap: 24px; }
+/* Sticky rail: cap the height and scroll internally, otherwise a chat stack
+   taller than the viewport pins at the top and its lower half becomes
+   unreachable — page scroll no longer moves it and it has no scroll of its own. */
+.af-projects-split__chat {
+  position: sticky;
+  top: 80px;
+  max-height: calc(100vh - 100px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.af-projects-split__chat .coach-shell {
+  max-width: none;
+  margin: 0;
+  padding: 0;
+}
+@media (max-width: 980px) {
+  .af-projects-split { grid-template-columns: 1fr; }
+  /* On mobile, put the chat rail ABOVE the projects list so users don't
+     have to scroll past every project card to reach the chat — it may be
+     their primary destination. The chat is sticky on desktop but static
+     on mobile, so this reordering doesn't affect the desktop layout. */
+  .af-projects-split__chat { order: -1; }
+  .af-projects-split__chat {
+    position: static;
+    max-height: none;
+    overflow-y: visible;
+  }
+  .af-projects-split__chat .coach-shell {
+    max-width: 700px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+  }
+}
+
 /* ---------- Principle strip (top-border cards) ---------- */
 .af-principle { border-top: 3px solid var(--af-primary); padding-top: 22px; }
 .af-principle__tag {
@@ -659,6 +728,98 @@ button.af-focus:focus-visible,
 }
 .af-timeline__title { color: var(--af-ink); margin-bottom: 6px; font-size: 21px; }
 .af-timeline__body { color: var(--af-text-2); font-size: 17px; }
+
+/* ---------- Role-and-outcome gateway (below hero) ---------- */
+.af-gateway {
+  background: var(--af-white);
+  border-bottom: 1px solid var(--af-border);
+  padding: 56px 0 64px;
+}
+.af-gateway__header {
+  text-align: center;
+  margin-bottom: 36px;
+}
+.af-gateway__question {
+  font-family: var(--af-serif);
+  font-weight: 600;
+  font-size: clamp(26px, 3.2vw, 36px);
+  line-height: 1.15;
+  color: var(--af-ink);
+  text-wrap: balance;
+}
+.af-gateway__sub {
+  font-size: 17px;
+  color: var(--af-text-2);
+  margin-top: 10px;
+}
+.af-gateway__grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+.af-gateway__option {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 16px;
+  background: var(--af-bg);
+  border: 1px solid var(--af-border);
+  border-radius: 16px;
+  padding: 28px 24px;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+  min-height: 180px;
+}
+.af-gateway__option:hover {
+  border-color: var(--af-primary);
+  box-shadow: 0 6px 20px rgba(14, 78, 68, 0.12);
+  transform: translateY(-3px);
+}
+.af-gateway__option:focus-visible {
+  outline: 3px solid var(--af-primary);
+  outline-offset: 3px;
+}
+.af-gateway__option-text {
+  font-family: var(--af-serif);
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 1.3;
+  color: var(--af-ink);
+}
+.af-gateway__option-arrow {
+  font-family: var(--af-sans);
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--af-primary);
+  text-decoration: none;
+}
+.af-gateway__option:hover .af-gateway__option-arrow {
+  text-decoration: underline;
+}
+@media (max-width: 980px) {
+  .af-gateway__grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 600px) {
+  .af-gateway__grid { grid-template-columns: 1fr; }
+  .af-gateway { padding: 40px 0 48px; }
+  .af-gateway__option { min-height: 0; }
+}
+
+/* ---------- Booking CTA (revealed after form submission) ---------- */
+.af-booking-cta {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid currentColor;
+}
+.af-booking-cta p {
+  font-size: 16px;
+  margin-bottom: 12px;
+}
+.af-form-status--success .af-booking-cta { border-top-color: #4CAF50; }
+.af-form-status--success .af-booking-cta p { color: #1B5E20; }
+.af-form-status--error .af-booking-cta { border-top-color: #FF9800; }
+.af-form-status--error .af-booking-cta p { color: #E65100; }
 
 /* ---------- Contact cards ---------- */
 .af-contact-card {
