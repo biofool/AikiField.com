@@ -128,6 +128,7 @@ PAGES = [
     "/fractional-ciso-for-saas.html",
     "/ai-devsecops-vulnerability-remediation.html",
     "/fractional-ciso.html", "/board-security-clarity.html", "/projects.php",
+    "/login.php",
 ]
 
 audit = {"started": datetime.now(timezone.utc).isoformat(), "steps": []}
@@ -423,8 +424,8 @@ def step_verify():
             + ("" if ray else " - NOT served through Cloudflare"))
         healthy &= good
 
-    # Session-bearing paths must never be cached.
-    for path in ("/projects.php", "/beta/assessment.php"):
+    # Dynamic/session-bearing paths must never be cached.
+    for path in ("/projects.php", "/login.php", "/beta/assessment.php"):
         status, headers, _ = http(path)
         cache = headers.get("cf-cache-status", "-")
         good = cache.upper() not in ("HIT", "STALE")

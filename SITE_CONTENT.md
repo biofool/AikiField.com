@@ -627,7 +627,7 @@ The composure and curiosity to adapt to emerging threats and AI risk.
 **Tag:** AI Coaching
 **Built-by tag:** Built by AikiField
 **Title:** Aikifield AI Chat
-**Lead:** An AI coaching chat that answers questions from Richard Moon's teachings, with tight cost controls so it stays free.
+**Lead:** Corpus-specific AI Chat. Designed to provide hallucination-free Q&A against a specific knowledge base. Free your team to handle the hard questions; give your customers a better interface to the documentation — because, who wants to read docs?
 **Live at:** quantumaikido.com — a public chat plus a members area (invitation-only, with email or Google login).
 **How it works:** It searches the teaching archive for relevant passages, drafts an answer with citations, keeps costs under control, and hands off to a human coach by video when it can't help or the member asks.
 
@@ -730,47 +730,26 @@ Both systems are built to sense and adapt — cost monitoring and data quality c
 **Body:** We built the systems above end-to-end — architecture, code, cost controls, and operation. The same engineering can be tailored to fit your security program, your stack, and your budget. Let's talk about what you need built.
 **Button:** Book a Discovery Call
 
-### AI Chat login (inline on projects.php when unauthed)
+### Invitation card (right column on projects.php)
 
-**Layout:** Two-column — forms on the left, caveats (intro + privacy) on the right. On mobile, caveats appear first as a collapsible section.
+The projects page no longer hosts a coaching login or an inline AI Chat.
+Instead the right column shows an invitation card pointing visitors to the
+contact form to request a live demo. (The coaching login was extracted to a
+blind `/login.php` page that gates only the `/beta/` assessment pages — see
+`docs/coach-auth-prd.md`.)
 
-**Left column — Sign In:**
-- Heading: Sign In
-- Intro: Sign in or register to start chatting.
-- Email label: Email address or login ID (placeholder: name@example.com or your login ID)
-- Password label: Password (placeholder: Password)
-- Buttons: Sign in | Forgot password?
-- Consent notice: By signing in, you confirm that you have read the privacy notice and agree to the processing described in the Privacy Policy.
-- Toggle: Don't have an account? Register
+**Tags:** See it live | Free
+**Heading:** Want to see it in action?
+**Lead:** If you want to see it live, request an invitation when you contact us — we're happy to show you how easy it is to stand one up.
+**Body:** The AikiField AI Chat runs in production at quantumaikido.com. We can walk you through a live demo, then design and build a corpus-specific chat grounded in your own knowledge base — runbooks, policies, product docs, or any body of text your team or customers keep asking about.
+**Button:** Request an invitation (links to contact.html)
+**Fine print:** No account needed to look around this page — the project cards on the left describe what each system does and how the same pattern fits your needs.
 
-**Left column — Create Account:**
-- Heading: Create Account
-- Intro: Sign up with your email and password to start chatting.
-- Required: Email address (name@example.com), Password (min 8 chars), Invitation code (optional — "if you have one")
-- Optional: Alias / username, Preferred language
-- Button: Create account
-- Toggle: Already have an account? Sign in
+### Page-header CTA (projects.php)
 
-**Right column — About AikiField AI Chat:**
-- Heading: AikiField AI Chat [Free]
-- Subtitle: AI-supported guidance for embodied practice, awareness, and constructive interaction.
-- Body: Explore personalised guidance for posture, breathing, mental focus, and everyday interactions. Ask about your practice, apply Aikido principles at work, or request support from a human coach.
-- Features:
-  - Responses informed by Richard Moon's authorised teaching materials — not direct quotations
-  - Request a handoff to a human coach when you need more
-  - Free to use — sign up to start chatting
-
-**Right column — Before you begin (privacy notice):**
-- Heading: Before you begin
-- Summary (3 bullets):
-  - Your conversations are stored so you can return to them and so we can improve the service. They are processed by Google Gemini to generate responses.
-  - You can request deletion of your conversation history at any time.
-  - Please do not enter sensitive personal information.
-- Links: Read the Privacy Policy | Read the AI Security & Safety Notice
-- Expandable "Full privacy details" (3 bullets):
-  - Your questions are stored by us and sent to Google Gemini for response generation. We do not share them with other organisations unless described in the full privacy policy.
-  - The chatbot's answers are informed by a private library of authorised teaching materials. The chatbot provides guidance in its own words and does not present responses as direct quotations.
-  - No phone numbers, email addresses, or other personal details are retained in the library.
+**Badge:** Free
+**Text:** See it live — request an invitation below
+**Arrow:** ↓ (anchors to #see-it-live, the invitation card)
 
 ---
 

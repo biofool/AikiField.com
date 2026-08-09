@@ -39,17 +39,25 @@ site. Validate changes by visual review and accessibility checks.
 
 - **Pages (root):** `index.html`, `approach.html`, `services.html`,
   `process.html`, `projects.php`, `assessment.html`, `contact.html`.
-  (`projects.html` is now `projects.php` — it hosts the coaching login and
-  301-redirects via `.htaccess`.)
-- **Styles:** `css/` (e.g. `css/redesign.css`) + `coach-auth.css` (login form).
-- **Scripts:** `js/` + `coach-login.js` (login/register/reset/confirm).
-- **Coaching auth + chat (PHP):** `projects.php` (inline login when
-  unauthed + AI Chat when authed + session POST handlers), `coach-proxy.php`
-  (`/coach-api/*` → AIRichardMoon backend), `coach-login.js` (unauthed),
-  `coach-chat.js` (authed), `includes/coach-config.load.php`,
-  `coach-config.php` (non-secret template), `coach-config.local.php`
-  (gitignored — `COACH_PROXY_SECRET` / `TURNSTILE_SITE_KEY`), `.htaccess`.
-  See `docs/coach-auth-prd.md`.
+  (`projects.html` 301-redirects to `projects.php` via `.htaccess`.
+  `projects.php` is a fully public marketing page — no auth, no chat — kept
+  as `.php` for the redirect and because `/beta/` pages link to it.)
+- **Styles:** `css/` (e.g. `css/redesign.css`) + `coach-auth.css` (login
+  form, loaded only by `login.php`).
+- **Scripts:** `js/` + `coach-login.js` (login/register/reset/confirm,
+  loaded only by `login.php`).
+- **Coaching auth (PHP, beta-gating only):** `login.php` (blind standalone
+  login page — gates `/beta/` only, not linked from nav; PHP session POST
+  handlers + `?next=` redirect), `coach-proxy.php`
+  (`/coach-api/*` → AIRichardMoon backend), `coach-login.js`,
+  `includes/coach-config.load.php`, `coach-config.php` (non-secret
+  template), `coach-config.local.php` (gitignored — `COACH_PROXY_SECRET` /
+  `TURNSTILE_SITE_KEY`), `includes/beta-gate.load.php` (redirects unauthed
+  `/beta/` requests to `/login.php?next=…`), `.htaccess`.
+  See `docs/coach-auth-prd.md`. Note: `projects.php` no longer hosts any
+  login or chat — it shows an invitation card instead. The inline
+  `coach-chat.js` was removed; the live chat lives on
+  `quantumaikido.com/members.php`.
 - **Content source of truth:** `SITE_CONTENT.md` -- update this alongside HTML
   when any site copy changes.
 - **Binary assets:** `AikiField.pdf` and redesign zips are DVC-tracked
@@ -68,11 +76,10 @@ site. Validate changes by visual review and accessibility checks.
   DVC (`.dvc` file + `dvc push`).
 - **`input/` is gitignored** -- it holds working/source materials only.
 - **`sync.sh` is production-sensitive.** Always run `dryrun` before `deploy`.
-- **Coaching auth + chat = shared flow (triple-PRD rule).** `projects.php`
-  hosts the login (when unauthed) and the AI Chat (when authed), both
-  authenticating against the AIRichardMoon backend (same as
-  quantumaikido.com). The chat is same-origin on aikifield.com, so no
-  cross-domain redirect. Changes to login/registration/auth/chat/session/
+- **Coaching auth = shared flow (triple-PRD rule).** The blind `login.php`
+  authenticates against the AIRichardMoon backend (same as
+  quantumaikido.com) and gates the `/beta/` pages. `projects.php` is public
+  and shows an invitation card. Changes to login/registration/auth/session/
   invitation flow MUST update all three PRDs (`docs/coach-auth-prd.md` here,
   `docs/coach-dashboard-prd.md` in QA, `backend/PRD.md` in AIRichardMoon) and
   deploy all affected repos together. Never commit `coach-config.local.php`.

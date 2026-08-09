@@ -41,9 +41,10 @@ define('COACH_VERIFY_TLS', true);
 // HTTP timeout (seconds) for proxied backend calls.
 define('COACH_TIMEOUT', 60);
 
-// Post-login destination. projects.php now hosts the AI Chat inline, so
-// after login the user stays on projects.php (same origin — the session
-// cookie is valid, no cross-domain redirect). This constant is retained for
-// compatibility but is no longer read by projects.php; override only if you
-// want to send authenticated users elsewhere.
-define('COACH_LOGIN_REDIRECT', '/projects.php');
+// Post-login destination. The coaching login now lives on the blind
+// /login.php page that gates the /beta/ assessment pages. login.php reads
+// a ?next= query parameter and overrides this default per-request so users
+// land back on the page they wanted. This constant is the fallback when
+// ?next= is absent. Override only if you want to send authenticated users
+// elsewhere by default.
+define('COACH_LOGIN_REDIRECT', '/beta/');

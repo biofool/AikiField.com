@@ -1,125 +1,30 @@
 <?php
 /**
- * AikiField — Demonstration Technologies (with coaching login integration).
+ * AikiField — Demonstration Technologies.
  *
- * Converted from the static projects.html. The page now leads with a login +
- * registration section that authenticates against the Quantum Aikido coaching
- * backend (AIRichardMoon on Cloud Run) via coach-proxy.php, so visitors can
- * sign in to (or create an account for) the AikiField AI Chat directly from
- * the Demonstration Technologies page. The existing marketing content follows below.
+ * Marketing page describing the systems AikiField has built (the AikiField
+ * AI Chat, World Studio Finder, MultiCloud-MultiPass). The page is fully
+ * public — there is no login or chat on this page anymore.
  *
- * Ported from quantumaikido.com/web/login.php (issue #51 unified login):
- *   - PHP session cookie stores the backend session (email + sessionToken).
- *   - coach-login.js handles login/register/reset/confirm and posts the
- *     backend-login here to establish the server-side session.
- *   - On success the user is redirected back to this page (projects.php),
- *     which now renders the AI Chat inline (coach-chat.js) instead of the
- *     login form. The chat calls /coach-api/v1/chat-secure on this same
- *     origin, so the aikifield.com session cookie is valid — no
- *     cross-domain redirect.
+ * History: this page previously hosted an inline coaching login + AI Chat
+ * (a public CTA authenticating against the Quantum Aikido coaching backend
+ * on Cloud Run via coach-proxy.php). That surface was removed — the page
+ * now shows an invitation card pointing visitors to the contact form to
+ * request a live demo. The coaching login was extracted to a blind
+ * /login.php page that gates only the /beta/ assessment pages. See
+ * docs/coach-auth-prd.md for the full history and the current auth surface.
  *
  * BLIND URL NOTE: This page IS linked from the public nav (it is a marketing
- * page). The login form is a CTA on a public page, not a gated area — the
- * sponsored-projects content remains visible to all visitors.
+ * page). The invitation card is a CTA, not a gate — all content stays
+ * visible to every visitor.
  *
- * Dual-PRD coordination: changes to this auth flow MUST update
+ * Dual-PRD coordination: changes to the auth flow (now on /login.php) MUST
+ * update
  *   - docs/coach-auth-prd.md (this repo)
  *   - ~/projects/quantumaikido.com/web/docs/coach-dashboard-prd.md
  *   - ~/projects/AIRichardMoon/backend/PRD.md
  * See docs/coach-auth-prd.md and AGENTS.md.
  */
-
-require __DIR__ . '/includes/coach-config.load.php';
-
-// --- Start PHP session with secure cookie settings ---
-if (session_status() === PHP_SESSION_NONE) {
-    $secure = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
-        || (($_SERVER['SERVER_PORT'] ?? '') == 443);
-    session_set_cookie_params([
-        'lifetime' => 86400 * 7,  // 7 days
-        'path'     => '/',
-        'domain'   => '',
-        'secure'   => $secure,
-        'httponly' => true,
-        'samesite' => 'Lax',
-    ]);
-    session_start();
-}
-
-$qaEmail        = $_SESSION['qa_email'] ?? null;
-$qaSessionToken = $_SESSION['qa_session_token'] ?? null;
-$qaAlreadyAuthed = !empty($qaEmail) && !empty($qaSessionToken);
-
-// --- Handle POST from coach-login.js (establish server-side session) ---
-// coach-login.js posts email + sessionToken here after a successful backend
-// auth. We verify against the backend and store in the PHP session cookie.
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'backend-login') {
-    $postEmail = trim($_POST['email'] ?? '');
-    $postToken = trim($_POST['sessionToken'] ?? '');
-    $qaSessionEstablished = false;
-    if ($postEmail !== '' && $postToken !== '') {
-        $verifyUrl = rtrim(COACH_BACKEND_URL, '/') . '/v1/auth/check-session';
-        $payload = json_encode(['email' => $postEmail, 'sessionToken' => $postToken]);
-        $ch = curl_init($verifyUrl);
-        $reqHeaders = ['Content-Type: application/json'];
-        if (defined('COACH_PROXY_SECRET') && COACH_PROXY_SECRET !== '') {
-            $reqHeaders[] = 'X-Proxy-Secret: ' . COACH_PROXY_SECRET;
-        }
-        curl_setopt_array($ch, [
-            CURLOPT_POST           => true,
-            CURLOPT_POSTFIELDS     => $payload,
-            CURLOPT_HTTPHEADER     => $reqHeaders,
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_TIMEOUT        => 10,
-            CURLOPT_SSL_VERIFYPEER => COACH_VERIFY_TLS,
-            CURLOPT_SSL_VERIFYHOST => COACH_VERIFY_TLS ? 2 : 0,
-        ]);
-        $resp = curl_exec($ch);
-        $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
-        if ($resp !== false && $code === 200) {
-            $data = json_decode($resp, true);
-            if ($data['ok'] ?? false) {
-                session_regenerate_id(true);
-                $_SESSION['qa_email']         = $data['email'] ?? $postEmail;
-                $_SESSION['qa_session_token'] = $postToken;
-                $_SESSION['qa_target_env']    = $data['targetEnvironment'] ?? 'both';
-                $_SESSION['qa_is_admin']      = $data['admin'] ?? false;
-                $qaSessionEstablished = true;
-            } else {
-                error_log('projects.php: check-session returned ok=false for ' . $postEmail);
-            }
-        } else {
-            error_log('projects.php: check-session failed http=' . (int)$code
-                . ' err=' . ($resp === false ? 'transport' : 'status'));
-        }
-    }
-    session_write_close();
-    header('Content-Type: application/json');
-    http_response_code(200);
-    echo json_encode(['ok' => $qaSessionEstablished]);
-    exit;
-}
-
-// --- Handle logout ---
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'logout') {
-    $_SESSION = [];
-    if (ini_get('session.use_cookies')) {
-        $p = session_get_cookie_params();
-        setcookie(session_name(), '', time() - 42000,
-            $p['path'], $p['domain'] ?? '',
-            $p['secure'] ?? false, $p['httponly'] ?? false);
-    }
-    session_destroy();
-    header('Location: ' . ($_SERVER['SCRIPT_NAME'] ?? '/projects.php'));
-    exit;
-}
-
-$apiBase = '/coach-api';
-// After login, stay on this page — it now renders the chat inline (same
-// origin, so the session cookie is valid). No cross-domain redirect.
-$loginRedirect = $_SERVER['SCRIPT_NAME'] ?? '/projects.php';
-$coachLoginUrl = $_SERVER['SCRIPT_NAME'] ?? '/projects.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -146,28 +51,6 @@ $coachLoginUrl = $_SERVER['SCRIPT_NAME'] ?? '/projects.php';
   <link rel="preload" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Public+Sans:wght@400;600;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <noscript><link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Public+Sans:wght@400;600;700&display=swap" rel="stylesheet"></noscript>
   <link rel="stylesheet" href="css/redesign.css">
-  <link rel="preload" href="coach-auth.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-  <noscript><link rel="stylesheet" href="coach-auth.css"></noscript>
-  <?php if (defined('TURNSTILE_SITE_KEY') && TURNSTILE_SITE_KEY): ?>
-  <script>
-    // Turnstile callbacks must be defined BEFORE coach-login.js loads.
-    window.qaTurnstileTokens = { reg: "", forgot: "", login: "" };
-    window.onTurnstileSuccess = function(token) {
-      var fc = document.getElementById("coach-forgot-captcha");
-      if (fc && !fc.hidden) { window.qaTurnstileTokens.forgot = token; return; }
-      var lc = document.getElementById("coach-login-captcha");
-      if (lc && !lc.hidden) { window.qaTurnstileTokens.login = token; return; }
-      window.qaTurnstileTokens.reg = token;
-    };
-    window.onTurnstileError = function() {
-      window.qaTurnstileTokens = { reg: "", forgot: "", login: "" };
-    };
-    window.onTurnstileExpired = function() {
-      window.qaTurnstileTokens = { reg: "", forgot: "", login: "" };
-    };
-  </script>
-  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
-  <?php endif; ?>
 </head>
 <body>
 
@@ -205,18 +88,18 @@ $coachLoginUrl = $_SERVER['SCRIPT_NAME'] ?? '/projects.php';
       <p class="af-eyebrow">Built by AikiField</p>
       <h1 class="af-h1">Technology we built &mdash; ready to fit your needs.</h1>
       <p class="af-lead af-lead--wide af-page-header__lead">AikiField designs, builds, and operates the systems below &mdash; production AI and data pipelines running today, not demos or slide-ware. The same engineering capability, cost discipline, and leadership judgment that built them is available to your organization, tailored to fit your security program and your stage.</p>
-      <a href="#ai-chat" class="af-page-header__chat-cta">
+      <a href="#see-it-live" class="af-page-header__chat-cta">
         <span class="af-page-header__chat-cta-badge">Free</span>
-        Try the AikiField AI Chat &mdash; sign in below
+        See it live &mdash; request an invitation below
         <span class="af-page-header__chat-cta-arrow" aria-hidden="true">&darr;</span>
       </a>
     </div>
   </section>
 
   <!-- ============================================================ -->
-  <!-- PROJECTS + AI CHAT LOGIN — two-column split                   -->
-  <!-- Left: both sponsored project cards.                           -->
-  <!-- Right: AI Chat login (unauthed) or chat (authed), sticky.     -->
+  <!-- PROJECTS + INVITATION CARD — two-column split                 -->
+  <!-- Left: the sponsored project cards.                            -->
+  <!-- Right: invitation card (request a live demo), sticky.         -->
   <!-- No --white modifier: falls through to body's --af-bg (warm    -->
   <!-- paper), so the page reads dark green header -> paper section  -->
   <!-- -> white cards, instead of white section -> paper cards.      -->
@@ -235,7 +118,7 @@ $coachLoginUrl = $_SERVER['SCRIPT_NAME'] ?? '/projects.php';
               <span class="af-svc__tag af-svc__tag--built">Built by AikiField</span>
             </div>
             <h2 class="af-svc__title">Aikifield AI Chat</h2>
-            <p class="af-svc__lead">An AI coaching chat that answers questions from Richard Moon&rsquo;s teachings, with tight cost controls so it stays free.</p>
+            <p class="af-svc__lead">Corpus-specific AI Chat. Designed to provide hallucination-free Q&amp;A against a specific knowledge base. Free your team to handle the hard questions; give your customers a better interface to the documentation &mdash; because, who wants to read docs?</p>
             <p class="af-svc__bestfor">Live at <a href="https://quantumaikido.com">quantumaikido.com</a> &mdash; a public chat plus a members area (invitation-only, with email or Google login).</p>
             <p class="af-svc__bestfor">How it works: it searches the teaching archive for relevant passages, drafts an answer with citations, keeps costs under control, and hands off to a human coach by video when it can&rsquo;t help or the member asks.</p>
             <h3 class="af-svc__bullets-label">What it does</h3>
@@ -326,257 +209,19 @@ $coachLoginUrl = $_SERVER['SCRIPT_NAME'] ?? '/projects.php';
 
         </div><!-- /.af-projects-split__projects -->
 
-        <!-- RIGHT COLUMN: AI Chat login (unauthed) or chat (authed) — sticky -->
-        <div class="af-projects-split__chat" id="ai-chat">
-          <div class="coach-shell">
-
-          <?php if ($qaAlreadyAuthed): ?>
-          <!-- Signed-in state: the AI Chat, inline (ported from members.php) -->
-          <div id="coach-chat" class="coach-card">
-            <div class="coach-chat-header">
-              <h2>AikiField AI Chat</h2>
-              <div id="coach-user-info" class="coach-user-info"></div>
-              <button type="button" id="coach-clear-btn" class="btn btn-secondary coach-clear-btn" title="Clear the conversation">Clear</button>
-              <button id="coach-logout" class="btn btn-secondary coach-logout-btn">Sign out</button>
+        <!-- RIGHT COLUMN: invitation card (request a live demo) — sticky -->
+        <div class="af-projects-split__chat" id="see-it-live">
+          <aside class="af-svc af-svc--invite">
+            <div class="af-svc__tag-row">
+              <span class="af-svc__tag af-svc__tag--flagship">See it live</span>
+              <span class="af-svc__tag af-svc__tag--built">Free</span>
             </div>
-            <div id="coach-messages" class="coach-messages">
-              <button type="button" id="coach-scroll-bottom-btn" class="coach-scroll-bottom-btn" hidden aria-label="Scroll to latest message">&#8595;</button>
-            </div>
-            <div id="coach-queue-banner" class="coach-queue-banner" hidden></div>
-            <form id="coach-chat-form" class="coach-chat-form">
-              <div class="coach-input-row">
-                <textarea id="coach-chat-input" class="coach-chat-input" placeholder="Ask the coach anything..." maxlength="4000" rows="3"></textarea>
-                <button type="submit" class="btn btn-primary" id="coach-send-btn" aria-label="Send message">&#10148;</button>
-              </div>
-              <div class="coach-input-footer">
-                <div class="coach-lang-selector">
-                  <label for="coach-language-select" class="sr-only">Response language</label>
-                  <select id="coach-language-select" class="coach-language-select" title="Overrides auto-detection. Leave as English to let the coach detect your language automatically.">
-                    <option value="en">English (auto-detect)</option>
-                  </select>
-                </div>
-                <div id="coach-send-hint" class="coach-send-hint" hidden>Press Enter again to send</div>
-                <div class="coach-char-counter"><span id="coach-char-count">0</span> / 4000</div>
-              </div>
-            </form>
-            <!-- Member-initiated coach handoff prompt (issue #103) -->
-            <div id="coach-handoff-prompt" class="coach-handoff-prompt" hidden>
-              <button type="button" id="coach-handoff-trigger" class="coach-handoff-trigger">Talk to a human coach</button>
-              <div id="coach-handoff-form" class="coach-handoff-form" hidden>
-                <p class="coach-handoff-q">Would you like to discuss this with an Aikido Coach?</p>
-                <div class="coach-handoff-yesno" data-q="q1">
-                  <button type="button" class="coach-handoff-choice" data-val="yes">Yes</button>
-                  <button type="button" class="coach-handoff-choice" data-val="no">No, thanks</button>
-                </div>
-                <div class="coach-handoff-q2" hidden>
-                  <p class="coach-handoff-q">Should I send them a summary of this chat?</p>
-                  <div class="coach-handoff-yesno" data-q="q2">
-                    <button type="button" class="coach-handoff-choice" data-val="yes">Yes, send a summary</button>
-                    <button type="button" class="coach-handoff-choice" data-val="no">No, just my question</button>
-                  </div>
-                </div>
-                <div class="coach-handoff-q3" hidden>
-                  <p class="coach-handoff-q">What specific question would you like to discuss with the coach?</p>
-                  <textarea id="coach-handoff-question" class="coach-handoff-question" maxlength="4000" rows="3" placeholder="Your question for the human coach (optional)..."></textarea>
-                  <div class="coach-handoff-actions">
-                    <button type="button" class="btn btn-primary" id="coach-handoff-submit">Request coach</button>
-                    <button type="button" class="coach-handoff-cancel" id="coach-handoff-cancel">Cancel</button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <?php else: ?>
-
-          <!-- Two-column layout: left = sign in/register, right = caveats.
-               On mobile, caveats appear first as a collapsible <details> section. -->
-          <div class="coach-login-layout">
-
-          <!-- Left column: auth forms -->
-          <div class="coach-login-forms">
-
-          <!-- Login step -->
-          <div id="coach-login" class="coach-card coach-card--highlight">
-            <h2>Sign In</h2>
-            <p class="coach-intro">Sign in or register to start chatting.</p>
-
-            <!-- Social login buttons (shown if OAuth is configured) -->
-            <div id="coach-social" class="coach-social" hidden>
-              <!-- OAuth provider buttons are dynamically rendered by coach-login.js -->
-            </div>
-
-            <div id="coach-divider" class="coach-divider" hidden><span>or</span></div>
-
-            <!-- Login form -->
-            <form id="coach-login-form" class="coach-form">
-              <label for="coach-email" class="coach-label">Email address or login ID</label>
-              <input type="text" id="coach-email" class="coach-input" placeholder="name@example.com or your login ID" required autocomplete="username">
-
-              <label for="coach-password" class="coach-label">Password</label>
-              <input type="password" id="coach-password" class="coach-input" placeholder="Password" required autocomplete="current-password" minlength="8">
-
-              <button type="submit" class="btn btn-primary" id="coach-login-btn">Sign in</button>
-              <button type="button" id="coach-forgot-btn" class="btn btn-link coach-forgot-link">Forgot password?</button>
-
-              <?php if (defined('TURNSTILE_SITE_KEY') && TURNSTILE_SITE_KEY): ?>
-              <div id="coach-login-captcha" class="coach-login-captcha">
-                <div class="cf-turnstile"
-                     data-sitekey="<?php echo htmlspecialchars(TURNSTILE_SITE_KEY); ?>"
-                     data-callback="onTurnstileSuccess"
-                     data-error-callback="onTurnstileError"
-                     data-expired-callback="onTurnstileExpired"></div>
-              </div>
-              <div id="coach-forgot-captcha" class="coach-forgot-captcha" hidden>
-                <div class="cf-turnstile"
-                     data-sitekey="<?php echo htmlspecialchars(TURNSTILE_SITE_KEY); ?>"
-                     data-callback="onTurnstileSuccess"
-                     data-error-callback="onTurnstileError"
-                     data-expired-callback="onTurnstileExpired"></div>
-              </div>
-              <?php endif; ?>
-            </form>
-
-            <div id="coach-login-status" class="coach-status" hidden></div>
-
-            <!-- Consent notice (issue #20) -->
-            <p class="coach-consent-notice">By signing in, you confirm that you have read the privacy notice and agree to the processing described in the Privacy Policy.</p>
-
-            <!-- Toggle between login and register -->
-            <div class="coach-toggle-row">
-              <span id="coach-toggle-text">Don&rsquo;t have an account?</span>
-              <button type="button" id="coach-toggle-btn" class="btn btn-link">Register</button>
-            </div>
-          </div>
-
-          <!-- Registration form -->
-          <div id="coach-register" class="coach-card" hidden>
-            <h2>Create Account</h2>
-            <p class="coach-intro">Sign up with your email and password to start chatting.</p>
-
-            <form id="coach-register-form" class="coach-form">
-              <div class="coach-reg-columns">
-                <!-- Left column: required fields -->
-                <div class="coach-reg-col coach-reg-required">
-                  <h3 class="coach-reg-col-heading">Required</h3>
-
-                  <label for="coach-reg-email" class="coach-label">Email address</label>
-                  <input type="email" id="coach-reg-email" class="coach-input" placeholder="name@example.com" required autocomplete="email">
-
-                  <label for="coach-reg-password" class="coach-label">Password</label>
-                  <input type="password" id="coach-reg-password" class="coach-input" placeholder="Choose a password (min 8 chars)" required autocomplete="new-password" minlength="8">
-
-                  <label for="coach-reg-code" class="coach-label">Invitation code <span class="coach-reg-hint" style="display:inline;font-weight:normal;">(if you have one)</span></label>
-                  <input type="text" id="coach-reg-code" class="coach-input" placeholder="Enter your invitation code (optional)" autocomplete="off">
-                </div>
-
-                <!-- Right column: optional fields -->
-                <div class="coach-reg-col coach-reg-optional">
-                  <h3 class="coach-reg-col-heading">Optional</h3>
-
-                  <label for="coach-reg-alias" class="coach-label">Alias / username</label>
-                  <input type="text" id="coach-reg-alias" class="coach-input" placeholder="Choose a login name (or leave blank)" autocomplete="username" maxlength="40">
-                  <p class="coach-reg-hint">If set, you can log in with this instead of your email. Letters, numbers, hyphens, underscores, and dots only.</p>
-
-                  <label for="coach-reg-language" class="coach-label">Preferred language</label>
-                  <select id="coach-reg-language" class="coach-input">
-                    <option value="">English (auto-detect)</option>
-                  </select>
-                  <p class="coach-reg-hint">Overrides auto-detection. The coach will respond in this language.</p>
-                </div>
-              </div>
-
-              <?php if (defined('TURNSTILE_SITE_KEY') && TURNSTILE_SITE_KEY): ?>
-              <div class="cf-turnstile"
-                   data-sitekey="<?php echo htmlspecialchars(TURNSTILE_SITE_KEY); ?>"
-                   data-callback="onTurnstileSuccess"
-                   data-error-callback="onTurnstileError"
-                   data-expired-callback="onTurnstileExpired"
-                   style="margin-top:0.5rem;"></div>
-              <?php endif; ?>
-
-              <button type="submit" class="btn btn-primary" id="coach-register-btn">Create account</button>
-            </form>
-
-            <div id="coach-register-status" class="coach-status" hidden></div>
-
-            <div class="coach-toggle-row">
-              <span>Already have an account?</span>
-              <button type="button" id="coach-toggle-back-btn" class="btn btn-link">Sign in</button>
-            </div>
-          </div>
-
-          <!-- Password reset form (shown when ?reset=token in URL) -->
-          <div id="coach-reset-step" class="coach-card" hidden>
-            <h2>Reset Password</h2>
-            <p class="coach-intro">Enter your new password below.</p>
-            <form id="coach-reset-form" class="coach-form">
-              <label for="coach-reset-password" class="coach-label">New password</label>
-              <input type="password" id="coach-reset-password" class="coach-input" placeholder="New password (min 8 chars)" required autocomplete="new-password" minlength="8">
-              <button type="submit" class="btn btn-primary" id="coach-reset-btn">Reset password</button>
-            </form>
-            <div id="coach-reset-status" class="coach-status" hidden></div>
-          </div>
-
-          <!-- Confirmation status (shown when ?confirm=token in URL) -->
-          <div id="coach-confirm-step" class="coach-card" hidden>
-            <h2>Confirming your email...</h2>
-            <p class="coach-intro" id="coach-confirm-text">Please wait while we confirm your email address.</p>
-            <div id="coach-confirm-status" class="coach-status" hidden></div>
-          </div>
-
-          </div><!-- /.coach-login-forms -->
-
-          <!-- Right column: intro + caveats (privacy, attribution, safety) -->
-          <details class="coach-login-caveats" open>
-            <summary class="coach-caveats-summary">About AikiField AI Chat</summary>
-            <div class="coach-caveats-body">
-
-            <!-- Compressed intro panel -->
-            <div class="coach-intro-panel coach-intro-panel--highlight">
-              <h2>AikiField AI Chat <span class="coach-free-badge">Free</span></h2>
-              <p class="coach-intro-subtitle">AI-supported guidance for embodied practice, awareness, and constructive interaction.</p>
-              <p class="coach-intro-text">
-                Explore personalised guidance for posture, breathing, mental focus,
-                and everyday interactions. Ask about your practice, apply Aikido
-                principles at work, or request support from a human coach.
-              </p>
-              <ul class="coach-intro-features">
-                <li>Responses informed by Richard Moon&rsquo;s authorised teaching materials &mdash; not direct quotations</li>
-                <li>Request a handoff to a human coach when you need more</li>
-                <li>Free to use &mdash; sign up to start chatting</li>
-              </ul>
-            </div>
-
-            <!-- Privacy summary (issue #20) -->
-            <div id="coach-privacy-notice" class="coach-card coach-privacy-notice">
-              <h2>Before you begin</h2>
-              <ul class="coach-privacy-list">
-                <li>Your conversations are stored so you can return to them and so we can improve the service. They are processed by Google Gemini to generate responses.</li>
-                <li>You can request deletion of your conversation history at any time.</li>
-                <li>Please do not enter sensitive personal information.</li>
-              </ul>
-              <div class="coach-privacy-links">
-                <a href="https://quantum-aikido-coach-6bfpsd3kkq-uc.a.run.app/v1/policies/corpus-privacy" target="_blank" rel="noopener">Read the Privacy Policy</a>
-                <a href="https://quantum-aikido-coach-6bfpsd3kkq-uc.a.run.app/v1/policies/ai-security" target="_blank" rel="noopener">Read the AI Security &amp; Safety Notice</a>
-              </div>
-              <details class="coach-privacy-details">
-                <summary>Full privacy details</summary>
-                <ul class="coach-privacy-list">
-                  <li>Your questions are stored by us and sent to Google Gemini for response generation. We do not share them with other organisations unless described in the full privacy policy.</li>
-                  <li>The chatbot&rsquo;s answers are informed by a private library of authorised teaching materials. The chatbot provides guidance in its own words and does not present responses as direct quotations.</li>
-                  <li>No phone numbers, email addresses, or other personal details are retained in the library.</li>
-                </ul>
-              </details>
-            </div>
-
-            </div><!-- /.coach-caveats-body -->
-          </details>
-
-          </div><!-- /.coach-login-layout -->
-
-          <?php endif; // end not-authenticated ?>
-
-          </div><!-- /.coach-shell -->
+            <h2 class="af-svc__title">Want to see it in action?</h2>
+            <p class="af-svc__lead">If you want to see it live, request an invitation when you <a href="contact.html">contact us</a> &mdash; we&rsquo;re happy to show you how easy it is to stand one up.</p>
+            <p class="af-svc__bestfor">The AikiField AI Chat runs in production at <a href="https://quantumaikido.com">quantumaikido.com</a>. We can walk you through a live demo, then design and build a corpus-specific chat grounded in your own knowledge base &mdash; runbooks, policies, product docs, or any body of text your team or customers keep asking about.</p>
+            <a href="contact.html" class="af-btn af-btn--light af-svc__cta">Request an invitation</a>
+            <p class="af-svc__fineprint">No account needed to look around this page &mdash; the project cards on the left describe what each system does and how the same pattern fits your needs.</p>
+          </aside>
         </div><!-- /.af-projects-split__chat -->
 
       </div><!-- /.af-projects-split -->
@@ -703,34 +348,6 @@ $coachLoginUrl = $_SERVER['SCRIPT_NAME'] ?? '/projects.php';
   </div>
   <div class="af-footer__legal">&copy; 2026 AikiField. All rights reserved.</div>
 </footer>
-
-<script>
-// Pass backend URLs and config to JS. This MUST run before coach-login.js /
-// coach-chat.js (loaded below) — those scripts read these values at load time.
-window.COACH_API_BASE = <?= json_encode($apiBase) ?>;
-window.COACH_BACKEND_URL = <?= json_encode(defined('COACH_BACKEND_URL') ? COACH_BACKEND_URL : '') ?>;
-window.COACH_LOGIN_REDIRECT = <?= json_encode($loginRedirect) ?>;
-// coach-chat.js uses these for logout + session-expiry redirects (back to
-// this page, not QA's /login.php).
-window.COACH_LOGIN_URL = <?= json_encode($coachLoginUrl) ?>;
-window.COACH_LOGOUT_URL = <?= json_encode($coachLoginUrl) ?>;
-<?php if ($qaAlreadyAuthed): ?>
-// Inject the authenticated session for coach-chat.js (same pattern as QA
-// members.php). coach-chat.js reads window.QA_SESSION instead of
-// sessionStorage.
-window.QA_SESSION = {
-    email: <?= json_encode($qaEmail ?? '') ?>,
-    token: <?= json_encode($qaSessionToken ?? '') ?>,
-    targetEnv: <?= json_encode($_SESSION['qa_target_env'] ?? 'both') ?>,
-    isAdmin: <?= json_encode($_SESSION['qa_is_admin'] ?? false) ?>
-};
-<?php endif; ?>
-</script>
-<?php if ($qaAlreadyAuthed): ?>
-<script src="coach-chat.js" defer></script>
-<?php else: ?>
-<script src="coach-login.js" defer></script>
-<?php endif; ?>
 
 </body>
 </html>

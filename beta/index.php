@@ -99,7 +99,7 @@
 
       <div class="bta-panel" style="margin-top:24px;">
         <h2 class="bta-h2">Access</h2>
-        <p class="bta-body">Every page in <code>/beta/</code> requires the same coaching-chat login as <a href="../projects.php#coach-login">projects.php</a>. An unauthenticated request redirects to the login page. The session cookie covers the whole <code>aikifield.com</code> origin, so logging in once unlocks all beta pages for 7 days.</p>
+        <p class="bta-body">Every page in <code>/beta/</code> requires the same coaching login as <a href="../login.php">login.php</a>. An unauthenticated request redirects to the login page with a <code>?next=</code> parameter so you land back on the page you wanted. The session cookie covers the whole <code>aikifield.com</code> origin, so logging in once unlocks all beta pages for 7 days.</p>
         <p class="bta-body bta-muted">This directory is disallowed in <code>robots.txt</code>, every page carries <code>noindex,nofollow</code>, and the raw data files are blocked at the server (<code>beta/data/.htaccess</code>) so the gate can&rsquo;t be bypassed.</p>
       </div>
 

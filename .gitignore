@@ -18,3 +18,7 @@ data/audit/
 
 # Downloaded access logs — contain visitor IPs, never commit
 logs/
+
+# Python bytecode cache
+__pycache__/
+*.pyc

@@ -1,7 +1,9 @@
 # AikiField.com — Apache rewrite rules + caching + security headers
 # The site is static HTML; the only rewrite needed is the coach API proxy,
 # which forwards /coach-api/* to coach-proxy.php (PHP proxy to the Quantum
-# Aikido coaching backend on Cloud Run). See docs/coach-auth-prd.md.
+# Aikido coaching backend on Cloud Run). The proxy is used by the blind
+# /login.php page that gates the /beta/ assessment pages. See
+# docs/coach-auth-prd.md.
 
 # ── Security headers ────────────────────────────────────────────────────────
 # Suppress X-Powered-By (leaks PHP version on dynamic pages)
@@ -32,13 +34,14 @@ RewriteRule ^(.*)$ https://aikifield.com/$1 [R=301,L]
 # Coach API proxy — forward /coach-api/* to coach-proxy.php
 RewriteRule ^coach-api(/.*)?$ coach-proxy.php [L]
 
-# Demonstration Technologies (formerly Sponsored Projects) is now a PHP page
-# (login integration). Permanently redirect the old static URL so existing
-# internal/external links keep working.
+# Demonstration Technologies is a PHP page (kept as .php for this redirect
+# and because /beta/ pages link to it). Permanently redirect the old static
+# URL so existing internal/external links keep working.
 RewriteRule ^projects\.html$ /projects.php [R=301,L]
 
-# /beta/ assessment pages are now session-gated PHP (same coach login as
-# projects.php). Redirect the old static URLs so existing links keep working.
+# /beta/ assessment pages are session-gated PHP (gated by the blind
+# /login.php coaching login). Redirect the old static URLs so existing
+# links keep working.
 RewriteRule ^beta/assessment\.html$ /beta/assessment.php [R=301,L]
 RewriteRule ^beta/assessment-organisation\.html$ /beta/assessment-organisation.php [R=301,L]
 RewriteRule ^beta/assessment-leadership\.html$ /beta/assessment-leadership.php [R=301,L]

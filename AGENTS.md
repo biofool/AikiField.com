@@ -140,8 +140,9 @@ startups, SaaS, AI-powered product teams). The site is a static multi-page
 HTML/CSS/JS site -- no build step, no framework. Pages: `index.html` (home),
 `approach.html`, `services.html`, `process.html`, `projects.php`,
 `assessment.html`, `contact.html`. Styles live in `css/`, scripts in `js/`.
-Note: `projects.html` is now `projects.php` (it hosts the coaching login;
-`projects.html` 301-redirects to `projects.php` via `.htaccess`).
+Note: `projects.html` 301-redirects to `projects.php` via `.htaccess`.
+`projects.php` is kept as `.php` for that redirect and because the `/beta/`
+pages link to it; it is a fully public marketing page (no auth).
 
 `SITE_CONTENT.md` is the source of truth for all site copy -- update it
 alongside the HTML when text changes. `sync.sh` handles deploy/dry-run
@@ -149,23 +150,30 @@ alongside the HTML when text changes. `sync.sh` handles deploy/dry-run
 `AikiField.pdf`, redesign zips) are tracked via DVC, not git directly. The
 `input/` directory holds source materials and is gitignored.
 
-### Coaching auth + chat integration (shared flow — triple-PRD rule)
+### Coaching auth (shared flow — triple-PRD rule)
 
-`projects.php` leads with a coaching login + registration CTA (when
-unauthenticated) **and** the AI Chat inline (when authenticated). Both
-authenticate against the Quantum Aikido coaching backend
-(`AIRichardMoon`, FastAPI on Cloud Run) via `coach-proxy.php`. This makes
-AikiField.com a **third frontend surface** for the shared coaching auth +
-chat flow, alongside `quantumaikido.com/web` and `AIRichardMoon/frontend`.
-The chat is hosted on `aikifield.com` (same origin as the login), so the
-PHP session cookie authenticates both — no cross-domain redirect.
+The coaching login authenticates against the Quantum Aikido coaching
+backend (`AIRichardMoon`, FastAPI on Cloud Run) via `coach-proxy.php`. The
+auth surface is a **blind `/login.php`** page that exists solely to gate
+the pre-release `/beta/` assessment pages. It is NOT linked from the public
+nav. `projects.php` no longer hosts any login or chat — it shows an
+invitation card pointing visitors to `contact.html` to request a live demo.
+The inline AI Chat (`coach-chat.js`) was removed; the live chat lives on
+`quantumaikido.com/members.php`.
 
-Files: `projects.php` (inline login + chat + PHP session POST handlers),
-`coach-proxy.php`, `coach-login.js` (loaded when unauthed), `coach-chat.js`
-(loaded when authed), `coach-auth.css`, `includes/coach-config.load.php`,
+AikiField.com remains a **third frontend surface** for the shared coaching
+auth flow (same backend user store, same session contract), alongside
+`quantumaikido.com/web` and `AIRichardMoon/frontend` — but the surface is
+now minimal (beta gating only), not a public chat.
+
+Files: `login.php` (blind login + PHP session POST handlers + `?next=`
+redirect), `coach-proxy.php`, `coach-login.js` (loaded by `login.php`),
+`coach-auth.css`, `includes/coach-config.load.php`,
 `coach-config.php` (non-secret template), `coach-config.local.php`
 (gitignored — holds `COACH_PROXY_SECRET` / `TURNSTILE_SITE_KEY`), `.htaccess`
-(`/coach-api/*` → proxy; `projects.html` → `projects.php` 301). Full design:
+(`/coach-api/*` → proxy; `projects.html` → `projects.php` 301;
+`/beta/*.html` → `/beta/*.php` 301s), `includes/beta-gate.load.php`
+(redirects unauthed `/beta/` requests to `/login.php?next=…`). Full design:
 `docs/coach-auth-prd.md`.
 
 **Sister repos:**
@@ -175,8 +183,8 @@ Files: `projects.php` (inline login + chat + PHP session POST handlers),
 - `~/projects/AIRichardMoon` — backend (FastAPI auth + chat, Cloud Run). PRD:
   `backend/PRD.md`.
 
-**Triple-PRD rule:** any change to the login/registration/auth/chat
-endpoints/session/invitation/proxy flow MUST update all three PRDs
+**Triple-PRD rule:** any change to the login/registration/auth/session/
+invitation/proxy flow MUST update all three PRDs
 (`docs/coach-auth-prd.md` here, `docs/coach-dashboard-prd.md` in QA,
 `backend/PRD.md` in AIRichardMoon) and deploy all affected repos together.
 

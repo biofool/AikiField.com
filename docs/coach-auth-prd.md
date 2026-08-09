@@ -2,71 +2,98 @@
 
 ## Summary
 
-AikiField.com (a static marketing site for a fractional-CISO consultancy) now
-hosts a coaching login on its **Demonstration Technologies** page (`projects.php`).
-The login authenticates visitors against the **Quantum Aikido coaching
-backend** (`AIRichardMoon`, FastAPI on Google Cloud Run) — the same backend
-that powers `quantumaikido.com/members.php`. Visitors can sign in or register
-(invitation-only) and are then directed to the AikiField AI Chat.
+AikiField.com (a static marketing site for a fractional-CISO consultancy)
+authenticates against the **Quantum Aikido coaching backend**
+(`AIRichardMoon`, FastAPI on Google Cloud Run) — the same backend that
+powers `quantumaikido.com/members.php`. The auth surface is now a **blind
+`/login.php` page** that exists solely to gate the pre-release `/beta/`
+assessment pages. It is NOT linked from the public navigation.
 
-This makes AikiField.com a **third frontend surface** for the shared coaching
-auth flow, alongside `quantumaikido.com/web` (PHP frontend) and the
-`AIRichardMoon/frontend` (backend-served static pages).
+**History:** AikiField.com previously hosted a coaching login + inline AI
+Chat on its public **Demonstration Technologies** page (`projects.php`) as a
+marketing CTA. That surface was removed — `projects.php` now shows an
+**invitation card** pointing visitors to the contact form to request a live
+demo. The login form + PHP session handler were extracted to the blind
+`/login.php` so `/beta/` gating keeps working without a public login on the
+marketing site. The inline AI Chat (`coach-chat.js`) was removed entirely;
+the live chat lives on `quantumaikido.com`.
+
+AikiField.com remains a **third frontend surface** for the shared coaching
+auth flow (same backend user store, same session contract), alongside
+`quantumaikido.com/web` (PHP frontend) and the `AIRichardMoon/frontend`
+(backend-served static pages) — but the surface is now minimal (beta gating
+only), not a public chat.
 
 ## Why this exists
 
-The Demonstration Technologies page (formerly "Demonstration Technologies") describes
-the AikiField AI Chat as a demonstration project. Leading the page with a
-working sign-in / registration CTA lets an interested visitor create an
-account and enter the chat directly from the project page, instead of having
-to find the chat on `quantumaikido.com`.
+The `/beta/` assessment pages are pre-release tools that should not be
+public. They reuse the same coaching session as the (now-removed) projects
+login so a member who already has a coaching account can sign in once and
+access all beta pages for 7 days. The login page is blind (not in the nav,
+`noindex,nofollow`) because it is an access gate, not a marketing surface.
 
-## UI layout (issues #20, #21 — ported from quantumaikido.com #113)
+## UI layout (login.php — blind, beta-gating only)
 
-The unauthed login area uses a **two-column layout** (`.coach-login-layout`):
+The login page uses a **two-column layout** (`.coach-login-layout`):
 - **Left column** (`.coach-login-forms`): sign-in form, registration form,
   password reset, email confirmation — all the interactive auth steps.
-- **Right column** (`.coach-login-caveats`, a `<details>` element): the intro
-  panel ("About AikiField AI Chat") and the privacy notice. On desktop
-  (≥768px) the caveats are always visible and sticky. On mobile (<768px)
-  the caveats appear first as a collapsible section with a toggle.
+- **Right column** (`.coach-login-caveats`, a `<details>` element): an intro
+  panel ("Beta Access") and a privacy notice. On desktop (≥768px) the
+  caveats are always visible and sticky. On mobile (<768px) the caveats
+  appear first as a collapsible section with a toggle.
 
-### Copy changes (issue #20)
+### Copy (login.php)
 
-- Login heading: "Sign In" (was "Sign in to the AI Chat")
-- Login intro: "Sign in or register to start chatting." (was "Have an
-  invitation code? Sign in, or register below...")
-- Registration heading: "Create Account" (was "Create your account")
-- Registration intro: "Sign up with your email and password to start
-  chatting." (was "Register with your email, password, and invitation
-  code...")
-- **Invitation code is now optional** (was required). Label includes
-  "(if you have one)", placeholder says "(optional)", `required` attribute
-  removed.
-- Email field label: "Email address or login ID" (was "Email or login ID")
-- Email placeholder: "name@example.com or your login ID" (was
-  "you@example.com or your login ID")
-- Registration email placeholder: "name@example.com" (was "you@example.com")
-- Password placeholder: "Password" (was "Your password")
-- **Consent notice** added below the login form: "By signing in, you
-  confirm that you have read the privacy notice and agree to the processing
+- Login heading: "Sign In"
+- Login intro: "Sign in or register to access the beta assessment pages."
+- Registration heading: "Create Account"
+- Registration intro: "Sign up with your email and password to access the
+  beta pages."
+- **Invitation code is optional** — label includes "(if you have one)",
+  placeholder says "(optional)".
+- Email field label: "Email address or login ID"
+- **Consent notice** below the login form: "By signing in, you confirm
+  that you have read the privacy notice and agree to the processing
   described in the Privacy Policy."
-- Intro panel subtitle added: "AI-supported guidance for embodied practice,
-  awareness, and constructive interaction."
-- Intro features rewritten to match QA #113 (3 bullets, not 3 different ones)
+- Intro panel: "Beta Access [Members]" — explains the session lasts 7 days
+  and covers the whole `aikifield.com` origin, and that the same account
+  works on quantumaikido.com.
+- Privacy notice: 3-bullet summary (session cookie, backend on Cloud Run,
+  don't enter sensitive info) + links to the Privacy Policy and AI Security
+  & Safety Notice.
 
-### Privacy notice rework (issue #20)
+### ?next= redirect support
 
-The old 6-bullet collapsible privacy notice (with "invited members only"
-language) was replaced with a **3-bullet summary** + expandable details:
-- Summary: conversations stored + processed by Gemini, deletion available,
-  don't enter sensitive info
-- Links: Privacy Policy + AI Security & Safety Notice (visible)
-- Full privacy details: 3 additional bullets in a nested `<details>`
-- "Before you begin" heading (was "Privacy notice")
-- Removed: "invited members only" language, "By logging in you acknowledge
-  this notice" (replaced by the consent notice above the login form)
-- Removed: the callout banner pointing at the login form
+`login.php` accepts a `?next=<URL-encoded path>` query parameter. The
+`includes/beta-gate.load.php` gate passes the originally-requested URI so
+the user lands back on the page they wanted after signing in. Only
+same-origin relative paths (starting with a single `/`, no scheme/host) are
+accepted — this prevents open-redirect abuse. Defaults to `/beta/` when
+`?next=` is absent or invalid.
+
+### Already-authed fast path
+
+If a visitor hits `/login.php` with an existing valid session, PHP redirects
+them straight to the `?next=` target (or `/beta/`) without rendering the
+form.
+
+## projects.php — invitation card (no auth)
+
+`projects.php` is now a fully public marketing page. The right column shows
+an invitation card (`#see-it-live`) instead of the login/chat:
+
+- Tags: "See it live" | "Free"
+- Heading: "Want to see it in action?"
+- Lead: "If you want to see it live, request an invitation when you contact
+  us — we're happy to show you how easy it is to stand one up."
+- Body: points at the live chat on quantumaikido.com and offers a
+  corpus-specific build grounded in the visitor's own knowledge base.
+- Button: "Request an invitation" → `contact.html`
+- The page-header CTA ("See it live — request an invitation ↓") anchors to
+  `#see-it-live`.
+
+No PHP session handling, no `coach-login.js`, no `coach-chat.js`, no
+`coach-auth.css`, no Turnstile widget on `projects.php`.
 
 ## Sister PRDs (dual-PRD rule — now a triple-PRD rule)
 
@@ -84,7 +111,7 @@ coordination section) and `~/.codeium/windsurf/memories/global_rules.md`.
 ## Architecture
 
 ```
-aikifield.com/projects.php  ──┐
+aikifield.com/login.php     ──┐  (blind; gates /beta/ only)
                               │  (login form, coach-login.js)
                               ▼
 aikifield.com/coach-api/*  ──▶  coach-proxy.php  ──▶  AIRichardMoon backend
@@ -99,64 +126,71 @@ aikifield.com/coach-api/*  ──▶  coach-proxy.php  ──▶  AIRichardMoon 
                                                   /v1/auth/confirm-email
 ```
 
+`projects.php` is no longer in this diagram — it is a static marketing page
+with no auth surface. The invitation card on `projects.php` links to
+`contact.html`, not to `login.php`.
+
 AikiField's `coach-proxy.php` is a trimmed port of
 `quantumaikido.com/web/coach-proxy.php`. It forwards `/coach-api/*` to
 `COACH_BACKEND_URL`, sends `X-Proxy-Secret` when configured, and rewrites
-OAuth `Location` headers back to `/projects.php` (for future social-login
+OAuth `Location` headers back to `/login.php` (for future social-login
 enablement; social login is currently disabled in `coach-login.js`).
 
 ### File inventory (AikiField.com)
 
 | File | Purpose | Source |
 |---|---|---|
-| `projects.php` | Demonstration Technologies page + inline login/register CTA (unauthed) **and** the AI Chat (authed) at top of `<main>`; PHP session POST handlers (`backend-login`, `logout`) | ported from `login.php` + `members.php` (issue #51) |
+| `login.php` | **Blind** standalone login page (gates `/beta/` only). PHP session POST handlers (`backend-login`, `logout`), `?next=` redirect support, already-authed fast path. Not linked from nav. | extracted from the former `projects.php` auth block (issue #51 lineage) |
+| `projects.php` | Demonstration Technologies marketing page — **fully public**, no auth. Shows the invitation card (`#see-it-live`) instead of the login/chat. Kept as `.php` for the `projects.html` → `projects.php` 301 and because `/beta/` pages link to it. | was the auth host; auth removed |
 | `coach-proxy.php` | PHP reverse proxy `/coach-api/*` → backend | ported from QA `coach-proxy.php` (trimmed) |
-| `coach-login.js` | Login/register/reset/confirm JS (loaded only when unauthed) | ported from QA `coach-login.js` |
-| `coach-chat.js` | Chat UI JS — reads `window.QA_SESSION`, calls `/coach-api/v1/chat-secure` (loaded only when authed) | ported from QA `coach-chat.js` (logout/expiry URLs via `window.COACH_LOGIN_URL`) |
-| `coach-auth.css` | Login + chat styling | copied verbatim from QA |
+| `coach-login.js` | Login/register/reset/confirm JS (loaded by `login.php`) | ported from QA `coach-login.js` |
+| `coach-auth.css` | Login styling (loaded by `login.php`) | copied verbatim from QA |
 | `includes/coach-config.load.php` | Config loader (local override → production) | ported from QA |
-| `coach-config.php` | Non-secret production config (backend URL, empty secret placeholders) | new template |
+| `coach-config.php` | Non-secret production config (backend URL, empty secret placeholders, `COACH_LOGIN_REDIRECT` default `/beta/`) | new template |
 | `coach-config.local.php` | **gitignored** — holds the real `COACH_PROXY_SECRET` / Turnstile key | operator-provided |
 | `.htaccess` | Routes `/coach-api/*` → `coach-proxy.php`; 301 `projects.html` → `projects.php`; 301s for the old `/beta/*.html` URLs → `/beta/*.php` | new |
-| `includes/beta-gate.load.php` | Page gate for `/beta/*.php` — re-establishes the same `qa_email` / `qa_session_token` session as `projects.php` (identical `session_set_cookie_params`) and redirects to `/projects.php#coach-login` if absent. No new auth endpoint, session model, or proxy route — reuses the session `projects.php` already sets. | new (issue: gate `/beta/` behind the coach login) |
+| `includes/beta-gate.load.php` | Page gate for `/beta/*.php` — re-establishes the same `qa_email` / `qa_session_token` session as `login.php` (identical `session_set_cookie_params`) and redirects to `/login.php?next=<original path>` if absent. No new auth endpoint, session model, or proxy route — reuses the session `login.php` sets. | updated (was redirecting to `/projects.php#coach-login`) |
 | `beta/data.php` | Session-gated JSON delivery for the beta assessment pages (`beta/js/assessment.js` fetches `data.php?f=<name>` instead of `data/<name>.json` directly); `beta/data/.htaccess` denies direct access to the raw JSON so the gate can't be bypassed by fetching the file straight | new |
 
-### What was NOT ported (intentionally)
+### Removed in this revision
+
+- `coach-chat.js` — **deleted**. The inline AI Chat no longer runs on
+  `aikifield.com`; the live chat lives on `quantumaikido.com/members.php`.
+- The authed/unauthed branch in `projects.php` — removed. The page is now a
+  single static render for all visitors.
+- The PHP session/login/logout handlers, Turnstile script block,
+  `coach-auth.css` preload, and `coach-login.js`/`coach-chat.js` script
+  loads from `projects.php` — all moved to `login.php` or dropped.
+
+### What was NOT ported (intentionally, still applies)
 
 - `coach-auth-check.php` (page gate) — `projects.php` is a **public** page;
-  the login form is a CTA, not a gate. The sponsored-projects content stays
-  visible to all visitors. A page gate was later added, but scoped to
-  `/beta/` only (see `includes/beta-gate.load.php` above) — `/beta/` content
-  is unfinished/pre-release, unlike the public Demonstration Technologies page.
+  the invitation card is a CTA, not a gate. The page gate is scoped to
+  `/beta/` only (see `includes/beta-gate.load.php` above).
 - `dashboard-env.php` / staging wrappers — AikiField has no dashboard and no
   `/staging/` folder.
 - The environment-toggle UI (`#coach-env-controls`) and the profile link
   (`/profile.php`) — AikiField has no staging backend and no profile page.
-  `coach-chat.js` handles their absence gracefully (null-guards on the DOM
-  refs).
 
 ## Session model
 
 - PHP session cookie on `aikifield.com` (HttpOnly, Secure on HTTPS,
   SameSite=Lax, 7-day lifetime). Session keys: `qa_email`,
   `qa_session_token`, `qa_target_env`, `qa_is_admin` — identical to QA.
-- `coach-login.js` posts `email` + `sessionToken` to `projects.php`
+- `coach-login.js` posts `email` + `sessionToken` to `login.php`
   (`action=backend-login`), which verifies against
   `/v1/auth/check-session` and stores the session.
-- On success the user is redirected back to `projects.php` (same page). On
-  reload, PHP sees the session cookie and renders the **AI Chat inline**
-  (`coach-chat.js`) instead of the login form.
-- `coach-chat.js` reads the session from `window.QA_SESSION` (PHP-injected
-  from the same-domain cookie) and calls `/coach-api/v1/chat-secure` on the
-  same origin → `coach-proxy.php` → backend. **No cross-domain redirect.**
-  The `aikifield.com` session cookie is valid for the chat because the chat
-  lives on `aikifield.com`.
+- On success the user is redirected to the `?next=` target (or `/beta/`).
+  The session cookie covers the whole `aikifield.com` origin, so all
+  `/beta/` pages read it via `includes/beta-gate.load.php`.
+- There is **no chat** on `aikifield.com` anymore. `coach-chat.js` was
+  deleted. The session exists only to gate `/beta/`.
 
 ### No cross-domain session issue
 
-Because the chat is hosted inline on `projects.php` (same origin as the
-login), the PHP session cookie authenticates both. There is no redirect to
-`quantumaikido.com` and no cross-domain SSO needed. The account itself is
+The login and the gated `/beta/` pages are all on `aikifield.com` (same
+origin), so the PHP session cookie authenticates both. There is no redirect
+to `quantumaikido.com` and no cross-domain SSO needed. The account itself is
 shared (same backend user store), so a user who also visits
 `quantumaikido.com/members.php` uses the same credentials — but that's a
 separate session on a separate domain, independent of this integration.
@@ -168,7 +202,7 @@ separate session on a separate domain, independent of this integration.
 | `COACH_BACKEND_URL` | `coach-config.php` | Public Cloud Run URL (not a secret) |
 | `COACH_PROXY_SECRET` | `coach-config.local.php` (gitignored) | MUST match backend `PROXY_SECRET` in GCP Secret Manager. When empty, auth endpoints still work, but **registration requires a Turnstile captcha** (backend enforces captcha when the proxy secret is absent). |
 | `TURNSTILE_SITE_KEY` | `coach-config.local.php` (gitignored) | Cloudflare Turnstile site key for `aikifield.com`. Required for registration if `COACH_PROXY_SECRET` is empty. |
-| `COACH_LOGIN_REDIRECT` | `coach-config.php` | Post-login destination (default QA members chat). |
+| `COACH_LOGIN_REDIRECT` | `coach-config.php` | Post-login fallback destination (default `/beta/`). `login.php` overrides this per-request with the `?next=` query parameter. |
 | `COACH_VERIFY_TLS` | `coach-config.php` | Leave `true` in production. |
 
 ### Backend-side requirements (AIRichardMoon)
@@ -239,8 +273,8 @@ Completed optimizations deployed to production:
 - Canonical URLs (`rel="canonical"`) on all pages
 - Google Fonts: reduced from 4 weights to 3 (dropped 500) — saves ~2 font file downloads
 - Google Fonts CSS: loaded asynchronously via `preload` + `onload` swap (non-render-blocking)
-- `coach-auth.css`: loaded asynchronously on `projects.php` (only styles below-fold content)
-- `defer` attribute added to `carousel.js`, `coach-login.js`, `coach-chat.js`
+- `coach-auth.css`: loaded synchronously on `login.php` (the only page that needs it now that `projects.php` is auth-free)
+- `defer` attribute added to `carousel.js`, `coach-login.js` (`coach-chat.js` was removed)
 - Open Graph + Twitter Card meta tags on all pages
 - `theme-color` and `apple-touch-icon` meta tags on all pages
 - Removed unused `css/style.css` and `js/main.js` from server
@@ -253,23 +287,32 @@ Completed optimizations deployed to production:
    `TURNSTILE_SITE_KEY` if using captcha) and deploy it out-of-band (it is
    gitignored). **Never commit it.**
 3. `./sync.sh deploy` — push to production.
-4. Confirm `https://aikifield.com/projects.php` loads and
-   `https://aikifield.com/coach-api/v1/auth/providers` returns JSON.
-5. Confirm `https://aikifield.com/projects.html` 301-redirects to
+4. Confirm `https://aikifield.com/projects.php` loads (public, invitation
+   card visible, no login form, no `coach-login.js`/`coach-chat.js`).
+5. Confirm `https://aikifield.com/login.php` loads the login form (blind —
+   not linked from nav) and `coach-login.js` is loaded.
+6. Confirm `https://aikifield.com/beta/assessment.php` 302-redirects to
+   `https://aikifield.com/login.php?next=%2Fbeta%2Fassessment.php`.
+7. Confirm `https://aikifield.com/coach-api/v1/auth/providers` returns JSON.
+8. Confirm `https://aikifield.com/projects.html` 301-redirects to
    `projects.php`.
 
 ## Verification
 
-- `php -l` on all new `.php` files (passes as of this writing).
-- Built-in server, **unauthed**: `projects.php` returns 200, login form
-  rendered, `coach-login.js` loaded, chat UI absent, no PHP warnings.
-- Built-in server, **authed** (fake session cookie): `projects.php` returns
-  200, login form absent, chat UI rendered (`coach-chat-form`), `coach-chat.js`
-  loaded, `coach-login.js` NOT loaded, `window.QA_SESSION` injected with the
-  email, existing marketing content present, no PHP warnings.
+- `php -l` on all `.php` files (passes as of this writing).
+- Built-in server, `projects.php`: returns 200, invitation card
+  (`#see-it-live`) rendered, no `coach-login`/`coach-chat`/`coach-shell`
+  markup, no `coach-auth.css`, no Turnstile script, no PHP warnings.
+- Built-in server, `login.php` (unauthed): returns 200, login form
+  rendered, `coach-login.js` loaded, registration form present, no PHP
+  warnings.
+- Built-in server, `login.php` (authed via fake session cookie): 302
+  redirects to the `?next=` target (or `/beta/`) without rendering the form.
+- Built-in server, `beta/assessment.php` (unauthed): 302 redirects to
+  `/login.php?next=%2Fbeta%2Fassessment.php`.
 - Proxy end-to-end: `/coach-api/v1/auth/providers` → 200 with the live
   backend's provider list (verified against the Cloud Run backend).
-- Full login → chat round-trip must be tested on `peec.biz` (Apache +
+- Full login → beta-access round-trip must be tested on `peec.biz` (Apache +
   mod_rewrite) after deploy, since the built-in PHP server does not process
   `.htaccess`.
 
@@ -277,9 +320,13 @@ Completed optimizations deployed to production:
 
 - Cross-domain SSO via one-time token exchange (only needed if you want a
   single login to carry across `aikifield.com` AND `quantumaikido.com`
-  simultaneously — not needed for the chat, which is hosted on AikiField).
-- Re-enable Google OAuth on AikiField (register the AikiField callback URI).
-- AikiField staging folder (`/staging/projects.php`) mirroring QA's staging
+  simultaneously — not currently needed; the live chat lives on QA).
+- Re-enable Google OAuth on AikiField (register the AikiField callback URI
+  `https://aikifield.com/coach-api/v1/auth/google/callback`).
+- AikiField staging folder (`/staging/login.php`) mirroring QA's staging
   pattern, if a staging backend is needed for this surface.
+- Bring the inline chat back to `aikifield.com` (would require restoring
+  `coach-chat.js` and a chat host page; currently out of scope — the
+  invitation card routes demo requests through the contact form instead).
 - AikiField profile page (`/profile.php`) if profile management is wanted
   here (currently profile management is only on `quantumaikido.com`).

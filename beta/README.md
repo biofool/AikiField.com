@@ -7,9 +7,9 @@ radar visualization, pressure scenarios, 30-day plan).
 **This folder is blind, and gated.** Every page carries `noindex,nofollow`,
 `/beta/` is disallowed for every user-agent group in `robots.txt`, and
 nothing here is linked from the site nav, footer, or `sitemap.xml`. On top of
-that, every page now requires the same coaching-chat login as
-`projects.php` — an unauthenticated request to any `beta/*.php` page or to
-`beta/data.php` redirects to `/projects.php#coach-login` (see
+that, every page requires the coaching login at
+`/login.php` — an unauthenticated request to any `beta/*.php` page or to
+`beta/data.php` redirects to `/login.php?next=<original path>` (see
 `includes/beta-gate.load.php` and `docs/coach-auth-prd.md`). The raw files
 under `beta/data/` are also blocked at the server (`beta/data/.htaccess`) so
 the gate can't be bypassed by fetching a `.json` file directly.
@@ -44,7 +44,7 @@ session. From the repository root:
 php -S localhost:8000
 ```
 
-then log in via `http://localhost:8000/projects.php#coach-login` and open
+then log in via `http://localhost:8000/login.php` and open
 `http://localhost:8000/beta/assessment.php`. If the data cannot be fetched
 the pages show an explicit error explaining why — they do not fail silently.
 
