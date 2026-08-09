@@ -401,6 +401,7 @@ case "$CMD" in
             printf '%s\n' "$RSYNC_OUT" \
                 | sed -n '/^sending incremental file list$/,/^$/p' \
                 | sed '1d;$d' \
+                | sed 's/^deleting //' \
                 | python_cmd "${LOCAL_PATH}scripts/cloudflare_migrate.py" --purge
         fi
         ;;
@@ -430,6 +431,7 @@ case "$CMD" in
         printf '%s\n' "$RSYNC_OUT" \
             | sed -n '/^sending incremental file list$/,/^$/p' \
             | sed '1d;$d' \
+            | sed 's/^deleting //' \
             | python_cmd "${LOCAL_PATH}scripts/cloudflare_migrate.py" --purge --apply || DEPLOY_WARN=1
         echo ""
         if [ -n "$DEPLOY_WARN" ]; then
