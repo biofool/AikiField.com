@@ -47,7 +47,14 @@ EXCLUDES=(
     --exclude='cgi-bin/'
     --exclude='input/'
     --exclude='logs/'
-    --exclude='.env'
+    # .env* not .env — a bare .env does not match .env.secrets, which holds
+    # the live Cloudflare API token. Never let it reach the web root.
+    --exclude='.env*'
+    --exclude='.gitignore'
+    --exclude='.gitattributes'
+    --exclude='*.dvc'
+    --exclude='scripts/'
+    --exclude='data/audit/'
     --exclude='.DS_Store'
     --exclude='Thumbs.db'
     --exclude='*.tmp'
