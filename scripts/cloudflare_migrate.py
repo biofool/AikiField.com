@@ -465,7 +465,195 @@ def step_verify():
 
 # ── Driver ──────────────────────────────────────────────────────────────────
 
-STEPS = ("dns", "settings", "cache", "files", "verify")
+# ── Step: origin-side checks over SSH ───────────────────────────────────────
+# These used to be ad-hoc ssh one-liners. Folded in so the whole audit is one
+# reproducible command instead of a stream of shell invocations.
+SSH_HOST = "peecbiz@peec.biz"
+SSH_KEY = os.path.expanduser("~/.ssh/quantumaikido_ed25519")
+WEB_ROOT = "~/public_html"
+ACCESS_LOG = "~/access-logs/aikifield.peec.biz-ssl_log"
+# Cloudflare edge ranges, abbreviated for a log-side spot check.
+CF_IP_RE = r"^(172\.6[4-9]|104\.2[1-9]|162\.15[89]|108\.162|173\.245|103\.2[12])\."
+
+
+def ssh(cmd):
+    """Run a read-only command on the origin. Returns (ok, output)."""
+    import subprocess
+    try:
+        r = subprocess.run(
+            ["ssh", "-i", SSH_KEY, "-o", "StrictHostKeyChecking=no",
+             "-o", "ConnectTimeout=15", "-o", "BatchMode=yes", SSH_HOST, cmd],
+            capture_output=True, text=True, timeout=60)
+        return r.returncode == 0, (r.stdout or "") + (r.stderr or "")
+    except Exception as e:
+        return False, str(e)
+
+
+def step_origin():
+    """Confirm no secrets reached the web root and that real client IPs are
+    still being logged (Cloudflare would otherwise mask them)."""
+    healthy = True
+
+    # 1. Nothing non-web in the web root. sync.sh excludes these, but rsync
+    # --delete does NOT remove excluded paths, so anything an older deploy put
+    # there persists indefinitely and has to be found explicitly.
+    ok, out = ssh(f"ls -1 {WEB_ROOT}/.env* {WEB_ROOT}/.gitignore "
+                  f"{WEB_ROOT}/.gitattributes {WEB_ROOT}/scripts {WEB_ROOT}/data "
+                  "2>/dev/null")
+    found = [l for l in out.splitlines() if l.strip()]
+    if found:
+        log("error", "origin: non-web files in the web root", ", ".join(found))
+        log("error", "origin: action required",
+            "delete them on the server - rsync --delete will not, they are excluded")
+        healthy = False
+    else:
+        log("ok", "origin: web root clean", "no .env*/.gitignore/scripts/data")
+
+    # 2. Real client IPs. If the origin logged Cloudflare edge IPs instead, the
+    # sync.sh visitor report would silently become meaningless.
+    ok, out = ssh(f"grep -cE '{CF_IP_RE}' {ACCESS_LOG}; wc -l < {ACCESS_LOG}")
+    nums = [l.strip() for l in out.split() if l.strip().isdigit()]
+    if len(nums) >= 2:
+        cf_lines, total = int(nums[0]), int(nums[1])
+        good = cf_lines == 0
+        log("ok" if good else "error", "origin: real client IPs in access log",
+            f"{cf_lines} Cloudflare-edge IPs in {total} lines"
+            + ("" if good else " - visitor report is measuring the CDN, not visitors"))
+        healthy &= good
+    else:
+        log("warn", "origin: could not read access log", out.strip()[:120])
+
+    return healthy
+
+
+# ── Step: GitHub issue reconciliation ───────────────────────────────────────
+
+def gh(args, body=None):
+    """Run a gh command. Returns (ok, output)."""
+    import subprocess
+    try:
+        r = subprocess.run(["gh"] + args, capture_output=True, text=True,
+                           timeout=60, input=body)
+        return r.returncode == 0, (r.stdout or "") + (r.stderr or "")
+    except Exception as e:
+        return False, str(e)
+
+
+# Issues resolved by this migration, with the evidence that closes them.
+RESOLVED_ISSUES = {
+    "27": ("Mail fix applied and verified. `mail` is now a DNS-only A record to "
+           "108.163.225.126 (was a CNAME to the proxied apex), MX points at "
+           "`mail.aikifield.com`, and SPF is `v=spf1 +ip4:108.163.225.126 "
+           "include:spf.greengeeks.net ~all` with `+a`/`+mx` removed. Confirmed "
+           "on both authoritative nameservers and via 1.1.1.1 / 8.8.8.8 / 9.9.9.9."),
+    "28": ("Fixed in cdc5183. `.gitignore` now uses `.env*`; "
+           "`git check-ignore -v .env.secrets` exits 0 and the file no longer "
+           "appears in `git status`. `git log --all --full-history -- "
+           ".env.secrets` returns nothing, so it was never committed. "
+           "Also verified the file never reached the web root."),
+    "30": ("Fixed and deployed. The origin now returns `Vary: Accept-Encoding` "
+           "(confirmed with `curl --resolve` straight to 108.163.225.126). "
+           "The edge may serve the old header from cached objects until the 1h "
+           "TTL expires or the cache is purged."),
+    "29": ("Moot - the cutover is complete and the zone is live. #25 now carries "
+           "the rollback procedure (revert nameservers at the registrar; records "
+           "are at TTL 300). The AXFR finding is recorded there too: zone "
+           "transfer is refused, so the DNS import relied on Cloudflare's zone "
+           "scan plus manual reconciliation, which is what happened."),
+    "31": ("Implemented. `scripts/cloudflare_migrate.py --purge` takes rsync's "
+           "transferred-file list on stdin, maps it to URLs and purges those "
+           "(falling back to purge-everything past Cloudflare's 30-URL cap). "
+           "`sync.sh` calls it after a successful deploy, and in `dryrun` it "
+           "prints the intended purge without calling the API. It fails loudly "
+           "with the API error and a non-zero exit - currently blocked on the "
+           "token's Cache Purge permission (#26)."),
+    "32": ("No change needed - the origin already restores real client IPs. "
+           "0 Cloudflare edge IPs across the post-migration access log, and a "
+           "request made through the edge logged the real client address. "
+           "Fixed two real bugs found while checking: the log filename was "
+           "`aikifield.com.peec.biz` instead of `aikifield.peec.biz` so every "
+           "download failed, and the combine step used a quoted heredoc so "
+           "`$LOGS_DIR` never expanded. `./sync.sh report` now works."),
+}
+
+
+def step_issues(apply):
+    healthy = True
+    for num, evidence in RESOLVED_ISSUES.items():
+        ok, out = gh(["api", f"repos/biofool/AikiField.com/issues/{num}",
+                      "--jq", ".state"])
+        if not ok:
+            log("warn", f"issues: cannot read #{num}", out.strip()[:100])
+            healthy = False
+            continue
+        if out.strip().upper() == "CLOSED":
+            log("ok", f"issues: #{num} already closed")
+            continue
+        if not apply:
+            log("apply", f"issues: would close #{num}", evidence[:80] + "...")
+            continue
+        ok, out = gh(["issue", "close", num, "--repo", "biofool/AikiField.com",
+                      "--comment", evidence])
+        log("apply" if ok else "error", f"issues: close #{num}",
+            "closed with evidence" if ok else out.strip()[:120])
+        healthy &= ok
+    return healthy
+
+
+CACHEABLE = (".html", ".css", ".js", ".svg", ".png", ".jpg", ".jpeg",
+             ".webp", ".ico", ".woff2")
+PURGE_URL_LIMIT = 30  # Cloudflare's cap for purge-by-URL
+
+
+def step_purge(token, apply, paths):
+    """Purge the edge cache for the given repo-relative paths.
+
+    Called by sync.sh after a deploy: HTML sits at a 1h edge TTL, so without
+    this a deploy is live at the origin and invisible to visitors for an hour.
+    Purges by URL so the rest of the cache stays warm, falling back to
+    purge-everything when too many files changed.
+    """
+    urls = []
+    for p in paths:
+        p = p.strip().lstrip("./")
+        if not p or p.endswith("/") or not p.endswith(CACHEABLE):
+            continue
+        urls.append(f"https://{ZONE}/{p}")
+        if p == "index.html":
+            urls.append(f"https://{ZONE}/")
+
+    if not urls:
+        log("ok", "purge: nothing to do", "no cacheable files changed")
+        return True
+
+    if len(urls) > PURGE_URL_LIMIT:
+        body = {"purge_everything": True}
+        what = f"everything ({len(urls)} files changed, over the {PURGE_URL_LIMIT} URL cap)"
+    else:
+        body = {"files": urls}
+        what = f"{len(urls)} URL(s)"
+
+    if not apply:
+        log("apply", f"purge: would purge {what}")
+        for u in urls[:PURGE_URL_LIMIT]:
+            log("info", "purge: url", u)
+        return True
+
+    ok, resp = cf(f"/zones/{ZONE_ID}/purge_cache", "POST", body, token)
+    if ok:
+        log("apply", f"purge: {what}", "edge cache purged")
+        return True
+
+    # Never fail silently - the deploy succeeded but visitors see stale content.
+    log("error", "purge FAILED - edge cache still holds the old content",
+        err(resp))
+    log("error", "purge: impact",
+        "content is live at the ORIGIN but the edge may serve the old version "
+        "for up to 1 hour - purge from the Cloudflare dashboard")
+    return False
+
+
+STEPS = ("dns", "settings", "cache", "files", "origin", "issues", "verify")
 
 
 def main():
@@ -477,7 +665,18 @@ def main():
                    help="run only the verification sweep, no writes")
     p.add_argument("--only", default=",".join(STEPS),
                    help=f"comma-separated subset of: {','.join(STEPS)}")
+    p.add_argument("--purge", action="store_true",
+                   help="purge the edge cache for repo-relative paths read "
+                        "from stdin (used by sync.sh after a deploy)")
     args = p.parse_args()
+
+    # Purge is a standalone mode: it runs on its own and skips convergence.
+    if args.purge:
+        token = load_token()
+        ok = step_purge(token, args.apply, sys.stdin.read().splitlines())
+        if not args.apply and any(s["status"] == "apply" for s in audit["steps"]):
+            print("  (dry run - pass --apply to actually purge)")
+        return 0 if ok else 1
 
     only = [s.strip() for s in args.only.split(",") if s.strip()]
     bad = set(only) - set(STEPS)
@@ -507,6 +706,10 @@ def main():
         healthy &= step_cache_rules(token, apply)
     if "files" in only:
         healthy &= step_files(apply)
+    if "origin" in only:
+        healthy &= step_origin()
+    if "issues" in only:
+        healthy &= step_issues(apply)
     if "verify" in only:
         if apply:
             print("\n  waiting 10s for DNS/cache changes to take effect\n")

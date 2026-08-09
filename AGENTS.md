@@ -194,10 +194,22 @@ This repo has no paid APIs (static HTML on peec.biz shared hosting), so the
 coordination rule rarely applies — but if a cloud resource is ever added
 (e.g. CDN, R2 bucket), update CloudManagement.
 
-**Cloudflare CDN (issue #25, in progress):** A Cloudflare Free plan zone is
-being added for `aikifield.com` to provide edge caching at Cloudflare's NZ
-PoPs. The CloudManagement inventory and PRD have been updated to document
-the planned zone. When the migration is complete, add the zone to
-`config/accounts.yaml` in CloudManagement (see `accounts.example.yaml` for
-the entry template). The proxy chain after migration: browser → Cloudflare
-edge (NZ) → greengeeks origin (Chicago) → coach-proxy.php → Cloud Run backend.
+**Cloudflare CDN (issue #25 — live):** `aikifield.com` is served through a
+Cloudflare Free plan zone (`71a04598ce4a9580faf7c0ee79f6da6c`, nameservers
+`ingrid`/`yevgen.ns.cloudflare.com`), giving edge caching at Cloudflare's NZ
+PoPs. TTFB from NZ is ~30ms, down from ~900ms direct to Chicago. The proxy
+chain: browser → Cloudflare edge (NZ) → greengeeks origin (Chicago) →
+coach-proxy.php → Cloud Run backend.
+
+Zone and local config are converged by `scripts/cloudflare_migrate.py`
+(dry-run by default, `--apply` to change, `--verify-only` for a health
+check). Declare desired state there rather than clicking in the dashboard,
+or the next run reports drift.
+
+**Cloudflare proxies only its HTTP(S) port list** (80/8080/8880/2052/2082/
+2086/2095, 443/2053/2083/2087/2096/8443). Anything else must be DNS-only:
+`mail` (SMTP:25 — proxying it stops inbound mail), `ftp` (21) and `webdisk`
+(2077/2078). `mail` must be a direct A record, never a CNAME to the apex —
+a CNAME inherits the apex's proxied IPs. SPF must not use `+a`/`+mx` for the
+same reason: post-migration both resolve to Cloudflare's edge and would
+authorize their entire range to send as this domain.

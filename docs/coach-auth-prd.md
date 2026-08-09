@@ -194,11 +194,12 @@ AIRichardMoon Cloud Run backend, which is already tracked in CloudManagement.
 Adding this auth surface does **not** add a cloud resource, so no
 CloudManagement inventory update is required.
 
-### CDN layer (issue #25 — Cloudflare migration, in progress)
+### CDN layer (issue #25 — Cloudflare migration, live)
 
-A Cloudflare Free plan zone is being added for `aikifield.com` to provide
-edge caching at Cloudflare's Auckland and Wellington PoPs (the primary
-audience is NZ). The proxy chain after migration:
+`aikifield.com` is served through a Cloudflare Free plan zone
+(`71a04598ce4a9580faf7c0ee79f6da6c`), giving edge caching at Cloudflare's
+Auckland and Wellington PoPs (the primary audience is NZ). Measured TTFB
+from NZ is ~30ms. The proxy chain:
 
 ```
 browser → Cloudflare edge (NZ) → greengeeks origin (Chicago) → coach-proxy.php → Cloud Run backend
@@ -210,9 +211,23 @@ Cloudflare cache rules:
 - `*.php` — bypass cache (dynamic, session-based)
 - `/beta/*` — bypass cache (session-gated PHP pages)
 
-This is a new cloud resource. After migration is complete, update
-CloudManagement `config/accounts.yaml` with the Cloudflare zone and update
-this PRD's cloud strategy section.
+Verified through the edge: `projects.php` and `/beta/*` return
+`cf-cache-status: DYNAMIC`, and `/coach-api/v1/auth/providers` returns JSON,
+so cookies and the proxy chain pass through unchanged. `/coach-api/*` is not
+yet covered by an explicit bypass rule — it is uncached incidentally rather
+than by configuration.
+
+**Auth flow is unchanged by the migration.** The CDN sits in front of an
+otherwise identical chain, so the triple-PRD rule is not triggered: session
+handling, cookie attributes, `coach-proxy.php` behaviour and the backend
+endpoints are all untouched, and only `aikifield.com` sits behind the edge.
+If any of those need to change, the rule applies in full and
+`docs/coach-dashboard-prd.md` (QuantumAikido) plus `backend/PRD.md`
+(AIRichardMoon) must move with it.
+
+Because HTML is cached at the edge for an hour, a deploy is invisible to
+visitors until the cache is purged — `sync.sh` purges automatically via
+`scripts/cloudflare_migrate.py --purge` after a successful upload.
 
 ### Performance optimizations (issue #25, Phase 1 + Phase 5)
 

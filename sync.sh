@@ -19,8 +19,10 @@ KNOWN_REMOTES=(
 
 SCP_KEY_ARGS=(-i "$SSH_KEY" -o LogLevel=ERROR)
 LOGS_DIR="${LOCAL_PATH}/logs/"
-ACCESS_LOG_PATH="access-logs/aikifield.com.peec.biz-ssl_log"
-ARCHIVE_LOG_PATH="logs/aikifield.com.peec.biz-ssl_log"
+# The cPanel log name is aikifield.peec.biz, NOT aikifield.com.peec.biz —
+# the wrong name made every log download fail silently into "archived data only".
+ACCESS_LOG_PATH="access-logs/aikifield.peec.biz-ssl_log"
+ARCHIVE_LOG_PATH="logs/aikifield.peec.biz-ssl_log"
 
 if [[ "$(uname -s)" == "Linux" ]]; then
     RSYNC_BIN="rsync"
@@ -194,18 +196,20 @@ for i in range(6):
 
 print('\\n'.join(months))
 " | while read MONTH; do
-        scp "${SCP_KEY_ARGS[@]}" "${LOG_USER}@${LOG_HOST}:~/logs/aikifield.com.peec.biz-ssl_log-${MONTH}.gz" "${LOGS_DIR}archive-ssl-${MONTH}.gz" 2>/dev/null
+        scp "${SCP_KEY_ARGS[@]}" "${LOG_USER}@${LOG_HOST}:~/${ARCHIVE_LOG_PATH}-${MONTH}.gz" "${LOGS_DIR}archive-ssl-${MONTH}.gz" 2>/dev/null
         if [ -f "${LOGS_DIR}archive-ssl-${MONTH}.gz" ]; then
             gunzip -f "${LOGS_DIR}archive-ssl-${MONTH}.gz" 2>/dev/null
         fi
     done
 
-    # Combine logs using Python for cross-platform compatibility
-    python_cmd << 'EOF'
+    # Combine logs using Python for cross-platform compatibility.
+    # LOGS_DIR is passed through the environment: the heredoc delimiter is
+    # quoted so the shell does not expand $LOGS_DIR inside it.
+    if ! LOGS_DIR="$LOGS_DIR" python_cmd << 'EOF'
 import os
 import glob
 
-log_dir = os.path.expanduser("$LOGS_DIR")
+log_dir = os.path.expanduser(os.environ["LOGS_DIR"])
 combined_path = os.path.join(log_dir, 'combined.log')
 
 seen = set()
@@ -230,6 +234,10 @@ with open(combined_path, 'w', encoding='utf-8', errors='ignore') as out:
 
 print(f"Combined {len(seen)} unique log lines")
 EOF
+    then
+        echo "  ✗ ERROR: failed to combine log files into ${LOGS_DIR}combined.log" >&2
+        return 1
+    fi
 
     echo "Logs updated: ${LOGS_DIR}combined.log"
 }
@@ -387,7 +395,13 @@ case "$CMD" in
         if [ "$SCOPE" == "download" ]; then
             do_rsync -avz --dry-run --exclude='.git/' -e "$RSYNC_SSH_CMD" "$RSYNC_REMOTE" "$RSYNC_LOCAL"
         else
-            do_rsync -avz --dry-run --delete "${EXCLUDES[@]}" -e "$RSYNC_SSH_CMD" "$RSYNC_LOCAL" "$RSYNC_REMOTE"
+            RSYNC_OUT=$(do_rsync -avz --dry-run --delete "${EXCLUDES[@]}" -e "$RSYNC_SSH_CMD" "$RSYNC_LOCAL" "$RSYNC_REMOTE")
+            echo "$RSYNC_OUT"
+            echo ""
+            printf '%s\n' "$RSYNC_OUT" \
+                | sed -n '/^sending incremental file list$/,/^$/p' \
+                | sed '1d;$d' \
+                | python_cmd "${LOCAL_PATH}scripts/cloudflare_migrate.py" --purge
         fi
         ;;
 
@@ -403,9 +417,26 @@ case "$CMD" in
         git -C "$(dirname "$0")" push
         echo ""
         echo "Uploading to peec.biz..."
-        do_rsync -avz --delete --chmod=F644,D755 "${EXCLUDES[@]}" -e "$RSYNC_SSH_CMD" "$RSYNC_LOCAL" "$RSYNC_REMOTE"
+        RSYNC_OUT=$(do_rsync -avz --delete --chmod=F644,D755 "${EXCLUDES[@]}" -e "$RSYNC_SSH_CMD" "$RSYNC_LOCAL" "$RSYNC_REMOTE")
+        RSYNC_STATUS=$?
+        echo "$RSYNC_OUT"
+        if [ $RSYNC_STATUS -ne 0 ]; then
+            echo "ERROR: rsync failed (exit $RSYNC_STATUS) — skipping cache purge." >&2
+            exit $RSYNC_STATUS
+        fi
         echo ""
-        echo "Deploy complete."
+        # Purge only what changed. rsync's file list is between the header line
+        # and the trailing blank/summary lines.
+        printf '%s\n' "$RSYNC_OUT" \
+            | sed -n '/^sending incremental file list$/,/^$/p' \
+            | sed '1d;$d' \
+            | python_cmd "${LOCAL_PATH}scripts/cloudflare_migrate.py" --purge --apply || DEPLOY_WARN=1
+        echo ""
+        if [ -n "$DEPLOY_WARN" ]; then
+            echo "Deploy complete — but the edge cache was NOT purged (see above)."
+        else
+            echo "Deploy complete."
+        fi
         ;;
 
     sftp|ftp)

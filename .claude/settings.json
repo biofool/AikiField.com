@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dig *)",
+      "Bash(ruff check *)",
+      "Bash(git check-ignore *)",
+      "Bash(curl -sI *)",
+      "Bash(curl -sX GET *)",
+      "Bash(./sync.sh dryrun)",
+      "Bash(gcloud logging read *)",
+      "Bash(gcloud config get-value *)",
+      "Bash(gcloud projects describe *)",
+      "Bash(gcloud projects get-iam-policy *)",
+      "Bash(gcloud run services list *)",
+      "Bash(podman info *)",
+      "Bash(docker info *)",
+      "Bash(gh repo list *)"
+    ]
+  }
+}

@@ -15,3 +15,6 @@ coach-config.local.php
 
 # Convergence-driver audit output (regenerated on every run)
 data/audit/
+
+# Downloaded access logs — contain visitor IPs, never commit
+logs/
