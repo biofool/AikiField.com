@@ -186,6 +186,29 @@ enablement; social login is currently disabled in `coach-login.js`).
 - There is **no chat** on `aikifield.com` anymore. `coach-chat.js` was
   deleted. The session exists only to gate `/beta/`.
 
+> **Note — quantumaikido.com has migrated to JWT cookies (issue #119).**
+> The sister frontend `quantumaikido.com` was migrated from a PHP shared host
+> (GreenGeeks) to Cloudflare Pages. Its session management changed from PHP
+> sessions (`session_start()` + `$_SESSION[...]`) to a signed JWT cookie named
+> `qa_session` (HMAC-SHA256, 7-day expiry, HttpOnly, Secure, SameSite=Lax).
+> The PHP endpoints were ported to Cloudflare Pages Functions
+> (`/functions/login.js`, `/functions/members.js`,
+> `/functions/coach-api/[[path]].js`, `/functions/logout.js`, etc.).
+>
+> **AikiField.com still uses PHP sessions** — it has not been migrated to
+> Cloudflare Pages yet. The session model documented above is current and
+> correct for AikiField. When AikiField is migrated, follow the same pattern
+> as quantumaikido.com: port `login.php` → `/functions/login.js`,
+> `coach-proxy.php` → `/functions/coach-api/[[path]].js`, and replace the PHP
+> session with a signed JWT cookie. The backend API contract does not change
+> (the backend still issues/validates session tokens via
+> `/v1/auth/check-session`); only the frontend storage mechanism changes.
+>
+> Reference: https://github.com/biofool/quantumaikido.com/issues/119
+> See also: `quantumaikido.com/web/docs/coach-dashboard-prd.md` §4.1.2
+> (Cloudflare Pages Functions migration) and `AIRichardMoon/backend/PRD.md`
+> (backend note — API contract unchanged).
+
 ### No cross-domain session issue
 
 The login and the gated `/beta/` pages are all on `aikifield.com` (same
