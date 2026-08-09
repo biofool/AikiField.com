@@ -1,7 +1,7 @@
 # AikiField.com — Site Content
 
 > Source of truth for all text content on aikifield.com.
-> Last updated: 2026-07-29
+> Last updated: 2026-08-08
 
 ---
 
@@ -12,7 +12,7 @@
 - Approach (`approach.html`)
 - Services (`services.html`)
 - Case Studies (`case-studies.html`)
-- Sponsored Projects (`projects.html`)
+- Demonstration Technologies (`projects.php`)
 - Assessment (`assessment.html`)
 - Get Started (`contact.html`)
 
@@ -22,7 +22,7 @@
 
 **Brand tagline:** Security leadership for product companies. Fractional CISO, AI-assisted security engineering, and presence-based executive coaching.
 
-**Explore:** Engagement Process | Our Approach | Services | Case Studies | Fractional CISO for SaaS | AI DevSecOps Remediation | Sponsored Projects | Self-Assessment
+**Explore:** Engagement Process | Our Approach | Services | Case Studies | Fractional CISO for SaaS | AI DevSecOps Remediation | Demonstration Technologies | Self-Assessment
 
 **Connect:** Contact | Inquiry
 
@@ -160,7 +160,7 @@ Where a leader places attention determines the security posture of the whole org
 **Mini links:**
 - Self-Assessment — Measure your security maturity and leadership presence — Two assessments in one — honest self-inquiry across five security categories and seven presence dimensions. (→ assessment.html)
 - Engagement Process — Six phases to a program that fits — A collaborative design cycle tailored to your stage, risks, and customers. (→ process.html)
-- Sponsored Projects — Where security leadership meets phronesis — Aikifield AI Chat, a cited coaching backend for the Quantum Aikido corpus, and World Studio Finder, a global studio discovery pipeline. (→ projects.html)
+- Demonstration Technologies — Technology we built, ready to fit your needs — Aikifield AI Chat, a cited coaching backend for the Quantum Aikido corpus; World Studio Finder, a global studio discovery pipeline; and MultiCloud-MultiPass, a multi-cloud cost kill switch. All built by AikiField; the same engineering is available to your organization. (→ projects.php)
 
 ### CTA
 
@@ -472,6 +472,65 @@ Multi-entity `@graph`: `Service` (AI-Assisted DevSecOps Vulnerability Remediatio
 
 ---
 
+## Fractional CISO (`fractional-ciso.html`)
+
+**Cluster type:** Primary service landing page (top of funnel)
+**Meta title:** Fractional CISO for SaaS and Industrial IoT Companies | AikiField
+**Meta description:** Practical Fractional CISO leadership for Series A and B product companies facing customer security reviews, insurance demands, compliance pressure, or an overloaded CTO.
+
+### Hero
+- Heading: Security leadership before you need a full-time CISO
+- Subheading: When enterprise customers, insurers, or your own team start asking difficult security questions, AikiField gives you experienced CISO-level leadership without the cost and delay of a full-time hire.
+- CTA: Start a security leadership conversation → contact.html
+- Context: Series A and B SaaS, AI, product, and industrial IoT companies · Wellington and remote engagements
+
+### Body sections
+1. Security has become a business problem (blockquote intro)
+2. CISO-level leadership without a full-time hire
+3. What AikiField takes off your team's plate (11 bullets)
+4. A practical path from uncertainty to maintenance (30/60/90 day phases)
+5. Security that helps close the deal ($5M channel, 165→21→3 days metrics)
+6. Make security questionnaires boring (6 bullets)
+7. Who this is for (8 bullets)
+8. An honest starting point
+9. Start with an honest security leadership conversation (CTA + cross-links to assessment.html, process.html, fractional-ciso-for-saas.html)
+10. Frequently asked questions (4 items: SOC 2, replace CTO, full-time CISO, compliance-only)
+
+**Cross-link:** Links to `/fractional-ciso-for-saas.html` (deep-dive comparison page).
+
+---
+
+## Board Security Clarity (`board-security-clarity.html`)
+
+**Cluster type:** Primary service landing page (top of funnel)
+**Meta title:** Board Security Risk Reporting and Clarity | AikiField
+**Meta description:** Give your board and executive team a clear, defensible view of cybersecurity risk, readiness, priorities, and next steps with practical security leadership from AikiField.
+
+### Hero
+- Heading: Give the board a clear, defensible view of security risk
+- Subheading: Technical findings are not the same as executive clarity. AikiField helps CEOs, CFOs, boards, and leadership teams understand what matters, what is changing, and what should happen next.
+- CTA: Create a clearer security picture → contact.html
+- Context: Security risk translated into business language · Practical reporting · Prioritized next steps
+
+### Body sections
+1. The board does not need another technical report
+2. From security activity to security clarity (8 bullets)
+3. What leadership should be able to see (Exposure, Capability gaps, Priorities, Progress, Decisions)
+4. Security reporting that connects to the business (8 bullets)
+5. Find the weak link before buying another tool (7 bullets)
+6. How the work creates clarity (Listen, Map, Prioritize, Build roadmap, Establish reporting rhythm)
+7. What the board receives (9 bullets)
+8. Security clarity that supports trust and growth ($5M, 165→21→3 days metrics)
+9. Compliance is evidence of discipline — not the whole story (6 bullets)
+10. Built for growing and mid-market organizations (7 bullets)
+11. An honest view of risk
+12. Create a clearer security picture (CTA + cross-links to assessment.html, process.html, fractional-ciso.html)
+13. Frequently asked questions (5 items: board report vs assessment, breach/audit, non-technical board members, replace security team, more risk than fixable)
+
+**Cross-links:** Links to `/assessment.html`, `/process.html`, `/fractional-ciso.html`, `/contact.html`.
+
+---
+
 ## Process (`process.html`)
 
 **Meta title:** AikiField — Engagement Process
@@ -553,19 +612,20 @@ The composure and curiosity to adapt to emerging threats and AI risk.
 
 ---
 
-## Sponsored Projects (`projects.html`)
+## Demonstration Technologies (`projects.php`)
 
-**Meta title:** AikiField — Sponsored Projects
-**Meta description:** Projects AikiField sponsors at the intersection of security leadership, AI, and the somatic practice community — somatic-informed AI coaching and global studio outreach.
+**Meta title:** AikiField — Technology We Build
+**Meta description:** Production AI and data pipelines designed and built by AikiField — a cited AI coaching chat and a global studio discovery pipeline. The same engineering capability is available to your organization, tailored to fit your needs.
 
 ### Hero
-- Eyebrow: Sponsored Projects
-- Title: Where security leadership meets phronesis.
-- Lead: Phronesis — the Aristotelian capacity for practical wisdom, discerning right action in the full complexity of a lived moment — is what Quantum Leadership demands. Not rigid frameworks, but the practiced judgment to navigate uncertainty, hold paradox, and respond appropriately to whatever arises. AikiField sponsors projects that embody this bridge: AI coaching that cultivates presence under pressure, and outreach that builds relational connection across the global movement-arts community.
+- Eyebrow: Built by AikiField
+- Title: Technology we built — ready to fit your needs.
+- Lead: AikiField designs, builds, and operates the systems below — production AI and data pipelines running today, not demos or slide-ware. The same engineering capability, cost discipline, and leadership judgment that built them is available to your organization, tailored to fit your security program and your stage.
 
 ### Project 1: Aikifield AI Chat
 
 **Tag:** AI Coaching
+**Built-by tag:** Built by AikiField
 **Title:** Aikifield AI Chat
 **Lead:** An AI coaching chat that answers questions from Richard Moon's teachings, with tight cost controls so it stays free.
 **Live at:** quantumaikido.com — a public chat plus a members area (invitation-only, with email or Google login).
@@ -581,9 +641,12 @@ The composure and curiosity to adapt to emerging threats and AI risk.
 
 **Tech stack:** Python · FastAPI · Gemini Developer API · Google Cloud Run · Firestore · Secret Manager · Pub/Sub · Cloud Functions · Cloudflare Turnstile · SQLite FTS5 · Docker · OpenTofu · DVC + GCS
 
+**Applied to your needs:** The same pattern — a cited, cost-controlled AI assistant grounded in your own knowledge base — can be built for your security team: a chat that answers policy and incident questions from your runbooks, triages vulnerabilities with citations back to the source, and escalates to a human on call when it can't help. We design, build, and operate it on a fixed budget.
+
 ### Project 2: World Studio Finder — Global Studio Discovery
 
 **Tag:** Outreach Pipeline
+**Built-by tag:** Built by AikiField
 **Title:** World Studio Finder — Global Studio Discovery
 **Lead:** A tool that finds yoga, tai chi, capoeira, and somatic-practice studios worldwide on Google Maps, then locates and verifies their contact emails for outreach.
 **Outreach:** Two ways to reach out: email campaigns via mail merge, and automatic contact-form submission for studios with a website but no listed email.
@@ -596,6 +659,51 @@ The composure and curiosity to adapt to emerging threats and AI risk.
 - **Resumes after interruptions** — picks up where it left off, and reprocesses records when the algorithm improves.
 
 **Tech stack:** Python · Playwright · Flask · Google Places API · Geocoding · Hunter.io · NeverBounce · Google Sheets API · GCP Compute Engine (systemd) · GCS · SQLite (SCD Type 2 data quality) · Terraform/OpenTofu
+
+**Applied to your needs:** The same pattern — a resumable, geo-aware data pipeline with verified contact enrichment — can be built for your organization: asset and vendor discovery across your cloud footprint, third-party risk outreach at scale, or customer-trust contact enrichment for your enterprise sales motion. We build it to resume, reprocess, and stay within budget.
+
+### Project 3: MultiCloud-MultiPass — Multi-Cloud Cost Kill Switch
+
+**Tag:** Cloud Management
+**Built-by tag:** Built by AikiField
+**Title:** MultiCloud-MultiPass — Multi-Cloud Cost Kill Switch
+**Lead:** A multi-cloud cost control system that monitors spending across Google Cloud, OpenStack, and Cloudflare, with an emergency shut-off that stops runaway costs in seconds.
+**Open source:** github.com/biofool/MultiCloud-MultiPass (AGPL-3.0) — the public face of the CloudManagement system.
+**How it works:** Each project declares expected usage before making paid API calls, then reports actual usage. If actual exceeds expectation by more than 20%, the job is stopped within seconds. Every 5 minutes the system polls quota usage; if exceeded, it pauses all services in that project. As a last resort, if spending crosses a budget threshold, it disconnects billing entirely.
+
+**What it does:**
+- **Provider-agnostic** — works with Google Cloud, OpenStack, Cloudflare, and any third-party API.
+- **Catches runaway costs in seconds** — not the 24–48 hours that billing reports lag.
+- **Intent/actual reporting** — declare expected usage, report actual, auto-stop on >20% overrun.
+- **Three-tier escalation** — per-job (seconds), per-project (minutes), per-billing-account (hours).
+- **Free-tier optimization** — tracks remaining free capacity per API per account and routes work to providers with capacity.
+- **Real-time dashboard** — free-tier consumption across all providers and accounts.
+
+**Tech stack:** Python · FastAPI · Google Cloud Run · Firestore · BigQuery billing export · OpenStack · Cloudflare (R2, Pages, GraphQL analytics) · Cloud Scheduler · Cloud Functions · Docker · OpenTofu · SQLite
+
+**Applied to your needs:** The same pattern — a multi-cloud cost control layer with intent/actual reporting and a kill switch — can be built for your organization: a single dashboard for your cloud spend across providers, real-time overrun detection on your AI and data workloads, and an emergency shut-off before a runaway job generates a surprise bill. We design, build, and operate it on a fixed budget.
+
+### Overview
+
+**Heading:** Three systems we built — at a glance
+**Lead:** All three systems were designed and built by AikiField and run in production today — AI-grounded coaching, global studio outreach, and multi-cloud cost control. The engineering patterns behind them are directly available to your engagement.
+
+### From these projects to your security program
+
+**Heading:** From these projects to your security program
+**Intro:** These aren't portfolio pieces — they're proof of capability. Each system was built end-to-end by AikiField: architecture, implementation, cost controls, and ongoing operation. The same engineering judgment is what we bring to a fractional CISO engagement, a DevSecOps pipeline rebuild, or a custom security tool your team needs but can't buy off the shelf.
+
+**Built by AikiField — Custom security tooling**
+Need a tool that doesn't exist — an AI triage assistant grounded in your policies, a vendor-risk outreach pipeline, an asset-discovery scanner for your cloud? We design, build, and operate it on a fixed budget, the same way we built the systems above.
+
+**Built by AikiField — Cost-disciplined AI**
+The AI Chat runs free on a fixed budget because we engineered the cost controls — rate limiting, queuing, scope-aware escalation. We bring that same discipline to any AI feature you ship, so capability doesn't become a surprise bill.
+
+**Built by AikiField — Pipelines that resume**
+The studio finder picks up where it left off and reprocesses when the algorithm improves. That resumable, data-quality-first pattern is what we apply to your vulnerability backlog, your compliance evidence collection, and your third-party risk program.
+
+**Built by AikiField — Cloud cost control**
+The kill switch catches runaway cloud spend in seconds, not the 24–48 hours that billing reports lag. We bring that same real-time cost control to your AI workloads and multi-cloud deployments, so a runaway job never becomes a surprise bill.
 
 ### From phronesis to Quantum Leadership
 
@@ -618,9 +726,51 @@ Both systems are built to sense and adapt — cost monitoring and data quality c
 
 ### CTA
 
-**Heading:** Interested in the methodology behind these projects?
-**Body:** The same principles — lean engineering, cost discipline, and leadership capacity — drive every AikiField engagement. Let's talk about your security program.
+**Heading:** Want this capability built for you?
+**Body:** We built the systems above end-to-end — architecture, code, cost controls, and operation. The same engineering can be tailored to fit your security program, your stack, and your budget. Let's talk about what you need built.
 **Button:** Book a Discovery Call
+
+### AI Chat login (inline on projects.php when unauthed)
+
+**Layout:** Two-column — forms on the left, caveats (intro + privacy) on the right. On mobile, caveats appear first as a collapsible section.
+
+**Left column — Sign In:**
+- Heading: Sign In
+- Intro: Sign in or register to start chatting.
+- Email label: Email address or login ID (placeholder: name@example.com or your login ID)
+- Password label: Password (placeholder: Password)
+- Buttons: Sign in | Forgot password?
+- Consent notice: By signing in, you confirm that you have read the privacy notice and agree to the processing described in the Privacy Policy.
+- Toggle: Don't have an account? Register
+
+**Left column — Create Account:**
+- Heading: Create Account
+- Intro: Sign up with your email and password to start chatting.
+- Required: Email address (name@example.com), Password (min 8 chars), Invitation code (optional — "if you have one")
+- Optional: Alias / username, Preferred language
+- Button: Create account
+- Toggle: Already have an account? Sign in
+
+**Right column — About AikiField AI Chat:**
+- Heading: AikiField AI Chat [Free]
+- Subtitle: AI-supported guidance for embodied practice, awareness, and constructive interaction.
+- Body: Explore personalised guidance for posture, breathing, mental focus, and everyday interactions. Ask about your practice, apply Aikido principles at work, or request support from a human coach.
+- Features:
+  - Responses informed by Richard Moon's authorised teaching materials — not direct quotations
+  - Request a handoff to a human coach when you need more
+  - Free to use — sign up to start chatting
+
+**Right column — Before you begin (privacy notice):**
+- Heading: Before you begin
+- Summary (3 bullets):
+  - Your conversations are stored so you can return to them and so we can improve the service. They are processed by Google Gemini to generate responses.
+  - You can request deletion of your conversation history at any time.
+  - Please do not enter sensitive personal information.
+- Links: Read the Privacy Policy | Read the AI Security & Safety Notice
+- Expandable "Full privacy details" (3 bullets):
+  - Your questions are stored by us and sent to Google Gemini for response generation. We do not share them with other organisations unless described in the full privacy policy.
+  - The chatbot's answers are informed by a private library of authorised teaching materials. The chatbot provides guidance in its own words and does not present responses as direct quotations.
+  - No phone numbers, email addresses, or other personal details are retained in the library.
 
 ---
 

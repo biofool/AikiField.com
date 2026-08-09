@@ -261,7 +261,7 @@
 .coach-label {
     font-size: 0.85rem;
     color: var(--text-secondary);
-    font-weight: 500;
+    font-weight: 600;
 }
 
 .coach-input {
@@ -302,7 +302,7 @@
     padding: 0.65rem 1rem;
     font: inherit;
     font-size: 0.9rem;
-    font-weight: 500;
+    font-weight: 600;
     cursor: pointer;
     background: var(--primary-bg);
     color: var(--text-primary);
@@ -565,7 +565,7 @@
 }
 
 .coach-msg-ai .coach-handoff-clarify-prompt {
-    font-weight: 500;
+    font-weight: 600;
     color: var(--text-primary, #f1f5f9);
     margin-bottom: 0.5rem;
 }
@@ -1141,6 +1141,143 @@
     font-weight: 600;
 }
 
+/* ── Consent notice (issue #20) ──────────────────────────────────────────── */
+.coach-consent-notice {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    font-style: italic;
+    margin: 0.75rem 0 0;
+    line-height: 1.5;
+}
+
+/* ── Two-column login layout (issue #21) — forms left, caveats right. ────── */
+/* On mobile, caveats appear first as a collapsible section. */
+.coach-login-layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+}
+
+.coach-login-forms {
+    min-width: 0;
+}
+
+.coach-login-caveats {
+    min-width: 0;
+}
+
+.coach-caveats-summary {
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    padding: 0.75rem 1.5rem;
+    list-style: none;
+}
+
+.coach-caveats-summary::-webkit-details-marker {
+    display: none;
+}
+
+.coach-caveats-summary::before {
+    content: "\25BC";
+    display: inline-block;
+    margin-right: 0.5rem;
+    font-size: 0.7em;
+    transition: transform 0.2s ease;
+}
+
+.coach-login-caveats:not([open]) .coach-caveats-summary::before {
+    transform: rotate(-90deg);
+}
+
+.coach-caveats-body {
+    padding: 0;
+}
+
+.coach-intro-subtitle {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    margin: 0 0 1rem;
+    line-height: 1.5;
+}
+
+.coach-privacy-links {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    margin: 0.75rem 0 0;
+}
+
+.coach-privacy-links a {
+    font-size: 0.85rem;
+}
+
+.coach-privacy-details {
+    margin-top: 0.75rem;
+}
+
+.coach-privacy-details > summary {
+    cursor: pointer;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    list-style: none;
+}
+
+.coach-privacy-details > summary::-webkit-details-marker {
+    display: none;
+}
+
+.coach-privacy-details > summary::after {
+    content: " +";
+    font-weight: 400;
+}
+
+.coach-privacy-details[open] > summary::after {
+    content: " \2212";
+}
+
+/* Desktop: 2 columns, caveats always open, hide the toggle */
+@media (min-width: 768px) {
+    .coach-login-layout {
+        grid-template-columns: 1.5fr 1fr;
+        align-items: start;
+    }
+
+    .coach-login-caveats {
+        position: sticky;
+        top: 1rem;
+    }
+
+    .coach-caveats-summary {
+        display: none;
+    }
+
+    .coach-caveats-body {
+        display: block;
+    }
+}
+
+/* Mobile: caveats first, collapsible */
+@media (max-width: 767px) {
+    .coach-login-layout {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .coach-login-caveats {
+        order: -1;
+        background: var(--coach-surface);
+        border: 1px solid var(--coach-border);
+        border-radius: 8px;
+        margin-bottom: 0.5rem;
+    }
+
+    .coach-login-caveats .coach-privacy-notice {
+        border: none;
+        padding: 0 1rem 1rem;
+    }
+}
+
 /* ── Privacy notice (ticket #004) ─────────────────────────────────────────── */
 /* Now a collapsible <details> to save space in the projects.php chat rail. */
 .coach-privacy-notice {
@@ -1269,7 +1406,7 @@
 }
 
 .coach-handoff-q {
-    font-weight: 500;
+    font-weight: 600;
     color: var(--text-primary, #f1f5f9);
     margin: 0 0 0.5rem 0;
 }

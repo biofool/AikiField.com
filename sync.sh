@@ -18,6 +18,9 @@ KNOWN_REMOTES=(
 )
 
 SCP_KEY_ARGS=(-i "$SSH_KEY" -o LogLevel=ERROR)
+LOGS_DIR="${LOCAL_PATH}/logs/"
+ACCESS_LOG_PATH="access-logs/aikifield.com.peec.biz-ssl_log"
+ARCHIVE_LOG_PATH="logs/aikifield.com.peec.biz-ssl_log"
 
 if [[ "$(uname -s)" == "Linux" ]]; then
     RSYNC_BIN="rsync"
@@ -72,6 +75,14 @@ do_rsync() {
     fi
 }
 
+python_cmd() {
+    if [[ "$(uname -s)" == "Linux" ]]; then
+        python3 "$@"
+    else
+        /c/Python312/python.exe "$@"
+    fi
+}
+
 # Pre-parse arguments
 CMD=""
 YES=0
@@ -86,7 +97,7 @@ for arg in "$@"; do
         -p) _next_p=1 ;;
         --remote) _next_remote=1 ;;
         -y|--yes) YES=1 ;;
-        upload|download|dryrun|deploy|sftp|ftp|help)
+        upload|download|dryrun|deploy|sftp|ftp|logs|report|help)
             [ -z "$CMD" ] && CMD="$arg"
             ;;
         *)
@@ -142,6 +153,180 @@ unset -f _apply_known_remote
 
 [[ -n "$REMOTE_PATH_FLAG" ]] && REMOTE_PATH="$REMOTE_PATH_FLAG"
 RSYNC_REMOTE="${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_PATH}"
+
+fetch_logs() {
+    echo "Fetching latest log files..."
+    mkdir -p "$LOGS_DIR"
+
+    # Logs always live on peec.biz regardless of which machine we're on
+    local LOG_HOST="peec.biz"
+    local LOG_USER="peecbiz"
+
+    # Download current access log (overwrites - it's the live log)
+    # Report scp failures instead of silencing them (never fail silently)
+    if scp "${SCP_KEY_ARGS[@]}" "${LOG_USER}@${LOG_HOST}:~/${ACCESS_LOG_PATH}" "${LOGS_DIR}current-ssl.log" 2>/dev/null; then
+        echo "  ✓ Current live log downloaded"
+    else
+        echo "  ⚠ WARNING: Failed to download current live log from ~/${ACCESS_LOG_PATH} — report will only show archived data" >&2
+    fi
+
+    # Download archived logs for current month + previous 5 months using Python for date math
+    python_cmd -c "
+import os
+from datetime import datetime, timedelta
+
+log_dir = '''$LOGS_DIR'''
+os.makedirs(log_dir, exist_ok=True)
+
+months = []
+today = datetime.now()
+for i in range(6):
+    month_date = today - timedelta(days=30*i)
+    month_str = month_date.strftime('%b-%Y')
+    months.append(month_str)
+
+print('\\n'.join(months))
+" | while read MONTH; do
+        scp "${SCP_KEY_ARGS[@]}" "${LOG_USER}@${LOG_HOST}:~/logs/aikifield.com.peec.biz-ssl_log-${MONTH}.gz" "${LOGS_DIR}archive-ssl-${MONTH}.gz" 2>/dev/null
+        if [ -f "${LOGS_DIR}archive-ssl-${MONTH}.gz" ]; then
+            gunzip -f "${LOGS_DIR}archive-ssl-${MONTH}.gz" 2>/dev/null
+        fi
+    done
+
+    # Combine logs using Python for cross-platform compatibility
+    python_cmd << 'EOF'
+import os
+import glob
+
+log_dir = os.path.expanduser("$LOGS_DIR")
+combined_path = os.path.join(log_dir, 'combined.log')
+
+seen = set()
+with open(combined_path, 'w', encoding='utf-8', errors='ignore') as out:
+    # Read current log first
+    current = os.path.join(log_dir, 'current-ssl.log')
+    if os.path.exists(current):
+        with open(current, 'r', encoding='utf-8', errors='ignore') as f:
+            for line in f:
+                if line not in seen:
+                    out.write(line)
+                    seen.add(line)
+
+    # Read archive logs
+    for filepath in glob.glob(os.path.join(log_dir, 'archive-ssl-*')):
+        if os.path.isfile(filepath):
+            with open(filepath, 'r', encoding='utf-8', errors='ignore') as f:
+                for line in f:
+                    if line not in seen:
+                        out.write(line)
+                        seen.add(line)
+
+print(f"Combined {len(seen)} unique log lines")
+EOF
+
+    echo "Logs updated: ${LOGS_DIR}combined.log"
+}
+
+generate_report() {
+    LOG_FILE="${LOGS_DIR}combined.log"
+
+    if [ ! -f "$LOG_FILE" ]; then
+        echo "No log file found. Run '$0 logs' first."
+        exit 1
+    fi
+
+    python_cmd -c "
+import re
+import json
+from collections import defaultdict, Counter
+from datetime import datetime
+
+with open('''$LOG_FILE''', 'r', errors='ignore') as f:
+    lines = f.readlines()
+
+# Parse logs (AikiField has no upload.php or review.php — no filtering needed)
+total = len(lines)
+
+# Extract unique IPs (first field)
+ips = set()
+pages = Counter()
+status_codes = Counter()
+referrers = Counter()
+dates_dict = defaultdict(int)
+
+bot_pattern = re.compile(r'(bot|spider|crawler|slurp|bing|google|yandex|baidu|semrush|ahrefs|mj12|dotbot|bytespider)', re.IGNORECASE)
+media_ext = re.compile(r'\.(css|js|png|jpg|jpeg|gif|ico|woff|woff2|svg|webp)$')
+
+for line in lines:
+    parts = line.split()
+    if len(parts) >= 9:
+        # IP
+        ips.add(parts[0])
+
+        # Date (4th field, remove leading '[')
+        date_str = parts[3].lstrip('[')
+        dates_dict[date_str[:11]] += 1
+
+        # Page (7th field)
+        if len(parts) > 6:
+            page = parts[6]
+            if not media_ext.search(page):
+                pages[page] += 1
+
+        # Status code (9th field)
+        status_codes[parts[8]] += 1
+
+        # Referrer (in quotes, typically after status and size)
+        if len(parts) > 10:
+            referrer = ' '.join(parts[10:])
+            if '\"' in referrer:
+                try:
+                    ref = referrer.split('\"')[1]
+                    if ref != '-' and 'aikifield' not in ref.lower():
+                        referrers[ref] += 1
+                except:
+                    pass
+
+# Count bots
+bot_count = sum(1 for line in lines if bot_pattern.search(line))
+human_count = total - bot_count
+unique_ips = len(ips)
+
+# Output report
+print()
+print('========================================')
+print('  AIKIFIELD.COM VISITOR STATISTICS')
+print(f'  Generated: {datetime.now().strftime(\"%a %b %d %H:%M:%S %Z %Y\")}')
+print('========================================')
+print()
+print('SUMMARY')
+print(f'  Total Requests:  {total}')
+print(f'  Unique Visitors: {unique_ips}')
+print(f'  Bot Traffic:     {bot_count}')
+print(f'  Human Traffic:   {human_count}')
+print()
+print('TOP 15 PAGES')
+print('----------------------------------------')
+for page, count in pages.most_common(15):
+    print(f'{count:6d} {page}')
+print()
+print('REQUESTS BY DAY')
+print('----------------------------------------')
+for date, count in sorted(dates_dict.items()):
+    print(f'{count:6d} {date}')
+print()
+print('TOP REFERRERS')
+print('----------------------------------------')
+for ref, count in referrers.most_common(10):
+    print(f'{count:6d} {ref}')
+print()
+print('HTTP STATUS CODES')
+print('----------------------------------------')
+for code, count in sorted(status_codes.items(), key=lambda x: -x[1]):
+    print(f'{count:6d} {code}')
+print()
+" 2>/dev/null || echo "  (error generating report)"
+}
 
 case "$CMD" in
     upload)
@@ -228,6 +413,15 @@ case "$CMD" in
         sftp -i "$SSH_KEY" -o IdentitiesOnly=yes -o StrictHostKeyChecking=no "${REMOTE_USER}@${REMOTE_HOST}"
         ;;
 
+    logs)
+        fetch_logs
+        ;;
+
+    report)
+        fetch_logs
+        generate_report
+        ;;
+
     help)
         echo "Usage: $0 [command] [options]"
         echo ""
@@ -238,6 +432,8 @@ case "$CMD" in
         echo "  dryrun       - Show what upload would do (no prompt)"
         echo "  dryrun download - Show what download would do (no prompt)"
         echo "  sftp         - Open an interactive SFTP session"
+        echo "  logs         - Fetch latest server access logs only"
+        echo "  report       - Fetch logs and generate statistics report"
         echo "  help         - Show this help message"
         echo ""
         echo "Options:"

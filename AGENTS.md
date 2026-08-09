@@ -193,3 +193,11 @@ changes its cloud provider/region/project, it MUST update:
 This repo has no paid APIs (static HTML on peec.biz shared hosting), so the
 coordination rule rarely applies — but if a cloud resource is ever added
 (e.g. CDN, R2 bucket), update CloudManagement.
+
+**Cloudflare CDN (issue #25, in progress):** A Cloudflare Free plan zone is
+being added for `aikifield.com` to provide edge caching at Cloudflare's NZ
+PoPs. The CloudManagement inventory and PRD have been updated to document
+the planned zone. When the migration is complete, add the zone to
+`config/accounts.yaml` in CloudManagement (see `accounts.example.yaml` for
+the entry template). The proxy chain after migration: browser → Cloudflare
+edge (NZ) → greengeeks origin (Chicago) → coach-proxy.php → Cloud Run backend.

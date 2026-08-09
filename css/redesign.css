@@ -154,7 +154,7 @@ button.af-focus:focus-visible,
 .af-brand__tagline {
   font-family: var(--af-sans);
   font-size: 12px;
-  font-weight: 500;
+  font-weight: 400;
   letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--af-muted, #6b7280);
@@ -175,7 +175,7 @@ button.af-focus:focus-visible,
   padding: 10px 13px;
   text-decoration: none;
   white-space: nowrap;
-  font-weight: 500;
+  font-weight: 600;
   font-size: 16px;
   border-radius: 8px;
   color: var(--af-text);
@@ -608,6 +608,24 @@ a.af-card:hover .af-card__arrow { text-decoration: underline; }
   color: var(--af-primary);
 }
 .af-svc__tag--flagship { background: var(--af-primary); color: #fff; }
+.af-svc__tag--built { background: var(--af-gold); color: #fff; }
+.af-svc__applied {
+  margin-top: 28px;
+  padding: 20px 24px;
+  border-radius: 14px;
+  background: var(--af-hover-bg);
+  border-left: 4px solid var(--af-gold);
+}
+.af-svc__applied-label {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--af-gold);
+  margin-bottom: 6px;
+}
+.af-svc__applied-body { font-size: 16px; line-height: 1.6; color: var(--af-text); margin: 0; }
+.af-svc__applied-body strong { color: var(--af-ink); font-weight: 600; }
 .af-svc__title { font-size: clamp(26px, 3vw, 34px); line-height: 1.14; margin-bottom: 16px; max-width: 22ch; text-wrap: balance; }
 .af-svc__lead { font-size: 19px; line-height: 1.6; color: var(--af-text); max-width: 64ch; margin-bottom: 20px; }
 .af-svc__bestfor { font-size: 16px; font-style: italic; color: var(--af-muted); max-width: 60ch; margin-bottom: 26px; }

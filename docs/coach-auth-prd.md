@@ -3,7 +3,7 @@
 ## Summary
 
 AikiField.com (a static marketing site for a fractional-CISO consultancy) now
-hosts a coaching login on its **Sponsored Projects** page (`projects.php`).
+hosts a coaching login on its **Demonstration Technologies** page (`projects.php`).
 The login authenticates visitors against the **Quantum Aikido coaching
 backend** (`AIRichardMoon`, FastAPI on Google Cloud Run) — the same backend
 that powers `quantumaikido.com/members.php`. Visitors can sign in or register
@@ -15,10 +15,58 @@ auth flow, alongside `quantumaikido.com/web` (PHP frontend) and the
 
 ## Why this exists
 
-The Sponsored Projects page describes the AikiField AI Chat as a sponsored
-project. Leading the page with a working sign-in / registration CTA lets an
-interested visitor create an account and enter the chat directly from the
-project page, instead of having to find the chat on `quantumaikido.com`.
+The Demonstration Technologies page (formerly "Demonstration Technologies") describes
+the AikiField AI Chat as a demonstration project. Leading the page with a
+working sign-in / registration CTA lets an interested visitor create an
+account and enter the chat directly from the project page, instead of having
+to find the chat on `quantumaikido.com`.
+
+## UI layout (issues #20, #21 — ported from quantumaikido.com #113)
+
+The unauthed login area uses a **two-column layout** (`.coach-login-layout`):
+- **Left column** (`.coach-login-forms`): sign-in form, registration form,
+  password reset, email confirmation — all the interactive auth steps.
+- **Right column** (`.coach-login-caveats`, a `<details>` element): the intro
+  panel ("About AikiField AI Chat") and the privacy notice. On desktop
+  (≥768px) the caveats are always visible and sticky. On mobile (<768px)
+  the caveats appear first as a collapsible section with a toggle.
+
+### Copy changes (issue #20)
+
+- Login heading: "Sign In" (was "Sign in to the AI Chat")
+- Login intro: "Sign in or register to start chatting." (was "Have an
+  invitation code? Sign in, or register below...")
+- Registration heading: "Create Account" (was "Create your account")
+- Registration intro: "Sign up with your email and password to start
+  chatting." (was "Register with your email, password, and invitation
+  code...")
+- **Invitation code is now optional** (was required). Label includes
+  "(if you have one)", placeholder says "(optional)", `required` attribute
+  removed.
+- Email field label: "Email address or login ID" (was "Email or login ID")
+- Email placeholder: "name@example.com or your login ID" (was
+  "you@example.com or your login ID")
+- Registration email placeholder: "name@example.com" (was "you@example.com")
+- Password placeholder: "Password" (was "Your password")
+- **Consent notice** added below the login form: "By signing in, you
+  confirm that you have read the privacy notice and agree to the processing
+  described in the Privacy Policy."
+- Intro panel subtitle added: "AI-supported guidance for embodied practice,
+  awareness, and constructive interaction."
+- Intro features rewritten to match QA #113 (3 bullets, not 3 different ones)
+
+### Privacy notice rework (issue #20)
+
+The old 6-bullet collapsible privacy notice (with "invited members only"
+language) was replaced with a **3-bullet summary** + expandable details:
+- Summary: conversations stored + processed by Gemini, deletion available,
+  don't enter sensitive info
+- Links: Privacy Policy + AI Security & Safety Notice (visible)
+- Full privacy details: 3 additional bullets in a nested `<details>`
+- "Before you begin" heading (was "Privacy notice")
+- Removed: "invited members only" language, "By logging in you acknowledge
+  this notice" (replaced by the consent notice above the login form)
+- Removed: the callout banner pointing at the login form
 
 ## Sister PRDs (dual-PRD rule — now a triple-PRD rule)
 
@@ -61,7 +109,7 @@ enablement; social login is currently disabled in `coach-login.js`).
 
 | File | Purpose | Source |
 |---|---|---|
-| `projects.php` | Sponsored Projects page + inline login/register CTA (unauthed) **and** the AI Chat (authed) at top of `<main>`; PHP session POST handlers (`backend-login`, `logout`) | ported from `login.php` + `members.php` (issue #51) |
+| `projects.php` | Demonstration Technologies page + inline login/register CTA (unauthed) **and** the AI Chat (authed) at top of `<main>`; PHP session POST handlers (`backend-login`, `logout`) | ported from `login.php` + `members.php` (issue #51) |
 | `coach-proxy.php` | PHP reverse proxy `/coach-api/*` → backend | ported from QA `coach-proxy.php` (trimmed) |
 | `coach-login.js` | Login/register/reset/confirm JS (loaded only when unauthed) | ported from QA `coach-login.js` |
 | `coach-chat.js` | Chat UI JS — reads `window.QA_SESSION`, calls `/coach-api/v1/chat-secure` (loaded only when authed) | ported from QA `coach-chat.js` (logout/expiry URLs via `window.COACH_LOGIN_URL`) |
@@ -79,7 +127,7 @@ enablement; social login is currently disabled in `coach-login.js`).
   the login form is a CTA, not a gate. The sponsored-projects content stays
   visible to all visitors. A page gate was later added, but scoped to
   `/beta/` only (see `includes/beta-gate.load.php` above) — `/beta/` content
-  is unfinished/pre-release, unlike the public Sponsored Projects page.
+  is unfinished/pre-release, unlike the public Demonstration Technologies page.
 - `dashboard-env.php` / staging wrappers — AikiField has no dashboard and no
   `/staging/` folder.
 - The environment-toggle UI (`#coach-env-controls`) and the profile link
@@ -144,8 +192,44 @@ AikiField.com is static HTML + a thin PHP proxy on peec.biz shared hosting
 (no paid APIs, no cloud resources of its own). The proxy forwards to the
 AIRichardMoon Cloud Run backend, which is already tracked in CloudManagement.
 Adding this auth surface does **not** add a cloud resource, so no
-CloudManagement inventory update is required. If AikiField later hosts the
-chat or adds a CDN/R2 bucket, update CloudManagement per the standard rule.
+CloudManagement inventory update is required.
+
+### CDN layer (issue #25 — Cloudflare migration, in progress)
+
+A Cloudflare Free plan zone is being added for `aikifield.com` to provide
+edge caching at Cloudflare's Auckland and Wellington PoPs (the primary
+audience is NZ). The proxy chain after migration:
+
+```
+browser → Cloudflare edge (NZ) → greengeeks origin (Chicago) → coach-proxy.php → Cloud Run backend
+```
+
+Cloudflare cache rules:
+- `*.html` — cache at edge for 1 hour
+- `*.css`, `*.js`, `*.svg` — cache at edge for 1 year (immutable)
+- `*.php` — bypass cache (dynamic, session-based)
+- `/beta/*` — bypass cache (session-gated PHP pages)
+
+This is a new cloud resource. After migration is complete, update
+CloudManagement `config/accounts.yaml` with the Cloudflare zone and update
+this PRD's cloud strategy section.
+
+### Performance optimizations (issue #25, Phase 1 + Phase 5)
+
+Completed optimizations deployed to production:
+- `.htaccess`: cache-control on static HTML (1hr), immutable on CSS/JS/SVG (1yr)
+- `.htaccess`: www → non-www 301 redirect, http → https 301 redirect
+- `.htaccess`: `X-Powered-By` header suppressed, `Referrer-Policy` header added
+- Favicon (`/favicon.svg`) created and deployed — eliminates 404 round trip
+- Canonical URLs (`rel="canonical"`) on all pages
+- Google Fonts: reduced from 4 weights to 3 (dropped 500) — saves ~2 font file downloads
+- Google Fonts CSS: loaded asynchronously via `preload` + `onload` swap (non-render-blocking)
+- `coach-auth.css`: loaded asynchronously on `projects.php` (only styles below-fold content)
+- `defer` attribute added to `carousel.js`, `coach-login.js`, `coach-chat.js`
+- Open Graph + Twitter Card meta tags on all pages
+- `theme-color` and `apple-touch-icon` meta tags on all pages
+- Removed unused `css/style.css` and `js/main.js` from server
+- Deployed `fractional-ciso.html` and `board-security-clarity.html` (were 404 on production)
 
 ## Deploy
 

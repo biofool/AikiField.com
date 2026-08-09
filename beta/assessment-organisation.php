@@ -9,7 +9,8 @@
   <meta name="description" content="Beta preview: the AikiField organisational security posture assessment — five categories, twenty questions, scored in your browser.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Public+Sans:wght@400;600;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Public+Sans:wght@400;600;700&display=swap" rel="stylesheet"></noscript>
   <link rel="stylesheet" href="../css/redesign.css">
   <link rel="stylesheet" href="css/assessment.css">
 </head>
@@ -31,7 +32,7 @@
       <a href="../approach.html" class="af-nav__link">Approach</a>
       <a href="../services.html" class="af-nav__link">Services</a>
       <a href="../case-studies.html" class="af-nav__link">Case Studies</a>
-      <a href="../projects.php" class="af-nav__link">Sponsored Projects</a>
+      <a href="../projects.php" class="af-nav__link">Demonstration Technologies</a>
       <a href="assessment.php" class="af-nav__link af-nav__link--active" aria-current="page">Assessment</a>
       <a href="../contact.html" class="af-nav__cta">Get Started</a>
     </nav>
@@ -174,7 +175,7 @@
         <li><a href="../case-studies.html">Case Studies</a></li>
         <li><a href="../fractional-ciso-for-saas.html">Fractional CISO for SaaS</a></li>
         <li><a href="../ai-devsecops-vulnerability-remediation.html">AI DevSecOps Remediation</a></li>
-        <li><a href="../projects.php">Sponsored Projects</a></li>
+        <li><a href="../projects.php">Demonstration Technologies</a></li>
         <li><a href="assessment.php">Self-Assessment (beta)</a></li>
       </ul>
     </nav>
