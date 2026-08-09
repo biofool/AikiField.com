@@ -1,15 +1,40 @@
-# AikiField.com — Apache rewrite rules
+# AikiField.com — Apache rewrite rules + caching + security headers
 # The site is static HTML; the only rewrite needed is the coach API proxy,
 # which forwards /coach-api/* to coach-proxy.php (PHP proxy to the Quantum
 # Aikido coaching backend on Cloud Run). See docs/coach-auth-prd.md.
 
+# ── Security headers ────────────────────────────────────────────────────────
+# Suppress X-Powered-By (leaks PHP version on dynamic pages)
+<IfModule mod_headers.c>
+  Header unset X-Powered-By
+  Header always set X-Powered-By ""
+  # Pin Vary: the host adds User-Agent, which fragments the
+  # Cloudflare edge cache per visitor (see issue #25).
+  Header always set Vary "Accept-Encoding"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-Frame-Options "SAMEORIGIN"
+</IfModule>
+
+# ── Canonical redirects ────────────────────────────────────────────────────
 RewriteEngine On
+
+# www → non-www (single canonical domain)
+RewriteCond %{HTTP_HOST} ^www\.aikifield\.com$ [NC]
+RewriteRule ^(.*)$ https://aikifield.com/$1 [R=301,L]
+
+# http → https (force HTTPS for all traffic)
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://aikifield.com/$1 [R=301,L]
+
+# ── Rewrites ────────────────────────────────────────────────────────────────
 
 # Coach API proxy — forward /coach-api/* to coach-proxy.php
 RewriteRule ^coach-api(/.*)?$ coach-proxy.php [L]
 
-# Sponsored Projects is now a PHP page (login integration). Permanently
-# redirect the old static URL so existing internal/external links keep working.
+# Demonstration Technologies (formerly Sponsored Projects) is now a PHP page
+# (login integration). Permanently redirect the old static URL so existing
+# internal/external links keep working.
 RewriteRule ^projects\.html$ /projects.php [R=301,L]
 
 # /beta/ assessment pages are now session-gated PHP (same coach login as
@@ -18,3 +43,40 @@ RewriteRule ^beta/assessment\.html$ /beta/assessment.php [R=301,L]
 RewriteRule ^beta/assessment-organisation\.html$ /beta/assessment-organisation.php [R=301,L]
 RewriteRule ^beta/assessment-leadership\.html$ /beta/assessment-leadership.php [R=301,L]
 RewriteRule ^beta/assessment-crossview\.html$ /beta/assessment-crossview.php [R=301,L]
+
+# ── Caching ────────────────────────────────────────────────────────────────
+
+# Static HTML pages — cache for 1 hour (short enough to pick up content
+# changes, long enough to avoid revalidation on repeat visits within a
+# session). PHP pages send their own no-cache headers.
+<IfModule mod_headers.c>
+  <FilesMatch "\.html$">
+    Header set Cache-Control "public, max-age=3600"
+  </FilesMatch>
+</IfModule>
+
+# Static assets (CSS, JS, SVG, fonts, images) — cache for 1 year with
+# immutable flag. These files rarely change, and when they do the
+# last-modified/etag will still allow revalidation if needed.
+<IfModule mod_headers.c>
+  <FilesMatch "\.(css|js|svg|woff|woff2|ttf|eot|otf|png|jpg|jpeg|gif|webp|avif|ico)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+</IfModule>
+
+# Fallback for mod_expires if mod_headers is unavailable
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType text/html "access plus 1 hour"
+  ExpiresByType text/css "access plus 1 year"
+  ExpiresByType text/javascript "access plus 1 year"
+  ExpiresByType application/javascript "access plus 1 year"
+  ExpiresByType image/svg+xml "access plus 1 year"
+  ExpiresByType image/png "access plus 1 year"
+  ExpiresByType image/jpeg "access plus 1 year"
+  ExpiresByType image/webp "access plus 1 year"
+  ExpiresByType image/avif "access plus 1 year"
+  ExpiresByType font/woff2 "access plus 1 year"
+  ExpiresByType font/woff "access plus 1 year"
+  ExpiresByType image/x-icon "access plus 1 year"
+</IfModule>

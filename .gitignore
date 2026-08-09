@@ -2,7 +2,7 @@ input/
 /AikiField homepage accessibility redesign.zip
 
 # AI coding config / secrets
-.env
+.env*
 *.key
 *.pem
 credentials.json
@@ -12,3 +12,6 @@ coach-config.local.php
 # Vim swap files
 *.swp
 *.swo
+
+# Convergence-driver audit output (regenerated on every run)
+data/audit/
