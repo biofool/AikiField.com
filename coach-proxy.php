@@ -52,6 +52,8 @@ $FORWARD_REQ_HEADERS = [
     'x-auth-session',
     'x-request-id',
     'authorization',
+    'cf-connecting-ip',
+    'x-forwarded-for',
 ];
 
 $FORWARD_RESP_HEADERS = [

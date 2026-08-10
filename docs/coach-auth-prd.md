@@ -149,6 +149,9 @@ IP-based rate limiting. When a request is rate-limited, the backend returns
 `coach-login.js` maps `429` to its own user-facing message via
 `httpErrorMessage(429)` and ignores any raw backend limit details. The
 concrete thresholds remain in server logs and admin alerts only.
+AikiField's `coach-proxy.php` forwards `CF-Connecting-IP` and
+`X-Forwarded-For` so the backend rate-limits per real visitor IP rather than
+the shared proxy IP.
 
 ### File inventory (AikiField.com)
 
