@@ -136,6 +136,20 @@ AikiField's `coach-proxy.php` is a trimmed port of
 OAuth `Location` headers back to `/login.php` (for future social-login
 enablement; social login is currently disabled in `coach-login.js`).
 
+### Rate-limit UX (issue #262)
+
+Backend auth endpoints (`/v1/auth/verify`, `/v1/auth/login`, etc.) enforce
+IP-based rate limiting. When a request is rate-limited, the backend returns
+`429` with a user-safe JSON body:
+
+```json
+{"ok": false, "error": "Too many login attempts. Please wait a moment and try again.", "retry_after": <seconds>}
+```
+
+`coach-login.js` maps `429` to its own user-facing message via
+`httpErrorMessage(429)` and ignores any raw backend limit details. The
+concrete thresholds remain in server logs and admin alerts only.
+
 ### File inventory (AikiField.com)
 
 | File | Purpose | Source |
