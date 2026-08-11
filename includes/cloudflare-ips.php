@@ -14,6 +14,10 @@
  * (rarely, but it happens) — re-fetch both URLs and update the two arrays
  * below periodically (e.g. quarterly), or if Cloudflare-origin traffic
  * starts getting misclassified as non-Cloudflare.
+ *
+ * Run `php scripts/verify-cloudflare-ips.php` to check these are still
+ * current against Cloudflare's live lists; it's wired into sync.sh as a
+ * pre-deploy check right alongside the php -l lint gate.
  */
 
 const QA_CLOUDFLARE_IPV4_RANGES = [
