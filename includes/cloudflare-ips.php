@@ -101,6 +101,21 @@ function qa_is_cloudflare_ip(string $ip): bool
     if ($ip === '') {
         return false;
     }
+    // Some dual-stack server configurations report an IPv4 peer's
+    // REMOTE_ADDR in IPv4-mapped-IPv6 form (e.g. "::ffff:173.245.48.1")
+    // rather than plain dotted-quad. inet_pton() on that form produces a
+    // 16-byte address that never matches our 4-byte IPv4 CIDRs, which would
+    // otherwise misclassify a genuine Cloudflare edge IP as untrusted.
+    // Unwrap it to the embedded IPv4 address before matching so both forms
+    // are recognized; this can only make detection more accurate (an
+    // address that isn't really IPv4-mapped is left untouched), it can
+    // never turn a non-Cloudflare address into a false positive.
+    if (stripos($ip, '::ffff:') === 0) {
+        $embedded = substr($ip, 7);
+        if (filter_var($embedded, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
+            $ip = $embedded;
+        }
+    }
     foreach (QA_CLOUDFLARE_IPV4_RANGES as $cidr) {
         if (qa_ip_in_cidr($ip, $cidr)) {
             return true;
