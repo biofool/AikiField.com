@@ -22,6 +22,7 @@
 
 // Load config — coach-config.local.php (gitignored) → coach-config.php.
 require __DIR__ . '/includes/coach-config.load.php';
+require __DIR__ . '/includes/cloudflare-ips.php';
 if (!defined('COACH_TIMEOUT')) {
     define('COACH_TIMEOUT', 30);
 }
@@ -46,14 +47,18 @@ if (!defined('COACH_OAUTH_REDIRECT_URI')) {
 }
 
 // --- Headers to forward ---
+// NOTE: cf-connecting-ip and x-forwarded-for are deliberately NOT in this
+// list. This script has no way to tell, on its own, whether a request that
+// reaches it actually came through Cloudflare or hit the origin directly —
+// so forwarding those headers verbatim would let any client set them to
+// whatever it likes and defeat the backend's IP-based rate limiting on auth
+// endpoints. They're rebuilt from a trust-checked address below instead.
 $FORWARD_REQ_HEADERS = [
     'content-type',
     'x-auth-email',
     'x-auth-session',
     'x-request-id',
     'authorization',
-    'cf-connecting-ip',
-    'x-forwarded-for',
 ];
 
 $FORWARD_RESP_HEADERS = [
@@ -94,6 +99,29 @@ foreach (getallheaders() as $name => $value) {
     if (in_array(strtolower($name), $FORWARD_REQ_HEADERS)) {
         $headers[] = "$name: $value";
     }
+}
+
+// --- Client IP for backend rate limiting ---
+// REMOTE_ADDR is the actual TCP peer address and cannot be spoofed by the
+// client, unlike CF-Connecting-IP / X-Forwarded-For, which are ordinary
+// request headers anyone can set. Only trust the client-supplied values for
+// those headers when REMOTE_ADDR is itself a genuine Cloudflare edge IP —
+// i.e. the request really did come through Cloudflare, which is what sets
+// CF-Connecting-IP in the first place. Otherwise (direct-to-origin request,
+// Cloudflare bypassed, or any other untrusted peer) ignore whatever the
+// client sent and forward REMOTE_ADDR itself, so the backend's rate limiter
+// always sees a value tied to an actual network connection.
+$remoteAddr = (string) ($_SERVER['REMOTE_ADDR'] ?? '');
+if ($remoteAddr !== '' && qa_is_cloudflare_ip($remoteAddr)) {
+    foreach (getallheaders() as $name => $value) {
+        $lower = strtolower($name);
+        if ($lower === 'cf-connecting-ip' || $lower === 'x-forwarded-for') {
+            $headers[] = "$name: $value";
+        }
+    }
+} else {
+    $headers[] = 'CF-Connecting-IP: ' . $remoteAddr;
+    $headers[] = 'X-Forwarded-For: ' . $remoteAddr;
 }
 
 // Add proxy secret header so the backend knows this came through the proxy
