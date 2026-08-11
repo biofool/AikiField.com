@@ -128,3 +128,51 @@ function qa_is_cloudflare_ip(string $ip): bool
     }
     return false;
 }
+
+/**
+ * Decide what CF-Connecting-IP / X-Forwarded-For headers coach-proxy.php
+ * should forward to the backend, given the trusted REMOTE_ADDR and whatever
+ * (untrusted) values the client itself sent for those two headers.
+ *
+ * - If REMOTE_ADDR is a genuine Cloudflare edge IP, the request really did
+ *   come through Cloudflare, so the client-supplied CF-Connecting-IP /
+ *   X-Forwarded-For values (the ones Cloudflare itself attached) are
+ *   forwarded as-is. A header the client didn't send is never invented.
+ * - Otherwise (direct-to-origin, Cloudflare bypassed, or REMOTE_ADDR
+ *   missing/malformed — fails closed) both headers are overwritten with
+ *   REMOTE_ADDR itself, ignoring whatever the client sent, so the backend's
+ *   rate limiter always sees a value tied to an actual network connection.
+ *
+ * Pure function (no I/O, no $_SERVER/getallheaders() access) so it can be
+ * unit-tested directly — see tests/unit/test-cloudflare-ip-trust.php — which
+ * matters because the Playwright e2e suite can't exercise the "genuine
+ * Cloudflare IP" branch: it always talks to the PHP built-in server over
+ * loopback, so $_SERVER['REMOTE_ADDR'] there is always 127.0.0.1/::1, never
+ * a real Cloudflare edge IP.
+ *
+ * @param string      $remoteAddr           $_SERVER['REMOTE_ADDR'] — the real, unspoofable TCP peer.
+ * @param string|null $clientCfConnectingIp The client-supplied CF-Connecting-IP header value, or null if the client didn't send one.
+ * @param string|null $clientXForwardedFor  The client-supplied X-Forwarded-For header value, or null if the client didn't send one.
+ * @return array<string,string> Header name => value pairs to forward (only ever 'CF-Connecting-IP' and/or 'X-Forwarded-For').
+ */
+function qa_resolve_client_ip_headers(
+    string $remoteAddr,
+    ?string $clientCfConnectingIp,
+    ?string $clientXForwardedFor
+): array {
+    if ($remoteAddr !== '' && qa_is_cloudflare_ip($remoteAddr)) {
+        $out = [];
+        if ($clientCfConnectingIp !== null) {
+            $out['CF-Connecting-IP'] = $clientCfConnectingIp;
+        }
+        if ($clientXForwardedFor !== null) {
+            $out['X-Forwarded-For'] = $clientXForwardedFor;
+        }
+        return $out;
+    }
+
+    return [
+        'CF-Connecting-IP' => $remoteAddr,
+        'X-Forwarded-For' => $remoteAddr,
+    ];
+}

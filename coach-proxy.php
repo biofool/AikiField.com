@@ -104,24 +104,25 @@ foreach (getallheaders() as $name => $value) {
 // --- Client IP for backend rate limiting ---
 // REMOTE_ADDR is the actual TCP peer address and cannot be spoofed by the
 // client, unlike CF-Connecting-IP / X-Forwarded-For, which are ordinary
-// request headers anyone can set. Only trust the client-supplied values for
-// those headers when REMOTE_ADDR is itself a genuine Cloudflare edge IP —
-// i.e. the request really did come through Cloudflare, which is what sets
-// CF-Connecting-IP in the first place. Otherwise (direct-to-origin request,
-// Cloudflare bypassed, or any other untrusted peer) ignore whatever the
-// client sent and forward REMOTE_ADDR itself, so the backend's rate limiter
-// always sees a value tied to an actual network connection.
+// request headers anyone can set. The actual trust decision (only forward
+// the client-supplied values when REMOTE_ADDR is itself a genuine
+// Cloudflare edge IP) lives in qa_resolve_client_ip_headers() in
+// includes/cloudflare-ips.php — kept as a pure function, separate from this
+// file's I/O, so it can be unit-tested directly (see
+// tests/unit/test-cloudflare-ip-trust.php) without a real HTTP request.
 $remoteAddr = (string) ($_SERVER['REMOTE_ADDR'] ?? '');
-if ($remoteAddr !== '' && qa_is_cloudflare_ip($remoteAddr)) {
-    foreach (getallheaders() as $name => $value) {
-        $lower = strtolower($name);
-        if ($lower === 'cf-connecting-ip' || $lower === 'x-forwarded-for') {
-            $headers[] = "$name: $value";
-        }
+$clientCfConnectingIp = null;
+$clientXForwardedFor = null;
+foreach (getallheaders() as $name => $value) {
+    $lower = strtolower($name);
+    if ($lower === 'cf-connecting-ip') {
+        $clientCfConnectingIp = $value;
+    } elseif ($lower === 'x-forwarded-for') {
+        $clientXForwardedFor = $value;
     }
-} else {
-    $headers[] = 'CF-Connecting-IP: ' . $remoteAddr;
-    $headers[] = 'X-Forwarded-For: ' . $remoteAddr;
+}
+foreach (qa_resolve_client_ip_headers($remoteAddr, $clientCfConnectingIp, $clientXForwardedFor) as $name => $value) {
+    $headers[] = "$name: $value";
 }
 
 // Add proxy secret header so the backend knows this came through the proxy
