@@ -35,7 +35,7 @@ ZONE = "aikifield.com"
 ZONE_ID = "71a04598ce4a9580faf7c0ee79f6da6c"
 ORIGIN_IP = "108.163.225.126"
 API = "https://api.cloudflare.com/client/v4"
-TTL = 300  # keep low until the migration is confirmed stable
+TTL = 300  # migration is stable; kept at 300 for quick DNS changes. Raise to 3600 to reduce lookup frequency.
 
 # ── Desired DNS state ───────────────────────────────────────────────────────
 # proxied=False is load-bearing for anything not on a Cloudflare-proxied port.
@@ -369,15 +369,14 @@ def step_files(apply):
 
 # ── Step: verification ──────────────────────────────────────────────────────
 
-def resolve(name, rtype="A"):
-    """Resolve via the system resolver. Returns a list of strings."""
+def resolve(name):
+    """Resolve A records via the system resolver. Returns a sorted list of IPs."""
     try:
-        if rtype == "A":
-            return sorted({ai[4][0] for ai in socket.getaddrinfo(
-                name, None, socket.AF_INET, socket.SOCK_STREAM)})
+        return sorted({ai[4][0] for ai in socket.getaddrinfo(
+            name, None, socket.AF_INET, socket.SOCK_STREAM)})
     except OSError as e:
         log("warn", f"verify: cannot resolve {name}", str(e))
-    return []
+        return []
 
 
 def http(path, host=ZONE):
@@ -482,7 +481,7 @@ def ssh(cmd):
     import subprocess
     try:
         r = subprocess.run(
-            ["ssh", "-i", SSH_KEY, "-o", "StrictHostKeyChecking=no",
+            ["ssh", "-i", SSH_KEY, "-o", "StrictHostKeyChecking=accept-new",
              "-o", "ConnectTimeout=15", "-o", "BatchMode=yes", SSH_HOST, cmd],
             capture_output=True, text=True, timeout=60)
         return r.returncode == 0, (r.stdout or "") + (r.stderr or "")
