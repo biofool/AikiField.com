@@ -22,3 +22,6 @@ logs/
 # Python bytecode cache
 __pycache__/
 *.pyc
+
+# Node.js / Playwright (e2e test suite)
+node_modules/

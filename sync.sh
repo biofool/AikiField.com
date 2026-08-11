@@ -74,6 +74,7 @@ EXCLUDES=(
     --exclude='__pycache__/'
     --exclude='.venv/'
     --exclude='node_modules/'
+    --exclude='tests/'
 )
 
 do_rsync() {
@@ -90,6 +91,33 @@ python_cmd() {
     else
         /c/Python312/python.exe "$@"
     fi
+}
+
+php_lint() {
+    # Lint every .php file in the repo before deploying so a parse error
+    # never reaches production. Excludes vendor/ (third-party) and tests/
+    # (stub files added separately). Skip in emergencies with
+    # SKIP_PHP_LINT=1 ./sync.sh deploy
+    if [[ "${SKIP_PHP_LINT:-0}" == "1" ]]; then
+        echo "PHP syntax check: SKIPPED (SKIP_PHP_LINT=1)"
+        return 0
+    fi
+    local count=0
+    local failed=0
+    local f
+    while IFS= read -r -d '' f; do
+        count=$((count + 1))
+        if ! php -l "$f" >/dev/null 2>&1; then
+            echo "✗ PHP syntax error in $f:" >&2
+            php -l "$f" >&2
+            failed=1
+        fi
+    done < <(find "$LOCAL_PATH" -name '*.php' -not -path '*/vendor/*' -not -path '*/tests/*' -not -path '*/.git/*' -print0)
+    if (( failed )); then
+        echo "ERROR: PHP syntax check failed — deploy aborted." >&2
+        exit 1
+    fi
+    echo "PHP syntax check: $count files OK"
 }
 
 # Pre-parse arguments
@@ -411,6 +439,8 @@ case "$CMD" in
         echo "  DEPLOY — git pull + push + rsync to peec.biz"
         echo "========================================"
         echo ""
+        php_lint
+        echo ""
         echo "Pulling from remote..."
         git -C "$(dirname "$0")" pull --no-rebase || { echo "ERROR: git pull failed — resolve conflicts before deploying."; exit 1; }
         echo ""
@@ -480,6 +510,9 @@ case "$CMD" in
         echo "  --remote HOST  - Specify remote server (skips interactive prompt)"
         echo "  -p PATH        - Override remote path"
         echo "  -y / --yes     - Skip confirmation prompts"
+        echo ""
+        echo "Environment:"
+        echo "  SKIP_PHP_LINT=1 - Skip the pre-deploy PHP syntax check (emergencies only)"
         echo ""
         echo "Remote: ${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_PATH}"
         echo ""

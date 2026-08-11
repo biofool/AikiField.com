@@ -1,0 +1,10 @@
+{
+  "private": true,
+  "description": "Playwright e2e suite for AikiField.com — modeled on the quantumaikido.com/web/tests/e2e pattern.",
+  "scripts": {
+    "test": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.61.1"
+  }
+}
