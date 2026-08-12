@@ -12,6 +12,44 @@
 
 require dirname(__DIR__) . '/includes/coach-config.load.php';
 
+/**
+ * Re-verify a /beta/ session against the backend's /v1/auth/check-session.
+ * Same request shape login.php's POST handler already uses at sign-in.
+ *
+ * Returns true (still valid), false (backend explicitly rejected it), or
+ * null (couldn't tell - transport/HTTP error, treat as "unknown" rather
+ * than "revoked" so a backend hiccup doesn't log everyone out).
+ */
+function qa_revalidate_beta_session(string $email, string $token): ?bool
+{
+    $verifyUrl = rtrim(COACH_BACKEND_URL, '/') . '/v1/auth/check-session';
+    $payload = json_encode(['email' => $email, 'sessionToken' => $token]);
+    $ch = curl_init($verifyUrl);
+    $reqHeaders = ['Content-Type: application/json'];
+    if (defined('COACH_PROXY_SECRET') && COACH_PROXY_SECRET !== '') {
+        $reqHeaders[] = 'X-Proxy-Secret: ' . COACH_PROXY_SECRET;
+    }
+    curl_setopt_array($ch, [
+        CURLOPT_POST           => true,
+        CURLOPT_POSTFIELDS     => $payload,
+        CURLOPT_HTTPHEADER     => $reqHeaders,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_TIMEOUT        => 10,
+        CURLOPT_SSL_VERIFYPEER => COACH_VERIFY_TLS,
+        CURLOPT_SSL_VERIFYHOST => COACH_VERIFY_TLS ? 2 : 0,
+    ]);
+    $resp = curl_exec($ch);
+    $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+    if ($resp === false || $code !== 200) {
+        error_log('beta-gate: check-session revalidation failed http=' . (int) $code
+            . ' err=' . ($resp === false ? 'transport' : 'status'));
+        return null;
+    }
+    $data = json_decode($resp, true);
+    return (bool) ($data['ok'] ?? false);
+}
+
 if (session_status() === PHP_SESSION_NONE) {
     $secure = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
         || (($_SERVER['SERVER_PORT'] ?? '') == 443);
@@ -29,6 +67,38 @@ if (session_status() === PHP_SESSION_NONE) {
 $qaEmail         = $_SESSION['qa_email'] ?? null;
 $qaSessionToken  = $_SESSION['qa_session_token'] ?? null;
 $betaAuthed      = !empty($qaEmail) && !empty($qaSessionToken);
+
+// --- Periodic re-validation against the backend ---
+// login.php only calls /v1/auth/check-session once, at sign-in, then this
+// gate trusted qa_email/qa_session_token for the full 7-day cookie lifetime
+// with no further check. If the backend disables the account or
+// revokes/rotates the token, that revocation would otherwise not take effect
+// here for up to 7 days. Re-check on a cadence instead: once per PHP session
+// is too coarse given the 7-day cookie, and re-checking on every single
+// request is wasteful, so use a wall-clock interval stored alongside the
+// token (login.php sets qa_session_checked_at at sign-in).
+const BETA_REVALIDATE_INTERVAL_SECONDS = 6 * 3600; // re-check at most every 6h
+
+if ($betaAuthed) {
+    $lastChecked = (int) ($_SESSION['qa_session_checked_at'] ?? 0);
+    if ((time() - $lastChecked) > BETA_REVALIDATE_INTERVAL_SECONDS) {
+        $stillValid = qa_revalidate_beta_session($qaEmail, $qaSessionToken);
+        if ($stillValid === true) {
+            $_SESSION['qa_session_checked_at'] = time();
+        } elseif ($stillValid === false) {
+            // Backend explicitly said the session is no longer valid
+            // (disabled account, rotated/expired token, de-invited, etc.) —
+            // clear the local session and force a fresh login.
+            $_SESSION = [];
+            session_destroy();
+            $betaAuthed = false;
+        }
+        // $stillValid === null means the backend call itself failed
+        // (network/timeout/non-200) - fail open rather than lock every /beta/
+        // visitor out on a transient backend hiccup; qa_session_checked_at is
+        // left unset so the next request retries the check.
+    }
+}
 
 if (!$betaAuthed) {
     // Send the visitor to the blind login page with the originally-requested

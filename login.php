@@ -118,6 +118,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'backe
                 $_SESSION['qa_session_token'] = $postToken;
                 $_SESSION['qa_target_env']    = $data['targetEnvironment'] ?? 'both';
                 $_SESSION['qa_is_admin']      = $data['admin'] ?? false;
+                // Timestamp this check-session call so includes/beta-gate.load.php
+                // knows not to re-check again immediately; it re-verifies on its
+                // own cadence from this point rather than trusting the session
+                // for the full 7-day cookie lifetime.
+                $_SESSION['qa_session_checked_at'] = time();
                 $qaSessionEstablished = true;
             } else {
                 error_log('login.php: check-session returned ok=false for ' . $postEmail);
