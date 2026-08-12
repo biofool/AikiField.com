@@ -22,6 +22,7 @@
 
 // Load config — coach-config.local.php (gitignored) → coach-config.php.
 require __DIR__ . '/includes/coach-config.load.php';
+require __DIR__ . '/includes/cloudflare-ips.php';
 if (!defined('COACH_TIMEOUT')) {
     define('COACH_TIMEOUT', 30);
 }
@@ -46,14 +47,18 @@ if (!defined('COACH_OAUTH_REDIRECT_URI')) {
 }
 
 // --- Headers to forward ---
+// NOTE: cf-connecting-ip and x-forwarded-for are deliberately NOT in this
+// list. This script has no way to tell, on its own, whether a request that
+// reaches it actually came through Cloudflare or hit the origin directly —
+// so forwarding those headers verbatim would let any client set them to
+// whatever it likes and defeat the backend's IP-based rate limiting on auth
+// endpoints. They're rebuilt from a trust-checked address below instead.
 $FORWARD_REQ_HEADERS = [
     'content-type',
     'x-auth-email',
     'x-auth-session',
     'x-request-id',
     'authorization',
-    'cf-connecting-ip',
-    'x-forwarded-for',
 ];
 
 $FORWARD_RESP_HEADERS = [
@@ -66,6 +71,22 @@ $FORWARD_RESP_HEADERS = [
 
 // --- Main ---
 $method = $_SERVER['REQUEST_METHOD'];
+
+// Reject any HTTP verb outside this allow-list before forwarding anything.
+// Apache will happily hand this script TRACE, arbitrary custom verbs, etc.,
+// and without this check they'd be forwarded to the backend as-is with no
+// allow-list at all (only the body-reading branch below constrained itself
+// to a method list). Defense in depth — the backend is expected to validate
+// its own routes regardless.
+$ALLOWED_METHODS = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'];
+if (!in_array($method, $ALLOWED_METHODS, true)) {
+    http_response_code(405);
+    header('Allow: ' . implode(', ', $ALLOWED_METHODS));
+    header('Content-Type: application/json');
+    echo json_encode(['detail' => 'Method not allowed.']);
+    exit;
+}
+
 $uri = $_SERVER['REQUEST_URI'] ?? '/';
 
 // Strip /coach-api prefix.
@@ -78,15 +99,18 @@ if ($path === '' || $path[0] !== '/') {
     $path = '/' . $path;
 }
 
-// Build backend URL. AikiField has no staging wrapper, so always use
-// COACH_BACKEND_URL (honour X-Target-Environment only if a staging URL is
-// configured, for forward compatibility).
-$targetEnv = $_SERVER['HTTP_X_TARGET_ENVIRONMENT'] ?? '';
-$selectedBackend = COACH_BACKEND_URL;
-if ($targetEnv === 'staging' && defined('COACH_STAGING_URL') && COACH_STAGING_URL !== '') {
-    $selectedBackend = COACH_STAGING_URL;
-}
-$backendUrl = rtrim($selectedBackend, '/') . $path;
+// Build backend URL. AikiField has no staging wrapper, so always use the
+// production backend.
+//
+// This used to honour an unauthenticated, client-supplied X-Target-Environment
+// header to switch to COACH_STAGING_URL. It was inert today only because
+// AikiField's coach-config.php never defines COACH_STAGING_URL — the moment
+// it did (e.g. via config copied from a sibling repo, a documented practice —
+// see AGENTS.md), any visitor could redirect their own auth/chat traffic to a
+// non-production backend with no allow-list or auth check gating that
+// choice. Removed rather than gated: AikiField has no legitimate use for
+// staging routing today, so there is no dead branch to protect.
+$backendUrl = rtrim(COACH_BACKEND_URL, '/') . $path;
 
 // Build headers to forward
 $headers = [];
@@ -94,6 +118,30 @@ foreach (getallheaders() as $name => $value) {
     if (in_array(strtolower($name), $FORWARD_REQ_HEADERS)) {
         $headers[] = "$name: $value";
     }
+}
+
+// --- Client IP for backend rate limiting ---
+// REMOTE_ADDR is the actual TCP peer address and cannot be spoofed by the
+// client, unlike CF-Connecting-IP / X-Forwarded-For, which are ordinary
+// request headers anyone can set. The actual trust decision (only forward
+// the client-supplied values when REMOTE_ADDR is itself a genuine
+// Cloudflare edge IP) lives in qa_resolve_client_ip_headers() in
+// includes/cloudflare-ips.php — kept as a pure function, separate from this
+// file's I/O, so it can be unit-tested directly (see
+// tests/unit/test-cloudflare-ip-trust.php) without a real HTTP request.
+$remoteAddr = (string) ($_SERVER['REMOTE_ADDR'] ?? '');
+$clientCfConnectingIp = null;
+$clientXForwardedFor = null;
+foreach (getallheaders() as $name => $value) {
+    $lower = strtolower($name);
+    if ($lower === 'cf-connecting-ip') {
+        $clientCfConnectingIp = $value;
+    } elseif ($lower === 'x-forwarded-for') {
+        $clientXForwardedFor = $value;
+    }
+}
+foreach (qa_resolve_client_ip_headers($remoteAddr, $clientCfConnectingIp, $clientXForwardedFor) as $name => $value) {
+    $headers[] = "$name: $value";
 }
 
 // Add proxy secret header so the backend knows this came through the proxy

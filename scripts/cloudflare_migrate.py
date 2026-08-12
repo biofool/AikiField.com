@@ -70,11 +70,31 @@ LEAVE_ALONE = {
 }
 
 DESIRED_SETTINGS = {
-    "ssl": "full",             # not "flexible" (redirect loops), Strict comes later
+    # "strict" validates the origin certificate (GreenGeeks AutoSSL / a
+    # Cloudflare Origin CA cert) rather than accepting any cert at the origin,
+    # including self-signed/expired ones. Was "full" - see GitLab security
+    # review issue "Cloudflare SSL mode is Full, not Full (strict)". Applying
+    # this to the live zone requires the origin to actually be serving a
+    # valid cert first; run --verify-only to confirm before --apply.
+    "ssl": "strict",
     "always_use_https": "on",
     "http3": "on",
     "0rtt": "on",
     "brotli": "on",
+    # Edge-side HSTS, mirroring the Strict-Transport-Security header added to
+    # .htaccess (see GitLab security review issue "No HSTS anywhere in the
+    # stack"). Cloudflare's zone setting value is a nested object, unlike the
+    # scalar settings above - step_settings() below compares by equality
+    # (not string coercion) so this works with the same reconciliation loop.
+    "security_header": {
+        "strict_transport_security": {
+            "enabled": True,
+            "max_age": 63072000,
+            "include_subdomains": True,
+            "nosniff": True,
+            "preload": False,
+        }
+    },
 }
 
 CACHE_RULES = [
@@ -267,7 +287,10 @@ def step_settings(token, apply):
             healthy = False
             continue
         have = payload["result"].get("value")
-        if str(have) == want:
+        # Plain equality (not str(have) == want) so this also works for
+        # nested-object settings like "security_header" (HSTS), whose value
+        # is a dict, not a scalar.
+        if have == want:
             log("ok", f"settings: {key}", f"= {have}")
             continue
         if not apply:

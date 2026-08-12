@@ -33,7 +33,19 @@ define('COACH_PROXY_SECRET', '');
 // Cloudflare Turnstile site key for bot protection (optional). When empty,
 // no captcha widget is rendered. Required for registration IF
 // COACH_PROXY_SECRET is empty (the backend demands one or the other).
+// Also gates the contact form's Turnstile widget (contact.html, fetched via
+// turnstile-sitekey.php since that page is static HTML) — same key, same
+// on/off behavior as login.php.
 define('TURNSTILE_SITE_KEY', '');
+
+// Cloudflare Turnstile secret key, used server-side by contact-handler.php to
+// verify the widget token against Cloudflare's siteverify endpoint before
+// sending mail. Leave empty here and set the real value in
+// coach-config.local.php (gitignored) — this one MUST NOT be committed, it's
+// the actual secret half of the TURNSTILE_SITE_KEY pair. When empty,
+// contact-handler.php skips verification (fails open) exactly like the
+// widget itself not rendering when TURNSTILE_SITE_KEY is empty.
+define('TURNSTILE_SECRET_KEY', '');
 
 // Verify TLS certificates when calling the backend. Leave true in production.
 define('COACH_VERIFY_TLS', true);

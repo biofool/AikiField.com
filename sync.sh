@@ -141,6 +141,27 @@ for entry in "${KNOWN_REMOTES[@]}"; do
     KNOWN_REMOTE_NAMES+=("$rn")
 done
 
+cloudflare_ip_check() {
+    # Compares the Cloudflare IP ranges vendored in includes/cloudflare-ips.php
+    # against Cloudflare's live published lists (scripts/verify-cloudflare-ips.php)
+    # before every deploy. Unlike php_lint() above, this only warns — it never
+    # aborts the deploy — for two reasons: (1) a stale list degrades the
+    # accuracy of coach-proxy.php's IP-based rate limiting (see
+    # includes/cloudflare-ips.php) but isn't itself an outage or a new
+    # exploitable hole, so it doesn't need to block shipping; and (2) this
+    # check depends on reaching www.cloudflare.com from the deploy machine,
+    # and a transient network/DNS hiccup there is not a reason to fail an
+    # otherwise-good deploy. Skip entirely (e.g. offline) with
+    # SKIP_CLOUDFLARE_IP_CHECK=1 ./sync.sh deploy
+    if [[ "${SKIP_CLOUDFLARE_IP_CHECK:-0}" == "1" ]]; then
+        echo "Cloudflare IP range check: SKIPPED (SKIP_CLOUDFLARE_IP_CHECK=1)"
+        return 0
+    fi
+    if ! php "${LOCAL_PATH}scripts/verify-cloudflare-ips.php"; then
+        echo "⚠ WARNING: Cloudflare IP range check did not pass cleanly (see above) — deploy continuing." >&2
+    fi
+}
+
 # Pre-parse arguments
 CMD=""
 YES=0
@@ -461,6 +482,8 @@ case "$CMD" in
         echo "========================================"
         echo ""
         php_lint
+        echo ""
+        cloudflare_ip_check
         echo ""
         echo "Pulling from remote..."
         git -C "$(dirname "$0")" pull --no-rebase || { echo "ERROR: git pull failed — resolve conflicts before deploying."; exit 1; }

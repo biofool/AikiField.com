@@ -123,12 +123,15 @@
                     + "&sessionToken=" + encodeURIComponent(sessionToken),
             });
         } catch (_) {
-            // Even if the server-side session POST fails, fall back to
-            // sessionStorage so the chat still works within the tab.
+            // If the server-side session POST fails, the httpOnly PHP session
+            // cookie won't be set and the redirect below will bounce back to
+            // login. There is no sessionStorage fallback on AikiField: the
+            // inline AI Chat that used to read qa_session_token from
+            // sessionStorage has been removed from this site, so persisting
+            // the raw bearer token client-side (readable by any script in
+            // this origin, including future XSS) has no functional benefit
+            // here — see AGENTS.md and projects.php's header comment.
         }
-        // Always set sessionStorage as a fallback for client-side reads
-        sessionStorage.setItem("qa_email", email);
-        sessionStorage.setItem("qa_session_token", sessionToken);
         // Redirect to destination
         window.location.href = REDIRECT;
     }

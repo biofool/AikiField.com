@@ -8,6 +8,11 @@
 #
 # Playwright starts and stops the two PHP servers itself (ports 8200/8201);
 # nothing here talks to Cloud Run.
+#
+# NOTE: this suite can't fake the TCP peer address (REMOTE_ADDR is always
+# loopback here), so it can't cover the "genuine Cloudflare IP" branch of
+# coach-proxy.php's IP-trust logic — see the standalone
+# tests/unit/test-cloudflare-ip-trust.php for that (`php tests/unit/test-cloudflare-ip-trust.php`).
 set -euo pipefail
 
 cd "$(dirname "$0")"

@@ -16,6 +16,13 @@
   Header always set Referrer-Policy "strict-origin-when-cross-origin"
   Header always set X-Content-Type-Options "nosniff"
   Header always set X-Frame-Options "SAMEORIGIN"
+  # HSTS: "Always Use HTTPS" at Cloudflare is only a 301 redirect - it does
+  # not stop a MITM from intercepting the very first plaintext HTTP request
+  # (SSL-stripping). This site collects credentials (login.php) and PII
+  # (contact form), so pin browsers to HTTPS-only for this host. Mirrored at
+  # the Cloudflare edge via the "security_header" zone setting in
+  # scripts/cloudflare_migrate.py.
+  Header always set Strict-Transport-Security "max-age=63072000; includeSubDomains"
 </IfModule>
 
 # ── Canonical redirects ────────────────────────────────────────────────────
