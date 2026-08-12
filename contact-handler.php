@@ -37,10 +37,20 @@ function redirect_with_status(string $status, string $msg = ''): void
 }
 
 // --- Extract and sanitize fields ---
-$name = trim($_POST['name'] ?? '');
+// strip_header_injection: trim() only removes leading/trailing whitespace,
+// not embedded CR/LF - a scripted (non-browser) POST can smuggle
+// "\r\nBcc: victim@example.com" into any of these fields. They all end up
+// either in a raw mail() header (name, via Reply-To) or in the body, so
+// strip control characters from all of them for defense in depth (CWE-93).
+function strip_header_injection(string $value): string
+{
+    return trim(str_replace(["\r", "\n"], '', $value));
+}
+
+$name = strip_header_injection($_POST['name'] ?? '');
 $email = trim($_POST['email'] ?? '');
-$organization = trim($_POST['organization'] ?? '');
-$interest = trim($_POST['interest'] ?? '');
+$organization = strip_header_injection($_POST['organization'] ?? '');
+$interest = strip_header_injection($_POST['interest'] ?? '');
 $message = trim($_POST['message'] ?? '');
 
 // Honeypot field — if filled, it's a bot
