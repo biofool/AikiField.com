@@ -53,6 +53,52 @@ $organization = strip_header_injection($_POST['organization'] ?? '');
 $interest = strip_header_injection($_POST['interest'] ?? '');
 $message = trim($_POST['message'] ?? '');
 
+// --- Rate limiting ---
+// The only anti-abuse control here used to be the honeypot below. There's no
+// Turnstile/CAPTCHA wired up on this form yet (unlike login.php, which has
+// one) - that remains a gap (see GitLab issue tracker). This is a cheap,
+// self-contained fixed-window limiter per IP so a scripted flood can't call
+// mail() on every request; it does not replace a real CAPTCHA.
+function contact_rate_limited(string $ip, int $maxRequests = 5, int $windowSeconds = 600): bool
+{
+    if ($ip === '') {
+        return false; // nothing to key on - fail open rather than block everyone
+    }
+    $dir = __DIR__ . '/data/ratelimit';
+    if (!is_dir($dir) && !@mkdir($dir, 0700, true) && !is_dir($dir)) {
+        return false; // fail open if local storage isn't available
+    }
+    $file = $dir . '/' . hash('sha256', $ip) . '.json';
+    $fh = @fopen($file, 'c+');
+    if ($fh === false) {
+        return false;
+    }
+    flock($fh, LOCK_EX);
+    $raw = stream_get_contents($fh);
+    $data = $raw !== false && $raw !== '' ? json_decode($raw, true) : null;
+    $now = time();
+    $windowStart = is_array($data) ? (int) ($data['windowStart'] ?? $now) : $now;
+    $count = is_array($data) ? (int) ($data['count'] ?? 0) : 0;
+    if (($now - $windowStart) > $windowSeconds) {
+        $windowStart = $now;
+        $count = 0;
+    }
+    $count++;
+    $limited = $count > $maxRequests;
+    ftruncate($fh, 0);
+    rewind($fh);
+    fwrite($fh, json_encode(['windowStart' => $windowStart, 'count' => $count]));
+    fflush($fh);
+    flock($fh, LOCK_UN);
+    fclose($fh);
+    return $limited;
+}
+
+if (contact_rate_limited((string) ($_SERVER['REMOTE_ADDR'] ?? ''))) {
+    http_response_code(429);
+    redirect_with_status('error', 'Too many submissions. Please wait a few minutes and try again.');
+}
+
 // Honeypot field — if filled, it's a bot
 $honeypot = trim($_POST['website'] ?? '');
 if ($honeypot !== '') {
