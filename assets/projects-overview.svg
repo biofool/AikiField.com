@@ -15,7 +15,7 @@
   <rect width="1120" height="760" fill="#F6F2EA"/>
 
   <!-- sponsor node -->
-  <rect x="460" y="28" width="200" height="64" rx="14" fill="#0E4E44"/>
+  <rect x="360" y="28" width="400" height="64" rx="14" fill="#0E4E44"/>
   <text x="560" y="56" text-anchor="middle" fill="#fff" font-family="'Source Serif 4', Georgia, serif" font-size="20" font-weight="600">AikiField</text>
   <text x="560" y="78" text-anchor="middle" fill="#8FE6C9" font-size="12" letter-spacing="0.06em">SPONSOR · PHRONESIS IN PRACTICE</text>
 
