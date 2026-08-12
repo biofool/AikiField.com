@@ -883,19 +883,27 @@ Practice and review regularly. Adjust based on results, incidents, and changing 
 **Meta title:** AikiField — Start a Conversation
 **Meta description:** Every security breakthrough begins with an inquiry. Book a discovery call or send a message to design an engagement that meets you where you are.
 
-### Hero (with CTAs at top)
+### Hero (compact, with trust signals)
 - Eyebrow: Contact
 - Title: Start a Conversation
 - Lead: Every security breakthrough begins with an inquiry.
-- CTAs: Book My Discovery Call (placeholder href — replace with scheduling tool URL) | Send a Message (scrolls to form)
+- Trust signals (3 metrics, on green background): $5M / 87% / 21→3 days
 
-### What to Expect
+### Two-Column Split (both paths visible without scrolling)
 
-**What to Expect**
-- A complimentary discovery conversation (30–45 minutes)
-- An assessment of your current security posture and leadership context
-- A tailored proposal for an engagement that fits your stage and needs
-- No obligation
+**Left column — Book a Discovery Call:**
+- Icon: clock
+- Heading: Book a Discovery Call
+- Lead: Prefer to talk directly? Pick a time that works for you.
+- Button: Book My Discovery Call → (Outlook Bookings link, opens in a new tab)
+- What to Expect (below button, separated by border):
+  - A complimentary discovery conversation (30–45 minutes)
+  - An assessment of your current security posture and leadership context
+  - A tailored proposal for an engagement that fits your stage and needs
+  - No obligation
+- Sticky on desktop (stays in view while form scrolls)
+
+**Right column — Send a Message form** (see below)
 
 > **Note — no published direct contact details.** The Direct Contact card
 > (email, phone, location) was removed deliberately: booking is the only
@@ -931,11 +939,13 @@ Practice and review regularly. Adjust based on results, incidents, and changing 
   - Security Maturity Assessment
   - Other
 - Message (required)
-- Submit button: Book My Discovery Call
-
-**Trust signals (below form):** $5M recovered, 87% risk eliminated, 21→3 days remediation
+- Submit button: Send Message
 
 ---
+
+> **Trust signals** have been moved from below the form into the hero section
+> (on the green background) so they aid conversion at first glance rather than
+> after scrolling past the form.
 
 ## Design System
 

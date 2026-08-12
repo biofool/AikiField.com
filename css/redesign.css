@@ -959,7 +959,56 @@ a.af-card:hover .af-card__arrow { text-decoration: underline; }
 /* ---------- Section header (centered intro text) ---------- */
 .af-section-header { max-width: none; margin-bottom: 48px; }
 .af-section-header--center { margin-left: auto; margin-right: auto; text-align: center; }
+.af-section-header--tight { margin-bottom: 28px; }
 .af-section-header p + p { margin-top: 12px; }
+
+/* ---------- Contact page: two-column split (book + form) ---------- */
+.af-contact-split { padding: 56px 0 72px; }
+.af-contact-split__grid {
+  display: grid;
+  grid-template-columns: 0.85fr 1.15fr;
+  gap: 48px;
+  align-items: start;
+}
+.af-contact-split__booking {
+  background: var(--af-bg);
+  border: 1px solid var(--af-border);
+  border-radius: 16px;
+  padding: 32px;
+  position: sticky;
+  top: 24px;
+}
+.af-contact-split__booking .af-contact-card__icon { margin-bottom: 18px; }
+.af-contact-split__booking .af-h2 { margin-bottom: 8px; }
+.af-contact-split__booking .af-lead { margin-bottom: 24px; }
+.af-contact-split__book-btn { width: 100%; text-align: center; }
+.af-contact-split__expect { margin-top: 28px; padding-top: 24px; border-top: 1px solid var(--af-border); }
+.af-contact-split__expect-title {
+  font-family: var(--af-sans);
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--af-text-2);
+  margin-bottom: 14px;
+}
+.af-contact-split__form-wrap { min-width: 0; }
+.af-form--contact { max-width: none; margin-top: 0; }
+
+/* Trust signals on green hero background — lighter borders, readable text */
+.af-hero-home__proof--on-green { margin-top: 36px; }
+.af-hero-home__proof--on-green .af-metric { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.18); }
+.af-hero-home__proof--on-green .af-metric span { color: var(--af-dark-card-text); }
+
+@media (max-width: 860px) {
+  .af-contact-split__grid { grid-template-columns: 1fr; gap: 32px; }
+  .af-contact-split__booking { position: static; }
+}
+@media (max-width: 600px) {
+  .af-contact-split { padding: 40px 0 56px; }
+  .af-contact-split__booking { padding: 24px; }
+  .af-hero-home__proof--on-green { grid-template-columns: 1fr; }
+}
 
 /* ---------- Home hero (static, green) ---------- */
 .af-hero-home { background: var(--af-primary); padding: 80px 0 72px; }

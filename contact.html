@@ -52,113 +52,115 @@
 
 <main id="main">
 
-  <!-- PAGE HEADER with CTAs -->
+  <!-- COMPACT PAGE HEADER with trust signals -->
   <section class="af-page-header af-page-header--tight af-page-header--green">
     <div class="af-container">
       <p class="af-eyebrow">Contact</p>
       <h1 class="af-h1">Start a Conversation</h1>
       <p class="af-lead af-page-header__lead">Every security breakthrough begins with an inquiry.</p>
-      <div class="af-btn-row" style="margin-top:28px;">
-        <a href="#" class="af-btn af-btn--primary">Book My Discovery Call</a>
-        <a href="#inquiry-form" class="af-btn af-btn--ghost">Send a Message</a>
-      </div>
-    </div>
-  </section>
-
-  <!-- WHAT TO EXPECT -->
-  <section class="af-section">
-    <div class="af-container">
-      <div class="af-grid af-grid--fit af-grid--28">
-        <article class="af-contact-card">
-          <span class="af-contact-card__icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#F6F2EA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
-          </span>
-          <h3 class="af-contact-card__title">What to Expect</h3>
-          <ul class="af-contact-card__list">
-            <li>A complimentary discovery conversation (30&ndash;45 minutes)</li>
-            <li>An assessment of your current security posture and leadership context</li>
-            <li>A tailored proposal for an engagement that fits your stage and needs</li>
-            <li>No obligation</li>
-          </ul>
-        </article>
-      </div>
-    </div>
-  </section>
-
-  <!-- INQUIRY FORM -->
-  <section class="af-section af-section--white" id="inquiry-form">
-    <div class="af-container">
-      <div class="af-section-header">
-        <h2 class="af-h2">Send a Message</h2>
-        <p class="af-lead af-lead--20">Tell us a bit about your organization and what you're looking for. We'll get back to you within one business day.</p>
-      </div>
-
-      <!-- Status messages (populated by query param from contact-handler.php) -->
-      <div id="form-success" class="af-form-status af-form-status--success" hidden role="status">
-        <strong>Thank you &mdash; your message has been sent.</strong> We'll get back to you within one business day.
-        <div class="af-booking-cta">
-          <p>If this is urgent, go ahead and book a time slot directly:</p>
-          <a href="https://outlook.office.com/bookwithme/user/57e8077433f14fbba90ce41be8eb815a@vigilent.com/meetingtype/c_nGn2-J1U2rVDW7BkFQXw2?bookingcode=06baa461-3ceb-48af-847d-feb43e809a97&anonymous&ismsaljsauthenabled&ep=mlink"
-             class="af-btn af-btn--primary af-btn--sm"
-             target="_blank" rel="noopener">Book a time now &rarr;</a>
-        </div>
-      </div>
-      <div id="form-error" class="af-form-status af-form-status--error" hidden role="alert">
-        <strong>Something went wrong.</strong> <span id="form-error-msg"></span>
-        <div class="af-booking-cta">
-          <p>If this is urgent, go ahead and book a time slot directly:</p>
-          <a href="https://outlook.office.com/bookwithme/user/57e8077433f14fbba90ce41be8eb815a@vigilent.com/meetingtype/c_nGn2-J1U2rVDW7BkFQXw2?bookingcode=06baa461-3ceb-48af-847d-feb43e809a97&anonymous&ismsaljsauthenabled&ep=mlink"
-             class="af-btn af-btn--primary af-btn--sm"
-             target="_blank" rel="noopener">Book a time now &rarr;</a>
-        </div>
-      </div>
-
-      <form class="af-form" action="contact-handler.php" method="post">
-        <!-- Honeypot field (hidden from humans, bots fill it) -->
-        <div style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden;" aria-hidden="true">
-          <label for="website">Website (leave empty)</label>
-          <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
-        </div>
-
-        <div class="af-form-group">
-          <label for="name">Name</label>
-          <input type="text" id="name" name="name" required autocomplete="name">
-        </div>
-        <div class="af-form-group">
-          <label for="email">Email</label>
-          <input type="email" id="email" name="email" required autocomplete="email">
-        </div>
-        <div class="af-form-group">
-          <label for="organization">Organization</label>
-          <input type="text" id="organization" name="organization" autocomplete="organization">
-        </div>
-        <div class="af-form-group">
-          <label for="interest">Area of Interest</label>
-          <select id="interest" name="interest">
-            <option value="" selected disabled>Select an area of interest&hellip;</option>
-            <option value="fractional-ciso">Fractional CISO</option>
-            <option value="devsecops">DevSecOps &amp; Vulnerability Remediation</option>
-            <option value="threat-modeling">Threat Modeling</option>
-            <option value="leadership-coaching">Security Leadership Coaching</option>
-            <option value="assessment">Security Maturity Assessment</option>
-            <option value="other">Other</option>
-          </select>
-        </div>
-        <div class="af-form-group">
-          <label for="message">Message</label>
-          <textarea id="message" name="message" rows="6" required placeholder="What's on your mind?"></textarea>
-        </div>
-        <div class="af-form-group" id="turnstile-widget-container"></div>
-        <div class="af-form__submit">
-          <button type="submit" class="af-btn af-btn--primary">Book My Discovery Call</button>
-        </div>
-      </form>
-
-      <!-- Trust signals -->
-      <div class="af-hero-home__proof" style="margin-top:48px;" aria-label="Results from real engagements">
+      <div class="af-hero-home__proof af-hero-home__proof--on-green" aria-label="Results from real engagements">
         <div class="af-metric"><strong>$5M</strong><span>Blocked sales channel recovered by resolving customer security objections.</span></div>
         <div class="af-metric"><strong>87%</strong><span>Customer-reported security risk eliminated in three thirty-minute meetings.</span></div>
         <div class="af-metric"><strong>21 &rarr; 3 days</strong><span>Vulnerability remediation time cut with AI-assisted triage workflows.</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TWO-COLUMN: Book a call (left) + Send a message (right) -->
+  <section class="af-section af-section--white af-contact-split" id="inquiry-form">
+    <div class="af-container">
+      <div class="af-contact-split__grid">
+
+        <!-- LEFT: Book a Discovery Call -->
+        <aside class="af-contact-split__booking">
+          <span class="af-contact-card__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#F6F2EA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+          </span>
+          <h2 class="af-h2 af-h2--sm">Book a Discovery Call</h2>
+          <p class="af-lead af-lead--20">Prefer to talk directly? Pick a time that works for you.</p>
+          <a href="https://outlook.office.com/bookwithme/user/57e8077433f14fbba90ce41be8eb815a@vigilent.com/meetingtype/c_nGn2-J1U2rVDW7BkFQXw2?bookingcode=06baa461-3ceb-48af-847d-feb43e809a97&anonymous&ismsaljsauthenabled&ep=mlink"
+             class="af-btn af-btn--primary af-contact-split__book-btn"
+             target="_blank" rel="noopener">Book My Discovery Call &rarr;</a>
+          <div class="af-contact-split__expect">
+            <h3 class="af-contact-split__expect-title">What to Expect</h3>
+            <ul class="af-contact-card__list">
+              <li>A complimentary discovery conversation (30&ndash;45 minutes)</li>
+              <li>An assessment of your current security posture and leadership context</li>
+              <li>A tailored proposal for an engagement that fits your stage and needs</li>
+              <li>No obligation</li>
+            </ul>
+          </div>
+        </aside>
+
+        <!-- RIGHT: Send a Message form -->
+        <div class="af-contact-split__form-wrap">
+          <div class="af-section-header af-section-header--tight">
+            <h2 class="af-h2 af-h2--sm">Send a Message</h2>
+            <p class="af-lead af-lead--20">Tell us a bit about your organization and what you&rsquo;re looking for. We&rsquo;ll get back to you within one business day.</p>
+          </div>
+
+          <!-- Status messages (populated by query param from contact-handler.php) -->
+          <div id="form-success" class="af-form-status af-form-status--success" hidden role="status">
+            <strong>Thank you &mdash; your message has been sent.</strong> We&rsquo;ll get back to you within one business day.
+            <div class="af-booking-cta">
+              <p>If this is urgent, go ahead and book a time slot directly:</p>
+              <a href="https://outlook.office.com/bookwithme/user/57e8077433f14fbba90ce41be8eb815a@vigilent.com/meetingtype/c_nGn2-J1U2rVDW7BkFQXw2?bookingcode=06baa461-3ceb-48af-847d-feb43e809a97&anonymous&ismsaljsauthenabled&ep=mlink"
+                 class="af-btn af-btn--primary af-btn--sm"
+                 target="_blank" rel="noopener">Book a time now &rarr;</a>
+            </div>
+          </div>
+          <div id="form-error" class="af-form-status af-form-status--error" hidden role="alert">
+            <strong>Something went wrong.</strong> <span id="form-error-msg"></span>
+            <div class="af-booking-cta">
+              <p>If this is urgent, go ahead and book a time slot directly:</p>
+              <a href="https://outlook.office.com/bookwithme/user/57e8077433f14fbba90ce41be8eb815a@vigilent.com/meetingtype/c_nGn2-J1U2rVDW7BkFQXw2?bookingcode=06baa461-3ceb-48af-847d-feb43e809a97&anonymous&ismsaljsauthenabled&ep=mlink"
+                 class="af-btn af-btn--primary af-btn--sm"
+                 target="_blank" rel="noopener">Book a time now &rarr;</a>
+            </div>
+          </div>
+
+          <form class="af-form af-form--contact" action="contact-handler.php" method="post">
+            <!-- Honeypot field (hidden from humans, bots fill it) -->
+            <div style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden;" aria-hidden="true">
+              <label for="website">Website (leave empty)</label>
+              <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
+            </div>
+
+            <div class="af-form-group">
+              <label for="name">Name</label>
+              <input type="text" id="name" name="name" required autocomplete="name">
+            </div>
+            <div class="af-form-group">
+              <label for="email">Email</label>
+              <input type="email" id="email" name="email" required autocomplete="email">
+            </div>
+            <div class="af-form-group">
+              <label for="organization">Organization</label>
+              <input type="text" id="organization" name="organization" autocomplete="organization">
+            </div>
+            <div class="af-form-group">
+              <label for="interest">Area of Interest</label>
+              <select id="interest" name="interest">
+                <option value="" selected disabled>Select an area of interest&hellip;</option>
+                <option value="fractional-ciso">Fractional CISO</option>
+                <option value="devsecops">DevSecOps &amp; Vulnerability Remediation</option>
+                <option value="threat-modeling">Threat Modeling</option>
+                <option value="leadership-coaching">Security Leadership Coaching</option>
+                <option value="assessment">Security Maturity Assessment</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+            <div class="af-form-group">
+              <label for="message">Message</label>
+              <textarea id="message" name="message" rows="5" required placeholder="What&rsquo;s on your mind?"></textarea>
+            </div>
+            <div class="af-form-group" id="turnstile-widget-container"></div>
+            <div class="af-form__submit">
+              <button type="submit" class="af-btn af-btn--primary">Send Message</button>
+            </div>
+          </form>
+        </div>
+
       </div>
     </div>
   </section>
