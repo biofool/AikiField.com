@@ -63,6 +63,9 @@ if (!defined('COACH_PROXY_SECRET')) {
 if (!defined('TURNSTILE_SITE_KEY')) {
     define('TURNSTILE_SITE_KEY', '');
 }
+if (!defined('TURNSTILE_SECRET_KEY')) {
+    define('TURNSTILE_SECRET_KEY', '');
+}
 // Where to send the user after a successful login. The coaching login now
 // lives on the blind /login.php page that gates /beta/. login.php reads a
 // ?next= query parameter and overrides this per-request; this is the

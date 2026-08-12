@@ -148,6 +148,7 @@
           <label for="message">Message</label>
           <textarea id="message" name="message" rows="6" required placeholder="What's on your mind?"></textarea>
         </div>
+        <div class="af-form-group" id="turnstile-widget-container"></div>
         <div class="af-form__submit">
           <button type="submit" class="af-btn af-btn--primary">Book My Discovery Call</button>
         </div>
@@ -220,6 +221,34 @@
   if (status) {
     history.replaceState(null, '', window.location.pathname);
   }
+})();
+
+// Turnstile CAPTCHA widget — same TURNSTILE_SITE_KEY config login.php uses
+// (see includes/coach-config.load.php / coach-config.php). This page is
+// static HTML, so it can't read that PHP constant directly the way
+// login.php does; instead it fetches the (non-secret) site key from
+// turnstile-sitekey.php, mirroring how beta/js/assessment.js fetches
+// beta/data.php rather than reading JSON files directly. If no site key is
+// configured, no widget renders — matching login.php's behavior — and the
+// form still submits (contact-handler.php fails open the same way).
+(function() {
+  var container = document.getElementById('turnstile-widget-container');
+  if (!container) return;
+  fetch('turnstile-sitekey.php', { credentials: 'omit' })
+    .then(function(r) { return r.ok ? r.json() : null; })
+    .then(function(cfg) {
+      if (!cfg || !cfg.siteKey) return;
+      var widget = document.createElement('div');
+      widget.className = 'cf-turnstile';
+      widget.setAttribute('data-sitekey', cfg.siteKey);
+      container.appendChild(widget);
+      var script = document.createElement('script');
+      script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js';
+      script.async = true;
+      script.defer = true;
+      document.head.appendChild(script);
+    })
+    .catch(function() { /* no widget - contact-handler.php fails open too */ });
 })();
 </script>
 

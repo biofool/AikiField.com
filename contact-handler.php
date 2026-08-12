@@ -17,6 +17,12 @@ $RECIPIENT_EMAIL = 'kenneth@aikifield.com';
 $FROM_EMAIL = 'contact@aikifield.com';
 $REDIRECT_URL = 'contact.html';
 
+// Shared coaching-auth config loader (same precedence login.php uses:
+// coach-config.local.php overrides > coach-config.php defaults). Reused here
+// only for TURNSTILE_SITE_KEY / TURNSTILE_SECRET_KEY so the contact form's
+// CAPTCHA shares one config source with login.php instead of a second one.
+require __DIR__ . '/includes/coach-config.load.php';
+
 // --- Only accept POST ---
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
@@ -54,11 +60,10 @@ $interest = strip_header_injection($_POST['interest'] ?? '');
 $message = trim($_POST['message'] ?? '');
 
 // --- Rate limiting ---
-// The only anti-abuse control here used to be the honeypot below. There's no
-// Turnstile/CAPTCHA wired up on this form yet (unlike login.php, which has
-// one) - that remains a gap (see GitLab issue tracker). This is a cheap,
-// self-contained fixed-window limiter per IP so a scripted flood can't call
-// mail() on every request; it does not replace a real CAPTCHA.
+// Turnstile CAPTCHA verification lives further down (after the honeypot
+// check). This is a cheap, self-contained fixed-window limiter per IP, kept
+// in addition to Turnstile so a scripted flood still can't call mail() on
+// every request even before a CAPTCHA token is checked.
 function contact_rate_limited(string $ip, int $maxRequests = 5, int $windowSeconds = 600): bool
 {
     if ($ip === '') {
@@ -104,6 +109,51 @@ $honeypot = trim($_POST['website'] ?? '');
 if ($honeypot !== '') {
     // Pretend success so bots don't retry
     redirect_with_status('success');
+}
+
+// --- Turnstile CAPTCHA verification ---
+// Same TURNSTILE_SITE_KEY/TURNSTILE_SECRET_KEY pair login.php's widget uses
+// (see includes/coach-config.load.php). Verified server-side against
+// Cloudflare's siteverify endpoint, mirroring the cURL usage/timeout style
+// of the backend calls in login.php and coach-proxy.php. Optional/fails open
+// when TURNSTILE_SECRET_KEY is unset, exactly like the widget itself not
+// rendering when TURNSTILE_SITE_KEY is unset — so this stays a no-op until
+// an operator configures real keys in coach-config.local.php.
+function contact_verify_turnstile(string $token, string $remoteIp): bool
+{
+    if (!defined('TURNSTILE_SECRET_KEY') || TURNSTILE_SECRET_KEY === '') {
+        return true; // CAPTCHA not configured for this deployment - fail open
+    }
+    if ($token === '') {
+        return false;
+    }
+    $ch = curl_init('https://challenges.cloudflare.com/turnstile/v0/siteverify');
+    curl_setopt_array($ch, [
+        CURLOPT_POST           => true,
+        CURLOPT_POSTFIELDS     => [
+            'secret'   => TURNSTILE_SECRET_KEY,
+            'response' => $token,
+            'remoteip' => $remoteIp,
+        ],
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_TIMEOUT        => 10,
+        CURLOPT_SSL_VERIFYPEER => true,
+        CURLOPT_SSL_VERIFYHOST => 2,
+    ]);
+    $resp = curl_exec($ch);
+    $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+    if ($resp === false || $code !== 200) {
+        error_log('contact-handler.php: Turnstile siteverify call failed http=' . (int) $code);
+        return false; // transport/backend trouble - do not treat as verified
+    }
+    $data = json_decode($resp, true);
+    return is_array($data) && ($data['success'] ?? false) === true;
+}
+
+$turnstileToken = trim($_POST['cf-turnstile-response'] ?? '');
+if (!contact_verify_turnstile($turnstileToken, (string) ($_SERVER['REMOTE_ADDR'] ?? ''))) {
+    redirect_with_status('error', 'CAPTCHA verification failed. Please try again.');
 }
 
 // --- Validation ---
