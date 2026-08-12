@@ -169,14 +169,16 @@ REMOTE_PATH_FLAG=""
 REMOTE_HOST_ARG=""
 _next_p=0
 _next_remote=0
+PURGE_ALL=0
 for arg in "$@"; do
     if [[ $_next_p -eq 1 ]]; then REMOTE_PATH_FLAG="$arg"; _next_p=0; continue; fi
     if [[ $_next_remote -eq 1 ]]; then REMOTE_HOST_ARG="$arg"; _next_remote=0; continue; fi
     case "$arg" in
         -p) _next_p=1 ;;
         --remote) _next_remote=1 ;;
+        --purge-all) PURGE_ALL=1 ;;
         -y|--yes) YES=1 ;;
-        upload|download|dryrun|deploy|sftp|ftp|logs|report|help)
+        upload|download|dryrun|deploy|deploy-all|sftp|ftp|logs|report|help)
             [ -z "$CMD" ] && CMD="$arg"
             ;;
         *)
@@ -476,6 +478,44 @@ case "$CMD" in
         fi
         ;;
 
+    deploy-all)
+        # Deploy to both staging and prod in sequence, so you can't forget
+        # one target. Git pull/push runs once (shared), then rsync to each.
+        echo "========================================"
+        echo "  DEPLOY-ALL — staging + prod in sequence"
+        echo "========================================"
+        echo ""
+        php_lint
+        echo ""
+        cloudflare_ip_check
+        echo ""
+        echo "Pulling from remote..."
+        git -C "$(dirname "$0")" pull --no-rebase || { echo "ERROR: git pull failed — resolve conflicts before deploying."; exit 1; }
+        echo ""
+        echo "Pushing to git remote..."
+        git -C "$(dirname "$0")" push
+        echo ""
+
+        _SCRIPT_DIR="$(dirname "$0")"
+        _PURGE_FLAG=""
+        [[ $PURGE_ALL -eq 1 ]] && _PURGE_FLAG="--purge-all"
+
+        for _target in staging prod; do
+            echo "========================================"
+            echo "  Deploying to ${_target}..."
+            echo "========================================"
+            bash "$_SCRIPT_DIR/sync.sh" "$_target" deploy $_PURGE_FLAG
+            if [ $? -ne 0 ]; then
+                echo "ERROR: deploy to ${_target} failed — aborting deploy-all." >&2
+                exit 1
+            fi
+            echo ""
+        done
+        echo "========================================"
+        echo "  DEPLOY-ALL complete: staging + prod"
+        echo "========================================"
+        ;;
+
     deploy)
         echo "========================================"
         echo "  DEPLOY — git pull + push + rsync to peec.biz"
@@ -500,13 +540,32 @@ case "$CMD" in
             exit $RSYNC_STATUS
         fi
         echo ""
-        # Purge only what changed. rsync's file list is between the header line
-        # and the trailing blank/summary lines.
-        printf '%s\n' "$RSYNC_OUT" \
-            | sed -n '/^sending incremental file list$/,/^$/p' \
-            | sed '1d;$d' \
-            | sed 's/^deleting //' \
-            | python_cmd "${LOCAL_PATH}scripts/cloudflare_migrate.py" --purge --apply || DEPLOY_WARN=1
+        if [[ $PURGE_ALL -eq 1 ]]; then
+            # --purge-all: purge the entire zone cache regardless of what
+            # rsync changed. Use this when the origin already has the right
+            # files but the edge is serving stale content (e.g. a prior
+            # deploy's purge failed or was skipped).
+            echo "Purging entire Cloudflare edge cache (--purge-all)..."
+            python_cmd "${LOCAL_PATH}scripts/cloudflare_migrate.py" --purge-all --apply || DEPLOY_WARN=1
+        else
+            # Purge only what changed. rsync's file list is between the
+            # header line and the trailing blank/summary lines.
+            CHANGED_FILES=$(printf '%s\n' "$RSYNC_OUT" \
+                | sed -n '/^sending incremental file list$/,/^$/p' \
+                | sed '1d;$d' \
+                | sed 's/^deleting //')
+            if [[ -z "$CHANGED_FILES" || "$CHANGED_FILES" =~ ^[[:space:]]*$ ]]; then
+                echo "⚠ WARNING: rsync transferred no files — the origin already"
+                echo "  matches local. The Cloudflare edge cache was NOT purged."
+                echo "  If visitors see stale content, re-run with --purge-all:"
+                echo "    ./sync.sh deploy --purge-all"
+                echo "  or purge specific paths manually:"
+                echo "    echo 'assets/projects-overview.svg' | python3 scripts/cloudflare_migrate.py --purge --apply"
+            else
+                printf '%s\n' "$CHANGED_FILES" \
+                    | python_cmd "${LOCAL_PATH}scripts/cloudflare_migrate.py" --purge --apply || DEPLOY_WARN=1
+            fi
+        fi
         echo ""
         if [ -n "$DEPLOY_WARN" ]; then
             echo "Deploy complete — but the edge cache was NOT purged (see above)."
@@ -541,6 +600,7 @@ case "$CMD" in
         echo ""
         echo "Commands:"
         echo "  deploy       - git pull + git push + rsync to the remote (no prompt)"
+        echo "  deploy-all   - Deploy to BOTH staging and prod in sequence (can't forget one)"
         echo "  upload       - Upload to server (dry-run preview, then confirm)"
         echo "  download     - Download from server (dry-run preview, then confirm)"
         echo "  dryrun       - Show what upload would do (no prompt)"
@@ -549,6 +609,11 @@ case "$CMD" in
         echo "  logs         - Fetch latest server access logs only"
         echo "  report       - Fetch logs and generate statistics report"
         echo "  help         - Show this help message"
+        echo ""
+        echo "Options:"
+        echo "  --purge-all  - Purge the entire Cloudflare edge cache after deploy"
+        echo "                 (use when rsync reports no changes but cache may be stale)"
+        echo "  -y, --yes    - Skip confirmation prompts"
         echo ""
         echo "Remotes (bare word, anywhere in the arguments — default: prod):"
         for entry in "${KNOWN_REMOTES[@]}"; do

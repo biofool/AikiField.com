@@ -636,30 +636,36 @@ def step_purge(token, apply, paths):
     Purges by URL so the rest of the cache stays warm, falling back to
     purge-everything when too many files changed.
     """
-    urls = []
-    for p in paths:
-        p = p.strip().lstrip("./")
-        if not p or p.endswith("/") or not p.endswith(CACHEABLE):
-            continue
-        urls.append(f"https://{ZONE}/{p}")
-        if p == "index.html":
-            urls.append(f"https://{ZONE}/")
-
-    if not urls:
-        log("ok", "purge: nothing to do", "no cacheable files changed")
-        return True
-
-    if len(urls) > PURGE_URL_LIMIT:
+    # Sentinel path from --purge-all: skip URL building, purge everything.
+    if paths == ["__purge_everything__"]:
         body = {"purge_everything": True}
-        what = f"everything ({len(urls)} files changed, over the {PURGE_URL_LIMIT} URL cap)"
+        what = "everything (--purge-all)"
     else:
-        body = {"files": urls}
-        what = f"{len(urls)} URL(s)"
+        urls = []
+        for p in paths:
+            p = p.strip().lstrip("./")
+            if not p or p.endswith("/") or not p.endswith(CACHEABLE):
+                continue
+            urls.append(f"https://{ZONE}/{p}")
+            if p == "index.html":
+                urls.append(f"https://{ZONE}/")
+
+        if not urls:
+            log("ok", "purge: nothing to do", "no cacheable files changed")
+            return True
+
+        if len(urls) > PURGE_URL_LIMIT:
+            body = {"purge_everything": True}
+            what = f"everything ({len(urls)} files changed, over the {PURGE_URL_LIMIT} URL cap)"
+        else:
+            body = {"files": urls}
+            what = f"{len(urls)} URL(s)"
 
     if not apply:
         log("apply", f"purge: would purge {what}")
-        for u in urls[:PURGE_URL_LIMIT]:
-            log("info", "purge: url", u)
+        if "files" in body:
+            for u in body["files"][:PURGE_URL_LIMIT]:
+                log("info", "purge: url", u)
         return True
 
     ok, resp = cf(f"/zones/{ZONE_ID}/purge_cache", "POST", body, token)
@@ -691,7 +697,19 @@ def main():
     p.add_argument("--purge", action="store_true",
                    help="purge the edge cache for repo-relative paths read "
                         "from stdin (used by sync.sh after a deploy)")
+    p.add_argument("--purge-all", action="store_true",
+                   help="purge the entire zone cache (no stdin needed). "
+                        "Use when rsync reports no changes but the edge may "
+                        "be serving stale content from a prior failed purge.")
     args = p.parse_args()
+
+    # Purge-all is a standalone mode: purge everything, no stdin needed.
+    if args.purge_all:
+        token = load_token()
+        ok = step_purge(token, args.apply, ["__purge_everything__"])
+        if not args.apply and any(s["status"] == "apply" for s in audit["steps"]):
+            print("  (dry run - pass --apply to actually purge)")
+        return 0 if ok else 1
 
     # Purge is a standalone mode: it runs on its own and skips convergence.
     if args.purge:
