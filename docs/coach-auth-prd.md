@@ -162,7 +162,7 @@ the shared proxy IP.
 | `coach-proxy.php` | PHP reverse proxy `/coach-api/*` → backend | ported from QA `coach-proxy.php` (trimmed) |
 | `coach-login.js` | Login/register/reset/confirm JS (loaded by `login.php`) | ported from QA `coach-login.js` |
 | `coach-auth.css` | Login styling (loaded by `login.php`) | copied verbatim from QA |
-| `includes/coach-config.load.php` | Config loader (local override → production) | ported from QA |
+| `includes/coach-config.load.php` | Config loader (local override → staging → production). Precedence: `QA_CONFIG_FILE` env var → `coach-config.local.php` (gitignored) → `coach-config.staging.php` (staging remote only) → `coach-config.php` (production). See `docs/STAGING.md` in the QA repo for the subdomain staging mechanism. | ported from QA |
 | `coach-config.php` | Non-secret production config (backend URL, empty secret placeholders, `COACH_LOGIN_REDIRECT` default `/beta/`) | new template |
 | `coach-config.local.php` | **gitignored** — holds the real `COACH_PROXY_SECRET` / Turnstile key | operator-provided |
 | `.htaccess` | Routes `/coach-api/*` → `coach-proxy.php`; 301 `projects.html` → `projects.php`; 301s for the old `/beta/*.html` URLs → `/beta/*.php` | new |
