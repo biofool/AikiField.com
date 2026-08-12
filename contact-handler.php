@@ -17,6 +17,16 @@ $RECIPIENT_EMAIL = 'kenneth@aikifield.com';
 $FROM_EMAIL = 'contact@aikifield.com';
 $REDIRECT_URL = 'contact.html';
 
+// --- Staging guard ---
+// The aikifield.peec.biz staging subdomain runs this exact same file (it's
+// rsynced as-is, see sync.sh) so testing the contact form there must never
+// reach the real inbox. Detected by hostname rather than an env var/config
+// file so it works with zero extra cPanel configuration — whatever hostname
+// the staging subdomain is created under, matching "aikifield.peec.biz" (or
+// the STAGING=1 escape hatch below, for local/manual testing) is enough.
+$IS_STAGING = getenv('STAGING') === '1'
+    || str_contains(strtolower((string) ($_SERVER['HTTP_HOST'] ?? '')), 'aikifield.peec.biz');
+
 // --- Only accept POST ---
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
@@ -94,6 +104,21 @@ $headers = [
 ];
 
 // --- Send ---
+if ($IS_STAGING) {
+    // No-op: log what would have been sent instead of calling mail(). This
+    // keeps the form fully testable on staging (validation, redirects, the
+    // success page) without ever touching kenneth@aikifield.com or a real
+    // mail server.
+    error_log(sprintf(
+        'STAGING contact-handler: no-op, would have emailed %s — name=%s email=%s interest=%s',
+        $RECIPIENT_EMAIL,
+        $name,
+        $email,
+        $interest !== '' ? $interest : 'General'
+    ));
+    redirect_with_status('success');
+}
+
 $sent = mail($RECIPIENT_EMAIL, $subject, $body, implode("\r\n", $headers));
 
 if ($sent) {

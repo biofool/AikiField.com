@@ -10,7 +10,15 @@
  *
  *   1. $_ENV/getenv('COACH_CONFIG_FILE')  — dev/test harness only
  *   2. coach-config.local.php             — developer overrides (gitignored)
- *   3. coach-config.php                   — deployed production config
+ *   3. coach-config.staging.php           — staging remote only (see below)
+ *   4. coach-config.php                   — deployed production config
+ *
+ * coach-config.staging.php is committed to the repo but sync.sh only ever
+ * deploys it to the staging remote (public_html/aikifield.peec.biz/) — the
+ * production deploy target excludes it by name. So on prod this file simply
+ * never exists and step 3 is skipped; on staging it exists and safely
+ * overrides COACH_BACKEND_URL with a non-resolving placeholder instead of
+ * the real Cloud Run backend. See docs/STAGING.md.
  *
  * Usage (from the web root):   require __DIR__ . '/includes/coach-config.load.php';
  * Usage (from a subdirectory): require dirname(__DIR__) . '/includes/coach-config.load.php';
@@ -30,6 +38,7 @@
         }
     }
     $candidates[] = $root . '/coach-config.local.php';
+    $candidates[] = $root . '/coach-config.staging.php';
     $candidates[] = $root . '/coach-config.php';
 
     foreach ($candidates as $file) {
