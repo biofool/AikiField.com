@@ -163,17 +163,24 @@ def log(status, step, detail=""):
 
 
 def load_token():
-    """Read CFT from .env.secrets without echoing it anywhere."""
+    """Read CFT (or CLOUDFLARE_API_TOKEN) from .env.secrets without echoing it."""
     env = REPO / ".env.secrets"
     if not env.exists():
         sys.exit("ERROR: .env.secrets not found - cannot authenticate")
+    cft = None
+    cfat = None
     for line in env.read_text().splitlines():
         line = line.strip()
-        if line.startswith("CFT=") and not line.startswith("#"):
-            tok = line[4:].strip().strip('"').strip("'")
-            if tok:
-                return tok
-    sys.exit("ERROR: no CFT= entry in .env.secrets")
+        if line.startswith("#"):
+            continue
+        if line.startswith("CLOUDFLARE_API_TOKEN="):
+            cfat = line[len("CLOUDFLARE_API_TOKEN="):].strip().strip('"').strip("'")
+        elif line.startswith("CFT="):
+            cft = line[4:].strip().strip('"').strip("'")
+    tok = cfat or cft
+    if tok:
+        return tok
+    sys.exit("ERROR: no CFT= or CLOUDFLARE_API_TOKEN= entry in .env.secrets")
 
 
 def cf(path, method="GET", body=None, token=None):
