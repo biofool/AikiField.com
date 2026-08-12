@@ -79,8 +79,16 @@ test.describe('proxy secret enforcement', () => {
   });
 });
 
-test.describe('client-IP header forwarding (issue #262)', () => {
-  test('the proxy forwards CF-Connecting-IP to the backend', async ({ request }) => {
+test.describe('client-IP header validation (issue #262 / CF-Connecting-IP spoofing)', () => {
+  // The e2e app server is only ever reached over loopback in this suite,
+  // never through Cloudflare, so REMOTE_ADDR here is never a Cloudflare edge
+  // IP. That means the proxy must ignore any client-supplied CF-Connecting-IP
+  // / X-Forwarded-For value and substitute the real peer address instead —
+  // otherwise a client could set those headers to anything and defeat the
+  // backend's IP-based rate limiting on auth endpoints.
+  const LOOPBACK_RE = /^(127\.0\.0\.1|::1|::ffff:127\.0\.0\.1)$/;
+
+  test('a spoofed CF-Connecting-IP from a non-Cloudflare peer is replaced with the real address', async ({ request }) => {
     await request.get('/coach-api/v1/auth/providers', {
       headers: { 'CF-Connecting-IP': '203.0.113.42' },
     });
@@ -88,10 +96,11 @@ test.describe('client-IP header forwarding (issue #262)', () => {
     const log = await stubRequests(request);
     const hit = log.requests.find((r) => r.path === '/v1/auth/providers');
     expect(hit, 'stub backend was not contacted').toBeTruthy();
-    expect(hit.cfConnectingIp).toBe('203.0.113.42');
+    expect(hit.cfConnectingIp).not.toBe('203.0.113.42');
+    expect(hit.cfConnectingIp).toMatch(LOOPBACK_RE);
   });
 
-  test('the proxy forwards X-Forwarded-For to the backend', async ({ request }) => {
+  test('a spoofed X-Forwarded-For from a non-Cloudflare peer is replaced with the real address', async ({ request }) => {
     await request.get('/coach-api/v1/auth/providers', {
       headers: { 'X-Forwarded-For': '198.51.100.10, 10.0.0.1' },
     });
@@ -99,7 +108,18 @@ test.describe('client-IP header forwarding (issue #262)', () => {
     const log = await stubRequests(request);
     const hit = log.requests.find((r) => r.path === '/v1/auth/providers');
     expect(hit, 'stub backend was not contacted').toBeTruthy();
-    expect(hit.xForwardedFor).toBe('198.51.100.10, 10.0.0.1');
+    expect(hit.xForwardedFor).not.toBe('198.51.100.10, 10.0.0.1');
+    expect(hit.xForwardedFor).toMatch(LOOPBACK_RE);
+  });
+
+  test('with no client-supplied IP headers, the proxy still forwards the real peer address', async ({ request }) => {
+    await request.get('/coach-api/v1/auth/providers');
+
+    const log = await stubRequests(request);
+    const hit = log.requests.find((r) => r.path === '/v1/auth/providers');
+    expect(hit, 'stub backend was not contacted').toBeTruthy();
+    expect(hit.cfConnectingIp).toMatch(LOOPBACK_RE);
+    expect(hit.xForwardedFor).toMatch(LOOPBACK_RE);
   });
 
   test('the proxy forwards X-Auth-Email and X-Auth-Session headers', async ({ request }) => {
