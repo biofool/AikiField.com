@@ -188,6 +188,16 @@ invitation/proxy flow MUST update all three PRDs
 (`docs/coach-auth-prd.md` here, `docs/coach-dashboard-prd.md` in QA,
 `backend/PRD.md` in AIRichardMoon) and deploy all affected repos together.
 
+### Contact page — direct booking is post-submit only
+
+The direct Outlook booking URL (`outlook.office.com/bookwithme/...`) must
+NOT appear as a standalone CTA on the contact page. It is only exposed
+inside the success and error banners that appear AFTER the contact form
+is submitted (`#form-success` / `#form-error`). The form is the sole
+primary conversion path; direct booking is a follow-up option, not a
+competing CTA. Do not add a "Book a Discovery Call" button to the main
+page layout, hero, or left column — keep it hidden until form submission.
+
 ### Cloud strategy — CloudManagement coordination
 
 **CloudManagement** (`biofool/CloudManagement`, formerly `biofool/CloudBilling`) is the

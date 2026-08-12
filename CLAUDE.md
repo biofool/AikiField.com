@@ -83,6 +83,11 @@ site. Validate changes by visual review and accessibility checks.
   invitation flow MUST update all three PRDs (`docs/coach-auth-prd.md` here,
   `docs/coach-dashboard-prd.md` in QA, `backend/PRD.md` in AIRichardMoon) and
   deploy all affected repos together. Never commit `coach-config.local.php`.
+- **Contact page: direct booking is post-submit only.** The Outlook booking
+  URL must NOT appear as a standalone CTA on the contact page. It is only
+  exposed inside the success/error banners after the form is submitted. The
+  form is the sole primary conversion path; direct booking is a follow-up
+  option, not a competing CTA.
 
 ## Global conventions (apply to every project)
 
