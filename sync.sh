@@ -4,18 +4,31 @@
 #  AikiField.com — Sync to peec.biz
 #  Based on quantumaikido.com/web/sync.sh
 #  Pushes the site to public_html/aikifield.com/ on peec.biz
+#
+#  Two deploy targets share this script:
+#    ./sync.sh deploy          -> prod    (public_html/aikifield/)
+#    ./sync.sh staging deploy  -> staging (public_html/aikifield.peec.biz/)
+#  "staging"/"prod" are recognized anywhere in the argument list (see
+#  KNOWN_REMOTES below) — no separate flag needed. Omitting a remote name
+#  always defaults to prod, matching the script's historical behavior.
 # ============================================
 
 LOCAL_PATH="$(cd "$(dirname "$0")" && pwd)/"
 REMOTE_HOST="peec.biz"
 REMOTE_USER="peecbiz"
 REMOTE_PATH="public_html/aikifield/"
+REMOTE_NAME="prod"
 SSH_KEY="$HOME/.ssh/quantumaikido_ed25519"
 
-# Known remote servers: "host|user|path|description"
+# Known remote servers: "name|host|user|path|description"
+# "name" is what you type on the command line (e.g. `./sync.sh staging deploy`)
+# and is also used to keep staging-only files out of the prod sync — see the
+# coach-config.staging.php exclude below.
 KNOWN_REMOTES=(
-    "peec.biz|peecbiz|public_html/aikifield/|Production server (peec.biz)"
+    "prod|peec.biz|peecbiz|public_html/aikifield/|Production server (peec.biz)"
+    "staging|peec.biz|peecbiz|public_html/aikifield.peec.biz/|Staging server (aikifield.peec.biz)"
 )
+DEFAULT_REMOTE_NAME="prod"
 
 SCP_KEY_ARGS=(-i "$SSH_KEY" -o LogLevel=ERROR)
 LOGS_DIR="${LOCAL_PATH}/logs/"
@@ -120,6 +133,14 @@ php_lint() {
     echo "PHP syntax check: $count files OK"
 }
 
+# Names of all known remotes (e.g. "prod", "staging") — recognized as a bare
+# positional argument anywhere on the command line, same as `--remote NAME`.
+KNOWN_REMOTE_NAMES=()
+for entry in "${KNOWN_REMOTES[@]}"; do
+    IFS='|' read -r rn _ru _rp _rd <<< "$entry"
+    KNOWN_REMOTE_NAMES+=("$rn")
+done
+
 # Pre-parse arguments
 CMD=""
 YES=0
@@ -138,58 +159,58 @@ for arg in "$@"; do
             [ -z "$CMD" ] && CMD="$arg"
             ;;
         *)
-            [ -n "$CMD" ] && [ -z "$SCOPE" ] && SCOPE="$arg"
+            _is_remote_name=0
+            for rn in "${KNOWN_REMOTE_NAMES[@]}"; do
+                if [[ "$arg" == "$rn" ]]; then
+                    [ -z "$REMOTE_HOST_ARG" ] && REMOTE_HOST_ARG="$arg"
+                    _is_remote_name=1
+                    break
+                fi
+            done
+            if [[ $_is_remote_name -eq 0 ]]; then
+                [ -n "$CMD" ] && [ -z "$SCOPE" ] && SCOPE="$arg"
+            fi
             ;;
     esac
 done
-unset _next_p _next_remote
+unset _next_p _next_remote _is_remote_name rn
 
-# Resolve remote host
+# Resolve remote host. Matches against either the remote's short "name"
+# (e.g. "staging") or its raw hostname, so both `--remote staging` and
+# `--remote peec.biz` work.
 _apply_known_remote() {
-    local host="$1"
+    local key="$1"
     for entry in "${KNOWN_REMOTES[@]}"; do
-        IFS='|' read -r rh ru rp rd <<< "$entry"
-        if [[ "$rh" == "$host" ]]; then
-            REMOTE_HOST="$rh"; REMOTE_USER="$ru"; REMOTE_PATH="$rp"
+        IFS='|' read -r rn rh ru rp rd <<< "$entry"
+        if [[ "$rn" == "$key" || "$rh" == "$key" ]]; then
+            REMOTE_NAME="$rn"; REMOTE_HOST="$rh"; REMOTE_USER="$ru"; REMOTE_PATH="$rp"
             return 0
         fi
     done
-    REMOTE_HOST="$host"
+    REMOTE_HOST="$key"
+    REMOTE_NAME=""
 }
 
 if [[ -n "$REMOTE_HOST_ARG" ]]; then
     _apply_known_remote "$REMOTE_HOST_ARG"
-elif [[ "$CMD" == "help" ]]; then
-    REMOTE_HOST="peec.biz"
 else
-    if (( ${#KNOWN_REMOTES[@]} == 1 )); then
-        # Only one known remote — auto-select it, no prompt
-        IFS='|' read -r REMOTE_HOST REMOTE_USER REMOTE_PATH _rd <<< "${KNOWN_REMOTES[0]}"
-    else
-        echo ""
-        echo "No remote server specified. Select one:"
-        echo ""
-        for i in "${!KNOWN_REMOTES[@]}"; do
-            IFS='|' read -r rh ru rp rd <<< "${KNOWN_REMOTES[$i]}"
-            printf "  %d) %-38s [%s@%s:%s]\n" "$((i+1))" "$rd" "$ru" "$rh" "$rp"
-        done
-        echo ""
-        read -p "Choice [1-${#KNOWN_REMOTES[@]}] or --remote hostname: " _REMOTE_CHOICE
-        if [[ "$_REMOTE_CHOICE" =~ ^[0-9]+$ ]] && (( _REMOTE_CHOICE >= 1 && _REMOTE_CHOICE <= ${#KNOWN_REMOTES[@]} )); then
-            IFS='|' read -r REMOTE_HOST REMOTE_USER REMOTE_PATH _rd <<< "${KNOWN_REMOTES[$((_REMOTE_CHOICE-1))]}"
-        elif [[ -n "$_REMOTE_CHOICE" ]]; then
-            _apply_known_remote "$_REMOTE_CHOICE"
-        else
-            echo "No remote specified. Exiting."
-            exit 1
-        fi
-        unset _REMOTE_CHOICE
-    fi
+    # No remote given anywhere on the command line — always default to prod,
+    # non-interactively, so `./sync.sh deploy` keeps working unattended.
+    _apply_known_remote "$DEFAULT_REMOTE_NAME"
 fi
 unset -f _apply_known_remote
 
 [[ -n "$REMOTE_PATH_FLAG" ]] && REMOTE_PATH="$REMOTE_PATH_FLAG"
 RSYNC_REMOTE="${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_PATH}"
+
+# coach-config.staging.php points the coaching-auth proxy at a placeholder,
+# never-resolving backend (see that file's header comment) — it must only
+# ever land on the staging remote. If it ever reached prod it would silently
+# override coach-config.php and break real coaching auth there, so exclude it
+# from every remote except staging.
+if [[ "$REMOTE_NAME" != "staging" ]]; then
+    EXCLUDES+=(--exclude='coach-config.staging.php')
+fi
 
 fetch_logs() {
     echo "Fetching latest log files..."
@@ -493,10 +514,10 @@ case "$CMD" in
         ;;
 
     help)
-        echo "Usage: $0 [command] [options]"
+        echo "Usage: $0 [remote] [command] [options]"
         echo ""
         echo "Commands:"
-        echo "  deploy       - git pull + git push + rsync to peec.biz (no prompt)"
+        echo "  deploy       - git pull + git push + rsync to the remote (no prompt)"
         echo "  upload       - Upload to server (dry-run preview, then confirm)"
         echo "  download     - Download from server (dry-run preview, then confirm)"
         echo "  dryrun       - Show what upload would do (no prompt)"
@@ -506,17 +527,26 @@ case "$CMD" in
         echo "  report       - Fetch logs and generate statistics report"
         echo "  help         - Show this help message"
         echo ""
+        echo "Remotes (bare word, anywhere in the arguments — default: prod):"
+        for entry in "${KNOWN_REMOTES[@]}"; do
+            IFS='|' read -r rn rh ru rp rd <<< "$entry"
+            printf "  %-10s - %-38s [%s@%s:%s]\n" "$rn" "$rd" "$ru" "$rh" "$rp"
+        done
+        echo ""
+        echo "  e.g. ./sync.sh staging deploy   ./sync.sh staging dryrun   ./sync.sh deploy"
+        echo ""
         echo "Options:"
-        echo "  --remote HOST  - Specify remote server (skips interactive prompt)"
-        echo "  -p PATH        - Override remote path"
-        echo "  -y / --yes     - Skip confirmation prompts"
+        echo "  --remote NAME|HOST - Specify remote by name or hostname (same as the bare word above)"
+        echo "  -p PATH            - Override remote path"
+        echo "  -y / --yes         - Skip confirmation prompts"
         echo ""
         echo "Environment:"
         echo "  SKIP_PHP_LINT=1 - Skip the pre-deploy PHP syntax check (emergencies only)"
         echo ""
-        echo "Remote: ${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_PATH}"
+        echo "Remote: ${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_PATH}${REMOTE_NAME:+ (name: $REMOTE_NAME)}"
         echo ""
         echo "Excluded from sync: .git/, input/, .devin/, *.md, *.py, *.sh, sync.sh, SITE_CONTENT.md"
+        echo "Also excluded from every remote except staging: coach-config.staging.php"
         ;;
 
     "")
