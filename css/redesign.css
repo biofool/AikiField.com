@@ -990,15 +990,6 @@ a.af-card:hover .af-card__arrow { text-decoration: underline; }
 }
 .af-contact-split__booking .af-lead { color: var(--af-dark-card-text); margin-bottom: 28px; }
 .af-contact-split__booking .af-contact-card__icon { margin-bottom: 20px; }
-.af-contact-split__booking .af-h2 { color: #fff; margin-bottom: 8px; }
-.af-contact-split__book-btn {
-  background: #fff;
-  color: var(--af-primary);
-  width: 100%;
-  text-align: center;
-  margin-bottom: 28px;
-}
-.af-contact-split__book-btn:hover { background: var(--af-mint-dk); }
 .af-contact-split__expect {
   margin-top: 0;
   padding-top: 24px;
