@@ -26,7 +26,7 @@
 </head>
 <body>
 
-<a href="#main" class="af-skip-link">Skip to main content</a>
+<a href="#main" class="af-skip-link" data-i18n="common.skip_to_main_content">Skip to main content</a>
 
 <!-- HEADER -->
 <header class="af-header">
@@ -36,16 +36,20 @@
       <span class="af-brand__text">AikiField</span>
     </a>
     <input type="checkbox" id="af-nav-check" class="af-nav-toggle-check">
-    <label for="af-nav-check" class="af-nav__toggle" aria-label="Menu">&#9776;</label>
+    <label for="af-nav-check" class="af-nav__toggle" aria-label="Menu" data-i18n-attr="aria-label:nav.toggle_menu">&#9776;</label>
     <nav aria-label="Primary" class="af-nav">
-      <a href="index.html" class="af-nav__link">Home</a>
-      <a href="process.html" class="af-nav__link">Process</a>
-      <a href="approach.html" class="af-nav__link">Approach</a>
-      <a href="services.html" class="af-nav__link">Services</a>
-      <a href="case-studies.html" class="af-nav__link af-nav__link--active" aria-current="page">Case Studies</a>
-      <a href="projects.php" class="af-nav__link">Demonstration Technologies</a>
-      <a href="assessment.html" class="af-nav__link">Assessment</a>
-      <a href="contact.html" class="af-nav__cta">Get Started</a>
+      <a href="index.html" class="af-nav__link" data-i18n="nav.home">Home</a>
+      <a href="process.html" class="af-nav__link" data-i18n="nav.process">Process</a>
+      <a href="approach.html" class="af-nav__link" data-i18n="nav.approach">Approach</a>
+      <a href="services.html" class="af-nav__link" data-i18n="nav.services">Services</a>
+      <a href="case-studies.html" class="af-nav__link af-nav__link--active" aria-current="page" data-i18n="case-studies.eyebrow_case_studies">Case Studies</a>
+      <a href="projects.php" class="af-nav__link" data-i18n="nav.demonstration_technologies">Demonstration Technologies</a>
+      <a href="assessment.html" class="af-nav__link" data-i18n="nav.assessment">Assessment</a>
+      <a href="contact.html" class="af-nav__cta" data-i18n="nav.get_started">Get Started</a>
+    
+      <div id="af-language-selector" class="af-lang-selector" data-i18n-attr="aria-label:nav.language_selection">
+        <span class="af-lang-label" aria-hidden="true">&#127760;</span>
+      </div>
     </nav>
   </div>
 </header>
@@ -55,8 +59,8 @@
   <!-- PAGE HEADER -->
   <section class="af-page-header af-page-header--tight af-page-header--green">
     <div class="af-container">
-      <p class="af-eyebrow">Case Studies</p>
-      <h1 class="af-h1">Security leadership that shows up in revenue and risk.</h1>
+      <p class="af-eyebrow" data-i18n="case-studies.eyebrow_case_studies">Case Studies</p>
+      <h1 class="af-h1" data-i18n="case-studies.security_leadership_that_shows_up">Security leadership that shows up in revenue and risk.</h1>
       <p class="af-lead af-lead--wide af-page-header__lead">What a long-term fractional CISO engagement looks like when it works &mdash; nine years of continuous trust, a security program that scales with an AI-driven product, and results measured in deals won and risk reduced, not just in a compliance binder.</p>
     </div>
   </section>
@@ -69,14 +73,14 @@
         <div class="af-svc__tag-row">
           <span class="af-svc__tag af-svc__tag--flagship">Fractional CISO &middot; 9 years</span>
         </div>
-        <h2 class="af-svc__title">Fractional CISO for an AI-Driven Data Center Technology Company</h2>
+        <h2 class="af-svc__title" data-i18n="case-studies.fractional_ciso_for_an_aidriven">Fractional CISO for an AI-Driven Data Center Technology Company</h2>
         <p class="af-svc__lead">An AI-driven industrial IoT company serving hyperscale and colocation data center operators &mdash; cooling optimization and analytics for 1,500+ facilities across 36 countries, serving hyperscale, colocation, telecom, and enterprise customers including Verizon, IBM, Digital Realty, and NTT.</p>
         <p class="af-svc__bestfor"><strong>Engagement:</strong> Fractional CISO &amp; Security Program Lead, ongoing since 2017 &mdash; nine years of continuous security leadership for a single venture-backed client.</p>
 
-        <h3 class="af-svc__bullets-label">The Challenge</h3>
+        <h3 class="af-svc__bullets-label" data-i18n="case-studies.the_challenge">The Challenge</h3>
         <p class="af-body">The company's AI-driven platform sits inside some of the world's most security-conscious buyers &mdash; hyperscale and colocation data center operators with rigorous vendor security review processes. A blocked sales channel worth $5M in ARR was stuck behind unresolved customer security objections, and the DevOps vulnerability backlog was taking months to clear &mdash; both a growing risk and a growing drag on enterprise deals.</p>
 
-        <h3 class="af-svc__bullets-label" style="margin-top:28px;">What We Did</h3>
+        <h3 class="af-svc__bullets-label" style="margin-top:28px;" data-i18n="case-studies.what_we_did">What We Did</h3>
         <ul class="af-svc__bullets">
           <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Built and executed a security roadmap</strong> that directly resolved the objections blocking the $5M channel &mdash; working customer-by-customer through their actual requirements (OWASP, CWE).</span></li>
           <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Rearchitected the vulnerability workflow</strong> across the DevOps pipeline, cutting average time to identify, escalate, and remediate from 165 days to 21 days.</span></li>
@@ -84,13 +88,13 @@
           <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Built custom tooling for OS hardening</strong> in production, and coordinated a lean cross-functional team spanning product security, compliance, and infrastructure.</span></li>
         </ul>
 
-        <h3 class="af-svc__bullets-label" style="margin-top:28px;">Results</h3>
+        <h3 class="af-svc__bullets-label" style="margin-top:28px;" data-i18n="case-studies.results">Results</h3>
         <div class="af-hero-home__proof" aria-label="Results from the engagement" style="margin-top:16px; grid-template-columns: repeat(2, 1fr);">
           <div class="af-metric"><strong>$5M</strong><span>Blocked ARR sales channel recovered by resolving customer security objections.</span></div>
           <div class="af-metric"><strong>87%</strong><span>Reduction in vulnerability remediation time (165 &rarr; 21 days) from a DevOps workflow rearchitecture.</span></div>
         </div>
 
-        <h3 class="af-svc__bullets-label" style="margin-top:28px;">Why It Matters</h3>
+        <h3 class="af-svc__bullets-label" style="margin-top:28px;" data-i18n="case-studies.why_it_matters">Why It Matters</h3>
         <p class="af-body">This is what a long-term fractional CISO engagement looks like when it works: nine years of continuous trust, a security program that scales with an AI-driven product, and results that show up directly in revenue and risk &mdash; not just in a compliance binder. It's also a rare combination: hands-on AI governance experience on a live, shipping AI product, paired with deep familiarity with the vendor security reviews that hyperscale and colocation operators run on every supplier that touches their facilities.</p>
       </article>
 
@@ -103,21 +107,21 @@
       <div class="af-cluster-cards" style="margin-bottom:40px;">
         <a href="fractional-ciso-for-saas.html" class="af-cluster-card">
           <span class="af-cluster-card__tag">Related Deep Dive</span>
-          <h3 class="af-cluster-card__title">When should a Series A SaaS hire a Fractional CISO vs full-time?</h3>
+          <h3 class="af-cluster-card__title" data-i18n="case-studies.when_should_a_series_a">When should a Series A SaaS hire a Fractional CISO vs full-time?</h3>
           <p class="af-cluster-card__body">The cost and timing analysis behind the decision &mdash; when fractional makes sense, when full-time is justified, and what each delivers.</p>
           <span class="af-cluster-card__link">Read the deep dive &rarr;</span>
         </a>
         <a href="ai-devsecops-vulnerability-remediation.html" class="af-cluster-card">
           <span class="af-cluster-card__tag">Related Deep Dive</span>
-          <h3 class="af-cluster-card__title">How to reduce vulnerability remediation from 21 days to 3 days</h3>
+          <h3 class="af-cluster-card__title" data-i18n="case-studies.how_to_reduce_vulnerability_remediation">How to reduce vulnerability remediation from 21 days to 3 days</h3>
           <p class="af-cluster-card__body">The technical workflow behind the 87% reduction &mdash; Aikido.dev integration, AI-assisted triage, and the pipeline rearchitecture.</p>
           <span class="af-cluster-card__link">Read the deep dive &rarr;</span>
         </a>
       </div>
       <div class="af-callout af-callout--sm">
-        <h2 class="af-callout__title af-callout__title--sm">Want this kind of result for your security program?</h2>
+        <h2 class="af-callout__title af-callout__title--sm" data-i18n="case-studies.want_this_kind_of_result">Want this kind of result for your security program?</h2>
         <p class="af-callout__body af-callout__body--sm af-callout__body--52">The same long-term, revenue-aware security leadership is available as a fractional engagement &mdash; right-sized to your stage, your customers, and your risk.</p>
-        <a href="contact.html" class="af-btn af-btn--light">Book a Discovery Call</a>
+        <a href="contact.html" class="af-btn af-btn--light" data-i18n="common.book_a_discovery_call">Book a Discovery Call</a>
       </div>
     </div>
   </section>
@@ -131,31 +135,33 @@
         <span class="af-footer__brand-icon" aria-hidden="true">A</span>
         <span class="af-footer__brand-text">AikiField</span>
       </div>
-      <p class="af-footer__tagline">Security leadership for product companies. Fractional CISO, AI-assisted security engineering, and presence-based executive coaching.</p>
+      <p class="af-footer__tagline" data-i18n="footer.tagline">Security leadership for product companies. Fractional CISO, AI-assisted security engineering, and presence-based executive coaching.</p>
     </div>
     <nav aria-label="Explore">
-      <h3 class="af-footer__col-title">Explore</h3>
+      <h3 class="af-footer__col-title" data-i18n="footer.explore">Explore</h3>
       <ul class="af-footer__nav">
-        <li><a href="process.html">Engagement Process</a></li>
-        <li><a href="approach.html">Our Approach</a></li>
-        <li><a href="services.html">Services</a></li>
-        <li><a href="case-studies.html">Case Studies</a></li>
-        <li><a href="fractional-ciso-for-saas.html">Fractional CISO for SaaS</a></li>
-        <li><a href="ai-devsecops-vulnerability-remediation.html">AI DevSecOps Remediation</a></li>
-        <li><a href="projects.php">Demonstration Technologies</a></li>
-        <li><a href="assessment.html">Self-Assessment</a></li>
+        <li><a href="process.html" data-i18n="footer.engagement_process">Engagement Process</a></li>
+        <li><a href="approach.html" data-i18n="footer.our_approach">Our Approach</a></li>
+        <li><a href="services.html" data-i18n="nav.services">Services</a></li>
+        <li><a href="case-studies.html" data-i18n="case-studies.eyebrow_case_studies">Case Studies</a></li>
+        <li><a href="fractional-ciso-for-saas.html" data-i18n="footer.fractional_ciso_for_saas">Fractional CISO for SaaS</a></li>
+        <li><a href="ai-devsecops-vulnerability-remediation.html" data-i18n="footer.ai_devsecops_remediation">AI DevSecOps Remediation</a></li>
+        <li><a href="projects.php" data-i18n="nav.demonstration_technologies">Demonstration Technologies</a></li>
+        <li><a href="assessment.html" data-i18n="footer.self_assessment">Self-Assessment</a></li>
       </ul>
     </nav>
     <nav aria-label="Connect">
-      <h3 class="af-footer__col-title">Connect</h3>
+      <h3 class="af-footer__col-title" data-i18n="footer.connect">Connect</h3>
       <ul class="af-footer__nav">
-        <li><a href="contact.html">Contact</a></li>
-        <li><a href="contact.html">Inquiry</a></li>
+        <li><a href="contact.html" data-i18n="footer.contact">Contact</a></li>
+        <li><a href="contact.html" data-i18n="footer.inquiry">Inquiry</a></li>
       </ul>
     </nav>
   </div>
-  <div class="af-footer__legal">&copy; 2026 AikiField. All rights reserved.</div>
+  <div class="af-footer__legal" data-i18n="footer.legal">&copy; 2026 AikiField. All rights reserved.</div>
 </footer>
 
+<script src="/js/locale-utils.js"></script>
+<script src="/js/language-selector.js"></script>
 </body>
 </html>

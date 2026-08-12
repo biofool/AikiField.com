@@ -26,7 +26,7 @@
 </head>
 <body>
 
-<a href="#main" class="af-skip-link">Skip to main content</a>
+<a href="#main" class="af-skip-link" data-i18n="common.skip_to_main_content">Skip to main content</a>
 
 <!-- HEADER -->
 <header class="af-header">
@@ -36,16 +36,20 @@
       <span class="af-brand__text">AikiField</span>
     </a>
     <input type="checkbox" id="af-nav-check" class="af-nav-toggle-check">
-    <label for="af-nav-check" class="af-nav__toggle" aria-label="Menu">&#9776;</label>
+    <label for="af-nav-check" class="af-nav__toggle" aria-label="Menu" data-i18n-attr="aria-label:nav.toggle_menu">&#9776;</label>
     <nav aria-label="Primary" class="af-nav">
-      <a href="index.html" class="af-nav__link">Home</a>
-      <a href="process.html" class="af-nav__link">Process</a>
-      <a href="approach.html" class="af-nav__link">Approach</a>
-      <a href="services.html" class="af-nav__link">Services</a>
-      <a href="case-studies.html" class="af-nav__link">Case Studies</a>
-      <a href="projects.php" class="af-nav__link">Demonstration Technologies</a>
-      <a href="assessment.html" class="af-nav__link">Assessment</a>
-      <a href="contact.html" class="af-nav__cta af-nav__link--active" aria-current="page">Get Started</a>
+      <a href="index.html" class="af-nav__link" data-i18n="nav.home">Home</a>
+      <a href="process.html" class="af-nav__link" data-i18n="nav.process">Process</a>
+      <a href="approach.html" class="af-nav__link" data-i18n="nav.approach">Approach</a>
+      <a href="services.html" class="af-nav__link" data-i18n="nav.services">Services</a>
+      <a href="case-studies.html" class="af-nav__link" data-i18n="nav.case_studies">Case Studies</a>
+      <a href="projects.php" class="af-nav__link" data-i18n="nav.demonstration_technologies">Demonstration Technologies</a>
+      <a href="assessment.html" class="af-nav__link" data-i18n="nav.assessment">Assessment</a>
+      <a href="contact.html" class="af-nav__cta af-nav__link--active" aria-current="page" data-i18n="nav.get_started">Get Started</a>
+    
+      <div id="af-language-selector" class="af-lang-selector" data-i18n-attr="aria-label:nav.language_selection">
+        <span class="af-lang-label" aria-hidden="true">&#127760;</span>
+      </div>
     </nav>
   </div>
 </header>
@@ -55,8 +59,8 @@
   <!-- COMPACT PAGE HEADER with trust signals -->
   <section class="af-page-header af-page-header--tight af-page-header--green">
     <div class="af-container">
-      <p class="af-eyebrow">Contact</p>
-      <h1 class="af-h1">Start a Conversation</h1>
+      <p class="af-eyebrow" data-i18n="contact.eyebrow_contact">Contact</p>
+      <h1 class="af-h1" data-i18n="contact.start_a_conversation">Start a Conversation</h1>
       <p class="af-lead af-page-header__lead">Every security breakthrough begins with an inquiry.</p>
       <div class="af-hero-home__proof af-hero-home__proof--on-green" aria-label="Results from real engagements">
         <div class="af-metric"><strong>$5M</strong><span>Blocked sales channel recovered by resolving customer security objections.</span></div>
@@ -76,13 +80,13 @@
           <span class="af-contact-card__icon" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none" stroke="#F6F2EA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
           </span>
-          <h2 class="af-h2 af-h2--sm">Book a Discovery Call</h2>
+          <h2 class="af-h2 af-h2--sm" data-i18n="common.book_a_discovery_call">Book a Discovery Call</h2>
           <p class="af-lead af-lead--20">Prefer to talk directly? Pick a time that works for you.</p>
           <a href="https://outlook.office.com/bookwithme/user/57e8077433f14fbba90ce41be8eb815a@vigilent.com/meetingtype/c_nGn2-J1U2rVDW7BkFQXw2?bookingcode=06baa461-3ceb-48af-847d-feb43e809a97&anonymous&ismsaljsauthenabled&ep=mlink"
              class="af-btn af-btn--primary af-contact-split__book-btn"
              target="_blank" rel="noopener">Book My Discovery Call &rarr;</a>
           <div class="af-contact-split__expect">
-            <h3 class="af-contact-split__expect-title">What to Expect</h3>
+            <h3 class="af-contact-split__expect-title" data-i18n="common.what_to_expect">What to Expect</h3>
             <ul class="af-contact-card__list">
               <li>A complimentary discovery conversation (30&ndash;45 minutes)</li>
               <li>An assessment of your current security posture and leadership context</li>
@@ -95,7 +99,7 @@
         <!-- RIGHT: Send a Message form -->
         <div class="af-contact-split__form-wrap">
           <div class="af-section-header af-section-header--tight">
-            <h2 class="af-h2 af-h2--sm">Send a Message</h2>
+            <h2 class="af-h2 af-h2--sm" data-i18n="contact.send_a_message">Send a Message</h2>
             <p class="af-lead af-lead--20">Tell us a bit about your organization and what you&rsquo;re looking for. We&rsquo;ll get back to you within one business day.</p>
           </div>
 
@@ -122,41 +126,41 @@
           <form class="af-form af-form--contact" action="contact-handler.php" method="post">
             <!-- Honeypot field (hidden from humans, bots fill it) -->
             <div style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden;" aria-hidden="true">
-              <label for="website">Website (leave empty)</label>
+              <label for="website" data-i18n="common.website_leave_empty">Website (leave empty)</label>
               <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
             </div>
 
             <div class="af-form-group">
-              <label for="name">Name</label>
+              <label for="name" data-i18n="common.name">Name</label>
               <input type="text" id="name" name="name" required autocomplete="name">
             </div>
             <div class="af-form-group">
-              <label for="email">Email</label>
+              <label for="email" data-i18n="common.email">Email</label>
               <input type="email" id="email" name="email" required autocomplete="email">
             </div>
             <div class="af-form-group">
-              <label for="organization">Organization</label>
+              <label for="organization" data-i18n="common.organization">Organization</label>
               <input type="text" id="organization" name="organization" autocomplete="organization">
             </div>
             <div class="af-form-group">
-              <label for="interest">Area of Interest</label>
+              <label for="interest" data-i18n="common.area_of_interest">Area of Interest</label>
               <select id="interest" name="interest">
-                <option value="" selected disabled>Select an area of interest&hellip;</option>
-                <option value="fractional-ciso">Fractional CISO</option>
-                <option value="devsecops">DevSecOps &amp; Vulnerability Remediation</option>
-                <option value="threat-modeling">Threat Modeling</option>
-                <option value="leadership-coaching">Security Leadership Coaching</option>
-                <option value="assessment">Security Maturity Assessment</option>
-                <option value="other">Other</option>
+                <option value="" selected disabled data-i18n="common.select_area_of_interest">Select an area of interest&hellip;</option>
+                <option value="fractional-ciso" data-i18n="common.fractional_ciso">Fractional CISO</option>
+                <option value="devsecops" data-i18n="common.devsecops_vulnerability_remediation">DevSecOps &amp; Vulnerability Remediation</option>
+                <option value="threat-modeling" data-i18n="common.threat_modeling">Threat Modeling</option>
+                <option value="leadership-coaching" data-i18n="common.security_leadership_coaching">Security Leadership Coaching</option>
+                <option value="assessment" data-i18n="common.security_maturity_assessment">Security Maturity Assessment</option>
+                <option value="other" data-i18n="common.other">Other</option>
               </select>
             </div>
             <div class="af-form-group">
-              <label for="message">Message</label>
-              <textarea id="message" name="message" rows="5" required placeholder="What&rsquo;s on your mind?"></textarea>
+              <label for="message" data-i18n="common.message">Message</label>
+              <textarea id="message" name="message" rows="5" required placeholder="What&rsquo;s on your mind?" data-i18n-placeholder="contact.placeholder_whats_on_your_mind"></textarea>
             </div>
             <div class="af-form-group" id="turnstile-widget-container"></div>
             <div class="af-form__submit">
-              <button type="submit" class="af-btn af-btn--primary">Send Message</button>
+              <button type="submit" class="af-btn af-btn--primary" data-i18n="common.send_message">Send Message</button>
             </div>
           </form>
         </div>
@@ -174,29 +178,29 @@
         <span class="af-footer__brand-icon" aria-hidden="true">A</span>
         <span class="af-footer__brand-text">AikiField</span>
       </div>
-      <p class="af-footer__tagline">Security leadership for product companies. Fractional CISO, AI-assisted security engineering, and presence-based executive coaching.</p>
+      <p class="af-footer__tagline" data-i18n="footer.tagline">Security leadership for product companies. Fractional CISO, AI-assisted security engineering, and presence-based executive coaching.</p>
     </div>
     <nav aria-label="Explore">
-      <h3 class="af-footer__col-title">Explore</h3>
+      <h3 class="af-footer__col-title" data-i18n="footer.explore">Explore</h3>
       <ul class="af-footer__nav">
-        <li><a href="process.html">Engagement Process</a></li>
-        <li><a href="approach.html">Our Approach</a></li>
-        <li><a href="services.html">Services</a></li>
-        <li><a href="case-studies.html">Case Studies</a></li>
-        <li><a href="fractional-ciso-for-saas.html">Fractional CISO for SaaS</a></li>
-        <li><a href="ai-devsecops-vulnerability-remediation.html">AI DevSecOps Remediation</a></li>
-        <li><a href="projects.php">Demonstration Technologies</a></li>
-        <li><a href="assessment.html">Self-Assessment</a></li>
+        <li><a href="process.html" data-i18n="footer.engagement_process">Engagement Process</a></li>
+        <li><a href="approach.html" data-i18n="footer.our_approach">Our Approach</a></li>
+        <li><a href="services.html" data-i18n="nav.services">Services</a></li>
+        <li><a href="case-studies.html" data-i18n="nav.case_studies">Case Studies</a></li>
+        <li><a href="fractional-ciso-for-saas.html" data-i18n="footer.fractional_ciso_for_saas">Fractional CISO for SaaS</a></li>
+        <li><a href="ai-devsecops-vulnerability-remediation.html" data-i18n="footer.ai_devsecops_remediation">AI DevSecOps Remediation</a></li>
+        <li><a href="projects.php" data-i18n="nav.demonstration_technologies">Demonstration Technologies</a></li>
+        <li><a href="assessment.html" data-i18n="footer.self_assessment">Self-Assessment</a></li>
       </ul>
     </nav>
     <nav aria-label="Connect">
-      <h3 class="af-footer__col-title">Connect</h3>
+      <h3 class="af-footer__col-title" data-i18n="footer.connect">Connect</h3>
       <ul class="af-footer__nav">
-        <li><a href="contact.html">Contact</a></li>
+        <li><a href="contact.html" data-i18n="contact.eyebrow_contact">Contact</a></li>
       </ul>
     </nav>
   </div>
-  <div class="af-footer__legal">&copy; 2026 AikiField. All rights reserved.</div>
+  <div class="af-footer__legal" data-i18n="footer.legal">&copy; 2026 AikiField. All rights reserved.</div>
 </footer>
 
 <script>
@@ -254,5 +258,7 @@
 })();
 </script>
 
+<script src="/js/locale-utils.js"></script>
+<script src="/js/language-selector.js"></script>
 </body>
 </html>

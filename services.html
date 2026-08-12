@@ -26,7 +26,7 @@
 </head>
 <body>
 
-<a href="#main" class="af-skip-link">Skip to main content</a>
+<a href="#main" class="af-skip-link" data-i18n="common.skip_to_main_content">Skip to main content</a>
 
 <!-- HEADER -->
 <header class="af-header">
@@ -36,16 +36,20 @@
       <span class="af-brand__text">AikiField</span>
     </a>
     <input type="checkbox" id="af-nav-check" class="af-nav-toggle-check">
-    <label for="af-nav-check" class="af-nav__toggle" aria-label="Menu">&#9776;</label>
+    <label for="af-nav-check" class="af-nav__toggle" aria-label="Menu" data-i18n-attr="aria-label:nav.toggle_menu">&#9776;</label>
     <nav aria-label="Primary" class="af-nav">
-      <a href="index.html" class="af-nav__link">Home</a>
-      <a href="process.html" class="af-nav__link">Process</a>
-      <a href="approach.html" class="af-nav__link">Approach</a>
-      <a href="services.html" class="af-nav__link af-nav__link--active" aria-current="page">Services</a>
-      <a href="case-studies.html" class="af-nav__link">Case Studies</a>
-      <a href="projects.php" class="af-nav__link">Demonstration Technologies</a>
-      <a href="assessment.html" class="af-nav__link">Assessment</a>
-      <a href="contact.html" class="af-nav__cta">Get Started</a>
+      <a href="index.html" class="af-nav__link" data-i18n="nav.home">Home</a>
+      <a href="process.html" class="af-nav__link" data-i18n="nav.process">Process</a>
+      <a href="approach.html" class="af-nav__link" data-i18n="nav.approach">Approach</a>
+      <a href="services.html" class="af-nav__link af-nav__link--active" aria-current="page" data-i18n="services.eyebrow_services">Services</a>
+      <a href="case-studies.html" class="af-nav__link" data-i18n="nav.case_studies">Case Studies</a>
+      <a href="projects.php" class="af-nav__link" data-i18n="nav.demonstration_technologies">Demonstration Technologies</a>
+      <a href="assessment.html" class="af-nav__link" data-i18n="nav.assessment">Assessment</a>
+      <a href="contact.html" class="af-nav__cta" data-i18n="nav.get_started">Get Started</a>
+    
+      <div id="af-language-selector" class="af-lang-selector" data-i18n-attr="aria-label:nav.language_selection">
+        <span class="af-lang-label" aria-hidden="true">&#127760;</span>
+      </div>
     </nav>
   </div>
 </header>
@@ -55,8 +59,8 @@
   <!-- PAGE HEADER -->
   <section class="af-page-header af-page-header--green">
     <div class="af-container">
-      <p class="af-eyebrow">Services</p>
-      <h1 class="af-h1">Engagements built around the outcome you need.</h1>
+      <p class="af-eyebrow" data-i18n="services.eyebrow_services">Services</p>
+      <h1 class="af-h1" data-i18n="services.engagements_built_around_the_outcome">Engagements built around the outcome you need.</h1>
       <p class="af-lead af-page-header__lead">Every engagement is designed to meet your security maturity and business stage &mdash; and to move a metric your business actually cares about.</p>
     </div>
   </section>
@@ -70,10 +74,10 @@
         <div class="af-svc__tag-row">
           <span class="af-svc__tag af-svc__tag--flagship">Flagship</span>
         </div>
-        <h2 class="af-svc__title">CISO-level leadership without a full-time hire</h2>
+        <h2 class="af-svc__title" data-i18n="services.cisolevel_leadership_without_a_fulltime">CISO-level leadership without a full-time hire</h2>
         <p class="af-svc__lead">Get executive security leadership that wins enterprise deals and keeps pace with your roadmap &mdash; 20+ years of CISO experience, practical AI in security engineering, and customer-trust advisory in one monthly engagement.</p>
         <p class="af-svc__bestfor">Best for: Series A&ndash;C startups, SaaS companies, AI-powered product teams, and anyone facing enterprise security requirements.</p>
-        <h3 class="af-svc__bullets-label">What you get</h3>
+        <h3 class="af-svc__bullets-label" data-i18n="services.what_you_get">What you get</h3>
         <ul class="af-svc__bullets">
           <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Win enterprise deals</strong> &mdash; a security roadmap and risk prioritization aligned to your stage and revenue model.</span></li>
           <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Ship AI features safely</strong> &mdash; a governance framework covering model security, data handling, and AI risk.</span></li>
@@ -82,7 +86,7 @@
           <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Make sound calls under pressure</strong> &mdash; security decision coaching for founders and CTOs.</span></li>
           <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Always-on support</strong> &mdash; monthly strategy, async help, and incident availability.</span></li>
         </ul>
-        <p style="margin-top:20px;"><a href="fractional-ciso-for-saas.html" class="af-btn af-btn--ghost af-btn--sm">Deep dive: Fractional CISO for SaaS &rarr;</a></p>
+        <p style="margin-top:20px;"><a href="fractional-ciso-for-saas.html" class="af-btn af-btn--ghost af-btn--sm" data-i18n="services.btn_deep_dive_fractional_ciso_for">Deep dive: Fractional CISO for SaaS &rarr;</a></p>
       </article>
 
       <!-- Program buildout -->
@@ -90,10 +94,10 @@
         <div class="af-svc__tag-row">
           <span class="af-svc__tag">Program buildout</span>
         </div>
-        <h2 class="af-svc__title">A security program right-sized to your risk</h2>
+        <h2 class="af-svc__title" data-i18n="services.a_security_program_rightsized_to">A security program right-sized to your risk</h2>
         <p class="af-svc__lead">Cover your real risks without an enterprise-sized budget &mdash; the 80/20 security program that protects the business, left-shifted into your development budget.</p>
         <p class="af-svc__bestfor">Best for: Companies that have outgrown "we'll do security when we need it" but aren't ready for a full-time hire.</p>
-        <h3 class="af-svc__bullets-label">What you get</h3>
+        <h3 class="af-svc__bullets-label" data-i18n="services.what_you_get">What you get</h3>
         <ul class="af-svc__bullets">
           <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Address 80% of your risk</strong> &mdash; the critical controls that matter, ranked and prioritized.</span></li>
           <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Scale without chaos</strong> &mdash; policies, procedures, and practices that grow with you.</span></li>
@@ -108,17 +112,17 @@
         <div class="af-svc__tag-row">
           <span class="af-svc__tag">DevSecOps</span>
         </div>
-        <h2 class="af-svc__title">Clear the security backlog blocking your enterprise deals</h2>
+        <h2 class="af-svc__title" data-i18n="services.clear_the_security_backlog_blocking">Clear the security backlog blocking your enterprise deals</h2>
         <p class="af-svc__lead">Stop your security debt from growing. Security shifted left into your CI/CD pipeline, cutting remediation from months to days (a proven 87% reduction: 165 &rarr; 21 days).</p>
         <p class="af-svc__bestfor">Best for: Engineering teams whose backlog is growing faster than they can fix it, or who must prove rapid remediation to enterprise customers.</p>
-        <h3 class="af-svc__bullets-label">What you get</h3>
+        <h3 class="af-svc__bullets-label" data-i18n="services.what_you_get">What you get</h3>
         <ul class="af-svc__bullets">
           <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Find gaps fast</strong> &mdash; a DevOps pipeline security assessment and rearchitecture.</span></li>
           <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Fix in days, not weeks</strong> &mdash; AI-assisted triage and remediation with prompts and validation.</span></li>
           <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Prove it to customers</strong> &mdash; vulnerability management platform implementation and tuning (e.g. Aikido.dev or equivalent).</span></li>
           <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Make it stick</strong> &mdash; team training on the new workflows.</span></li>
         </ul>
-        <p style="margin-top:20px;"><a href="ai-devsecops-vulnerability-remediation.html" class="af-btn af-btn--ghost af-btn--sm">Deep dive: AI DevSecOps Remediation &rarr;</a></p>
+        <p style="margin-top:20px;"><a href="ai-devsecops-vulnerability-remediation.html" class="af-btn af-btn--ghost af-btn--sm" data-i18n="services.btn_deep_dive_ai_devsecops_remediation">Deep dive: AI DevSecOps Remediation &rarr;</a></p>
       </article>
 
       <!-- Threat modeling -->
@@ -126,10 +130,10 @@
         <div class="af-svc__tag-row">
           <span class="af-svc__tag">Threat modeling</span>
         </div>
-        <h2 class="af-svc__title">Catch security flaws before you write the code</h2>
+        <h2 class="af-svc__title" data-i18n="services.catch_security_flaws_before_you">Catch security flaws before you write the code</h2>
         <p class="af-svc__lead">Bring security into the design phase &mdash; before code ships, before customers ask &mdash; so you avoid costly rework and pass enterprise security reviews the first time.</p>
         <p class="af-svc__bestfor">Best for: Teams building new products, shipping cloud services, or preparing for enterprise security reviews.</p>
-        <h3 class="af-svc__bullets-label">What you get</h3>
+        <h3 class="af-svc__bullets-label" data-i18n="services.what_you_get">What you get</h3>
         <ul class="af-svc__bullets">
           <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Align the team early</strong> &mdash; facilitated threat-model workshops with engineering and product.</span></li>
           <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>See where you're exposed</strong> &mdash; attack-surface mapping across your product.</span></li>
@@ -143,9 +147,9 @@
         <div class="af-svc__tag-row">
           <span class="af-svc__tag">Coaching</span>
         </div>
-        <h2 class="af-svc__title">Make confident security calls under pressure</h2>
+        <h2 class="af-svc__title" data-i18n="services.make_confident_security_calls_under">Make confident security calls under pressure</h2>
         <p class="af-svc__bestfor">Best for: CTOs, founders, VP Engineering, and senior leaders who own security but aren't security specialists.</p>
-        <h3 class="af-svc__bullets-label">What you get</h3>
+        <h3 class="af-svc__bullets-label" data-i18n="services.what_you_get">What you get</h3>
         <ul class="af-svc__bullets">
           <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Navigate trade-offs</strong> &mdash; coaching across security, speed, and cost.</span></li>
           <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Win customer confidence</strong> &mdash; support for founder-led enterprise security conversations.</span></li>
@@ -161,16 +165,16 @@
   <!-- ASSESSMENTS -->
   <section class="af-section" style="padding-top:16px;">
     <div class="af-container">
-      <h2 class="af-h2--sm">Know where you stand first</h2>
+      <h2 class="af-h2--sm" data-i18n="services.know_where_you_stand_first">Know where you stand first</h2>
       <p class="af-lead af-lead--19" style="margin:8px 0 28px;">Two diagnostics that show you exactly where to focus before you spend a dollar.</p>
       <div class="af-grid af-grid--fit300">
         <div class="af-assess-card">
-          <h3 class="af-assess-card__title">Security Maturity Assessment</h3>
+          <h3 class="af-assess-card__title" data-i18n="common.security_maturity_assessment">Security Maturity Assessment</h3>
           <p class="af-assess-card__body">A practical read on your current posture &mdash; controls, gaps, and priorities &mdash; benchmarked against what enterprise customers actually ask about.</p>
           <a href="assessment.html" class="af-assess-card__link">Take the assessment &rarr;</a>
         </div>
         <div class="af-assess-card">
-          <h3 class="af-assess-card__title">Leadership Presence Assessment</h3>
+          <h3 class="af-assess-card__title" data-i18n="services.leadership_presence_assessment">Leadership Presence Assessment</h3>
           <p class="af-assess-card__body">A seven-dimension self-assessment of the leadership capabilities security leaders need, from grounded composure to navigating uncertainty.</p>
           <a href="assessment.html" class="af-assess-card__link">Take the assessment &rarr;</a>
         </div>
@@ -182,9 +186,9 @@
   <section class="af-section af-section--lg" style="padding-top:40px;">
     <div class="af-container">
       <div class="af-callout af-callout--sm">
-        <h2 class="af-callout__title af-callout__title--sm">Let's design your engagement.</h2>
+        <h2 class="af-callout__title af-callout__title--sm" data-i18n="services.lets_design_your_engagement">Let's design your engagement.</h2>
         <p class="af-callout__body af-callout__body--sm">Every company's security journey is different. We'll tailor a program that fits your stage, your risks, and your aspirations.</p>
-        <a href="contact.html" class="af-btn af-btn--light">Book a Discovery Call</a>
+        <a href="contact.html" class="af-btn af-btn--light" data-i18n="common.book_a_discovery_call">Book a Discovery Call</a>
       </div>
     </div>
   </section>
@@ -198,31 +202,33 @@
         <span class="af-footer__brand-icon" aria-hidden="true">A</span>
         <span class="af-footer__brand-text">AikiField</span>
       </div>
-      <p class="af-footer__tagline">Security leadership for product companies. Fractional CISO, AI-assisted security engineering, and presence-based executive coaching.</p>
+      <p class="af-footer__tagline" data-i18n="footer.tagline">Security leadership for product companies. Fractional CISO, AI-assisted security engineering, and presence-based executive coaching.</p>
     </div>
     <nav aria-label="Explore">
-      <h3 class="af-footer__col-title">Explore</h3>
+      <h3 class="af-footer__col-title" data-i18n="footer.explore">Explore</h3>
       <ul class="af-footer__nav">
-        <li><a href="process.html">Engagement Process</a></li>
-        <li><a href="approach.html">Our Approach</a></li>
-        <li><a href="services.html">Services</a></li>
-        <li><a href="case-studies.html">Case Studies</a></li>
-        <li><a href="fractional-ciso-for-saas.html">Fractional CISO for SaaS</a></li>
-        <li><a href="ai-devsecops-vulnerability-remediation.html">AI DevSecOps Remediation</a></li>
-        <li><a href="projects.php">Demonstration Technologies</a></li>
-        <li><a href="assessment.html">Self-Assessment</a></li>
+        <li><a href="process.html" data-i18n="footer.engagement_process">Engagement Process</a></li>
+        <li><a href="approach.html" data-i18n="footer.our_approach">Our Approach</a></li>
+        <li><a href="services.html" data-i18n="services.eyebrow_services">Services</a></li>
+        <li><a href="case-studies.html" data-i18n="nav.case_studies">Case Studies</a></li>
+        <li><a href="fractional-ciso-for-saas.html" data-i18n="footer.fractional_ciso_for_saas">Fractional CISO for SaaS</a></li>
+        <li><a href="ai-devsecops-vulnerability-remediation.html" data-i18n="footer.ai_devsecops_remediation">AI DevSecOps Remediation</a></li>
+        <li><a href="projects.php" data-i18n="nav.demonstration_technologies">Demonstration Technologies</a></li>
+        <li><a href="assessment.html" data-i18n="footer.self_assessment">Self-Assessment</a></li>
       </ul>
     </nav>
     <nav aria-label="Connect">
-      <h3 class="af-footer__col-title">Connect</h3>
+      <h3 class="af-footer__col-title" data-i18n="footer.connect">Connect</h3>
       <ul class="af-footer__nav">
-        <li><a href="contact.html">Contact</a></li>
-        <li><a href="contact.html">Inquiry</a></li>
+        <li><a href="contact.html" data-i18n="footer.contact">Contact</a></li>
+        <li><a href="contact.html" data-i18n="footer.inquiry">Inquiry</a></li>
       </ul>
     </nav>
   </div>
-  <div class="af-footer__legal">&copy; 2026 AikiField. All rights reserved.</div>
+  <div class="af-footer__legal" data-i18n="footer.legal">&copy; 2026 AikiField. All rights reserved.</div>
 </footer>
 
+<script src="/js/locale-utils.js"></script>
+<script src="/js/language-selector.js"></script>
 </body>
 </html>

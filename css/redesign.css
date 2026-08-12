@@ -1390,3 +1390,20 @@ a.af-card:hover .af-card__arrow { text-decoration: underline; }
 @media (max-width: 640px) {
   .af-diagram__img { border-radius: 10px; }
 }
+
+/* ── Language selector ─────────────────────────────────────────────── */
+.af-lang-selector {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 1rem;
+  margin-left: 0.5rem;
+}
+.af-lang-selector:hover {
+  background: rgba(255,255,255,0.1);
+}
+.af-lang-label {
+  font-size: 1.2rem;
+}
