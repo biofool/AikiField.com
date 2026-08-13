@@ -243,7 +243,7 @@ separate session on a separate domain, independent of this integration.
 | `COACH_PROXY_SECRET` | `coach-config.local.php` (gitignored) | MUST match backend `PROXY_SECRET` in GCP Secret Manager. When empty, auth endpoints still work, but **registration requires a Turnstile captcha** (backend enforces captcha when the proxy secret is absent). |
 | `TURNSTILE_SITE_KEY` | `coach-config.local.php` (gitignored) | Cloudflare Turnstile site key for `aikifield.com`. Required for registration if `COACH_PROXY_SECRET` is empty. |
 | `COACH_LOGIN_REDIRECT` | `coach-config.php` | Post-login fallback destination (default `/beta/`). `login.php` overrides this per-request with the `?next=` query parameter. |
-| `COACH_LOGIN_URL` | `coach-config.php` | Optional. When set, unauthenticated visitors to AI chat pages are redirected to this external login URL (with `?redirect=<full return URL>`) instead of the local `/login.php`. **AikiField does not use this** — its `login.php` gates `/beta/` only and has no AI chat pages. Documented here for cross-repo parity with quantumaikido.com, where it points to `https://quantum-aikido-coach.kronsensei.workers.dev/login.html`. Leave empty (default). |
+| `COACH_LOGIN_URL` | `coach-config.php` | **Removed Aug 13 2026.** Previously an optional external login redirect for cross-repo parity with quantumaikido.com. Removed because the external Workers login caused a cross-domain auth failure (sessionStorage on the Workers domain could not create cookies on quantumaikido.com). AikiField never used this — its `login.php` gates `/beta/` only. |
 | `COACH_VERIFY_TLS` | `coach-config.php` | Leave `true` in production. |
 
 ### Backend-side requirements (AIRichardMoon)
