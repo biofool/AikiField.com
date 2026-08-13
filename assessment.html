@@ -26,7 +26,7 @@
 </head>
 <body>
 
-<a href="#main" class="af-skip-link">Skip to main content</a>
+<a href="#main" class="af-skip-link" data-i18n="common.skip_to_main_content">Skip to main content</a>
 
 <!-- HEADER -->
 <header class="af-header">
@@ -36,16 +36,20 @@
       <span class="af-brand__text">AikiField</span>
     </a>
     <input type="checkbox" id="af-nav-check" class="af-nav-toggle-check">
-    <label for="af-nav-check" class="af-nav__toggle" aria-label="Menu">&#9776;</label>
+    <label for="af-nav-check" class="af-nav__toggle" aria-label="Menu" data-i18n-attr="aria-label:nav.toggle_menu">&#9776;</label>
     <nav aria-label="Primary" class="af-nav">
-      <a href="index.html" class="af-nav__link">Home</a>
-      <a href="process.html" class="af-nav__link">Process</a>
-      <a href="approach.html" class="af-nav__link">Approach</a>
-      <a href="services.html" class="af-nav__link">Services</a>
-      <a href="case-studies.html" class="af-nav__link">Case Studies</a>
-      <a href="projects.php" class="af-nav__link">Demonstration Technologies</a>
-      <a href="assessment.html" class="af-nav__link af-nav__link--active" aria-current="page">Assessment</a>
-      <a href="contact.html" class="af-nav__cta">Get Started</a>
+      <a href="index.html" class="af-nav__link" data-i18n="nav.home">Home</a>
+      <a href="process.html" class="af-nav__link" data-i18n="nav.process">Process</a>
+      <a href="approach.html" class="af-nav__link" data-i18n="nav.approach">Approach</a>
+      <a href="services.html" class="af-nav__link" data-i18n="nav.services">Services</a>
+      <a href="case-studies.html" class="af-nav__link" data-i18n="nav.case_studies">Case Studies</a>
+      <a href="projects.php" class="af-nav__link" data-i18n="nav.demonstration_technologies">Demonstration Technologies</a>
+      <a href="assessment.html" class="af-nav__link af-nav__link--active" aria-current="page" data-i18n="nav.assessment">Assessment</a>
+      <a href="contact.html" class="af-nav__cta" data-i18n="nav.get_started">Get Started</a>
+    
+      <div id="af-language-selector" class="af-lang-selector" data-i18n-attr="aria-label:nav.language_selection">
+        <span class="af-lang-label" aria-hidden="true">&#127760;</span>
+      </div>
     </nav>
   </div>
 </header>
@@ -55,8 +59,8 @@
   <!-- PAGE HEADER -->
   <section class="af-page-header af-page-header--tight af-page-header--green">
     <div class="af-container">
-      <p class="af-eyebrow">Self-Assessment</p>
-      <h1 class="af-h1">The Security Leadership Assessment</h1>
+      <p class="af-eyebrow" data-i18n="assessment.eyebrow_selfassessment">Self-Assessment</p>
+      <h1 class="af-h1" data-i18n="assessment.the_security_leadership_assessment">The Security Leadership Assessment</h1>
       <p class="af-lead af-page-header__lead">Measure your security maturity and the leadership presence capabilities that sustain it.</p>
     </div>
   </section>
@@ -76,12 +80,12 @@
   <section class="af-section af-section--white">
     <div class="af-container">
       <div class="af-section-header">
-        <h2 class="af-h2">Part 1: Security Maturity Assessment</h2>
+        <h2 class="af-h2" data-i18n="assessment.part_1_security_maturity_assessment">Part 1: Security Maturity Assessment</h2>
         <p class="af-lead af-lead--20">Five categories measuring your organization's security posture, controls, and readiness.</p>
       </div>
 
       <div class="af-assess-dim">
-        <h4 class="af-assess-dim__title">Governance &amp; Strategy</h4>
+        <h4 class="af-assess-dim__title" data-i18n="assessment.governance_strategy">Governance &amp; Strategy</h4>
         <ul class="af-assess-dim__questions">
           <li>Have a documented security posture aligned to your business stage?</li>
           <li>Have a security roadmap with clear priorities and owners?</li>
@@ -91,7 +95,7 @@
       </div>
 
       <div class="af-assess-dim">
-        <h4 class="af-assess-dim__title">Product &amp; Engineering Security</h4>
+        <h4 class="af-assess-dim__title" data-i18n="assessment.product_engineering_security">Product &amp; Engineering Security</h4>
         <ul class="af-assess-dim__questions">
           <li>Conduct threat modeling for new products and features?</li>
           <li>Have documented secure development practices your team follows?</li>
@@ -101,7 +105,7 @@
       </div>
 
       <div class="af-assess-dim">
-        <h4 class="af-assess-dim__title">DevSecOps &amp; Vulnerability Remediation</h4>
+        <h4 class="af-assess-dim__title" data-i18n="common.devsecops_vulnerability_remediation">DevSecOps &amp; Vulnerability Remediation</h4>
         <ul class="af-assess-dim__questions">
           <li>Track average time to identify, escalate, and remediate vulnerabilities?</li>
           <li>Use AI-assisted triage workflows for vulnerability management?</li>
@@ -111,7 +115,7 @@
       </div>
 
       <div class="af-assess-dim">
-        <h4 class="af-assess-dim__title">Customer Trust &amp; Compliance</h4>
+        <h4 class="af-assess-dim__title" data-i18n="assessment.customer_trust_compliance">Customer Trust &amp; Compliance</h4>
         <ul class="af-assess-dim__questions">
           <li>Can complete enterprise security questionnaires without panic?</li>
           <li>Have a clear narrative for how you protect customer data?</li>
@@ -121,7 +125,7 @@
       </div>
 
       <div class="af-assess-dim">
-        <h4 class="af-assess-dim__title">Incident Readiness</h4>
+        <h4 class="af-assess-dim__title" data-i18n="assessment.incident_readiness">Incident Readiness</h4>
         <ul class="af-assess-dim__questions">
           <li>Have an incident response playbook with defined roles?</li>
           <li>Conduct tabletop exercises to test your incident response?</li>
@@ -136,13 +140,13 @@
   <section class="af-section">
     <div class="af-container">
       <div class="af-section-header">
-        <h2 class="af-h2">Part 2: Leadership Presence Assessment</h2>
+        <h2 class="af-h2" data-i18n="assessment.part_2_leadership_presence_assessment">Part 2: Leadership Presence Assessment</h2>
         <p class="af-lead af-lead--20">Seven dimensions measuring the leadership presence capabilities that sustain your security program under pressure.</p>
       </div>
 
       <div class="af-assess-dim">
         <span class="af-assess-dim__label">Dimension 1 &middot; Balance</span>
-        <h4 class="af-assess-dim__title">Aligned Action &mdash; Center / Relax / Ground</h4>
+        <h4 class="af-assess-dim__title" data-i18n="assessment.aligned_action_center_relax_ground">Aligned Action &mdash; Center / Relax / Ground</h4>
         <ul class="af-assess-dim__questions">
           <li>Maintain balance between security urgency and business priorities?</li>
           <li>Hold yourself and your team accountable for security commitments?</li>
@@ -153,7 +157,7 @@
 
       <div class="af-assess-dim">
         <span class="af-assess-dim__label">Dimension 2 &middot; Flexibility</span>
-        <h4 class="af-assess-dim__title">Non-Resistance &mdash; Allow / Accept / Adapt</h4>
+        <h4 class="af-assess-dim__title" data-i18n="assessment.nonresistance_allow_accept_adapt">Non-Resistance &mdash; Allow / Accept / Adapt</h4>
         <ul class="af-assess-dim__questions">
           <li>Accept extended periods of uncertainty about emerging threats?</li>
           <li>Let go of security approaches that no longer serve?</li>
@@ -164,7 +168,7 @@
 
       <div class="af-assess-dim">
         <span class="af-assess-dim__label">Dimension 3 &middot; Vitality</span>
-        <h4 class="af-assess-dim__title">Dynamic Presence &mdash; Breathe / Sense / Enjoy</h4>
+        <h4 class="af-assess-dim__title" data-i18n="assessment.dynamic_presence_breathe_sense_enjoy">Dynamic Presence &mdash; Breathe / Sense / Enjoy</h4>
         <ul class="af-assess-dim__questions">
           <li>Practice conscious presence before high-stakes security conversations?</li>
           <li>Bring energy and engagement to security discussions?</li>
@@ -175,7 +179,7 @@
 
       <div class="af-assess-dim">
         <span class="af-assess-dim__label">Dimension 4 &middot; Heart</span>
-        <h4 class="af-assess-dim__title">Relational Harmony &mdash; Feel / Flow / Join</h4>
+        <h4 class="af-assess-dim__title" data-i18n="assessment.relational_harmony_feel_flow_join">Relational Harmony &mdash; Feel / Flow / Join</h4>
         <ul class="af-assess-dim__questions">
           <li>Build genuine partnership with engineering?</li>
           <li>Demonstrate empathy for engineers who raise security concerns?</li>
@@ -186,7 +190,7 @@
 
       <div class="af-assess-dim">
         <span class="af-assess-dim__label">Dimension 5 &middot; Voice</span>
-        <h4 class="af-assess-dim__title">Creative Expression &mdash; Aspire / Engage / Dialogue</h4>
+        <h4 class="af-assess-dim__title" data-i18n="assessment.creative_expression_aspire_engage_dialogue">Creative Expression &mdash; Aspire / Engage / Dialogue</h4>
         <ul class="af-assess-dim__questions">
           <li>Articulate your security posture and commitments clearly to others?</li>
           <li>Communicate security risk in language the business can understand?</li>
@@ -197,7 +201,7 @@
 
       <div class="af-assess-dim">
         <span class="af-assess-dim__label">Dimension 6 &middot; Vision</span>
-        <h4 class="af-assess-dim__title">Inspired Leadership &mdash; Imagine / Intend / Create</h4>
+        <h4 class="af-assess-dim__title" data-i18n="assessment.inspired_leadership_imagine_intend_create">Inspired Leadership &mdash; Imagine / Intend / Create</h4>
         <ul class="af-assess-dim__questions">
           <li>Visualize a security program that enables business growth?</li>
           <li>Set time aside for strategic security thinking?</li>
@@ -208,7 +212,7 @@
 
       <div class="af-assess-dim">
         <span class="af-assess-dim__label">Dimension 7 &middot; Inspiration</span>
-        <h4 class="af-assess-dim__title">Not Knowing &mdash; Inquire / Listen / Intuit</h4>
+        <h4 class="af-assess-dim__title" data-i18n="assessment.not_knowing_inquire_listen_intuit">Not Knowing &mdash; Inquire / Listen / Intuit</h4>
         <ul class="af-assess-dim__questions">
           <li>Value self-reflection and inquiry into your own security leadership?</li>
           <li>Value not knowing? Value paradox? Value intuition about emerging risk?</li>
@@ -223,28 +227,28 @@
   <section class="af-section af-section--white">
     <div class="af-container">
       <div class="af-section-header">
-        <h2 class="af-h2">Designing Your Security Leadership Practice</h2>
+        <h2 class="af-h2" data-i18n="assessment.designing_your_security_leadership_practice">Designing Your Security Leadership Practice</h2>
         <p class="af-lead af-lead--20">The assessment is just the beginning. Here's how to turn diagnosis into development.</p>
       </div>
       <div class="af-timeline" style="margin-top:56px;">
         <div class="af-timeline__item">
-          <h4 class="af-timeline__title">I &mdash; Diagnose</h4>
+          <h4 class="af-timeline__title" data-i18n="assessment.i_diagnose">I &mdash; Diagnose</h4>
           <p class="af-timeline__body">Complete both assessments. Identify your security maturity gaps and leadership edges.</p>
         </div>
         <div class="af-timeline__item">
-          <h4 class="af-timeline__title">II &mdash; Aspire</h4>
+          <h4 class="af-timeline__title" data-i18n="assessment.ii_aspire">II &mdash; Aspire</h4>
           <p class="af-timeline__body">Set your security posture target and leadership development vision. Measurable goals.</p>
         </div>
         <div class="af-timeline__item">
-          <h4 class="af-timeline__title">III &mdash; Select</h4>
+          <h4 class="af-timeline__title" data-i18n="assessment.iii_select">III &mdash; Select</h4>
           <p class="af-timeline__body">Choose the security controls and leadership practices that serve your goals. Plan a practical routine.</p>
         </div>
         <div class="af-timeline__item">
-          <h4 class="af-timeline__title">IV &mdash; Enroll</h4>
+          <h4 class="af-timeline__title" data-i18n="assessment.iv_enroll">IV &mdash; Enroll</h4>
           <p class="af-timeline__body">Enlist your leadership team and supporters to stay on track and measure effectiveness.</p>
         </div>
         <div class="af-timeline__item">
-          <h4 class="af-timeline__title">V &mdash; Review</h4>
+          <h4 class="af-timeline__title" data-i18n="assessment.v_review">V &mdash; Review</h4>
           <p class="af-timeline__body">Practice and review regularly. Adjust based on results, incidents, and changing conditions.</p>
         </div>
       </div>
@@ -255,9 +259,9 @@
   <section class="af-section af-section--lg">
     <div class="af-container">
       <div class="af-callout">
-        <h2 class="af-callout__title">Want a guided assessment?</h2>
+        <h2 class="af-callout__title" data-i18n="assessment.want_a_guided_assessment">Want a guided assessment?</h2>
         <p class="af-callout__body">A facilitated assessment with us provides deeper insight, a tailored security roadmap, and leadership coaching to execute it.</p>
-        <a href="contact.html" class="af-btn af-btn--light">Book a Discovery Call</a>
+        <a href="contact.html" class="af-btn af-btn--light" data-i18n="common.book_a_discovery_call">Book a Discovery Call</a>
       </div>
     </div>
   </section>
@@ -271,31 +275,33 @@
         <span class="af-footer__brand-icon" aria-hidden="true">A</span>
         <span class="af-footer__brand-text">AikiField</span>
       </div>
-      <p class="af-footer__tagline">Security leadership for product companies. Fractional CISO, AI-assisted security engineering, and presence-based executive coaching.</p>
+      <p class="af-footer__tagline" data-i18n="footer.tagline">Security leadership for product companies. Fractional CISO, AI-assisted security engineering, and presence-based executive coaching.</p>
     </div>
     <nav aria-label="Explore">
-      <h3 class="af-footer__col-title">Explore</h3>
+      <h3 class="af-footer__col-title" data-i18n="footer.explore">Explore</h3>
       <ul class="af-footer__nav">
-        <li><a href="process.html">Engagement Process</a></li>
-        <li><a href="approach.html">Our Approach</a></li>
-        <li><a href="services.html">Services</a></li>
-        <li><a href="case-studies.html">Case Studies</a></li>
-        <li><a href="fractional-ciso-for-saas.html">Fractional CISO for SaaS</a></li>
-        <li><a href="ai-devsecops-vulnerability-remediation.html">AI DevSecOps Remediation</a></li>
-        <li><a href="projects.php">Demonstration Technologies</a></li>
-        <li><a href="assessment.html">Self-Assessment</a></li>
+        <li><a href="process.html" data-i18n="footer.engagement_process">Engagement Process</a></li>
+        <li><a href="approach.html" data-i18n="footer.our_approach">Our Approach</a></li>
+        <li><a href="services.html" data-i18n="nav.services">Services</a></li>
+        <li><a href="case-studies.html" data-i18n="nav.case_studies">Case Studies</a></li>
+        <li><a href="fractional-ciso-for-saas.html" data-i18n="footer.fractional_ciso_for_saas">Fractional CISO for SaaS</a></li>
+        <li><a href="ai-devsecops-vulnerability-remediation.html" data-i18n="footer.ai_devsecops_remediation">AI DevSecOps Remediation</a></li>
+        <li><a href="projects.php" data-i18n="nav.demonstration_technologies">Demonstration Technologies</a></li>
+        <li><a href="assessment.html" data-i18n="assessment.eyebrow_selfassessment">Self-Assessment</a></li>
       </ul>
     </nav>
     <nav aria-label="Connect">
-      <h3 class="af-footer__col-title">Connect</h3>
+      <h3 class="af-footer__col-title" data-i18n="footer.connect">Connect</h3>
       <ul class="af-footer__nav">
-        <li><a href="contact.html">Contact</a></li>
-        <li><a href="contact.html">Inquiry</a></li>
+        <li><a href="contact.html" data-i18n="footer.contact">Contact</a></li>
+        <li><a href="contact.html" data-i18n="footer.inquiry">Inquiry</a></li>
       </ul>
     </nav>
   </div>
-  <div class="af-footer__legal">&copy; 2026 AikiField. All rights reserved.</div>
+  <div class="af-footer__legal" data-i18n="footer.legal">&copy; 2026 AikiField. All rights reserved.</div>
 </footer>
 
+<script src="/js/locale-utils.js"></script>
+<script src="/js/language-selector.js"></script>
 </body>
 </html>

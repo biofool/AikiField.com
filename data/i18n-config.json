@@ -1,0 +1,50 @@
+{
+    "version": 1,
+    "defaultLocale": "en",
+    "comment": "Foundational i18n configuration for AikiField.com. Locales are listed with their native (endonym) names rather than flags, because flags represent nations and can be politically sensitive.",
+    "supportedLocales": [
+        "en",
+        "es",
+        "fr",
+        "de",
+        "pt",
+        "ja",
+        "zh",
+        "ko",
+        "ar",
+        "he",
+        "fa",
+        "hi"
+    ],
+    "localeNames": {
+        "en": "English",
+        "es": "Español",
+        "fr": "Français",
+        "de": "Deutsch",
+        "pt": "Português",
+        "ja": "日本語",
+        "zh": "中文",
+        "ko": "한국어",
+        "ar": "العربية",
+        "he": "עברית",
+        "fa": "فارسی",
+        "hi": "हिन्दी"
+    },
+    "rtlLocales": [
+        "ar",
+        "he",
+        "fa"
+    ],
+    "defaultCurrency": "USD",
+    "defaultTimeZone": "UTC",
+    "defaultMeasurementSystem": "metric",
+    "measurementSystemOverrides": {
+        "en-US": "imperial",
+        "en": "imperial",
+        "en-GB": "imperial",
+        "us": "imperial",
+        "uk": "imperial"
+    },
+    "textExpansionFactor": 0.4,
+    "_textExpansionNote": "Translations can be 30-40% longer than English; layouts should leave room for expansion."
+}

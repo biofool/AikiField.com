@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# Load secrets (CLOUDFLARE_API_TOKEN / CFT for Cloudflare API calls)
+if [ -f "$(cd "$(dirname "$0")" && pwd)/.env.secrets" ]; then
+    set -a; . "$(cd "$(dirname "$0")" && pwd)/.env.secrets"; set +a
+fi
+
 # ============================================
 #  AikiField.com — Sync to peec.biz
 #  Based on quantumaikido.com/web/sync.sh
