@@ -338,6 +338,28 @@ Completed optimizations deployed to production:
 8. Confirm `https://aikifield.com/projects.html` 301-redirects to
    `projects.php`.
 
+### Branch and staging policy
+
+This repo is part of a three-repo coaching system (AikiField.com frontend,
+quantumaikido.com frontend, AIRichardMoon backend). All three repos MUST
+maintain a long-lived `staging` branch alongside `main`:
+
+- **`staging` branch** — integration branch for pre-production testing.
+  Fixes and features land on `staging` first, are verified against the
+  staging backend, then are merged to `main` via PR for production deploy.
+- **Do not delete `staging` after merge.** The branch is permanent — it
+  is reused for every release cycle. Deleting it (as happened on
+  2026-08-15) forces recreation and loses branch protection rules and
+  CI history.
+- **Cross-repo coordination** — when auth, session, invitation, or
+  profile changes touch all three repos, stage and merge all three
+  `staging` branches in the same cycle before deploying any to
+  production. Mismatched frontend/backend versions break the auth flow.
+- **AikiField does not currently have a `/staging/` folder** (no staging
+  backend for this surface), but the `staging` git branch still exists
+  for pre-production integration testing of config, proxy, and login
+  changes.
+
 ## Verification
 
 - `php -l` on all `.php` files (passes as of this writing).
