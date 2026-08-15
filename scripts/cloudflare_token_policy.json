@@ -1,0 +1,145 @@
+{
+  "token_name": "aikifield.com-dev",
+  "account_id": "062579a5337db8e60922bca1c0fd922f",
+  "zone_name": "aikifield.com",
+  "zone_id": "71a04598ce4a9580faf7c0ee79f6da6c",
+  "env_keys": ["CLOUDFLARE_API_TOKEN", "CFT"],
+  "forbidden_zones": [
+    {
+      "name": "quantumaikido.com",
+      "id": "10757f502b6069f03ae2496af94872f6"
+    },
+    {
+      "name": "peec.biz",
+      "id": "edf87345185e2625346570b26232ed2a"
+    },
+    {
+      "name": "magicsolutions.biz",
+      "id": "32b13f4aef5c02b26278432a417b90ed"
+    }
+  ],
+  "permissions": [
+    {
+      "scope": "zone",
+      "name": "Zone Read",
+      "why": "Resolve and inspect the aikifield.com zone"
+    },
+    {
+      "scope": "zone",
+      "name": "Zone Settings Write",
+      "why": "SSL Full (strict), always HTTPS, HTTP/3, Brotli, HSTS"
+    },
+    {
+      "scope": "zone",
+      "name": "DNS Write",
+      "why": "scripts/cloudflare_migrate.py DNS reconciliation"
+    },
+    {
+      "scope": "zone",
+      "name": "Cache Purge",
+      "why": "sync.sh purge after deploy"
+    },
+    {
+      "scope": "zone",
+      "name": "Cache Rules Write",
+      "why": "Bypass PHP/API; cache HTML and static assets"
+    },
+    {
+      "scope": "zone",
+      "name": "Analytics Read",
+      "why": "Zone analytics inventory"
+    },
+    {
+      "scope": "zone",
+      "name": "Email Routing Rules Write",
+      "why": "Live Cloudflare Email Routing rules exist on this zone"
+    },
+    {
+      "scope": "account",
+      "name": "Account Settings Read",
+      "why": "Account inventory"
+    },
+    {
+      "scope": "account",
+      "name": "Account Rulesets Write",
+      "why": "Cache Rules API is account-ruleset backed"
+    },
+    {
+      "scope": "account",
+      "name": "Account Filter Lists Write",
+      "why": "Cache Rules API requires account lists"
+    },
+    {
+      "scope": "account",
+      "name": "Turnstile Write",
+      "why": "login.php and contact-handler.php siteverify widgets"
+    },
+    {
+      "scope": "account",
+      "name": "Email Routing Addresses Write",
+      "why": "Destination addresses for live Email Routing"
+    },
+    {
+      "scope": "account",
+      "name": "Email Sending Write",
+      "why": "kenneth@aikifield.com via Email Sending REST API",
+      "optional": true
+    }
+  ],
+  "verify": [
+    {
+      "name": "zone",
+      "method": "GET",
+      "path": "/zones/{zone_id}",
+      "expect": "ok"
+    },
+    {
+      "name": "dns",
+      "method": "GET",
+      "path": "/zones/{zone_id}/dns_records?per_page=1",
+      "expect": "ok"
+    },
+    {
+      "name": "ssl-setting",
+      "method": "GET",
+      "path": "/zones/{zone_id}/settings/ssl",
+      "expect": "ok"
+    },
+    {
+      "name": "rulesets",
+      "method": "GET",
+      "path": "/zones/{zone_id}/rulesets",
+      "expect": "ok"
+    },
+    {
+      "name": "email-routing-rules",
+      "method": "GET",
+      "path": "/zones/{zone_id}/email/routing/rules",
+      "expect": "ok"
+    },
+    {
+      "name": "account",
+      "method": "GET",
+      "path": "/accounts/{account_id}",
+      "expect": "ok"
+    },
+    {
+      "name": "denied-quantumaikido-zone",
+      "method": "GET",
+      "path": "/zones/10757f502b6069f03ae2496af94872f6",
+      "expect": "denied"
+    },
+    {
+      "name": "denied-pages-project",
+      "method": "GET",
+      "path": "/accounts/{account_id}/pages/projects/quantumaikido",
+      "expect": "denied"
+    },
+    {
+      "name": "denied-worker",
+      "method": "GET",
+      "path": "/accounts/{account_id}/workers/scripts/quantum-aikido-coach",
+      "expect": "denied"
+    }
+  ]
+}
