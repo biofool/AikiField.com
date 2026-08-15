@@ -342,23 +342,26 @@ Completed optimizations deployed to production:
 
 This repo is part of a three-repo coaching system (AikiField.com frontend,
 quantumaikido.com frontend, AIRichardMoon backend). All three repos MUST
-maintain a long-lived `staging` branch alongside `main`:
+maintain a three-branch workflow: `dev` → `staging` → `main`:
 
-- **`staging` branch** — integration branch for pre-production testing.
-  Fixes and features land on `staging` first, are verified against the
-  staging backend, then are merged to `main` via PR for production deploy.
-- **Do not delete `staging` after merge.** The branch is permanent — it
-  is reused for every release cycle. Deleting it (as happened on
-  2026-08-15) forces recreation and loses branch protection rules and
-  CI history.
+- **`dev` branch** — integration branch. Features and fixes are merged
+  here first for integration testing with other repos.
+- **`staging` branch** — validation branch. Changes promoted from `dev`
+  are verified against the staging backend before reaching production.
+- **`main` branch** — production. Only merged from `staging` via PR after
+  validation passes.
+- **Do not delete `dev` or `staging` after merge.** Both branches are
+  permanent — they are reused for every release cycle. Deleting them (as
+  happened to `staging` on 2026-08-15) forces recreation and loses branch
+  protection rules and CI history.
 - **Cross-repo coordination** — when auth, session, invitation, or
-  profile changes touch all three repos, stage and merge all three
-  `staging` branches in the same cycle before deploying any to
-  production. Mismatched frontend/backend versions break the auth flow.
+  profile changes touch all three repos, integrate on `dev`, validate on
+  `staging`, and merge all three `staging` branches to `main` in the same
+  cycle before deploying any to production. Mismatched frontend/backend
+  versions break the auth flow.
 - **AikiField does not currently have a `/staging/` folder** (no staging
   backend for this surface), but the `staging` git branch still exists
-  for pre-production integration testing of config, proxy, and login
-  changes.
+  for pre-production validation of config, proxy, and login changes.
 
 ## Verification
 
