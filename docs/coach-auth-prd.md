@@ -184,10 +184,10 @@ the shared proxy IP.
 - `coach-auth-check.php` (page gate) — `projects.php` is a **public** page;
   the invitation card is a CTA, not a gate. The page gate is scoped to
   `/beta/` only (see `includes/beta-gate.load.php` above).
-- `dashboard-env.php` / staging wrappers — AikiField has no dashboard and no
-  `/staging/` folder.
+- `dashboard-env.php` — AikiField has no dashboard. Staging wrappers ARE
+  ported (see [Staging folder](#staging-folder-stagingloginphp) below).
 - The environment-toggle UI (`#coach-env-controls`) and the profile link
-  (`/profile.php`) — AikiField has no staging backend and no profile page.
+  (`/profile.php`) — AikiField has no profile page.
 
 ## Session model
 
@@ -338,6 +338,88 @@ Completed optimizations deployed to production:
 8. Confirm `https://aikifield.com/projects.html` 301-redirects to
    `projects.php`.
 
+**Staging deploy** (`./sync.sh staging deploy` → `aikifield.peec.biz`):
+
+1. `./sync.sh staging dryrun` — preview the rsync to
+   `peec.biz:public_html/aikifield.peec.biz/`.
+2. Ensure `coach-config.staging.php` defines `COACH_STAGING_URL` pointing
+   to the staging Cloud Run backend
+   (`https://quantum-aikido-coach-staging-6bfpsd3kkq-uc.a.run.app`).
+3. `./sync.sh staging deploy` — push to staging.
+4. Confirm `https://aikifield.peec.biz/staging/login.php` loads the login
+   form with `window.COACH_API_BASE = "/staging/coach-api"` and
+   `window.COACH_FORCE_STAGING = true`.
+5. Confirm `https://aikifield.peec.biz/staging/coach-api/v1/auth/providers`
+   returns JSON from the staging backend.
+6. Test a full register → login → beta-access round-trip on staging.
+
+### Staging folder (`/staging/*`)
+
+A dedicated staging entry point is available at
+`https://aikifield.peec.biz/staging/login.php` so operators can test
+login/registration changes in staging before promoting to production.
+This mirrors the quantumaikido.com `/staging/` pattern — see
+[§Staging folder in the QA PRD](https://github.com/biofool/quantumaikido.com/blob/main/docs/coach-dashboard-prd.md#staging-folder-stagingmembersphp).
+
+Every file in `/staging/` is a thin wrapper: it defines `COACH_FORCE_STAGING`
+and `require`s its parent. There is no staging-specific markup, JS or CSS
+anywhere — one implementation, two environments.
+
+| Wrapper | Parent | Staging URL |
+|---|---|---|
+| `staging/login.php` | `login.php` | `/staging/login.php` |
+| `staging/coach-proxy.php` | `coach-proxy.php` | `/staging/coach-api/*` |
+
+- **`staging/login.php`** — the parent detects the constant and sets
+  `window.COACH_API_BASE = "/staging/coach-api"` + `window.COACH_FORCE_STAGING = true`
+  so all client-side API calls route through the staging proxy. The login
+  redirect after successful auth goes to `/beta/` (same as production —
+  AikiField has no separate staging beta folder; the session cookie covers
+  the whole origin).
+- **`staging/coach-proxy.php`** — thin PHP wrapper that defines
+  `COACH_FORCE_STAGING` and includes the parent `coach-proxy.php`. The parent
+  detects the constant and always selects `COACH_STAGING_URL` as the backend
+  (ignoring `X-Target-Environment` and the default `COACH_BACKEND_URL`).
+  **Requires `COACH_STAGING_URL` to be defined in `coach-config.staging.php`**
+  (currently it is empty — see below).
+- **`staging/.htaccess`** — rewrites `^coach-api(/.*)?$` to
+  `staging/coach-proxy.php`, mirroring the root `.htaccess` rule. It also
+  inherits (and duplicates as a fallback) the extensionless URL rewrite from
+  the root `.htaccess` so that `/staging/login` resolves to
+  `/staging/login.php`. Without this, per-directory rewrite rules replace
+  rather than merge with the parent's rules and those URLs 404 (same issue
+  as QA #115).
+- **`coach-config.staging.php`** — must define `COACH_STAGING_URL` pointing
+  to the staging Cloud Run backend
+  (`https://quantum-aikido-coach-staging-6bfpsd3kkq-uc.a.run.app`).
+  Currently this file defines `COACH_BACKEND_URL` as a non-resolving
+  `.invalid` placeholder. When the staging folder is deployed, either:
+  - **Option A (recommended):** set `COACH_STAGING_URL` to the staging
+    Cloud Run URL and keep `COACH_BACKEND_URL` as the `.invalid` placeholder
+    (so the root proxy still can't reach production from the staging
+    subdomain, but `/staging/coach-api/*` routes to the staging backend).
+  - **Option B:** set `COACH_BACKEND_URL` directly to the staging Cloud Run
+    URL (simpler, but then the root `/coach-api/*` on the staging subdomain
+    also hits the staging backend — acceptable since the staging subdomain
+    is not public-facing).
+- **`coach-proxy.php`** — the parent must be updated to check
+  `COACH_FORCE_STAGING`: when set, use `COACH_STAGING_URL` (falling back to
+  `COACH_BACKEND_URL` if `COACH_STAGING_URL` is empty) instead of always
+  using `COACH_BACKEND_URL`. This mirrors the QA proxy's
+  `COACH_FORCE_STAGING` handling.
+- **`login.php`** — the parent must be updated to check
+  `COACH_FORCE_STAGING`: when set, override `$apiBase` to
+  `/staging/coach-api` and set `window.COACH_FORCE_STAGING = true` so
+  `coach-login.js` routes all auth calls through the staging proxy.
+- **No-index** — the staging page inherits `<meta name="robots"
+  content="noindex, nofollow">` from the parent `login.php` and is not
+  linked from the public site. Operators must be given the direct URL.
+- **No OAuth on staging** — AikiField does not currently have Google OAuth
+  enabled (see Future considerations). The staging login exercises
+  email/password registration and login only. When OAuth is enabled, the
+  proxy must construct the OAuth callback URL as
+  `/staging/coach-api/v1/auth/google/callback` (mirroring QA's pattern).
+
 ### Branch and staging policy
 
 This repo is part of a three-repo coaching system (AikiField.com frontend,
@@ -359,9 +441,10 @@ maintain a three-branch workflow: `dev` → `staging` → `main`:
   `staging`, and merge all three `staging` branches to `main` in the same
   cycle before deploying any to production. Mismatched frontend/backend
   versions break the auth flow.
-- **AikiField does not currently have a `/staging/` folder** (no staging
-  backend for this surface), but the `staging` git branch still exists
-  for pre-production validation of config, proxy, and login changes.
+- **AikiField `/staging/` folder** — mirrors the QA staging pattern (see
+  [Staging folder](#staging-folder-stagingloginphp) above). Contains thin
+  wrappers for `login.php` and `coach-proxy.php`. Deployed to
+  `aikifield.peec.biz` via `./sync.sh staging deploy`.
 
 ## Verification
 
@@ -381,6 +464,16 @@ maintain a three-branch workflow: `dev` → `staging` → `main`:
 - Full login → beta-access round-trip must be tested on `peec.biz` (Apache +
   mod_rewrite) after deploy, since the built-in PHP server does not process
   `.htaccess`.
+- Staging: `php -l` on `staging/login.php` and `staging/coach-proxy.php`.
+- Staging: built-in server, `staging/login.php` (unauthed): returns 200,
+  login form rendered, `coach-login.js` loaded,
+  `window.COACH_API_BASE = "/staging/coach-api"`,
+  `window.COACH_FORCE_STAGING = true`.
+- Staging: `/staging/coach-api/v1/auth/providers` → 200 with the staging
+  backend's provider list (requires `COACH_STAGING_URL` in
+  `coach-config.staging.php`).
+- Staging: full login → beta-access round-trip on `aikifield.peec.biz`
+  after `./sync.sh staging deploy`.
 
 ## Future considerations
 
@@ -389,8 +482,6 @@ maintain a three-branch workflow: `dev` → `staging` → `main`:
   simultaneously — not currently needed; the live chat lives on QA).
 - Re-enable Google OAuth on AikiField (register the AikiField callback URI
   `https://aikifield.com/coach-api/v1/auth/google/callback`).
-- AikiField staging folder (`/staging/login.php`) mirroring QA's staging
-  pattern, if a staging backend is needed for this surface.
 - Bring the inline chat back to `aikifield.com` (would require restoring
   `coach-chat.js` and a chat host page; currently out of scope — the
   invitation card routes demo requests through the contact form instead).
