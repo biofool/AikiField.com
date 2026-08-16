@@ -82,3 +82,14 @@ if (!defined('TURNSTILE_SECRET_KEY')) {
 if (!defined('COACH_LOGIN_REDIRECT')) {
     define('COACH_LOGIN_REDIRECT', '/beta/');
 }
+// Operations Dashboard — Cloudflare log monitoring (dashboard.php).
+// These are secrets and must be set in coach-config.local.php (gitignored).
+if (!defined('DASHBOARD_ADMIN_KEY')) {
+    define('DASHBOARD_ADMIN_KEY', '');
+}
+if (!defined('CLOUDFLARE_API_TOKEN')) {
+    define('CLOUDFLARE_API_TOKEN', '');
+}
+if (!defined('CLOUDFLARE_ZONE_ID')) {
+    define('CLOUDFLARE_ZONE_ID', '');
+}

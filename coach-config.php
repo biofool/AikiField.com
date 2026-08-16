@@ -60,3 +60,13 @@ define('COACH_TIMEOUT', 60);
 // ?next= is absent. Override only if you want to send authenticated users
 // elsewhere by default.
 define('COACH_LOGIN_REDIRECT', '/beta/');
+
+// Operations Dashboard (dashboard.php) — Cloudflare log monitoring.
+// These are SECRETS and must only be set in coach-config.local.php (gitignored).
+// DASHBOARD_ADMIN_KEY: shared secret for dashboard access (?key= param).
+// CLOUDFLARE_API_TOKEN: Cloudflare API token with Analytics Read permissions.
+// CLOUDFLARE_ZONE_ID: the aikifield.com zone ID in Cloudflare.
+// Leave empty here — the dashboard shows a config error if they're missing.
+define('DASHBOARD_ADMIN_KEY', '');
+define('CLOUDFLARE_API_TOKEN', '');
+define('CLOUDFLARE_ZONE_ID', '');

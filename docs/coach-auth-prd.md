@@ -162,6 +162,8 @@ the shared proxy IP.
 | `coach-proxy.php` | PHP reverse proxy `/coach-api/*` → backend | ported from QA `coach-proxy.php` (trimmed) |
 | `coach-login.js` | Login/register/reset/confirm JS (loaded by `login.php`) | ported from QA `coach-login.js` |
 | `coach-auth.css` | Login styling (loaded by `login.php`) | copied verbatim from QA |
+| `dashboard.php` | **Blind** operations dashboard — pulls HTTP errors (4xx/5xx), firewall/WAF events, and traffic summaries from the Cloudflare GraphQL Analytics API. Not linked from nav. Access via `?key=<DASHBOARD_ADMIN_KEY>`. | new |
+| `includes/cloudflare-logs.class.php` | `CloudflareLogsScanner` class — queries the Cloudflare GraphQL API for zone analytics, returns structured report, renders HTML. Used by `dashboard.php`. | new |
 | `includes/coach-config.load.php` | Config loader (local override → staging → production). Precedence: `QA_CONFIG_FILE` env var → `coach-config.local.php` (gitignored) → `coach-config.staging.php` (staging remote only) → `coach-config.php` (production). See `docs/STAGING.md` in the QA repo for the subdomain staging mechanism. | ported from QA |
 | `coach-config.php` | Non-secret production config (backend URL, empty secret placeholders, `COACH_LOGIN_REDIRECT` default `/beta/`) | new template |
 | `coach-config.local.php` | **gitignored** — holds the real `COACH_PROXY_SECRET` / Turnstile key | operator-provided |
@@ -420,6 +422,58 @@ anywhere — one implementation, two environments.
   proxy must construct the OAuth callback URL as
   `/staging/coach-api/v1/auth/google/callback` (mirroring QA's pattern).
 
+### Operations Dashboard (`/dashboard.php`)
+
+A blind operations dashboard at `https://aikifield.com/dashboard.php` that
+pulls error and traffic data from the Cloudflare GraphQL Analytics API for
+the `aikifield.com` zone. Mirrors the quantumaikido.com dashboard pattern
+but uses Cloudflare edge data rather than Apache access logs (AikiField is
+behind Cloudflare's proxy, so edge data is the authoritative source).
+
+**Access:** blind (not linked from nav). Requires `DASHBOARD_ADMIN_KEY`
+sent via `?key=` query param or `X-Dashboard-Key` header. The key is a
+shared secret stored in `coach-config.local.php` (gitignored). Returns 401
+if missing or incorrect (constant-time comparison via `hash_equals`).
+
+**Data sources (Cloudflare GraphQL Analytics API):**
+
+| Section | GraphQL dataset | What it shows |
+|---|---|---|
+| HTTP Errors | `httpRequestsAdaptiveGroups` | Requests with 4xx/5xx status codes, grouped by path, method, status, country |
+| Firewall Events | `firewallEventsAdaptive` | WAF blocks, challenges, managed-rule actions |
+| Traffic Summary | `httpRequests1dGroups` | Daily requests, page views, threats, unique visitors (last 7 days) |
+
+**Time windows:** `?hours=24` (default), `?hours=48`, `?hours=168` (7 days).
+The window applies to the HTTP errors and firewall events sections; the
+traffic summary always shows the last 7 days.
+
+**Output formats:**
+- HTML (default) — dark-themed dashboard with summary stat cards, error
+  table (sorted by count), firewall events table, and daily traffic table.
+- JSON (`?format=json`) — machine-readable report for CI/monitoring.
+
+**Required config (in `coach-config.local.php`, gitignored):**
+
+```php
+define('DASHBOARD_ADMIN_KEY', '<random 32+ char string>');
+define('CLOUDFLARE_API_TOKEN', '<CF token with Analytics Read perms>');
+define('CLOUDFLARE_ZONE_ID', '71a04598ce4a9580faf7c0ee79f6da6c');
+```
+
+The Cloudflare API token needs `Zone.Analytics` read permission for the
+`aikifield.com` zone. Create it at
+`https://dash.cloudflare.com/profile/api-tokens` → "Create Custom Token"
+with permissions: `Zone` → `Analytics` → `Read`.
+
+**Files:**
+- `dashboard.php` — the page (auth check + HTML/JSON rendering)
+- `includes/cloudflare-logs.class.php` — `CloudflareLogsScanner` class
+  (GraphQL queries, report parsing, HTML rendering)
+
+**No-index:** the dashboard sends `X-Robots-Tag: noindex, nofollow` and
+includes `<meta name="robots" content="noindex, nofollow">`. It is not
+linked from the public site or nav.
+
 ### Branch and staging policy
 
 This repo is part of a three-repo coaching system (AikiField.com frontend,
@@ -474,6 +528,16 @@ maintain a three-branch workflow: `dev` → `staging` → `main`:
   `coach-config.staging.php`).
 - Staging: full login → beta-access round-trip on `aikifield.peec.biz`
   after `./sync.sh staging deploy`.
+- Dashboard: `php -l` on `dashboard.php` and `includes/cloudflare-logs.class.php`.
+- Dashboard: built-in server, `dashboard.php` (no key): returns 401.
+- Dashboard: built-in server, `dashboard.php?key=<key>`: returns 200,
+  HTML page with Cloudflare data (error count, firewall events, traffic
+  summary).
+- Dashboard: `dashboard.php?key=<key>&format=json`: returns valid JSON
+  with `error_count`, `firewall_count`, `daily_summary`, `error_requests`,
+  `firewall_events` fields.
+- Dashboard: `dashboard.php?key=<key>&hours=168`: returns 7-day window
+  (may show more error groups than the default 24h).
 
 ## Future considerations
 

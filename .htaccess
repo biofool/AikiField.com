@@ -41,6 +41,10 @@ RewriteRule ^(.*)$ https://aikifield.com/$1 [R=301,L]
 # Coach API proxy — forward /coach-api/* to coach-proxy.php
 RewriteRule ^coach-api(/.*)?$ coach-proxy.php [L]
 
+# Operations dashboard — blind (not linked from nav, not localizable).
+# Access via /dashboard.php?key=<DASHBOARD_ADMIN_KEY>.
+RewriteRule ^(en|es|fr|de|pt|ja|zh|ko|ar|he|fa|hi)/dashboard\.php$ /dashboard.php [R=301,L]
+
 # Demonstration Technologies is a PHP page (kept as .php for this redirect
 # and because /beta/ pages link to it). Permanently redirect the old static
 # URL so existing internal/external links keep working.
