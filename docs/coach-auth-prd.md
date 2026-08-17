@@ -108,6 +108,12 @@ all three PRDs and deploy all affected repos together:
 Mismatched versions break the auth flow. See `AGENTS.md` (cross-repo
 coordination section) and `~/.codeium/windsurf/memories/global_rules.md`.
 
+**QA file wrap (2026-08-17):** On quantumaikido.com, form-processor pages
+(`login`, `profile`, `dashboard`, and others) are `.html` files that still
+contain PHP. The public login URL is `/login` (old `/login.php` 301s there).
+AikiField keeps `login.php`; do not rename AikiField's login file as part of
+that QA wrap.
+
 ## Architecture
 
 ```
