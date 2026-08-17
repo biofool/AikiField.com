@@ -18,6 +18,14 @@ demo. The login form + PHP session handler were extracted to the blind
 marketing site. The inline AI Chat (`coach-chat.js`) was removed entirely;
 the live chat lives on `quantumaikido.com`.
 
+### AIQA / krishnafats cutover (#318)
+
+`coach-config.php` `COACH_BACKEND_URL` stays on
+`https://quantum-aikido-coach-6bfpsd3kkq-uc.a.run.app` until AIQA Cloud Run
+exists (AIRichardMoon Phase 8). Do **not** deploy a live URL change in this
+window. Cutover placeholders:
+`~/projects/AIRichardMoon/backend/data/migration/aiqa_frontend_cutover.json`.
+
 AikiField.com remains a **third frontend surface** for the shared coaching
 auth flow (same backend user store, same session contract), alongside
 `quantumaikido.com/web` (PHP frontend) and the `AIRichardMoon/frontend`
