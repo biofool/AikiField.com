@@ -215,6 +215,10 @@ the shared proxy IP.
   `/v1/auth/check-session` and stores the session. The backend also
   returns `aeoAccess` on this endpoint (and on login/`/v1/auth/me`);
   AikiField has no `/AEO/` surface and **ignores** that field.
+  `coach-login.js` still maps `?error=aeo_required` / `admin_required` /
+  `session_expired` to friendly copy and prefers `?redirect=` over the
+  baked `COACH_LOGIN_REDIRECT` (parity with QA Pages; AikiField has no
+  `/AEO/` gate that emits `aeo_required`).
 - On success the user is redirected to the `?next=` target (or `/beta/`).
   The session cookie covers the whole `aikifield.com` origin, so all
   `/beta/` pages read it via `includes/beta-gate.load.php`.
