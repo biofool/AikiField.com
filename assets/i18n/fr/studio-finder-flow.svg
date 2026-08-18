@@ -1,0 +1,110 @@
+<svg xml:lang="fr" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 1040" font-family="Noto Sans JP, Noto Sans SC, Noto Sans KR, Noto Naskh Arabic, Noto Sans Hebrew, Noto Sans Devanagari, Public Sans, sans-serif" role="img" aria-labelledby="sf-title sf-desc">
+  <title id="sf-title">World Studio Finder — Pipeline de découverte et de prospection</title>
+  <desc id="sf-desc">Pipeline : ciblage géographique des régions du monde, scraping de Google Maps via Playwright avec repli sur Places API, recherche et vérification d'e-mails, synchronisation avec Google Sheets, puis exécution de campagnes d'e-mails YAMM ou de soumissions automatisées de formulaires web.</desc>
+
+  <defs>
+    <marker id="sf-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#0E4E44"/>
+    </marker>
+    <marker id="sf-arrow-mint" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#5FD3B2"/>
+    </marker>
+    <marker id="sf-arrow-gold" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#9A6B14"/>
+    </marker>
+  </defs>
+
+  <rect width="820" height="1040" fill="#F6F2EA"/>
+
+  <!-- title -->
+  <text x="410" y="44" text-anchor="middle" fill="#16201C" font-family="'Source Serif 4', Georgia, serif" font-size="22" font-weight="600">World Studio Finder — Pipeline</text>
+  <text x="410" y="68" text-anchor="middle" fill="#5A655F" font-size="13">Du scraping de carte mondiale à la prospection vérifiée à grande échelle</text>
+
+  <!-- Step 1: Geo-target -->
+  <rect x="260" y="96" width="300" height="58" rx="12" fill="#0A3A33"/>
+  <text x="410" y="120" text-anchor="middle" fill="#fff" font-weight="600" font-size="15">1 · Ciblage géographique des régions</text>
+  <text x="410" y="140" text-anchor="middle" fill="#8FE6C9" font-size="12">pays · État américain · fuseau horaire · continent · grille hexagonale</text>
+  <path d="M410,154 L410,182" stroke="#0E4E44" stroke-width="2" marker-end="url(#sf-arrow)"/>
+
+  <!-- Step 2: Scrape (parallel paths) -->
+  <text x="160" y="200" fill="#5A655F" font-size="11" letter-spacing="0.1em">PRINCIPAL</text>
+  <rect x="60" y="210" width="300" height="70" rx="10" fill="#ffffff" stroke="#5FD3B2" stroke-width="1.5"/>
+  <text x="210" y="234" text-anchor="middle" fill="#16201C" font-weight="600" font-size="14">2a · Playwright scraping</text>
+  <text x="210" y="252" text-anchor="middle" fill="#5A655F" font-size="11.5">Google Maps · recherche en grille 2×2</text>
+  <text x="210" y="268" text-anchor="middle" fill="#5A655F" font-size="11.5">anti-détection · yoga/tai chi/capoeira/somatique</text>
+
+  <text x="660" y="200" fill="#5A655F" font-size="11" letter-spacing="0.1em">SOLUTION DE RECHANGE</text>
+  <rect x="460" y="210" width="300" height="70" rx="10" fill="#ffffff" stroke="#5FD3B2" stroke-width="1.5"/>
+  <text x="610" y="234" text-anchor="middle" fill="#16201C" font-weight="600" font-size="14">2b · Google Places API</text>
+  <text x="610" y="252" text-anchor="middle" fill="#5A655F" font-size="11.5">lorsque le scraping est bloqué</text>
+  <text x="610" y="268" text-anchor="middle" fill="#5A655F" font-size="11.5">API de géocodage pour les coordonnées</text>
+
+  <!-- converge -->
+  <path d="M210,280 L210,310 L410,310 L410,338" stroke="#0E4E44" stroke-width="2" fill="none" marker-end="url(#sf-arrow)"/>
+  <path d="M610,280 L610,310 L410,310" stroke="#0E4E44" stroke-width="2" fill="none"/>
+
+  <!-- Step 3: Studio records -->
+  <rect x="210" y="340" width="400" height="58" rx="10" fill="#ffffff" stroke="#5FD3B2" stroke-width="1.5"/>
+  <text x="410" y="364" text-anchor="middle" fill="#16201C" font-weight="600" font-size="14">3 · Enregistrements du studio collectés</text>
+  <text x="410" y="382" text-anchor="middle" fill="#5A655F" font-size="11.5">nom · adresse · site web · téléphone · catégorie</text>
+  <path d="M410,398 L410,426" stroke="#0E4E44" stroke-width="2" marker-end="url(#sf-arrow)"/>
+
+  <!-- Step 4: Email discovery (parallel) -->
+  <text x="160" y="444" fill="#5A655F" font-size="11" letter-spacing="0.1em">TROUVER EMAIL</text>
+  <rect x="60" y="454" width="300" height="58" rx="10" fill="#ffffff" stroke="#5FD3B2" stroke-width="1.5"/>
+  <text x="210" y="478" text-anchor="middle" fill="#16201C" font-weight="600" font-size="14">4a · Recherche Hunter.io</text>
+  <text x="210" y="496" text-anchor="middle" fill="#5A655F" font-size="11.5">découverte d'e-mails basée sur le domaine</text>
+
+  <text x="660" y="444" fill="#5A655F" font-size="11" letter-spacing="0.1em">GRATTER</text>
+  <rect x="460" y="454" width="300" height="58" rx="10" fill="#ffffff" stroke="#5FD3B2" stroke-width="1.5"/>
+  <text x="610" y="478" text-anchor="middle" fill="#16201C" font-weight="600" font-size="14">4b · Grattage du site web</text>
+  <text x="610" y="496" text-anchor="middle" fill="#5A655F" font-size="11.5">exploration directe du site pour les informations de contact</text>
+
+  <!-- converge -->
+  <path d="M210,512 L210,540 L410,540 L410,568" stroke="#0E4E44" stroke-width="2" fill="none" marker-end="url(#sf-arrow)"/>
+  <path d="M610,512 L610,540 L410,540" stroke="#0E4E44" stroke-width="2" fill="none"/>
+
+  <!-- Step 5: Verify -->
+  <rect x="210" y="570" width="400" height="58" rx="10" fill="#ffffff" stroke="#5FD3B2" stroke-width="1.5"/>
+  <text x="410" y="594" text-anchor="middle" fill="#16201C" font-weight="600" font-size="14">5 · Vérifier + filtrer les e-mails</text>
+  <text x="410" y="612" text-anchor="middle" fill="#5A655F" font-size="11.5">Délivrabilité NeverBounce · filtrage de domaines indésirables</text>
+  <path d="M410,628 L410,656" stroke="#0E4E44" stroke-width="2" marker-end="url(#sf-arrow)"/>
+
+  <!-- Step 6: Store -->
+  <rect x="160" y="658" width="500" height="70" rx="10" fill="#ffffff" stroke="#5FD3B2" stroke-width="1.5"/>
+  <text x="410" y="682" text-anchor="middle" fill="#16201C" font-weight="600" font-size="14">6 · Stocker + synchroniser</text>
+  <text x="410" y="700" text-anchor="middle" fill="#5A655F" font-size="11.5">SQLite (qualité des données de type SCD 2) · point de contrôle JSONL</text>
+  <text x="410" y="716" text-anchor="middle" fill="#5A655F" font-size="11.5">Synchronisation Google Sheets — enregistrement faisant autorité, prêt pour YAMM</text>
+  <path d="M410,728 L410,756" stroke="#0E4E44" stroke-width="2" marker-end="url(#sf-arrow)"/>
+
+  <!-- Step 7: Decision — has l'e-mail ? -->
+  <polygon points="410,758 580,820 410,882 240,820" fill="#ffffff" stroke="#0E4E44" stroke-width="1.5"/>
+  <text x="410" y="812" text-anchor="middle" fill="#16201C" font-weight="600" font-size="14">7 · A vérifié</text>
+  <text x="410" y="832" text-anchor="middle" fill="#16201C" font-weight="600" font-size="14">l'e-mail ?</text>
+
+  <!-- OUI branch (left) -->
+  <text x="200" y="816" text-anchor="middle" fill="#0E4E44" font-size="13" font-weight="600">OUI</text>
+  <path d="M240,820 L140,820 L140,906" stroke="#5FD3B2" stroke-width="2" fill="none" marker-end="url(#sf-arrow-mint)"/>
+
+  <!-- NO branch (right) -->
+  <text x="620" y="816" text-anchor="middle" fill="#9A6B14" font-size="13" font-weight="600">NON (site web uniquement)</text>
+  <path d="M580,820 L680,820 L680,906" stroke="#9A6B14" stroke-width="2" fill="none" marker-end="url(#sf-arrow-gold)"/>
+
+  <!-- Step 8a: YAMM -->
+  <rect x="20" y="908" width="240" height="70" rx="10" fill="#E6F5EF" stroke="#5FD3B2" stroke-width="1.5"/>
+  <text x="140" y="934" text-anchor="middle" fill="#16201C" font-weight="600" font-size="14">8a · Fusion YAMM</text>
+  <text x="140" y="952" text-anchor="middle" fill="#5A655F" font-size="11.5">campagnes d'e-mails géo-filtrées</text>
+  <text x="140" y="968" text-anchor="middle" fill="#5A655F" font-size="11.5">lectures en direct de l'ordre des colonnes</text>
+
+  <!-- Step 8b: Web form -->
+  <rect x="560" y="908" width="240" height="70" rx="10" fill="#FBF1DD" stroke="#9A6B14" stroke-width="1.5"/>
+  <text x="680" y="934" text-anchor="middle" fill="#16201C" font-weight="600" font-size="14">8b · Soumission de formulaire Web</text>
+  <text x="680" y="952" text-anchor="middle" fill="#5A655F" font-size="11.5">formulaire de contact automatisé</text>
+  <text x="680" y="968" text-anchor="middle" fill="#5A655F" font-size="11.5">soumission pour studios sans e-mail</text>
+
+  <!-- infrastructure footer -->
+  <line x1="60" y1="996" x2="760" y2="996" stroke="#E0D9CB"/>
+  <text x="410" y="1020" text-anchor="middle" fill="#5A655F" font-size="12">
+    <tspan font-weight="600" fill="#0E4E44">Infrastructure :</tspan> GCP Compute Engine (systemd) · GCS · Flask · Terraform/OpenTofu · algorithm-version tracking
+  </text>
+</svg>

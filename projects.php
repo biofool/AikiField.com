@@ -66,14 +66,17 @@
     <input type="checkbox" id="af-nav-check" class="af-nav-toggle-check">
     <label for="af-nav-check" class="af-nav__toggle" aria-label="Menu">&#9776;</label>
     <nav aria-label="Primary" class="af-nav">
-      <a href="index.html" class="af-nav__link">Home</a>
-      <a href="process.html" class="af-nav__link">Process</a>
-      <a href="approach.html" class="af-nav__link">Approach</a>
-      <a href="services.html" class="af-nav__link">Services</a>
-      <a href="case-studies.html" class="af-nav__link">Case Studies</a>
-      <a href="projects.php" class="af-nav__link af-nav__link--active" aria-current="page">Projects</a>
-      <a href="assessment.html" class="af-nav__link">Assessment</a>
-      <a href="contact.html" class="af-nav__cta">Get Started</a>
+      <a href="index.html" class="af-nav__link" data-i18n="nav.home">Home</a>
+      <a href="process.html" class="af-nav__link" data-i18n="nav.process">Process</a>
+      <a href="approach.html" class="af-nav__link" data-i18n="nav.approach">Approach</a>
+      <a href="services.html" class="af-nav__link" data-i18n="index.eyebrow_services">Services</a>
+      <a href="case-studies.html" class="af-nav__link" data-i18n="nav.case_studies">Case Studies</a>
+      <a href="projects.php" class="af-nav__link af-nav__link--active" aria-current="page" data-i18n="nav.demonstration_technologies">Projects</a>
+      <a href="assessment.html" class="af-nav__link" data-i18n="nav.assessment">Assessment</a>
+      <a href="contact.html" class="af-nav__cta" data-i18n="nav.get_started">Get Started</a>
+      <div id="af-language-selector" class="af-lang-selector" data-i18n-attr="aria-label:nav.language_selection">
+        <span class="af-lang-label" aria-hidden="true">&#127760;</span>
+      </div>
     </nav>
   </div>
 </header>
@@ -140,7 +143,7 @@
 
             <div class="af-diagram">
               <figure class="af-diagram__figure">
-                <img src="assets/aichat-flow.svg" alt="AikiField AI Chat request flow: step 1 member asks a question; step 2a authenticate (email, password, Google OAuth, Turnstile) and 2b rate limit and queue; step 3 search teaching corpus via SQLite FTS5; step 4 Gemini drafts cited answer; step 5 decision — can it answer confidently? YES leads to 6a return cited answer (24/7, free, within budget), NO leads to 6b escalate to human coach via video link; step 7 member receives response. Infrastructure: Cloud Run, Firestore, Secret Manager, Pub/Sub, Cloud Functions, Docker, OpenTofu, DVC plus GCS." class="af-diagram__img" width="780" height="980" loading="lazy"/>
+                <img src="assets/aichat-flow.svg" data-af-diagram="aichat-flow" data-i18n-attr="alt:svg.aichat_flow.alt" alt="AikiField AI Chat request flow: step 1 member asks a question; step 2a authenticate (email, password, Google OAuth, Turnstile) and 2b rate limit and queue; step 3 search teaching corpus via SQLite FTS5; step 4 Gemini drafts cited answer; step 5 decision — can it answer confidently? YES leads to 6a return cited answer (24/7, free, within budget), NO leads to 6b escalate to human coach via video link; step 7 member receives response. Infrastructure: Cloud Run, Firestore, Secret Manager, Pub/Sub, Cloud Functions, Docker, OpenTofu, DVC plus GCS." class="af-diagram__img" width="780" height="980" loading="lazy"/>
                 <figcaption class="af-diagram__caption"><strong>Figure 1.</strong> AikiField AI Chat request flow &mdash; from member question through corpus search, Gemini-drafted answer, and the decision to return a cited answer or escalate to a live human coach. <a href="assets/aichat-flow.png" class="af-diagram__download" download>Download PNG &darr;</a></figcaption>
               </figure>
             </div>
@@ -173,7 +176,7 @@
 
             <div class="af-diagram">
               <figure class="af-diagram__figure">
-                <img src="assets/studio-finder-flow.svg" alt="World Studio Finder pipeline: step 1 geo-target regions (country, US state, timezone, continent, hex grid); step 2a Playwright scrape of Google Maps with 2x2 grid search and anti-detection, 2b Google Places API fallback with Geocoding; step 3 studio records collected (name, address, website, phone, category); step 4a Hunter.io email lookup and 4b website scrape for contact info; step 5 verify and filter emails via NeverBounce and junk-domain filtering; step 6 store and sync to SQLite SCD Type 2 with JSONL checkpointing and Google Sheets sync; step 7 decision — has verified email? YES leads to 8a YAMM mail merge with geo-filtered campaigns, NO leads to 8b automated web form submission for no-email studios. Infrastructure: GCP Compute Engine, GCS, Flask, Terraform/OpenTofu, algorithm-version tracking." class="af-diagram__img" width="820" height="1040" loading="lazy"/>
+                <img src="assets/studio-finder-flow.svg" data-af-diagram="studio-finder-flow" data-i18n-attr="alt:svg.studio_finder_flow.alt" alt="World Studio Finder pipeline: step 1 geo-target regions (country, US state, timezone, continent, hex grid); step 2a Playwright scrape of Google Maps with 2x2 grid search and anti-detection, 2b Google Places API fallback with Geocoding; step 3 studio records collected (name, address, website, phone, category); step 4a Hunter.io email lookup and 4b website scrape for contact info; step 5 verify and filter emails via NeverBounce and junk-domain filtering; step 6 store and sync to SQLite SCD Type 2 with JSONL checkpointing and Google Sheets sync; step 7 decision — has verified email? YES leads to 8a YAMM mail merge with geo-filtered campaigns, NO leads to 8b automated web form submission for no-email studios. Infrastructure: GCP Compute Engine, GCS, Flask, Terraform/OpenTofu, algorithm-version tracking." class="af-diagram__img" width="820" height="1040" loading="lazy"/>
                 <figcaption class="af-diagram__caption"><strong>Figure 2.</strong> World Studio Finder pipeline &mdash; from geo-targeted map search through email discovery, verification, storage, and the two outreach paths (mail merge or automatic contact-form submission). <a href="assets/studio-finder-flow.png" class="af-diagram__download" download>Download PNG &darr;</a></figcaption>
               </figure>
             </div>
@@ -235,7 +238,7 @@
       <p class="af-lead af-lead--wide">All three systems were designed and built by AikiField and run in production today &mdash; AI-grounded coaching, global studio outreach, and multi-cloud cost control. The engineering patterns behind them are directly available to your engagement.</p>
       <div class="af-diagram">
         <figure class="af-diagram__figure">
-          <img src="assets/projects-overview.svg" alt="Overview diagram: AikiField sponsors two projects — AikiField AI Chat (inputs: member question and teaching corpus; core: Gemini API, SQLite FTS5, Cloud Run, Firestore, rate limiter, auth; outputs: cited answer and human coach escalation) and World Studio Finder (inputs: Google Maps, Places API, Hunter.io; core: Playwright scraper, email verifier, SQLite SCD Type 2, Google Sheets sync, geo-filter, Compute Engine; outputs: YAMM email campaigns and web form submission)." class="af-diagram__img" width="1120" height="760" loading="lazy"/>
+          <img src="assets/projects-overview.svg" data-af-diagram="projects-overview" data-i18n-attr="alt:svg.projects_overview.alt" alt="Overview diagram: AikiField sponsors two projects — AikiField AI Chat (inputs: member question and teaching corpus; core: Gemini API, SQLite FTS5, Cloud Run, Firestore, rate limiter, auth; outputs: cited answer and human coach escalation) and World Studio Finder (inputs: Google Maps, Places API, Hunter.io; core: Playwright scraper, email verifier, SQLite SCD Type 2, Google Sheets sync, geo-filter, Compute Engine; outputs: YAMM email campaigns and web form submission)." class="af-diagram__img" width="1120" height="760" loading="lazy"/>
           <figcaption class="af-diagram__caption"><strong>Figure 3.</strong> Overview of the two systems AikiField built, showing inputs, core components, and outputs for each. <a href="assets/projects-overview.png" class="af-diagram__download" download>Download PNG &darr;</a></figcaption>
         </figure>
       </div>
@@ -349,5 +352,7 @@
   <div class="af-footer__legal">&copy; 2026 AikiField. All rights reserved.</div>
 </footer>
 
+<script src="/js/locale-utils.js?v=20260818i18n"></script>
+<script src="/js/language-selector.js?v=20260818i18n"></script>
 </body>
 </html>

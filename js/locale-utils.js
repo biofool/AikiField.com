@@ -461,6 +461,17 @@
       var phKey = phel.getAttribute('data-i18n-placeholder');
       if (phKey) phel.setAttribute('placeholder', t(phKey));
     }
+    localizeDiagrams();
+  }
+
+  function localizeDiagrams() {
+    var diagrams = document.querySelectorAll('img[data-af-diagram]');
+    for (var d = 0; d < diagrams.length; d++) {
+      var img = diagrams[d];
+      var name = img.getAttribute('data-af-diagram');
+      if (!name) continue;
+      img.src = '/assets/i18n/' + currentLocale + '/' + name + '.svg';
+    }
   }
 
   // ── Public API ────────────────────────────────────────────────────

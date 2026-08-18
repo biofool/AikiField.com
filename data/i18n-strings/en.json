@@ -230,6 +230,7 @@
     "nav.demonstration_technologies": "Demonstration Technologies",
     "nav.get_started": "Get Started",
     "nav.home": "Home",
+    "nav.language_selection": "Language selection",
     "nav.process": "Process",
     "nav.services": "Services",
     "nav.sponsored_projects": "Sponsored Projects",
@@ -265,5 +266,7 @@
     "services.lets_design_your_engagement": "Let's design your engagement.",
     "services.make_confident_security_calls_under": "Make confident security calls under pressure",
     "services.what_you_get": "What you get",
-    "nav.language_selection": "Language selection"
+    "svg.aichat_flow.alt": "AikiField AI Chat request flow: step 1 member asks a question; step 2a authenticate (email, password, Google OAuth, Turnstile) and 2b rate limit and queue; step 3 search teaching corpus via SQLite FTS5; step 4 Gemini drafts cited answer; step 5 decision — can it answer confidently? YES leads to 6a return cited answer (24/7, free, within budget), NO leads to 6b escalate to human coach via video link; step 7 member receives response. Infrastructure: Cloud Run, Firestore, Secret Manager, Pub/Sub, Cloud Functions, Docker, OpenTofu, DVC plus GCS.",
+    "svg.projects_overview.alt": "Overview diagram: AikiField sponsors two projects — AikiField AI Chat (inputs: member question and teaching corpus; core: Gemini API, SQLite FTS5, Cloud Run, Firestore, rate limiter, auth; outputs: cited answer and human coach escalation) and World Studio Finder (inputs: Google Maps, Places API, Hunter.io; core: Playwright scraper, email verifier, SQLite SCD Type 2, Google Sheets sync, geo-filter, Compute Engine; outputs: YAMM email campaigns and web form submission).",
+    "svg.studio_finder_flow.alt": "World Studio Finder pipeline: step 1 geo-target regions (country, US state, timezone, continent, hex grid); step 2a Playwright scrape of Google Maps with 2x2 grid search and anti-detection, 2b Google Places API fallback with Geocoding; step 3 studio records collected (name, address, website, phone, category); step 4a Hunter.io email lookup and 4b website scrape for contact info; step 5 verify and filter emails via NeverBounce and junk-domain filtering; step 6 store and sync to SQLite SCD Type 2 with JSONL checkpointing and Google Sheets sync; step 7 decision — has verified email? YES leads to 8a YAMM mail merge with geo-filtered campaigns, NO leads to 8b automated web form submission for no-email studios. Infrastructure: GCP Compute Engine, GCS, Flask, Terraform/OpenTofu, algorithm-version tracking."
 }
