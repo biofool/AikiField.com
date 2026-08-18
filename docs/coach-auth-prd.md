@@ -204,7 +204,9 @@ the shared proxy IP.
   `qa_session_token`, `qa_target_env`, `qa_is_admin` — identical to QA.
 - `coach-login.js` posts `email` + `sessionToken` to `login.php`
   (`action=backend-login`), which verifies against
-  `/v1/auth/check-session` and stores the session.
+  `/v1/auth/check-session` and stores the session. The backend also
+  returns `aeoAccess` on this endpoint (and on login/`/v1/auth/me`);
+  AikiField has no `/AEO/` surface and **ignores** that field.
 - On success the user is redirected to the `?next=` target (or `/beta/`).
   The session cookie covers the whole `aikifield.com` origin, so all
   `/beta/` pages read it via `includes/beta-gate.load.php`.
