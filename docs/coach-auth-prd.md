@@ -28,7 +28,7 @@ window. Cutover placeholders:
 
 AikiField.com remains a **third frontend surface** for the shared coaching
 auth flow (same backend user store, same session contract), alongside
-`quantumaikido.com/web` (PHP frontend) and the `AIRichardMoon/frontend`
+`quantumaikido.com` (PHP frontend) and the `AIRichardMoon/frontend`
 (backend-served static pages) — but the surface is now minimal (beta gating
 only), not a public chat.
 
@@ -110,11 +110,33 @@ auth endpoints, session model, invitation codes, or proxy routing MUST update
 all three PRDs and deploy all affected repos together:
 
 1. **This PRD**: `AikiField.com/docs/coach-auth-prd.md` (AikiField frontend surface)
-2. **QA frontend PRD**: `quantumaikido.com/web/docs/coach-dashboard-prd.md`
+2. **QA frontend PRD**: `quantumaikido.com/docs/coach-dashboard-prd.md`
 3. **Backend PRD**: `AIRichardMoon/backend/PRD.md`
 
 Mismatched versions break the auth flow. See `AGENTS.md` (cross-repo
 coordination section) and `~/.codeium/windsurf/memories/global_rules.md`.
+
+**What is N/A for this repo (AIRichardMoon issue #361).** The rule covers the
+login/registration/session/invitation contract. It does **not** oblige an
+update here for backend features AikiField's surface never consumes. This
+surface is the blind `login.php` plus `includes/beta-gate.load.php`; the
+inline AI chat was removed entirely (the live chat lives on
+`quantumaikido.com`), and the only backend calls are `/v1/auth/login`,
+`/v1/auth/register*` and `/v1/auth/check-session`. So the following are
+explicitly N/A here, and a backend change to them needs no AikiField PRD
+update or deploy:
+
+- **Durable chat preferences** (`POST /v1/auth/preferences` —
+  `preferredTone` / `preferredMode` / `preferredGrounding` /
+  `preferredLanguage`): no chat, no preferences UI.
+- **`aeoAccess`**: AikiField ignores it (already recorded in
+  `AIRichardMoon/backend/PRD.md` under `/v1/auth/check-session`).
+- **The `monitor` flag**: not returned by `/v1/auth/check-session`, the only
+  profile-bearing call this repo makes; monitoring accounts call Cloud Run
+  directly.
+
+Recorded so the N/A is explicit rather than silent. Anything touching login,
+registration, the session model, or the proxy remains in scope.
 
 **QA file wrap (2026-08-17):** On quantumaikido.com, form-processor pages
 (`login`, `profile`, `dashboard`, and others) are `.html` files that still
@@ -145,7 +167,7 @@ with no auth surface. The invitation card on `projects.php` links to
 `contact.html`, not to `login.php`.
 
 AikiField's `coach-proxy.php` is a trimmed port of
-`quantumaikido.com/web/coach-proxy.php`. It forwards `/coach-api/*` to
+`quantumaikido.com/coach-proxy.php`. It forwards `/coach-api/*` to
 `COACH_BACKEND_URL`, sends `X-Proxy-Secret` when configured, and rewrites
 OAuth `Location` headers back to `/login.php` (for future social-login
 enablement; social login is currently disabled in `coach-login.js`).
@@ -246,7 +268,7 @@ the shared proxy IP.
 > `/v1/auth/check-session`); only the frontend storage mechanism changes.
 >
 > Reference: https://github.com/biofool/quantumaikido.com/issues/119
-> See also: `quantumaikido.com/web/docs/coach-dashboard-prd.md` §4.1.2
+> See also: `quantumaikido.com/docs/coach-dashboard-prd.md` §4.1.2
 > (Cloudflare Pages Functions migration) and `AIRichardMoon/backend/PRD.md`
 > (backend note — API contract unchanged).
 

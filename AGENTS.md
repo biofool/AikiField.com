@@ -121,7 +121,7 @@ coaching system: `quantumaikido.com` frontend + `AIRichardMoon` backend). If
 this project is part of such a pair, document the sister repo here and the
 coordination rule (e.g. "auth changes MUST update both PRDs and deploy both
 repos together"). Mismatched frontend/backend versions break the flow. See
-`~/projects/quantumaikido.com/web/AGENTS.md` and
+`~/projects/quantumaikido.com/AGENTS.md` and
 `~/projects/AIRichardMoon/AGENTS.md` for the canonical example.
 
 ## Skills
@@ -163,7 +163,7 @@ The inline AI Chat (`coach-chat.js`) was removed; the live chat lives on
 
 AikiField.com remains a **third frontend surface** for the shared coaching
 auth flow (same backend user store, same session contract), alongside
-`quantumaikido.com/web` and `AIRichardMoon/frontend` — but the surface is
+`quantumaikido.com` and `AIRichardMoon/frontend` — but the surface is
 now minimal (beta gating only), not a public chat.
 
 Files: `login.php` (blind login + PHP session POST handlers + `?next=`
@@ -177,7 +177,7 @@ redirect), `coach-proxy.php`, `coach-login.js` (loaded by `login.php`),
 `docs/coach-auth-prd.md`.
 
 **Sister repos:**
-- `~/projects/quantumaikido.com/web` — canonical PHP frontend (`login.php`,
+- `~/projects/quantumaikido.com` — canonical PHP frontend (`login.php`,
   `members.php`, `coach-proxy.php`, `coach-login.js`, `coach-chat.js`,
   `coach-auth.css`). PRD: `docs/coach-dashboard-prd.md`.
 - `~/projects/AIRichardMoon` — backend (FastAPI auth + chat, Cloud Run). PRD:
