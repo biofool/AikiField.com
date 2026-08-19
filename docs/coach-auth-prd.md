@@ -213,8 +213,10 @@ the shared proxy IP.
 - `coach-login.js` posts `email` + `sessionToken` to `login.php`
   (`action=backend-login`), which verifies against
   `/v1/auth/check-session` and stores the session. The backend also
-  returns `aeoAccess` on this endpoint (and on login/`/v1/auth/me`);
-  AikiField has no `/AEO/` surface and **ignores** that field.
+  returns `aeoAccess` and `siteReviewer` on this endpoint (and on
+  login/`/v1/auth/me`); AikiField has no `/AEO/` or `/for-review/`
+  surface and **ignores** both fields. (`siteReviewer` gates
+  quantumaikido.com's `/for-review/*` staff tooling — QA issue #169.)
   `coach-login.js` still maps `?error=aeo_required` / `admin_required` /
   `session_expired` to friendly copy and prefers `?redirect=` over the
   baked `COACH_LOGIN_REDIRECT` (parity with QA Pages; AikiField has no
