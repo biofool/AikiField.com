@@ -207,6 +207,87 @@
             </div>
           </article>
 
+          <!-- PROJECT 4: CHAOSENGINE -->
+          <article class="af-svc">
+            <div class="af-svc__tag-row">
+              <span class="af-svc__tag">Resilience Engineering</span>
+              <span class="af-svc__tag af-svc__tag--built">Built by AikiField</span>
+            </div>
+            <h2 class="af-svc__title">ChaosEngine &mdash; Controlled Failure Injection for Security Resilience</h2>
+            <p class="af-svc__lead">A Go-based CLI that runs staging-scoped chaos experiments &mdash; latency injection, dependency failure, resource pressure, and controlled process termination &mdash; to prove your systems fail safely before a real incident does.</p>
+            <p class="af-svc__bestfor">How it works: every experiment declares a blast radius and a verified staging target before it runs, can be previewed in dry-run mode before it touches anything live, and rolls back automatically the moment a guardrail trips or the run window ends.</p>
+            <h3 class="af-svc__bullets-label">What it does</h3>
+            <ul class="af-svc__bullets">
+              <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Environment-scoped by design</strong> &mdash; refuses to run against anything but a verified staging target.</span></li>
+              <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Blast-radius limits</strong> &mdash; caps how much of the environment an experiment can touch, so a bad run stays contained.</span></li>
+              <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Dry-run mode</strong> &mdash; previews exactly what an experiment would do before it touches anything live.</span></li>
+              <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Four experiment types</strong> &mdash; latency injection, dependency failure, resource pressure, and controlled process termination.</span></li>
+              <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Automatic rollback</strong> &mdash; reverts the injected fault the moment a guardrail trips or the experiment window ends.</span></li>
+              <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>CI/CD approval gates</strong> &mdash; every experiment requires sign-off and leaves a full audit log.</span></li>
+            </ul>
+            <h3 class="af-svc__bullets-label" style="margin-top:28px;">Tech stack</h3>
+            <p class="af-body">Go &middot; Python/Bash &middot; AWS SDK/CLI &middot; Docker &middot; CI/CD approval gates</p>
+
+            <div class="af-svc__applied">
+              <p class="af-svc__applied-label">Applied to your needs</p>
+              <p class="af-svc__applied-body">The same pattern &mdash; <strong>controlled, guardrailed failure injection with blast-radius limits and automatic rollback</strong> &mdash; is what we use to pressure-test your incident-response runbooks and business continuity plan: proving detection and recovery procedures actually hold up under realistic failure conditions, with the same environment verification, approval gates, and logging a security engagement requires, before a real breach or outage tests them for you. We design, build, and operate it on a fixed budget.</p>
+            </div>
+          </article>
+
+          <!-- PROJECT 5: CLIPQUOTES -->
+          <article class="af-svc">
+            <div class="af-svc__tag-row">
+              <span class="af-svc__tag">Media Intelligence</span>
+              <span class="af-svc__tag af-svc__tag--built">Built by AikiField</span>
+            </div>
+            <h2 class="af-svc__title">ClipQuotes &mdash; Automated Evidence &amp; Communications Extraction</h2>
+            <p class="af-svc__lead">A retrieval and computer-vision pipeline that locates one specific spoken moment inside hours of long-form video or audio and extracts it as an accurately framed, timestamped clip.</p>
+            <p class="af-svc__bestfor">How it works: it transcribes and diarizes the source recording, retrieves the passage matching the request, tracks the speaker&rsquo;s face across frames to set the crop, then cuts and exports the moment with its source timestamp attached.</p>
+            <h3 class="af-svc__bullets-label">What it does</h3>
+            <ul class="af-svc__bullets">
+              <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Finds the moment, not just the transcript</strong> &mdash; retrieves the exact spoken passage out of hours of footage.</span></li>
+              <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Speaker diarization</strong> &mdash; identifies who said what, so the right speaker ends up in frame.</span></li>
+              <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Accurate framing</strong> &mdash; tracks faces across frames via computer vision, so clips aren&rsquo;t cropped mid-speaker.</span></li>
+              <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Timestamped exports</strong> &mdash; every clip carries the timestamp back to the original recording.</span></li>
+              <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Built for long-form source material</strong> &mdash; designed for meetings, webinars, and recorded sessions, not just short clips.</span></li>
+              <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Simple review interface</strong> &mdash; a Flask front end for queuing extraction requests and reviewing results.</span></li>
+            </ul>
+            <h3 class="af-svc__bullets-label" style="margin-top:28px;">Tech stack</h3>
+            <p class="af-body">Python &middot; Whisper &middot; pyannote.audio &middot; OpenCV &middot; FFmpeg &middot; Flask</p>
+
+            <div class="af-svc__applied">
+              <p class="af-svc__applied-label">Applied to your needs</p>
+              <p class="af-svc__applied-body">The same pattern &mdash; <strong>retrieval plus computer vision to pull a verified, timestamped moment out of long-form recordings</strong> &mdash; is what we use to build security-awareness training content and to extract incident post-mortem evidence: pulling exact, timestamped moments from recorded meetings, tabletop exercises, or webinars for compliance documentation and stakeholder communication. We design, build, and operate it on a fixed budget.</p>
+            </div>
+          </article>
+
+          <!-- PROJECT 6: VOICE SYNTHESIS BENCHMARKING -->
+          <article class="af-svc">
+            <div class="af-svc__tag-row">
+              <span class="af-svc__tag">AI Research &amp; Governance</span>
+              <span class="af-svc__tag af-svc__tag--built">Built by AikiField</span>
+            </div>
+            <h2 class="af-svc__title">Voice Synthesis Benchmarking &mdash; Deepfake-Aware AI Governance</h2>
+            <p class="af-svc__lead">A consent-based benchmarking pipeline that evaluates open-source text-to-speech and voice-conversion models for naturalness, speaker similarity, and failure modes.</p>
+            <p class="af-svc__bestfor">How it works: every model is run against consented, provenance-tracked voice data, scored for naturalness and speaker similarity, and stress-tested for where it breaks down &mdash; with strict provenance and consent controls enforced on every training and evaluation dataset.</p>
+            <h3 class="af-svc__bullets-label">What it does</h3>
+            <ul class="af-svc__bullets">
+              <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Consent-first data pipeline</strong> &mdash; every voice sample used for evaluation is provenance-tracked and consent-verified end to end.</span></li>
+              <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Naturalness and similarity scoring</strong> &mdash; benchmarks models on how convincing and how close to the source speaker they are.</span></li>
+              <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Failure-mode mapping</strong> &mdash; documents exactly where and how each model breaks down, not just its best-case output.</span></li>
+              <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Covers TTS and voice conversion</strong> &mdash; evaluates both text-to-speech and voice-cloning approaches side by side.</span></li>
+              <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>GPU-inference benchmarking harness</strong> &mdash; repeatable evaluation runs across model versions.</span></li>
+              <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Governance-ready reporting</strong> &mdash; findings are written up in a form usable for policy decisions, not just a research log.</span></li>
+            </ul>
+            <h3 class="af-svc__bullets-label" style="margin-top:28px;">Tech stack</h3>
+            <p class="af-body">Python &middot; PyTorch &middot; torchaudio &middot; Hugging Face Transformers &middot; GPU inference pipelines</p>
+
+            <div class="af-svc__applied">
+              <p class="af-svc__applied-label">Applied to your needs</p>
+              <p class="af-svc__applied-body">The same rigor &mdash; <strong>benchmarking model failure modes under consent-first data controls</strong> &mdash; is what we bring to your organization&rsquo;s exposure to voice-phishing and deepfake social engineering: helping you understand what today&rsquo;s synthetic-voice models can and can&rsquo;t convincingly fake, and building the responsible-AI governance policy that governs any generative voice tooling your teams procure or build in-house. We design, build, and operate it on a fixed budget.</p>
+            </div>
+          </article>
+
         </div><!-- /.af-projects-split__projects -->
 
         <!-- RIGHT COLUMN: invitation card (request a live demo) — sticky -->
@@ -231,12 +312,12 @@
   <!-- OVERVIEW DIAGRAM — below the split -->
   <section class="af-section">
     <div class="af-container">
-      <h2 class="af-h2">Three systems we built &mdash; at a glance</h2>
-      <p class="af-lead af-lead--wide">All three systems were designed and built by AikiField and run in production today &mdash; AI-grounded coaching, global studio outreach, and multi-cloud cost control. The engineering patterns behind them are directly available to your engagement.</p>
+      <h2 class="af-h2">Six systems we built &mdash; at a glance</h2>
+      <p class="af-lead af-lead--wide">All six systems were designed and built by AikiField and run in production today &mdash; AI-grounded coaching, global studio outreach, multi-cloud cost control, resilience engineering, media intelligence, and AI governance research. The engineering patterns behind them are directly available to your engagement.</p>
       <div class="af-diagram">
         <figure class="af-diagram__figure">
-          <img src="assets/projects-overview.svg" alt="Overview diagram: AikiField sponsors two projects — AikiField AI Chat (inputs: member question and teaching corpus; core: Gemini API, SQLite FTS5, Cloud Run, Firestore, rate limiter, auth; outputs: cited answer and human coach escalation) and World Studio Finder (inputs: Google Maps, Places API, Hunter.io; core: Playwright scraper, email verifier, SQLite SCD Type 2, Google Sheets sync, geo-filter, Compute Engine; outputs: YAMM email campaigns and web form submission)." class="af-diagram__img" width="1120" height="760" loading="lazy"/>
-          <figcaption class="af-diagram__caption"><strong>Figure 3.</strong> Overview of the two systems AikiField built, showing inputs, core components, and outputs for each. <a href="assets/projects-overview.png" class="af-diagram__download" download>Download PNG &darr;</a></figcaption>
+          <img src="assets/projects-overview.svg" alt="Overview diagram covering two of the six systems described on this page: AikiField AI Chat (inputs: member question and teaching corpus; core: Gemini API, SQLite FTS5, Cloud Run, Firestore, rate limiter, auth; outputs: cited answer and human coach escalation) and World Studio Finder (inputs: Google Maps, Places API, Hunter.io; core: Playwright scraper, email verifier, SQLite SCD Type 2, Google Sheets sync, geo-filter, Compute Engine; outputs: YAMM email campaigns and web form submission)." class="af-diagram__img" width="1120" height="760" loading="lazy"/>
+          <figcaption class="af-diagram__caption"><strong>Figure 3.</strong> Overview of two of the six systems AikiField built &mdash; AikiField AI Chat and World Studio Finder &mdash; showing inputs, core components, and outputs for each. <a href="assets/projects-overview.png" class="af-diagram__download" download>Download PNG &darr;</a></figcaption>
         </figure>
       </div>
     </div>

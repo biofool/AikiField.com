@@ -685,8 +685,8 @@ The composure and curiosity to adapt to emerging threats and AI risk.
 
 ### Overview
 
-**Heading:** Three systems we built — at a glance
-**Lead:** All three systems were designed and built by AikiField and run in production today — AI-grounded coaching, global studio outreach, and multi-cloud cost control. The engineering patterns behind them are directly available to your engagement.
+**Heading:** Six systems we built — at a glance
+**Lead:** All six systems were designed and built by AikiField and run in production today — AI-grounded coaching, global studio outreach, multi-cloud cost control, resilience engineering, media intelligence, and AI governance research. The engineering patterns behind them are directly available to your engagement.
 
 ### From these projects to your security program
 
