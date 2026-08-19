@@ -1440,3 +1440,70 @@ a.af-card:hover .af-card__arrow { text-decoration: underline; }
 .af-lang-label {
   font-size: 1.2rem;
 }
+
+/* Extra-large pills/tags/chips for non-Roman locales. */
+html[data-locale="ja"] .af-client-chip,
+html[data-locale="zh"] .af-client-chip,
+html[data-locale="ko"] .af-client-chip,
+html[data-locale="ar"] .af-client-chip,
+html[data-locale="he"] .af-client-chip,
+html[data-locale="fa"] .af-client-chip,
+html[data-locale="hi"] .af-client-chip,
+html[data-locale="ja"] .af-service__tag,
+html[data-locale="zh"] .af-service__tag,
+html[data-locale="ko"] .af-service__tag,
+html[data-locale="ar"] .af-service__tag,
+html[data-locale="he"] .af-service__tag,
+html[data-locale="fa"] .af-service__tag,
+html[data-locale="hi"] .af-service__tag,
+html[data-locale="ja"] .af-svc__tag,
+html[data-locale="zh"] .af-svc__tag,
+html[data-locale="ko"] .af-svc__tag,
+html[data-locale="ar"] .af-svc__tag,
+html[data-locale="he"] .af-svc__tag,
+html[data-locale="fa"] .af-svc__tag,
+html[data-locale="hi"] .af-svc__tag,
+html[data-locale="ja"] .af-principle__tag,
+html[data-locale="zh"] .af-principle__tag,
+html[data-locale="ko"] .af-principle__tag,
+html[data-locale="ar"] .af-principle__tag,
+html[data-locale="he"] .af-principle__tag,
+html[data-locale="fa"] .af-principle__tag,
+html[data-locale="hi"] .af-principle__tag,
+html[data-locale="ja"] .af-compare__col-tag,
+html[data-locale="zh"] .af-compare__col-tag,
+html[data-locale="ko"] .af-compare__col-tag,
+html[data-locale="ar"] .af-compare__col-tag,
+html[data-locale="he"] .af-compare__col-tag,
+html[data-locale="fa"] .af-compare__col-tag,
+html[data-locale="hi"] .af-compare__col-tag,
+html[data-locale="ja"] .af-cluster-card__tag,
+html[data-locale="zh"] .af-cluster-card__tag,
+html[data-locale="ko"] .af-cluster-card__tag,
+html[data-locale="ar"] .af-cluster-card__tag,
+html[data-locale="he"] .af-cluster-card__tag,
+html[data-locale="fa"] .af-cluster-card__tag,
+html[data-locale="hi"] .af-cluster-card__tag,
+html[data-locale="ja"] .af-shift__tag,
+html[data-locale="zh"] .af-shift__tag,
+html[data-locale="ko"] .af-shift__tag,
+html[data-locale="ar"] .af-shift__tag,
+html[data-locale="he"] .af-shift__tag,
+html[data-locale="fa"] .af-shift__tag,
+html[data-locale="hi"] .af-shift__tag,
+html[data-locale="ja"] .af-practice__tag,
+html[data-locale="zh"] .af-practice__tag,
+html[data-locale="ko"] .af-practice__tag,
+html[data-locale="ar"] .af-practice__tag,
+html[data-locale="he"] .af-practice__tag,
+html[data-locale="fa"] .af-practice__tag,
+html[data-locale="hi"] .af-practice__tag {
+  font-size: 1.05rem;
+  padding: 0.55rem 1.15rem;
+  line-height: 1.45;
+  letter-spacing: 0;
+  text-transform: none;
+  white-space: normal;
+  border-radius: 1.35rem;
+  max-width: 100%;
+}

@@ -16,7 +16,46 @@
 
     const API = window.COACH_API_BASE || "/coach-api";
     const FORCE_STAGING = window.COACH_FORCE_STAGING === true;
-    const REDIRECT = window.COACH_LOGIN_REDIRECT || "/members.php";
+
+    function containsBackslash(s) {
+        for (let i = 0; i < 4; i++) {
+            if (s.includes('\\')) return true;
+            if (s.toLowerCase().includes('%5c')) return true;
+            try {
+                const next = decodeURIComponent(s);
+                if (next === s) break;
+                s = next;
+            } catch { break; }
+        }
+        return false;
+    }
+
+    // Prefer ?redirect= over the baked COACH_LOGIN_REDIRECT (same open-redirect
+    // rules as QA's qa_safe_redirect). Needed when login HTML is static/pre-rendered.
+    function safeRedirect(candidate, fallback) {
+        if (!candidate || typeof candidate !== "string") return fallback;
+        const c = candidate.trim();
+        if (!c || c[0] !== "/" || c.startsWith("//") || c.includes("\r") || c.includes("\n") || containsBackslash(c)) {
+            return fallback;
+        }
+        try {
+            const u = new URL(c, window.location.origin);
+            if (u.origin !== window.location.origin) return fallback;
+            const path = (u.pathname || "/").replace(/\/+$/, "") || "/";
+            if (path === "/login" || path.endsWith("/login")
+                || path.endsWith("/login.php") || path.endsWith("/login.html")) {
+                return fallback;
+            }
+            return c;
+        } catch (_) {
+            return fallback;
+        }
+    }
+    const _initParams = new URLSearchParams(window.location.search);
+    const REDIRECT = safeRedirect(
+        _initParams.get("redirect"),
+        window.COACH_LOGIN_REDIRECT || "/members.php",
+    );
     let currentEmail = "";
 
     // --- DOM refs ---
@@ -185,13 +224,40 @@
         }
     }
 
-    function handleOAuthError() {
+    // Gate / OAuth error codes in ?error=. Map known codes to the same copy as
+    // login.php; preserve ?redirect= when clearing the error from the URL.
+    function loginErrorMessage(code) {
+        const email = sessionStorage.getItem("qa_email") || "";
+        switch (code) {
+            case "admin_required":
+                return email
+                    ? ("You are signed in as " + email
+                        + ", which does not have admin access. Sign out and use an admin account to reach the dashboard.")
+                    : "Your account does not have admin access.";
+            case "aeo_required":
+                return email
+                    ? ("You are signed in as " + email
+                        + ", which does not have AEO review access. Ask an admin to grant the AEO review flag, or sign in with an admin account.")
+                    : "Your account does not have AEO review access.";
+            case "session_expired":
+                return "Your session has expired. Please sign in again.";
+            default:
+                try {
+                    return decodeURIComponent(code);
+                } catch (_) {
+                    return code;
+                }
+        }
+    }
+
+    function handleQueryError() {
         const params = new URLSearchParams(window.location.search);
         const error = params.get("error");
-        if (error) {
-            showStatus(loginStatus, decodeURIComponent(error), "error");
-            history.replaceState(null, "", window.location.pathname);
-        }
+        if (!error || !loginStatus) return;
+        showStatus(loginStatus, loginErrorMessage(error), "error");
+        params.delete("error");
+        const qs = params.toString();
+        history.replaceState(null, "", window.location.pathname + (qs ? "?" + qs : ""));
     }
 
     // --- Confirmation link handling (?confirm=token) ---
@@ -451,7 +517,7 @@
     if (handleResetLink()) {
         return;
     }
-    handleOAuthError();
+    handleQueryError();
     // Social login disabled — not worth maintaining OAuth config at the moment.
     // loadProviders();
 })();

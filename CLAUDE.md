@@ -19,6 +19,8 @@ build step and no framework.
 - **Shell:** bash on Linux (Ubuntu).
 - **Deploy:** `./sync.sh dryrun` (preview), `./sync.sh deploy` (push to
   production). Treat `sync.sh` as production-sensitive -- always dry-run first.
+  Use `--staging` or `--prod` to select a target explicitly:
+  `./sync.sh --staging dryrun`, `./sync.sh --prod deploy`.
 - **DVC:** used for large binary assets (`AikiField.pdf`, redesign zips).
   `dvc pull` / `dvc push` to sync tracked binaries.
 - **Git:** remote is `https://github.com/biofool/AikiField.com.git`, branch
@@ -28,7 +30,8 @@ build step and no framework.
 
 - **Preview locally:** open `index.html` in a browser, or run a static server
   (e.g. `python3 -m http.server`).
-- **Deploy:** `./sync.sh dryrun` then `./sync.sh deploy`.
+- **Deploy:** `./sync.sh dryrun` then `./sync.sh deploy` (default prod). Use
+  `--staging` or `--prod` to select the target explicitly.
 - **DVC sync:** `dvc pull` / `dvc push`.
 - **Git:** standard `git add` / `git commit` / `git push` on `main`.
 

@@ -1,0 +1,98 @@
+<svg xml:lang="hi" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 1000" font-family="Noto Sans JP, Noto Sans SC, Noto Sans KR, Noto Naskh Arabic, Noto Sans Hebrew, Noto Sans Devanagari, Public Sans, sans-serif" role="img" aria-labelledby="ai-title ai-desc">
+  <title id="ai-title">AikiField AI चैट — अनुरोध प्रवाह</title>
+  <desc id="ai-desc">ऊर्ध्वाधर पाइपलाइन: सदस्य एक प्रश्न पूछता है, सिस्टम प्रमाणित करता है, कॉर्पस खोजता है, Gemini के माध्यम से उद्धृत उत्तर का मसौदा तैयार करता है, दर-सीमित करता है, और या तो उत्तर लौटाता है या मानव कोच को भेजता है।</desc>
+
+  <defs>
+    <marker id="ai-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#0E4E44"/>
+    </marker>
+    <marker id="ai-arrow-mint" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#5FD3B2"/>
+    </marker>
+    <marker id="ai-arrow-gold" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#9A6B14"/>
+    </marker>
+  </defs>
+
+  <rect width="780" height="1000" fill="#F6F2EA"/>
+
+  <!-- title -->
+  <text x="390" y="44" text-anchor="middle" fill="#16201C" font-family="'Source Serif 4', Georgia, serif" font-size="22" font-weight="600">AikiField AI चैट — अनुरोध प्रवाह</text>
+  <text x="390" y="68" text-anchor="middle" fill="#5A655F" font-size="13">सदस्य के प्रश्न से उद्धृत उत्तर या मानव-कोच एस्केलेशन तक</text>
+
+  <!-- Step 1: Member asks -->
+  <rect x="240" y="96" width="300" height="58" rx="12" fill="#0E4E44"/>
+  <text x="390" y="120" text-anchor="middle" fill="#fff" font-weight="600" font-size="15">1 · सदस्य एक प्रश्न पूछता है</text>
+  <text x="390" y="140" text-anchor="middle" fill="#8FE6C9" font-size="11.2">quantumaikido.com · सार्वजनिक चैट या सदस्य क्षेत्र</text>
+  <path d="M390,154 L390,182" stroke="#0E4E44" stroke-width="2" marker-end="url(#ai-arrow)"/>
+
+  <!-- Step 2: Auth + rate limit (parallel) -->
+  <text x="120" y="200" fill="#5A655F" font-size="11" letter-spacing="0.1em">गेट</text>
+  <rect x="60" y="210" width="280" height="58" rx="10" fill="#ffffff" stroke="#5FD3B2" stroke-width="1.5"/>
+  <text x="200" y="234" text-anchor="middle" fill="#16201C" font-weight="600" font-size="14">2a · प्रमाणित करें</text>
+  <text x="200" y="252" text-anchor="middle" fill="#5A655F" font-size="11.5">ईमेल + पासवर्ड · Google OAuth · Turnstile</text>
+
+  <text x="600" y="200" fill="#5A655F" font-size="11" letter-spacing="0.1em">नियंत्रण</text>
+  <rect x="440" y="210" width="280" height="58" rx="10" fill="#ffffff" stroke="#5FD3B2" stroke-width="1.5"/>
+  <text x="580" y="234" text-anchor="middle" fill="#16201C" font-weight="600" font-size="14">2b · दर सीमा + कतार</text>
+  <text x="580" y="252" text-anchor="middle" fill="#5A655F" font-size="10.9">निर्धारित बजट · कोई उपयोगकर्ता दूसरों को बाहर नहीं निकालता है</text>
+
+  <!-- converge -->
+  <path d="M200,268 L200,290 L390,290 L390,318" stroke="#0E4E44" stroke-width="2" fill="none" marker-end="url(#ai-arrow)"/>
+  <path d="M580,268 L580,290 L390,290" stroke="#0E4E44" stroke-width="2" fill="none"/>
+
+  <!-- Step 3: Corpus search -->
+  <rect x="200" y="320" width="380" height="58" rx="10" fill="#ffffff" stroke="#5FD3B2" stroke-width="1.5"/>
+  <text x="390" y="344" text-anchor="middle" fill="#16201C" font-weight="600" font-size="14">3 · शिक्षण कॉर्पस खोजें</text>
+  <text x="390" y="362" text-anchor="middle" fill="#5A655F" font-size="11.5">SQLite FTS5 · Richard Moon's क्यूरेटेड अंश</text>
+  <path d="M390,378 L390,406" stroke="#0E4E44" stroke-width="2" marker-end="url(#ai-arrow)"/>
+
+  <!-- Step 4: Gemini drafts -->
+  <rect x="200" y="408" width="380" height="58" rx="10" fill="#ffffff" stroke="#5FD3B2" stroke-width="1.5"/>
+  <text x="390" y="432" text-anchor="middle" fill="#16201C" font-weight="600" font-size="14">4 · Gemini ड्राफ्ट उद्धृत उत्तर</text>
+  <text x="390" y="450" text-anchor="middle" fill="#5A655F" font-size="11.5">Gemini Developer API · प्राप्त अंशों में निहित</text>
+  <path d="M390,466 L390,494" stroke="#0E4E44" stroke-width="2" marker-end="url(#ai-arrow)"/>
+
+  <!-- Step 5: Decision -->
+  <polygon points="390,496 540,560 390,624 240,560" fill="#ffffff" stroke="#0E4E44" stroke-width="1.5"/>
+  <text x="390" y="552" text-anchor="middle" fill="#16201C" font-weight="600" font-size="14">5 · क्या यह उत्तर दे सकता है</text>
+  <text x="390" y="572" text-anchor="middle" fill="#16201C" font-weight="600" font-size="14">आत्मविश्वास से?</text>
+
+  <!-- हाँ branch (left) -->
+  <text x="220" y="556" text-anchor="middle" fill="#0E4E44" font-size="13" font-weight="600">हाँ</text>
+  <path d="M240,560 L160,560 L160,650" stroke="#5FD3B2" stroke-width="2" fill="none" marker-end="url(#ai-arrow-mint)"/>
+
+  <!-- NO branch (right) -->
+  <text x="610" y="556" text-anchor="middle" fill="#9A6B14" font-size="13" font-weight="600">नहीं / सदस्य पूछता है</text>
+  <path d="M540,560 L620,560 L620,650" stroke="#9A6B14" stroke-width="2" fill="none" marker-end="url(#ai-arrow-gold)"/>
+
+  <!-- Step 6a: Return answer -->
+  <rect x="40" y="652" width="240" height="70" rx="10" fill="#E6F5EF" stroke="#5FD3B2" stroke-width="1.5"/>
+  <text x="160" y="678" text-anchor="middle" fill="#16201C" font-weight="600" font-size="14">6ए · उद्धृत उत्तर लौटाएं</text>
+  <text x="160" y="698" text-anchor="middle" fill="#5A655F" font-size="11.5">स्रोत पर वापस उद्धरण</text>
+  <text x="160" y="714" text-anchor="middle" fill="#5A655F" font-size="11.5">24/7 · मुफ़्त · बजट के भीतर</text>
+
+  <!-- Step 6b: Escalate -->
+  <rect x="500" y="652" width="240" height="70" rx="10" fill="#FBF1DD" stroke="#9A6B14" stroke-width="1.5"/>
+  <text x="620" y="678" text-anchor="middle" fill="#16201C" font-weight="600" font-size="14">6बी · मानव को एस्केलेट करें</text>
+  <text x="620" y="698" text-anchor="middle" fill="#5A655F" font-size="11.5">वीडियो लिंक हैंडऑफ़</text>
+  <text x="620" y="714" text-anchor="middle" fill="#5A655F" font-size="9.5">संदर्भ/चैट के लिए पूछें कोचों को ईमेल कर सकते हैं</text>
+
+  <!-- both feed back to member -->
+  <path d="M160,722 L160,800 L390,800" stroke="#5A655F" stroke-width="1.5" fill="none" stroke-dasharray="4 4"/>
+  <path d="M620,722 L620,800 L390,800" stroke="#5A655F" stroke-width="1.5" fill="none" stroke-dasharray="4 4"/>
+  <path d="M390,800 L390,828" stroke="#5A655F" stroke-width="1.5" marker-end="url(#ai-arrow)"/>
+
+  <!-- Step 7: Member receives -->
+  <rect x="240" y="830" width="300" height="58" rx="12" fill="#0A3A33"/>
+  <text x="390" y="854" text-anchor="middle" fill="#fff" font-weight="600" font-size="15">7 · सदस्य को प्रतिक्रिया मिलती है</text>
+  <text x="390" y="874" text-anchor="middle" fill="#8FE6C9" font-size="12">उद्धृत उत्तर · या वीडियो के माध्यम से लाइव कोच</text>
+
+  <!-- infrastructure footer -->
+  <line x1="60" y1="916" x2="720" y2="916" stroke="#E0D9CB"/>
+  <text x="390" y="938" text-anchor="middle" fill="#5A655F" font-size="12">
+    <tspan x="390" dy="0" font-weight="600" fill="#0E4E44" font-size="13">बुनियादी ढांचा:</tspan>
+    <tspan x="390" dy="18" font-size="11.5">Cloud Run · Firestore · Secret Manager · Pub/Sub · Cloud Functions · Docker · OpenTofu · DVC + GCS</tspan>
+  </text>
+  <text x="390" y="982" text-anchor="middle" fill="#9A6B14" font-size="11" letter-spacing="0.06em">सभी क्लाउड पर पोर्टेबल · कोई अप्रत्याशित बिल नहीं</text>
+</svg>

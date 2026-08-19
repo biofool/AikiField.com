@@ -169,6 +169,7 @@ cloudflare_ip_check() {
 
 # Pre-parse arguments
 CMD=""
+SCOPE=""
 YES=0
 REMOTE_PATH_FLAG=""
 REMOTE_HOST_ARG=""
@@ -181,6 +182,8 @@ for arg in "$@"; do
     case "$arg" in
         -p) _next_p=1 ;;
         --remote) _next_remote=1 ;;
+        --staging) [ -z "$REMOTE_HOST_ARG" ] && REMOTE_HOST_ARG="staging" ;;
+        --prod)    [ -z "$REMOTE_HOST_ARG" ] && REMOTE_HOST_ARG="prod" ;;
         --purge-all) PURGE_ALL=1 ;;
         -y|--yes) YES=1 ;;
         upload|download|dryrun|deploy|deploy-all|sftp|ftp|logs|report|help)
@@ -626,10 +629,12 @@ case "$CMD" in
             printf "  %-10s - %-38s [%s@%s:%s]\n" "$rn" "$rd" "$ru" "$rh" "$rp"
         done
         echo ""
-        echo "  e.g. ./sync.sh staging deploy   ./sync.sh staging dryrun   ./sync.sh deploy"
+        echo "  e.g. ./sync.sh staging deploy   ./sync.sh --staging deploy   ./sync.sh deploy"
         echo ""
         echo "Options:"
         echo "  --remote NAME|HOST - Specify remote by name or hostname (same as the bare word above)"
+        echo "  --staging          - Select the staging remote (same as bare word 'staging')"
+        echo "  --prod             - Select the production remote (same as bare word 'prod')"
         echo "  -p PATH            - Override remote path"
         echo "  -y / --yes         - Skip confirmation prompts"
         echo ""

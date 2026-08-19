@@ -43,6 +43,81 @@
 
 require __DIR__ . '/includes/coach-config.load.php';
 
+/**
+ * Open-redirect guard for AikiField ?next= redirects.
+ *
+ * Rejects absolute URLs, scheme-relative //evil.com, backslashes (WHATWG
+ * URL treats \ as /, so /%5Cevil.com resolves to https://evil.com/),
+ * percent-encoded backslashes, CR/LF injection, and login.php targets.
+ * Also rejects any path that resolves off-site.
+ */
+function af_safe_redirect(?string $candidate, string $fallback): string
+{
+    $candidate = is_string($candidate) ? trim($candidate) : '';
+    if ($candidate === ''
+        || $candidate[0] !== '/'
+        || str_starts_with($candidate, '//')
+        || parse_url($candidate, PHP_URL_HOST) !== null
+        || parse_url($candidate, PHP_URL_SCHEME) !== null
+        || str_contains($candidate, "\r")
+        || str_contains($candidate, "\n")
+        || af_contains_backslash($candidate)
+    ) {
+        return $fallback;
+    }
+
+    $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+        || (($_SERVER['SERVER_PORT'] ?? '') == 443) ? 'https' : 'http';
+    $host = $_SERVER['HTTP_HOST'] ?? 'aikifield.com';
+    if (af_url_is_offsite($candidate, $scheme, $host)) {
+        return $fallback;
+    }
+
+    $path = parse_url($candidate, PHP_URL_PATH) ?? '';
+    if (str_ends_with($path, '/login.php') || $path === '/login' || str_ends_with($path, '/login.html')) {
+        return $fallback;
+    }
+    return $candidate;
+}
+
+function af_contains_backslash(string $s): bool
+{
+    for ($i = 0; $i < 4; $i++) {
+        if (str_contains($s, '\\')) {
+            return true;
+        }
+        if (str_contains(strtolower($s), '%5c')) {
+            return true;
+        }
+        $next = rawurldecode($s);
+        if ($next === $s) {
+            break;
+        }
+        $s = $next;
+    }
+    return false;
+}
+
+function af_url_is_offsite(string $candidate, string $scheme, string $host): bool
+{
+    if (str_starts_with($candidate, '//')) {
+        return true;
+    }
+    if (parse_url($candidate, PHP_URL_SCHEME) !== null) {
+        return true;
+    }
+    $absolute = $scheme . '://' . $host . $candidate;
+    $parts = parse_url($absolute);
+    $base = parse_url($scheme . '://' . $host);
+    if (!$parts || !$base
+        || ($parts['host'] ?? '') !== ($base['host'] ?? '')
+        || ($parts['port'] ?? null) !== ($base['port'] ?? null)
+    ) {
+        return true;
+    }
+    return false;
+}
+
 // --- Start PHP session with secure cookie settings ---
 // Identical params to the former projects.php handler and to
 // includes/beta-gate.load.php — the session cookie must be valid site-wide
@@ -68,14 +143,7 @@ $qaAlreadyAuthed = !empty($qaEmail) && !empty($qaSessionToken);
 // --- Resolve post-login destination (?next=, else default) ---
 // Only allow same-origin relative paths for ?next= to prevent open redirect.
 $nextRaw = $_GET['next'] ?? '';
-$nextPath = '/beta/';
-if (is_string($nextRaw) && $nextRaw !== '') {
-    // Must start with a single slash and contain no scheme/host/protocol-relative.
-    if (preg_match('#^/[^/]#', $nextRaw) && strpos($nextRaw, '://') === false) {
-        $nextPath = $nextRaw;
-    }
-}
-$loginRedirect = $nextPath;
+$loginRedirect = af_safe_redirect($nextRaw, '/beta/');
 
 // --- If already authed, skip the form and go to ?next= ---
 if ($qaAlreadyAuthed) {

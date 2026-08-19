@@ -18,9 +18,17 @@ demo. The login form + PHP session handler were extracted to the blind
 marketing site. The inline AI Chat (`coach-chat.js`) was removed entirely;
 the live chat lives on `quantumaikido.com`.
 
+### AIQA / krishnafats cutover (#318)
+
+`coach-config.php` `COACH_BACKEND_URL` stays on
+`https://quantum-aikido-coach-6bfpsd3kkq-uc.a.run.app` until AIQA Cloud Run
+exists (AIRichardMoon Phase 8). Do **not** deploy a live URL change in this
+window. Cutover placeholders:
+`~/projects/AIRichardMoon/backend/data/migration/aiqa_frontend_cutover.json`.
+
 AikiField.com remains a **third frontend surface** for the shared coaching
 auth flow (same backend user store, same session contract), alongside
-`quantumaikido.com/web` (PHP frontend) and the `AIRichardMoon/frontend`
+`quantumaikido.com` (PHP frontend) and the `AIRichardMoon/frontend`
 (backend-served static pages) — but the surface is now minimal (beta gating
 only), not a public chat.
 
@@ -71,6 +79,14 @@ same-origin relative paths (starting with a single `/`, no scheme/host) are
 accepted — this prevents open-redirect abuse. Defaults to `/beta/` when
 `?next=` is absent or invalid.
 
+**Security hardening (issue #170, quantumaikido.com):** the QA login guard
+(`pages-functions/functions/login.js` and `includes/dashboard-env.php`) now
+also rejects literal and percent-encoded backslashes (`%5C`) and verifies the
+resolved URL stays same-origin, because WHATWG `URL` parsing treats `\` as
+`/` and would otherwise allow `/%5Cevil.com` to resolve to `https://evil.com/`.
+AikiField's `?next=` guard should be updated to the same standard; it currently
+shares the same relative-path-only intent.
+
 ### Already-authed fast path
 
 If a visitor hits `/login.php` with an existing valid session, PHP redirects
@@ -102,11 +118,39 @@ auth endpoints, session model, invitation codes, or proxy routing MUST update
 all three PRDs and deploy all affected repos together:
 
 1. **This PRD**: `AikiField.com/docs/coach-auth-prd.md` (AikiField frontend surface)
-2. **QA frontend PRD**: `quantumaikido.com/web/docs/coach-dashboard-prd.md`
+2. **QA frontend PRD**: `quantumaikido.com/docs/coach-dashboard-prd.md`
 3. **Backend PRD**: `AIRichardMoon/backend/PRD.md`
 
 Mismatched versions break the auth flow. See `AGENTS.md` (cross-repo
 coordination section) and `~/.codeium/windsurf/memories/global_rules.md`.
+
+**What is N/A for this repo (AIRichardMoon issue #361).** The rule covers the
+login/registration/session/invitation contract. It does **not** oblige an
+update here for backend features AikiField's surface never consumes. This
+surface is the blind `login.php` plus `includes/beta-gate.load.php`; the
+inline AI chat was removed entirely (the live chat lives on
+`quantumaikido.com`), and the only backend calls are `/v1/auth/login`,
+`/v1/auth/register*` and `/v1/auth/check-session`. So the following are
+explicitly N/A here, and a backend change to them needs no AikiField PRD
+update or deploy:
+
+- **Durable chat preferences** (`POST /v1/auth/preferences` —
+  `preferredTone` / `preferredMode` / `preferredGrounding` /
+  `preferredLanguage`): no chat, no preferences UI.
+- **`aeoAccess`**: AikiField ignores it (already recorded in
+  `AIRichardMoon/backend/PRD.md` under `/v1/auth/check-session`).
+- **The `monitor` flag**: not returned by `/v1/auth/check-session`, the only
+  profile-bearing call this repo makes; monitoring accounts call Cloud Run
+  directly.
+
+Recorded so the N/A is explicit rather than silent. Anything touching login,
+registration, the session model, or the proxy remains in scope.
+
+**QA file wrap (2026-08-17):** On quantumaikido.com, form-processor pages
+(`login`, `profile`, `dashboard`, and others) are `.html` files that still
+contain PHP. The public login URL is `/login` (old `/login.php` 301s there).
+AikiField keeps `login.php`; do not rename AikiField's login file as part of
+that QA wrap.
 
 ## Architecture
 
@@ -131,7 +175,7 @@ with no auth surface. The invitation card on `projects.php` links to
 `contact.html`, not to `login.php`.
 
 AikiField's `coach-proxy.php` is a trimmed port of
-`quantumaikido.com/web/coach-proxy.php`. It forwards `/coach-api/*` to
+`quantumaikido.com/coach-proxy.php`. It forwards `/coach-api/*` to
 `COACH_BACKEND_URL`, sends `X-Proxy-Secret` when configured, and rewrites
 OAuth `Location` headers back to `/login.php` (for future social-login
 enablement; social login is currently disabled in `coach-login.js`).
@@ -198,7 +242,15 @@ the shared proxy IP.
   `qa_session_token`, `qa_target_env`, `qa_is_admin` — identical to QA.
 - `coach-login.js` posts `email` + `sessionToken` to `login.php`
   (`action=backend-login`), which verifies against
-  `/v1/auth/check-session` and stores the session.
+  `/v1/auth/check-session` and stores the session. The backend also
+  returns `aeoAccess` and `siteReviewer` on this endpoint (and on
+  login/`/v1/auth/me`); AikiField has no `/AEO/` or `/for-review/`
+  surface and **ignores** both fields. (`siteReviewer` gates
+  quantumaikido.com's `/for-review/*` staff tooling — QA issue #169.)
+  `coach-login.js` still maps `?error=aeo_required` / `admin_required` /
+  `session_expired` to friendly copy and prefers `?redirect=` over the
+  baked `COACH_LOGIN_REDIRECT` (parity with QA Pages; AikiField has no
+  `/AEO/` gate that emits `aeo_required`).
 - On success the user is redirected to the `?next=` target (or `/beta/`).
   The session cookie covers the whole `aikifield.com` origin, so all
   `/beta/` pages read it via `includes/beta-gate.load.php`.
@@ -224,7 +276,7 @@ the shared proxy IP.
 > `/v1/auth/check-session`); only the frontend storage mechanism changes.
 >
 > Reference: https://github.com/biofool/quantumaikido.com/issues/119
-> See also: `quantumaikido.com/web/docs/coach-dashboard-prd.md` §4.1.2
+> See also: `quantumaikido.com/docs/coach-dashboard-prd.md` §4.1.2
 > (Cloudflare Pages Functions migration) and `AIRichardMoon/backend/PRD.md`
 > (backend note — API contract unchanged).
 
@@ -329,7 +381,7 @@ Completed optimizations deployed to production:
 2. Fill in `coach-config.local.php` locally with `COACH_PROXY_SECRET` (and
    `TURNSTILE_SITE_KEY` if using captcha) and deploy it out-of-band (it is
    gitignored). **Never commit it.**
-3. `./sync.sh deploy` — push to production.
+3. `./sync.sh deploy` (or `./sync.sh --prod deploy`) — push to production.
 4. Confirm `https://aikifield.com/projects.php` loads (public, invitation
    card visible, no login form, no `coach-login.js`/`coach-chat.js`).
 5. Confirm `https://aikifield.com/login.php` loads the login form (blind —
@@ -340,14 +392,14 @@ Completed optimizations deployed to production:
 8. Confirm `https://aikifield.com/projects.html` 301-redirects to
    `projects.php`.
 
-**Staging deploy** (`./sync.sh staging deploy` → `aikifield.peec.biz`):
+**Staging deploy** (`./sync.sh staging deploy` or `./sync.sh --staging deploy` → `aikifield.peec.biz`):
 
-1. `./sync.sh staging dryrun` — preview the rsync to
+1. `./sync.sh staging dryrun` (or `./sync.sh --staging dryrun`) — preview the rsync to
    `peec.biz:public_html/aikifield.peec.biz/`.
 2. Ensure `coach-config.staging.php` defines `COACH_STAGING_URL` pointing
    to the staging Cloud Run backend
    (`https://quantum-aikido-coach-staging-6bfpsd3kkq-uc.a.run.app`).
-3. `./sync.sh staging deploy` — push to staging.
+3. `./sync.sh staging deploy` (or `./sync.sh --staging deploy`) — push to staging.
 4. Confirm `https://aikifield.peec.biz/staging/login.php` loads the login
    form with `window.COACH_API_BASE = "/staging/coach-api"` and
    `window.COACH_FORCE_STAGING = true`.
@@ -498,7 +550,7 @@ maintain a three-branch workflow: `dev` → `staging` → `main`:
 - **AikiField `/staging/` folder** — mirrors the QA staging pattern (see
   [Staging folder](#staging-folder-stagingloginphp) above). Contains thin
   wrappers for `login.php` and `coach-proxy.php`. Deployed to
-  `aikifield.peec.biz` via `./sync.sh staging deploy`.
+  `aikifield.peec.biz` via `./sync.sh staging deploy` or `./sync.sh --staging deploy`.
 
 ## Verification
 
@@ -527,7 +579,7 @@ maintain a three-branch workflow: `dev` → `staging` → `main`:
   backend's provider list (requires `COACH_STAGING_URL` in
   `coach-config.staging.php`).
 - Staging: full login → beta-access round-trip on `aikifield.peec.biz`
-  after `./sync.sh staging deploy`.
+  after `./sync.sh staging deploy` or `./sync.sh --staging deploy`.
 - Dashboard: `php -l` on `dashboard.php` and `includes/cloudflare-logs.class.php`.
 - Dashboard: built-in server, `dashboard.php` (no key): returns 401.
 - Dashboard: built-in server, `dashboard.php?key=<key>`: returns 200,

@@ -121,7 +121,7 @@ coaching system: `quantumaikido.com` frontend + `AIRichardMoon` backend). If
 this project is part of such a pair, document the sister repo here and the
 coordination rule (e.g. "auth changes MUST update both PRDs and deploy both
 repos together"). Mismatched frontend/backend versions break the flow. See
-`~/projects/quantumaikido.com/web/AGENTS.md` and
+`~/projects/quantumaikido.com/AGENTS.md` and
 `~/projects/AIRichardMoon/AGENTS.md` for the canonical example.
 
 ## Skills
@@ -146,7 +146,9 @@ pages link to it; it is a fully public marketing page (no auth).
 
 `SITE_CONTENT.md` is the source of truth for all site copy -- update it
 alongside the HTML when text changes. `sync.sh` handles deploy/dry-run
-(`./sync.sh dryrun`, `./sync.sh deploy`). Large binary assets (e.g.
+(`./sync.sh dryrun`, `./sync.sh deploy`). Use `--staging` or `--prod` to
+select the target explicitly: `./sync.sh --staging deploy`,
+`./sync.sh --prod dryrun`. Large binary assets (e.g.
 `AikiField.pdf`, redesign zips) are tracked via DVC, not git directly. The
 `input/` directory holds source materials and is gitignored.
 
@@ -163,7 +165,7 @@ The inline AI Chat (`coach-chat.js`) was removed; the live chat lives on
 
 AikiField.com remains a **third frontend surface** for the shared coaching
 auth flow (same backend user store, same session contract), alongside
-`quantumaikido.com/web` and `AIRichardMoon/frontend` — but the surface is
+`quantumaikido.com` and `AIRichardMoon/frontend` — but the surface is
 now minimal (beta gating only), not a public chat.
 
 Files: `login.php` (blind login + PHP session POST handlers + `?next=`
@@ -177,7 +179,7 @@ redirect), `coach-proxy.php`, `coach-login.js` (loaded by `login.php`),
 `docs/coach-auth-prd.md`.
 
 **Sister repos:**
-- `~/projects/quantumaikido.com/web` — canonical PHP frontend (`login.php`,
+- `~/projects/quantumaikido.com` — canonical PHP frontend (`login.php`,
   `members.php`, `coach-proxy.php`, `coach-login.js`, `coach-chat.js`,
   `coach-auth.css`). PRD: `docs/coach-dashboard-prd.md`.
 - `~/projects/AIRichardMoon` — backend (FastAPI auth + chat, Cloud Run). PRD:
