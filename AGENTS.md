@@ -146,7 +146,9 @@ pages link to it; it is a fully public marketing page (no auth).
 
 `SITE_CONTENT.md` is the source of truth for all site copy -- update it
 alongside the HTML when text changes. `sync.sh` handles deploy/dry-run
-(`./sync.sh dryrun`, `./sync.sh deploy`). Large binary assets (e.g.
+(`./sync.sh dryrun`, `./sync.sh deploy`). Use `--staging` or `--prod` to
+select the target explicitly: `./sync.sh --staging deploy`,
+`./sync.sh --prod dryrun`. Large binary assets (e.g.
 `AikiField.pdf`, redesign zips) are tracked via DVC, not git directly. The
 `input/` directory holds source materials and is gitignored.
 

@@ -79,6 +79,14 @@ same-origin relative paths (starting with a single `/`, no scheme/host) are
 accepted — this prevents open-redirect abuse. Defaults to `/beta/` when
 `?next=` is absent or invalid.
 
+**Security hardening (issue #170, quantumaikido.com):** the QA login guard
+(`pages-functions/functions/login.js` and `includes/dashboard-env.php`) now
+also rejects literal and percent-encoded backslashes (`%5C`) and verifies the
+resolved URL stays same-origin, because WHATWG `URL` parsing treats `\` as
+`/` and would otherwise allow `/%5Cevil.com` to resolve to `https://evil.com/`.
+AikiField's `?next=` guard should be updated to the same standard; it currently
+shares the same relative-path-only intent.
+
 ### Already-authed fast path
 
 If a visitor hits `/login.php` with an existing valid session, PHP redirects
@@ -373,7 +381,7 @@ Completed optimizations deployed to production:
 2. Fill in `coach-config.local.php` locally with `COACH_PROXY_SECRET` (and
    `TURNSTILE_SITE_KEY` if using captcha) and deploy it out-of-band (it is
    gitignored). **Never commit it.**
-3. `./sync.sh deploy` — push to production.
+3. `./sync.sh deploy` (or `./sync.sh --prod deploy`) — push to production.
 4. Confirm `https://aikifield.com/projects.php` loads (public, invitation
    card visible, no login form, no `coach-login.js`/`coach-chat.js`).
 5. Confirm `https://aikifield.com/login.php` loads the login form (blind —
@@ -384,14 +392,14 @@ Completed optimizations deployed to production:
 8. Confirm `https://aikifield.com/projects.html` 301-redirects to
    `projects.php`.
 
-**Staging deploy** (`./sync.sh staging deploy` → `aikifield.peec.biz`):
+**Staging deploy** (`./sync.sh staging deploy` or `./sync.sh --staging deploy` → `aikifield.peec.biz`):
 
-1. `./sync.sh staging dryrun` — preview the rsync to
+1. `./sync.sh staging dryrun` (or `./sync.sh --staging dryrun`) — preview the rsync to
    `peec.biz:public_html/aikifield.peec.biz/`.
 2. Ensure `coach-config.staging.php` defines `COACH_STAGING_URL` pointing
    to the staging Cloud Run backend
    (`https://quantum-aikido-coach-staging-6bfpsd3kkq-uc.a.run.app`).
-3. `./sync.sh staging deploy` — push to staging.
+3. `./sync.sh staging deploy` (or `./sync.sh --staging deploy`) — push to staging.
 4. Confirm `https://aikifield.peec.biz/staging/login.php` loads the login
    form with `window.COACH_API_BASE = "/staging/coach-api"` and
    `window.COACH_FORCE_STAGING = true`.
@@ -542,7 +550,7 @@ maintain a three-branch workflow: `dev` → `staging` → `main`:
 - **AikiField `/staging/` folder** — mirrors the QA staging pattern (see
   [Staging folder](#staging-folder-stagingloginphp) above). Contains thin
   wrappers for `login.php` and `coach-proxy.php`. Deployed to
-  `aikifield.peec.biz` via `./sync.sh staging deploy`.
+  `aikifield.peec.biz` via `./sync.sh staging deploy` or `./sync.sh --staging deploy`.
 
 ## Verification
 
@@ -571,7 +579,7 @@ maintain a three-branch workflow: `dev` → `staging` → `main`:
   backend's provider list (requires `COACH_STAGING_URL` in
   `coach-config.staging.php`).
 - Staging: full login → beta-access round-trip on `aikifield.peec.biz`
-  after `./sync.sh staging deploy`.
+  after `./sync.sh staging deploy` or `./sync.sh --staging deploy`.
 - Dashboard: `php -l` on `dashboard.php` and `includes/cloudflare-logs.class.php`.
 - Dashboard: built-in server, `dashboard.php` (no key): returns 401.
 - Dashboard: built-in server, `dashboard.php?key=<key>`: returns 200,

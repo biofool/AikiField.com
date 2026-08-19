@@ -16,12 +16,26 @@
 
     const API = window.COACH_API_BASE || "/coach-api";
     const FORCE_STAGING = window.COACH_FORCE_STAGING === true;
+
+    function containsBackslash(s) {
+        for (let i = 0; i < 4; i++) {
+            if (s.includes('\\')) return true;
+            if (s.toLowerCase().includes('%5c')) return true;
+            try {
+                const next = decodeURIComponent(s);
+                if (next === s) break;
+                s = next;
+            } catch { break; }
+        }
+        return false;
+    }
+
     // Prefer ?redirect= over the baked COACH_LOGIN_REDIRECT (same open-redirect
     // rules as QA's qa_safe_redirect). Needed when login HTML is static/pre-rendered.
     function safeRedirect(candidate, fallback) {
         if (!candidate || typeof candidate !== "string") return fallback;
         const c = candidate.trim();
-        if (!c || c[0] !== "/" || c.startsWith("//") || c.includes("\r") || c.includes("\n")) {
+        if (!c || c[0] !== "/" || c.startsWith("//") || c.includes("\r") || c.includes("\n") || containsBackslash(c)) {
             return fallback;
         }
         try {

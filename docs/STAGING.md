@@ -12,8 +12,9 @@ the coaching-auth backend and the contact form both made safe by default.
   `public_html/aikifield.peec.biz/` on `peec.biz` (same host, same SSH key,
   same rsync excludes as prod). `./sync.sh deploy` (no remote given) still
   deploys to prod at `public_html/aikifield/`, unchanged. `staging`/`prod`
-  are recognized as a bare word anywhere in the arguments — e.g.
-  `./sync.sh staging dryrun`, `./sync.sh staging upload`,
+  can be selected as a bare word anywhere in the arguments, or with explicit
+  `--staging`/`--prod` flags — e.g. `./sync.sh staging dryrun`,
+  `./sync.sh --staging deploy`, `./sync.sh --prod upload`,
   `./sync.sh --remote staging deploy` all work the same way. Run
   `./sync.sh help` to see both remotes listed.
 

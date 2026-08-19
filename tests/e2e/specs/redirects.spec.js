@@ -97,6 +97,22 @@ test.describe('login.php redirect logic', () => {
     }
   });
 
+  test('backslash and percent-encoded backslash redirect targets are refused (issue #170)', async ({ request }) => {
+    await establishSession(request, { email: TEST_EMAIL });
+    for (const evil of [
+      '/\\evil.example.com/',
+      '/%5Cevil.example.com/',
+      '/%255Cevil.example.com/',
+    ]) {
+      const resp = await request.get(
+        `/login.php?next=${encodeURIComponent(evil)}`,
+        NO_REDIRECT,
+      );
+      expect(resp.status()).toBe(302);
+      expect(resp.headers()['location']).toBe('/beta/');
+    }
+  });
+
   test('a login.php redirect target does not loop back to login', async ({ request }) => {
     await establishSession(request, { email: TEST_EMAIL });
     const resp = await request.get(
@@ -108,8 +124,7 @@ test.describe('login.php redirect logic', () => {
     // but the already-authed fast path redirects to it. The important thing
     // is no infinite loop — the redirect goes somewhere, not back to login
     // with a next=login param.
-    const location = resp.headers()['location'];
-    expect(location).not.toContain('next=');
+    expect(resp.headers()['location']).toBe('/beta/');
   });
 });
 
