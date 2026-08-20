@@ -139,8 +139,18 @@ function contact_rate_limited(string $ip, int $maxRequests = 5, int $windowSecon
 }
 
 if (contact_rate_limited(contact_client_ip())) {
+    // Serve a real 429 response instead of redirecting — the redirect
+    // would force a 302, discarding the 429 status code (issue #45).
     http_response_code(429);
-    redirect_with_status('error', 'Too many submissions. Please wait a few minutes and try again.');
+    header('Retry-After: 600');
+    header('Content-Type: text/html; charset=utf-8');
+    echo '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">';
+    echo '<title>429 Too Many Requests</title></head><body>';
+    echo '<h1>Too Many Requests</h1>';
+    echo '<p>You have submitted this form too many times. Please wait a few minutes and try again.</p>';
+    echo '<p><a href="/contact.html">Back to contact page</a></p>';
+    echo '</body></html>';
+    exit;
 }
 
 // Honeypot field — if filled, it's a bot

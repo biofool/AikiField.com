@@ -75,6 +75,7 @@ EXCLUDES=(
     --exclude='*.dvc'
     --exclude='scripts/'
     --exclude='data/audit/'
+    --exclude='data/ratelimit/'
     --exclude='.DS_Store'
     --exclude='Thumbs.db'
     --exclude='*.tmp'
