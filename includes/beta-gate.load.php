@@ -78,13 +78,24 @@ $betaAuthed      = !empty($qaEmail) && !empty($qaSessionToken);
 // request is wasteful, so use a wall-clock interval stored alongside the
 // token (login.php sets qa_session_checked_at at sign-in).
 const BETA_REVALIDATE_INTERVAL_SECONDS = 6 * 3600; // re-check at most every 6h
+// While the backend is unreachable, retrying on *every* request would turn a
+// backend outage into a 10s-per-request (CURLOPT_TIMEOUT) storm across all of
+// /beta/ on shared hosting with a small worker pool. Fail open (don't log
+// anyone out) but back off: only retry the check once per this interval,
+// tracked separately from qa_session_checked_at so a failed attempt doesn't
+// look like — or block — a later successful one.
+const BETA_REVALIDATE_RETRY_BACKOFF_SECONDS = 60;
 
 if ($betaAuthed) {
     $lastChecked = (int) ($_SESSION['qa_session_checked_at'] ?? 0);
-    if ((time() - $lastChecked) > BETA_REVALIDATE_INTERVAL_SECONDS) {
+    $lastFailedAt = (int) ($_SESSION['qa_session_check_failed_at'] ?? 0);
+    $due = (time() - $lastChecked) > BETA_REVALIDATE_INTERVAL_SECONDS;
+    $backedOff = $lastFailedAt !== 0 && (time() - $lastFailedAt) < BETA_REVALIDATE_RETRY_BACKOFF_SECONDS;
+    if ($due && !$backedOff) {
         $stillValid = qa_revalidate_beta_session($qaEmail, $qaSessionToken);
         if ($stillValid === true) {
             $_SESSION['qa_session_checked_at'] = time();
+            unset($_SESSION['qa_session_check_failed_at']);
         } elseif ($stillValid === false) {
             // Backend explicitly said the session is no longer valid
             // (disabled account, rotated/expired token, de-invited, etc.) —
@@ -92,11 +103,14 @@ if ($betaAuthed) {
             $_SESSION = [];
             session_destroy();
             $betaAuthed = false;
+        } else {
+            // $stillValid === null means the backend call itself failed
+            // (network/timeout/non-200) - fail open rather than lock every
+            // /beta/ visitor out on a transient backend hiccup, but record the
+            // failure so we back off instead of retrying on every request
+            // while the outage lasts.
+            $_SESSION['qa_session_check_failed_at'] = time();
         }
-        // $stillValid === null means the backend call itself failed
-        // (network/timeout/non-200) - fail open rather than lock every /beta/
-        // visitor out on a transient backend hiccup; qa_session_checked_at is
-        // left unset so the next request retries the check.
     }
 }
 

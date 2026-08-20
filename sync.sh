@@ -548,7 +548,17 @@ case "$CMD" in
             exit $RSYNC_STATUS
         fi
         echo ""
-        if [[ $PURGE_ALL -eq 1 ]]; then
+        # scripts/cloudflare_migrate.py's ZONE/ZONE_ID are hardcoded to the
+        # production aikifield.com zone — REMOTE_NAME is never consulted by
+        # the script itself. Deploying to any other remote (e.g. the
+        # aikifield.peec.biz staging subdomain, which isn't on that zone at
+        # all) must not purge prod's edge cache, so gate the purge call here
+        # rather than in the script. `deploy-all` (below) invokes this same
+        # `deploy` case once per remote, so this also protects it.
+        if [[ "$REMOTE_NAME" != "prod" ]]; then
+            echo "Skipping Cloudflare purge — remote '${REMOTE_NAME:-<unnamed>}' is not 'prod'"
+            echo "(scripts/cloudflare_migrate.py only ever targets the production zone)."
+        elif [[ $PURGE_ALL -eq 1 ]]; then
             # --purge-all: purge the entire zone cache regardless of what
             # rsync changed. Use this when the origin already has the right
             # files but the edge is serving stale content (e.g. a prior
