@@ -33,7 +33,7 @@
   <div class="af-header__inner">
     <a href="index.html" class="af-brand">
       <span class="af-brand__icon" aria-hidden="true">A</span>
-      <span class="af-brand__text">AikiField</span>
+      <span class="af-brand__text" data-i18n="contact.aikifield">AikiField</span>
     </a>
     <input type="checkbox" id="af-nav-check" class="af-nav-toggle-check">
     <label for="af-nav-check" class="af-nav__toggle" aria-label="Menu" data-i18n-attr="aria-label:nav.toggle_menu">&#9776;</label>
@@ -65,47 +65,47 @@
         <aside class="af-contact-split__booking">
           <p class="af-eyebrow" data-i18n="contact.eyebrow_contact">Contact</p>
           <h1 class="af-h1 af-contact-split__title" data-i18n="contact.start_a_conversation">Start a Conversation</h1>
-          <p class="af-lead af-lead--20">Every security breakthrough begins with an inquiry.</p>
+          <p class="af-lead af-lead--20" data-i18n="contact.every_security_breakthrough_begins_with">Every security breakthrough begins with an inquiry.</p>
           <span class="af-contact-card__icon" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none" stroke="#F6F2EA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
           </span>
-          <div class="af-contact-split__expect">
+          <div class="af-contact-split__expect" data-i18n="contact.no_obligation_2">
             <h3 class="af-contact-split__expect-title" data-i18n="common.what_to_expect">What to Expect</h3>
             <ul class="af-contact-card__list">
-              <li>A complimentary discovery conversation (30&ndash;45 minutes)</li>
-              <li>An assessment of your current security posture and leadership context</li>
-              <li>A tailored proposal for an engagement that fits your stage and needs</li>
-              <li>No obligation</li>
+              <li data-i18n="contact.a_complimentary_discovery_conversation">A complimentary discovery conversation (30&ndash;45 minutes)</li>
+              <li data-i18n="contact.an_assessment_of_your_current">An assessment of your current security posture and leadership context</li>
+              <li data-i18n="contact.a_tailored_proposal_for_an">A tailored proposal for an engagement that fits your stage and needs</li>
+              <li data-i18n="contact.no_obligation">No obligation</li>
             </ul>
           </div>
-          <div class="af-contact-split__proof" aria-label="Results from real engagements">
-            <div class="af-metric"><strong>$5M</strong><span>Blocked sales channel recovered by resolving customer security objections.</span></div>
-            <div class="af-metric"><strong>87%</strong><span>Customer-reported security risk eliminated in three thirty-minute meetings.</span></div>
-            <div class="af-metric"><strong>21 &rarr; 3 days</strong><span>Vulnerability remediation time cut with AI-assisted triage workflows.</span></div>
+          <div class="af-contact-split__proof" aria-label="Results from real engagements" data-i18n="contact.vulnerability_remediation_time_cut_with_3">
+            <div class="af-metric" data-i18n="contact.blocked_sales_channel_recovered_by_2"><strong>$5M</strong><span data-i18n="contact.blocked_sales_channel_recovered_by">Blocked sales channel recovered by resolving customer security objections.</span></div>
+            <div class="af-metric" data-i18n="contact.customer_reported_security_risk_2"><strong>87%</strong><span data-i18n="contact.customer_reported_security_risk">Customer-reported security risk eliminated in three thirty-minute meetings.</span></div>
+            <div class="af-metric" data-i18n="contact.vulnerability_remediation_time_cut_with_2"><strong>21 &rarr; 3 days</strong><span data-i18n="contact.vulnerability_remediation_time_cut_with">Vulnerability remediation time cut with AI-assisted triage workflows.</span></div>
           </div>
         </aside>
 
         <!-- RIGHT: Send a Message form -->
         <div class="af-contact-split__form-wrap">
-          <div class="af-section-header af-section-header--tight">
+          <div class="af-section-header af-section-header--tight" data-i18n="contact.tell_us_a_bit_about_2">
             <h2 class="af-h2 af-h2--sm" data-i18n="contact.send_a_message">Send a Message</h2>
-            <p class="af-lead af-lead--20">Tell us a bit about your organization and what you&rsquo;re looking for. We&rsquo;ll get back to you within one business day.</p>
+            <p class="af-lead af-lead--20" data-i18n="contact.tell_us_a_bit_about">Tell us a bit about your organization and what you&rsquo;re looking for. We&rsquo;ll get back to you within one business day.</p>
           </div>
 
           <!-- Status messages (populated by query param from contact-handler.php) -->
-          <div id="form-success" class="af-form-status af-form-status--success" hidden role="status">
+          <div id="form-success" class="af-form-status af-form-status--success" hidden role="status" data-i18n="contact.if_this_is_urgent_go_3">
             <strong>Thank you &mdash; your message has been sent.</strong> We&rsquo;ll get back to you within one business day.
-            <div class="af-booking-cta">
-              <p>If this is urgent, go ahead and book a time slot directly:</p>
+            <div class="af-booking-cta" data-i18n="contact.if_this_is_urgent_go_2">
+              <p data-i18n="contact.if_this_is_urgent_go">If this is urgent, go ahead and book a time slot directly:</p>
               <a href="https://outlook.office.com/bookwithme/user/57e8077433f14fbba90ce41be8eb815a@vigilent.com/meetingtype/c_nGn2-J1U2rVDW7BkFQXw2?bookingcode=06baa461-3ceb-48af-847d-feb43e809a97&anonymous&ismsaljsauthenabled&ep=mlink"
                  class="af-btn af-btn--primary af-btn--sm"
                  target="_blank" rel="noopener">Book a time now &rarr;</a>
             </div>
           </div>
-          <div id="form-error" class="af-form-status af-form-status--error" hidden role="alert">
+          <div id="form-error" class="af-form-status af-form-status--error" hidden role="alert" data-i18n="contact.if_this_is_urgent_go_6">
             <strong>Something went wrong.</strong> <span id="form-error-msg"></span>
-            <div class="af-booking-cta">
-              <p>If this is urgent, go ahead and book a time slot directly:</p>
+            <div class="af-booking-cta" data-i18n="contact.if_this_is_urgent_go_5">
+              <p data-i18n="contact.if_this_is_urgent_go_4">If this is urgent, go ahead and book a time slot directly:</p>
               <a href="https://outlook.office.com/bookwithme/user/57e8077433f14fbba90ce41be8eb815a@vigilent.com/meetingtype/c_nGn2-J1U2rVDW7BkFQXw2?bookingcode=06baa461-3ceb-48af-847d-feb43e809a97&anonymous&ismsaljsauthenabled&ep=mlink"
                  class="af-btn af-btn--primary af-btn--sm"
                  target="_blank" rel="noopener">Book a time now &rarr;</a>
@@ -162,10 +162,10 @@
 <!-- FOOTER -->
 <footer class="af-footer">
   <div class="af-footer__grid">
-    <div>
-      <div class="af-footer__brand-row">
+    <div data-i18n="contact.aikifield_4">
+      <div class="af-footer__brand-row" data-i18n="contact.aikifield_3">
         <span class="af-footer__brand-icon" aria-hidden="true">A</span>
-        <span class="af-footer__brand-text">AikiField</span>
+        <span class="af-footer__brand-text" data-i18n="contact.aikifield_2">AikiField</span>
       </div>
       <p class="af-footer__tagline" data-i18n="footer.tagline">Security leadership for product companies. Fractional CISO, AI-assisted security engineering, and presence-based executive coaching.</p>
     </div>
