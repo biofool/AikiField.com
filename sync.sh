@@ -18,6 +18,68 @@ fi
 #  always defaults to prod, matching the script's historical behavior.
 # ============================================
 
+VERBOSE=false
+DEBUG=false
+
+log_v() { [[ "$VERBOSE" == true ]] && echo "[verbose] $*" >&2; }
+log_d() { [[ "$DEBUG" == true ]] && echo "[debug] $*" >&2; }
+
+show_help() {
+    echo "Usage: $0 [remote] [command] [options]"
+    echo ""
+    echo "Commands:"
+    echo "  deploy       - git pull + git push + rsync to the remote (no prompt)"
+    echo "  deploy-all   - Deploy to BOTH staging and prod in sequence (can't forget one)"
+    echo "  upload       - Upload to server (dry-run preview, then confirm)"
+    echo "  download     - Download from server (dry-run preview, then confirm)"
+    echo "  dryrun       - Show what upload would do (no prompt)"
+    echo "  dryrun download - Show what download would do (no prompt)"
+    echo "  sftp         - Open an interactive SFTP session"
+    echo "  logs         - Fetch latest server access logs only"
+    echo "  report       - Fetch logs and generate statistics report"
+    echo "  help         - Show this help message"
+    echo ""
+    echo "Standard flags:"
+    echo "  -h, --help     - Show this help message and exit"
+    echo "  -v, --verbose  - Show verbose log messages"
+    echo "  -d, --debug    - Enable bash trace (set -x)"
+    echo ""
+    echo "Options:"
+    echo "  --purge-all  - Purge the entire Cloudflare edge cache after deploy"
+    echo "                 (use when rsync reports no changes but cache may be stale)"
+    echo "  -y, --yes    - Skip confirmation prompts"
+    echo ""
+    echo "Remotes (bare word, anywhere in the arguments — default: prod):"
+    for entry in "${KNOWN_REMOTES[@]}"; do
+        IFS='|' read -r rn rh ru rp rd <<< "$entry"
+        printf "  %-10s - %-38s [%s@%s:%s]\n" "$rn" "$rd" "$ru" "$rh" "$rp"
+    done
+    echo ""
+    echo "  e.g. ./sync.sh staging deploy   ./sync.sh --staging deploy   ./sync.sh deploy"
+    echo ""
+    echo "Options:"
+    echo "  --remote NAME|HOST - Specify remote by name or hostname (same as the bare word above)"
+    echo "  --staging          - Select the staging remote (same as bare word 'staging')"
+    echo "  --prod             - Select the production remote (same as bare word 'prod')"
+    echo "  -p PATH            - Override remote path"
+    echo "  -y / --yes         - Skip confirmation prompts"
+    echo ""
+    echo "Environment:"
+    echo "  SKIP_PHP_LINT=1 - Skip the pre-deploy PHP syntax check (emergencies only)"
+    echo ""
+    echo "Remote: ${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_PATH}${REMOTE_NAME:+ (name: $REMOTE_NAME)}"
+    echo ""
+    echo "Excluded from sync: .git/, input/, .devin/, *.md, *.py, *.sh, sync.sh, SITE_CONTENT.md"
+    echo "Also excluded from every remote except staging: coach-config.staging.php"
+}
+
+die_usage() {
+    echo "Error: $*" >&2
+    echo "" >&2
+    show_help >&2
+    exit 1
+}
+
 LOCAL_PATH="$(cd "$(dirname "$0")" && pwd)/"
 REMOTE_HOST="peec.biz"
 REMOTE_USER="peecbiz"
@@ -181,6 +243,9 @@ for arg in "$@"; do
     if [[ $_next_p -eq 1 ]]; then REMOTE_PATH_FLAG="$arg"; _next_p=0; continue; fi
     if [[ $_next_remote -eq 1 ]]; then REMOTE_HOST_ARG="$arg"; _next_remote=0; continue; fi
     case "$arg" in
+        -h|--help)    show_help; exit 0 ;;
+        -v|--verbose) VERBOSE=true ;;
+        -d|--debug)   DEBUG=true; set -x ;;
         -p) _next_p=1 ;;
         --remote) _next_remote=1 ;;
         --staging) [ -z "$REMOTE_HOST_ARG" ] && REMOTE_HOST_ARG="staging" ;;
@@ -200,6 +265,11 @@ for arg in "$@"; do
                 fi
             done
             if [[ $_is_remote_name -eq 0 ]]; then
+                # Unrecognized flag (starts with -) is an error; bare words
+                # fall through as SCOPE to preserve existing behavior.
+                if [[ "$arg" == -* ]]; then
+                    die_usage "unrecognized option: $arg"
+                fi
                 [ -n "$CMD" ] && [ -z "$SCOPE" ] && SCOPE="$arg"
             fi
             ;;
@@ -245,6 +315,7 @@ if [[ "$REMOTE_NAME" != "staging" ]]; then
 fi
 
 fetch_logs() {
+    log_v "Fetching latest log files from peec.biz"
     echo "Fetching latest log files..."
     mkdir -p "$LOGS_DIR"
 
@@ -426,6 +497,7 @@ print()
 
 case "$CMD" in
     upload)
+        log_v "Upload (dry-run preview then confirm) to ${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_PATH}"
         echo ""
         echo "========================================"
         echo "  DRY RUN - Preview of upload changes"
@@ -468,6 +540,7 @@ case "$CMD" in
         ;;
 
     dryrun)
+        log_v "Dry-run preview (scope: ${SCOPE:-upload}) to ${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_PATH}"
         echo ""
         echo "========================================"
         echo "  DRY RUN - Preview only (no changes)"
@@ -526,6 +599,7 @@ case "$CMD" in
         ;;
 
     deploy)
+        log_v "Deploying to ${REMOTE_NAME:-prod} (${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_PATH})"
         echo "========================================"
         echo "  DEPLOY — git pull + push + rsync to peec.biz"
         echo "========================================"
@@ -615,47 +689,7 @@ case "$CMD" in
         ;;
 
     help)
-        echo "Usage: $0 [remote] [command] [options]"
-        echo ""
-        echo "Commands:"
-        echo "  deploy       - git pull + git push + rsync to the remote (no prompt)"
-        echo "  deploy-all   - Deploy to BOTH staging and prod in sequence (can't forget one)"
-        echo "  upload       - Upload to server (dry-run preview, then confirm)"
-        echo "  download     - Download from server (dry-run preview, then confirm)"
-        echo "  dryrun       - Show what upload would do (no prompt)"
-        echo "  dryrun download - Show what download would do (no prompt)"
-        echo "  sftp         - Open an interactive SFTP session"
-        echo "  logs         - Fetch latest server access logs only"
-        echo "  report       - Fetch logs and generate statistics report"
-        echo "  help         - Show this help message"
-        echo ""
-        echo "Options:"
-        echo "  --purge-all  - Purge the entire Cloudflare edge cache after deploy"
-        echo "                 (use when rsync reports no changes but cache may be stale)"
-        echo "  -y, --yes    - Skip confirmation prompts"
-        echo ""
-        echo "Remotes (bare word, anywhere in the arguments — default: prod):"
-        for entry in "${KNOWN_REMOTES[@]}"; do
-            IFS='|' read -r rn rh ru rp rd <<< "$entry"
-            printf "  %-10s - %-38s [%s@%s:%s]\n" "$rn" "$rd" "$ru" "$rh" "$rp"
-        done
-        echo ""
-        echo "  e.g. ./sync.sh staging deploy   ./sync.sh --staging deploy   ./sync.sh deploy"
-        echo ""
-        echo "Options:"
-        echo "  --remote NAME|HOST - Specify remote by name or hostname (same as the bare word above)"
-        echo "  --staging          - Select the staging remote (same as bare word 'staging')"
-        echo "  --prod             - Select the production remote (same as bare word 'prod')"
-        echo "  -p PATH            - Override remote path"
-        echo "  -y / --yes         - Skip confirmation prompts"
-        echo ""
-        echo "Environment:"
-        echo "  SKIP_PHP_LINT=1 - Skip the pre-deploy PHP syntax check (emergencies only)"
-        echo ""
-        echo "Remote: ${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_PATH}${REMOTE_NAME:+ (name: $REMOTE_NAME)}"
-        echo ""
-        echo "Excluded from sync: .git/, input/, .devin/, *.md, *.py, *.sh, sync.sh, SITE_CONTENT.md"
-        echo "Also excluded from every remote except staging: coach-config.staging.php"
+        show_help
         ;;
 
     "")
