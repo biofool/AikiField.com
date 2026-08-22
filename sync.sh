@@ -21,8 +21,8 @@ fi
 VERBOSE=false
 DEBUG=false
 
-log_v() { [[ "$VERBOSE" == true ]] && echo "[verbose] $*" >&2; }
-log_d() { [[ "$DEBUG" == true ]] && echo "[debug] $*" >&2; }
+log_v() { [[ "$VERBOSE" == true ]] || return 0; echo "[verbose] $*" >&2; }
+log_d() { [[ "$DEBUG" == true ]] || return 0; echo "[debug] $*" >&2; }
 
 show_help() {
     echo "Usage: $0 [remote] [command] [options]"
