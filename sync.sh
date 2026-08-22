@@ -24,6 +24,54 @@ DEBUG=false
 log_v() { [[ "$VERBOSE" == true ]] || return 0; echo "[verbose] $*" >&2; }
 log_d() { [[ "$DEBUG" == true ]] || return 0; echo "[debug] $*" >&2; }
 
+# Require a specific git branch before deploying to staging.
+# Auto-pulls (fast-forward only) if local is behind origin. Pass --no-pull
+# to skip the auto-pull and deploy the local HEAD as-is.
+require_git_branch() {
+    local expected="$1"
+    local _script_dir
+    _script_dir="$(dirname "$0")"
+    local current
+    current="$(git -C "$_script_dir" rev-parse --abbrev-ref HEAD 2>/dev/null || true)"
+    if [[ -z "$current" || "$current" == "HEAD" ]]; then
+        echo "ERROR: Detached HEAD — check out '${expected}' before deploying." >&2
+        echo "  Run: git checkout ${expected} && git pull origin ${expected}" >&2
+        exit 1
+    fi
+    if [[ "$current" != "$expected" ]]; then
+        echo "ERROR: Staging deploy must run from the '${expected}' branch (currently on '${current}')." >&2
+        echo "  Run: git checkout ${expected} && git pull origin ${expected}" >&2
+        exit 1
+    fi
+
+    # Fetch and check if local is behind origin
+    git -C "$_script_dir" fetch origin "$expected" --quiet 2>/dev/null || {
+        echo "  ⚠ WARNING: Could not fetch origin/${expected} — deploying local '${expected}' as-is." >&2
+        return 0
+    }
+    local local_sha remote_sha
+    local_sha="$(git -C "$_script_dir" rev-parse HEAD)"
+    remote_sha="$(git -C "$_script_dir" rev-parse "origin/${expected}" 2>/dev/null || true)"
+    if [[ -n "$remote_sha" && "$local_sha" != "$remote_sha" ]]; then
+        if git -C "$_script_dir" merge-base --is-ancestor HEAD "origin/${expected}" 2>/dev/null; then
+            # Local is behind origin — auto-pull unless --no-pull
+            if [[ "$NO_PULL" -eq 1 ]]; then
+                echo "  ⚠ WARNING: Local '${expected}' is behind origin/${expected} (--no-pull set) — deploying stale local HEAD." >&2
+            else
+                echo "Pulling latest ${expected} from origin..."
+                git -C "$_script_dir" pull --ff-only origin "$expected" --quiet 2>/dev/null || {
+                    echo "ERROR: git pull failed (merge conflict?). Resolve manually: git pull origin ${expected}" >&2
+                    exit 1
+                }
+                echo "  ✓ Pulled latest ${expected} ($(git -C "$_script_dir" rev-parse --short=8 HEAD))"
+            fi
+        else
+            echo "  ⚠ WARNING: Local '${expected}' has commits not on origin/${expected} — deploying unpushed local HEAD." >&2
+        fi
+    fi
+    echo "  ✓ Git branch: ${expected} ($(git -C "$_script_dir" rev-parse --short=8 HEAD))"
+}
+
 show_help() {
     echo "Usage: $0 [remote] [command] [options]"
     echo ""
@@ -63,6 +111,7 @@ show_help() {
     echo "  --prod             - Select the production remote (same as bare word 'prod')"
     echo "  -p PATH            - Override remote path"
     echo "  -y / --yes         - Skip confirmation prompts"
+    echo "  --no-pull          - Skip auto-pull of staging branch (deploy local HEAD as-is)"
     echo ""
     echo "Environment:"
     echo "  SKIP_PHP_LINT=1 - Skip the pre-deploy PHP syntax check (emergencies only)"
@@ -234,6 +283,7 @@ cloudflare_ip_check() {
 CMD=""
 SCOPE=""
 YES=0
+NO_PULL=0
 REMOTE_PATH_FLAG=""
 REMOTE_HOST_ARG=""
 _next_p=0
@@ -251,6 +301,7 @@ for arg in "$@"; do
         --staging) [ -z "$REMOTE_HOST_ARG" ] && REMOTE_HOST_ARG="staging" ;;
         --prod)    [ -z "$REMOTE_HOST_ARG" ] && REMOTE_HOST_ARG="prod" ;;
         --purge-all) PURGE_ALL=1 ;;
+        --no-pull)   NO_PULL=1 ;;
         -y|--yes) YES=1 ;;
         upload|download|dryrun|deploy|deploy-all|sftp|ftp|logs|report|help)
             [ -z "$CMD" ] && CMD="$arg"
@@ -567,12 +618,13 @@ case "$CMD" in
         echo "  DEPLOY-ALL — staging + prod in sequence"
         echo "========================================"
         echo ""
+        # Staging deploys must run from the 'staging' git branch — auto-pull
+        # the latest from origin if local is behind (unless --no-pull).
+        require_git_branch "staging"
+        echo ""
         php_lint
         echo ""
         cloudflare_ip_check
-        echo ""
-        echo "Pulling from remote..."
-        git -C "$(dirname "$0")" pull --no-rebase || { echo "ERROR: git pull failed — resolve conflicts before deploying."; exit 1; }
         echo ""
         echo "Pushing to git remote..."
         git -C "$(dirname "$0")" push
@@ -604,6 +656,12 @@ case "$CMD" in
         echo "  DEPLOY — git pull + push + rsync to peec.biz"
         echo "========================================"
         echo ""
+        # Staging deploys must run from the 'staging' git branch — auto-pull
+        # the latest from origin if local is behind (unless --no-pull).
+        if [[ "$REMOTE_NAME" == "staging" ]]; then
+            require_git_branch "staging"
+            echo ""
+        fi
         php_lint
         echo ""
         cloudflare_ip_check
