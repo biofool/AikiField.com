@@ -50,6 +50,14 @@ The login page uses a **two-column layout** (`.coach-login-layout`):
   caveats are always visible and sticky. On mobile (<768px) the caveats
   appear first as a collapsible section with a toggle.
 
+**Not yet ported:** quantumaikido.com changed the *inner* `.coach-login-forms`
+layout so sign-in and registration render side by side (≥900px) instead of
+toggling between them — see `docs/coach-dashboard-prd.md` §4.1.1 "Layout
+(updated)" in that repo. AikiField's `coach-login.js`/`login.php`/
+`coach-auth.css` are a ported copy and have **not** received this change yet;
+they still use the old toggle-based single-form view. Port before relying on
+side-by-side behavior here.
+
 ### Copy (login.php)
 
 - Login heading: "Sign In"
