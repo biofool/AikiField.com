@@ -16,14 +16,71 @@
 # or if the deploy path (rsync/scp) depends on HTTP access to the origin.
 set -euo pipefail
 
+VERBOSE=false
+DEBUG=false
+
+log_v() { [[ "$VERBOSE" == true ]] || return 0; echo "[verbose] $*" >&2; }
+log_d() { [[ "$DEBUG" == true ]] || return 0; echo "[debug] $*" >&2; }
+
+show_help() {
+    cat << 'HELP'
+generate_cf_ip_allowlist.sh — Fetch Cloudflare's published IP ranges and
+emit an Apache .htaccess fragment that restricts origin access to those
+ranges only. Part of issue #33 (origin lockdown, Phase 5).
+
+Usage:
+  ./scripts/generate_cf_ip_allowlist.sh                    # print to stdout
+  ./scripts/generate_cf_ip_allowlist.sh --output .htaccess.cf-allow  # write to file
+
+Standard flags:
+  -h, --help     Show this help message and exit
+  -v, --verbose  Show verbose log messages
+  -d, --debug    Enable bash trace (set -x)
+
+Options:
+  --output FILE  Write the generated fragment to FILE instead of stdout
+
+The generated fragment uses mod_authz_host (Apache 2.4) Require ip
+directives, which natively support CIDR notation for both IPv4 and IPv6.
+
+IMPORTANT: This script does NOT modify .htaccess directly. It generates
+a fragment you must review and manually include. Enabling the allow-list
+without testing can take the site offline if Cloudflare's ranges change
+or if the deploy path (rsync/scp) depends on HTTP access to the origin.
+HELP
+}
+
+die_usage() {
+    echo "Error: $*" >&2
+    echo "" >&2
+    show_help >&2
+    exit 1
+}
+
+# Pre-parse standard flags (-h/-v/-d)
+_remaining_args=()
+for _arg in "$@"; do
+    case "$_arg" in
+        -h|--help)    show_help; exit 0 ;;
+        -v|--verbose) VERBOSE=true ;;
+        -d|--debug)   DEBUG=true; set -x ;;
+        *)            _remaining_args+=("$_arg") ;;
+    esac
+done
+set -- "${_remaining_args[@]}"
+unset _arg _remaining_args
+
 OUTPUT_FILE=""
 if [[ "${1:-}" == "--output" ]]; then
   OUTPUT_FILE="${2:?--output requires a file path}"
+elif [[ $# -gt 0 ]]; then
+  die_usage "unrecognized argument: $1"
 fi
 
 CF_IPV4_URL="https://www.cloudflare.com/ips-v4"
 CF_IPV6_URL="https://www.cloudflare.com/ips-v6"
 
+log_v "Fetching Cloudflare IP ranges from $CF_IPV4_URL and $CF_IPV6_URL"
 echo "Fetching Cloudflare IP ranges..." >&2
 IPV4=$(curl -sS --fail "$CF_IPV4_URL" || echo "")
 IPV6=$(curl -sS --fail "$CF_IPV6_URL" || echo "")
