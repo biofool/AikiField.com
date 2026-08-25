@@ -23,6 +23,35 @@ $REDIRECT_URL = 'contact.html';
 // CAPTCHA shares one config source with login.php instead of a second one.
 require __DIR__ . '/includes/coach-config.load.php';
 
+// Cloudflare edge-IP trust decision (qa_is_cloudflare_ip / QA_CLOUDFLARE_*_RANGES),
+// shared with coach-proxy.php. Needed here so the rate limiter and the "IP:"
+// line in the notification email key on the real visitor address instead of
+// the Cloudflare edge PoP's address (see contact_client_ip() below).
+require __DIR__ . '/includes/cloudflare-ips.php';
+
+/**
+ * The address to key rate limiting (and the notification email's "IP:" line)
+ * on. REMOTE_ADDR is the real, unspoofable TCP peer — but for traffic that
+ * actually came through Cloudflare, that's the edge PoP's address, not the
+ * visitor's, so every visitor hitting the same PoP would share one rate-limit
+ * bucket. Only trust the client-supplied CF-Connecting-IP header when
+ * REMOTE_ADDR itself is a genuine Cloudflare edge IP (qa_is_cloudflare_ip(),
+ * same check coach-proxy.php uses) — otherwise fall back to REMOTE_ADDR, so a
+ * request that bypasses Cloudflare can't spoof this header to dodge the
+ * limiter.
+ */
+function contact_client_ip(): string
+{
+    $remoteAddr = (string) ($_SERVER['REMOTE_ADDR'] ?? '');
+    if ($remoteAddr !== '' && qa_is_cloudflare_ip($remoteAddr)) {
+        $cfIp = trim((string) ($_SERVER['HTTP_CF_CONNECTING_IP'] ?? ''));
+        if ($cfIp !== '') {
+            return $cfIp;
+        }
+    }
+    return $remoteAddr;
+}
+
 // --- Staging guard ---
 // The aikifield.peec.biz staging subdomain runs this exact same file (it's
 // rsynced as-is, see sync.sh) so testing the contact form there must never
@@ -109,9 +138,19 @@ function contact_rate_limited(string $ip, int $maxRequests = 5, int $windowSecon
     return $limited;
 }
 
-if (contact_rate_limited((string) ($_SERVER['REMOTE_ADDR'] ?? ''))) {
+if (contact_rate_limited(contact_client_ip())) {
+    // Serve a real 429 response instead of redirecting — the redirect
+    // would force a 302, discarding the 429 status code (issue #45).
     http_response_code(429);
-    redirect_with_status('error', 'Too many submissions. Please wait a few minutes and try again.');
+    header('Retry-After: 600');
+    header('Content-Type: text/html; charset=utf-8');
+    echo '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">';
+    echo '<title>429 Too Many Requests</title></head><body>';
+    echo '<h1>Too Many Requests</h1>';
+    echo '<p>You have submitted this form too many times. Please wait a few minutes and try again.</p>';
+    echo '<p><a href="/contact.html">Back to contact page</a></p>';
+    echo '</body></html>';
+    exit;
 }
 
 // Honeypot field — if filled, it's a bot
@@ -162,7 +201,7 @@ function contact_verify_turnstile(string $token, string $remoteIp): bool
 }
 
 $turnstileToken = trim($_POST['cf-turnstile-response'] ?? '');
-if (!contact_verify_turnstile($turnstileToken, (string) ($_SERVER['REMOTE_ADDR'] ?? ''))) {
+if (!contact_verify_turnstile($turnstileToken, contact_client_ip())) {
     redirect_with_status('error', 'CAPTCHA verification failed. Please try again.');
 }
 
@@ -200,7 +239,8 @@ if ($interest !== '') {
 $body .= "\nMessage:\n" . $message . "\n";
 $body .= "\n---\n";
 $body .= "Submitted: " . date('Y-m-d H:i:s') . " (server time)\n";
-$body .= "IP: " . ($_SERVER['REMOTE_ADDR'] ?? 'unknown') . "\n";
+$clientIpForLog = contact_client_ip();
+$body .= "IP: " . ($clientIpForLog !== '' ? $clientIpForLog : 'unknown') . "\n";
 
 $headers = [
     'From: AikiField Contact <' . $FROM_EMAIL . '>',

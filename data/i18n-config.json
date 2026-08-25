@@ -2,19 +2,10 @@
     "version": 1,
     "defaultLocale": "en",
     "comment": "Foundational i18n configuration for AikiField.com. Locales are listed with their native (endonym) names rather than flags, because flags represent nations and can be politically sensitive.",
+    "_supportedLocalesNote": "Only list a locale here once data/i18n-strings/<locale>.json is an actual translation, not an untranslated English stub (_meta.is_source: false with content byte-identical to en.json). fr/de/pt/ja/zh/ko/ar/he/fa/hi are still stubs as of 2026-08 — offering them would silently serve English (and, for ar/he/fa, apply dir=\"rtl\" to English text). Move a locale back into supportedLocales as soon as its stub is replaced with a real translation.",
     "supportedLocales": [
         "en",
-        "es",
-        "fr",
-        "de",
-        "pt",
-        "ja",
-        "zh",
-        "ko",
-        "ar",
-        "he",
-        "fa",
-        "hi"
+        "es"
     ],
     "localeNames": {
         "en": "English",
