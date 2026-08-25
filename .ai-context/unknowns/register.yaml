@@ -1,0 +1,159 @@
+# Unknowns / Evidence Gaps Register
+# Questions that cannot be resolved from source code alone, with the cheapest
+# verification path for each.
+# Revision: f8b3b868273b42006194d56005765316d68548d8
+
+- id: UNKNOWN-001
+  question: >
+    What are the actual values in coach-config.local.php (gitignored)?
+    Specifically: COACH_PROXY_SECRET, TURNSTILE_SITE_KEY,
+    TURNSTILE_SECRET_KEY, DASHBOARD_ADMIN_KEY, CLOUDFLARE_API_TOKEN,
+    CLOUDFLARE_ZONE_ID.
+  classification: evidence-gap
+  impact: high
+  evidence:
+    - path: coach-config.local.php
+      evidence_type: source
+      note: "gitignored — file exists on server but not in repo"
+    - path: .gitignore
+      lines: "11-12"
+      evidence_type: source
+      note: "coach-config.local.php is gitignored"
+  cheapest_verification: >
+    SSH to peec.biz and cat the file on the server, or ask the operator to
+    share the key names (not values) and confirm they are non-empty.
+
+- id: UNKNOWN-002
+  question: >
+    What PHP version is running on peec.biz shared hosting? The code
+    requires PHP 8.0+ (str_starts_with, str_contains, named arguments,
+    declare(strict_types=1) with union types).
+  classification: evidence-gap
+  impact: high
+  evidence:
+    - path: login.php
+      lines: "1-5"
+      evidence_type: source
+      note: "uses str_starts_with, str_contains (PHP 8.0+)"
+    - path: contact-handler.php
+      lines: "63"
+      evidence_type: source
+      note: "str_contains (PHP 8.0+)"
+  cheapest_verification: >
+    SSH to peec.biz and run `php -v`, or add a phpinfo() page temporarily.
+
+- id: UNKNOWN-003
+  question: >
+    What is the live state of the Cloudflare zone for aikifield.com?
+    Are the origin lock, security headers, caching rules, and Turnstile
+    settings actually configured as described in .htaccess and the PRD?
+  classification: evidence-gap
+  impact: high
+  evidence:
+    - path: scripts/cloudflare_migrate.py
+      evidence_type: source
+      note: "exists to converge zone state, but not run in this analysis"
+    - path: .htaccess
+      evidence_type: source
+      note: "origin lock, HSTS, cache headers declared here"
+  cheapest_verification: >
+    Run `python3 scripts/cloudflare_migrate.py` (dry-run) with a valid
+    CLOUDFLARE_API_TOKEN, or check the Cloudflare dashboard UI.
+
+- id: UNKNOWN-004
+  question: >
+    What is the runtime behavior of the AIRichardMoon backend
+    (/v1/auth/check-session, /v1/auth/login, /v1/auth/register-with-password)?
+    The proxy forwards to it, but backend behavior is inferred from PRD +
+    proxy code, not directly inspected.
+  classification: evidence-gap
+  impact: medium
+  evidence:
+    - path: docs/coach-auth-prd.md
+      evidence_type: doc
+      note: "describes backend contract but backend is a separate repo"
+    - path: coach-proxy.php
+      evidence_type: source
+      note: "forwards requests; response handling inferred from PRD"
+  cheapest_verification: >
+    Inspect ~/projects/AIRichardMoon/backend/app/auth.py directly, or run
+    the e2e stub backend (tests/e2e/stub-backend.php) which encodes the
+    expected response shapes.
+
+- id: UNKNOWN-005
+  question: >
+    Is the staging subdomain (aikifield.peec.biz) actually live and serving
+    the site? sync.sh has a staging deploy target, but its live status is
+    not verifiable from source alone.
+  classification: evidence-gap
+  impact: low
+  evidence:
+    - path: sync.sh
+      lines: "13-14"
+      evidence_type: source
+      note: "staging deploy target: public_html/aikifield.peec.biz/"
+    - path: contact-handler.php
+      lines: "62-63"
+      evidence_type: source
+      note: "staging guard checks for 'aikifield.peec.biz' in HTTP_HOST"
+  cheapest_verification: >
+    curl -sI https://aikifield.peec.biz/ and check for a 200 response.
+
+- id: UNKNOWN-006
+  question: >
+    Does the e2e test suite actually pass in the current repo state?
+    The suite requires PHP + Node.js + Playwright install, which was not
+    available in this analysis environment.
+  classification: evidence-gap
+  impact: medium
+  evidence:
+    - path: tests/e2e/run.sh
+      evidence_type: source
+      note: "requires php, node, and playwright install"
+    - path: .ai-context/manifest.yaml
+      lines: "48-53"
+      evidence_type: doc
+      note: "commands_not_run lists the e2e suite"
+  cheapest_verification: >
+    Run `bash tests/e2e/run.sh` in an environment with PHP 8.0+ and Node.js.
+
+- id: UNKNOWN-007
+  question: >
+    Are the 10 "stub" locale translations (fr/de/pt/ja/zh/ko/ar/he/fa/hi)
+    complete enough to offer to users? The files contain real translations
+    (not byte-identical to en.json), but quality and coverage are
+    unverified. The i18n-config.json comment still calls them stubs.
+  classification: evidence-gap
+  impact: medium
+  evidence:
+    - path: data/i18n-config.json
+      lines: "7-8"
+      evidence_type: source
+      note: "declares them as stubs, but data shows real translations"
+    - path: data/i18n-strings/
+      evidence_type: source
+      note: "2-70 of 1109 strings identical to en — mostly translated"
+  cheapest_verification: >
+    Spot-check 10-20 strings in each locale file for translation quality,
+    or run the locale-router.php test server and visually verify pages.
+
+- id: UNKNOWN-008
+  question: >
+    What is the actual session revalidation behavior under load on peec.biz
+    shared hosting? The 10s CURLOPT_TIMEOUT in beta-gate.load.php could
+    cause request serialization if the backend is slow (PHP built-in server
+    is single-threaded, but peec.biz may use Apache prefork).
+  classification: evidence-gap
+  impact: medium
+  evidence:
+    - path: includes/beta-gate.load.php
+      lines: "37"
+      evidence_type: source
+      note: "CURLOPT_TIMEOUT = 10 seconds"
+    - path: tests/e2e/playwright.config.js
+      lines: "48-50"
+      evidence_type: source
+      note: "PHP_CLI_SERVER_WORKERS=4 for e2e; peec.biz worker count unknown"
+  cheapest_verification: >
+    Check peec.biz Apache/mod_php configuration for MaxRequestWorkers, or
+    load-test /beta/ pages with a slow backend response.

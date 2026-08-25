@@ -1,0 +1,66 @@
+# Conflicts Register
+# Contradictions between declared claims (docs/comments/config) and observed
+# behavior (source code/data). Each entry records both sides and the impact
+# of trusting the wrong one.
+# Revision: f8b3b868273b42006194d56005765316d68548d8
+
+- id: CONFLICT-001
+  summary: >
+    OAuth Location rewrite target: coach-proxy.php rewrites to /projects.php,
+    but the PRD says it should rewrite to /login.php. projects.php no longer
+    loads coach-login.js (the OTC exchange handler), so the code is stale.
+  declared_claim:
+    statement: >
+      OAuth Location headers should be rewritten back to /login.php for
+      future social-login enablement.
+    source: docs/coach-auth-prd.md
+    lines: "178-181"
+    evidence_type: doc
+  observed_behavior:
+    statement: >
+      coach-proxy.php rewrites /login.html → /projects.php (not /login.php).
+      The docblock on lines 8-9 also says "targets /projects.php (AikiField's
+      login page)" — but projects.php is no longer the login page.
+    source: coach-proxy.php
+    lines: "8-9, 246-261"
+    evidence_type: source
+  resolution: UNKNOWN
+  resolution_evidence: >
+    OAuth is currently disabled in coach-login.js, so this code path is not
+    exercised. The PRD was updated when auth moved from projects.php to
+    login.php (issue #51), but the proxy code was not updated to match.
+  impact_if_agent_trusts_wrong_side: >
+    If an agent trusts the code (projects.php) and re-enables OAuth, the OTC
+    exchange would fail — users would land on /projects.php which has no
+    coach-login.js to handle ?oauth_code=. If an agent trusts the PRD
+    (login.php) and updates the code, OAuth would work correctly.
+
+- id: CONFLICT-002
+  summary: >
+    i18n-config.json declares fr/de/pt/ja/zh/ko/ar/he/fa/hi as "stubs"
+    (untranslated English), but the actual translation files contain real
+    translations (only 2-70 of 1109 strings are identical to en.json).
+  declared_claim:
+    statement: >
+      "fr/de/pt/ja/zh/ko/ar/he/fa/hi are still stubs as of 2026-08 —
+      offering them would silently serve English"
+    source: data/i18n-config.json
+    lines: "7-8"
+    evidence_type: source
+  observed_behavior:
+    statement: >
+      All 10 locale files contain real translations. String-level comparison
+      shows only 2-70 of 1109 strings are byte-identical to en.json (the
+      rest are genuinely translated). _meta.is_source is false for all.
+    source: data/i18n-strings/
+    lines: "fr.json, de.json, pt.json, ja.json, zh.json, ko.json, ar.json, he.json, fa.json, hi.json"
+    evidence_type: source
+  resolution: UNKNOWN
+  resolution_evidence: >
+    The config comment appears to be stale — translations were added but the
+    comment and supportedLocales array (only ["en", "es"]) were not updated.
+  impact_if_agent_trusts_wrong_side: >
+    If an agent trusts the config comment, it would believe these locales
+    are untranslated and not offer them, wasting completed translation work.
+    If an agent trusts the data, it might enable locales that have not been
+    quality-reviewed, potentially serving incomplete or incorrect translations.

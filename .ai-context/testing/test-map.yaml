@@ -1,0 +1,156 @@
+# Test & Validation Routing Map
+# Single source of truth for validation commands. Every command below is
+# OBSERVED in repo evidence (run.sh, package.json, source comments, sync.sh).
+# Never invent commands — only commands that exist in the repo are listed.
+# Revision: f8b3b868273b42006194d56005765316d68548d8
+
+# ── coaching-auth (login.php, coach-proxy.php, beta-gate) ──────────────
+- target: coaching-auth
+  e2e:
+    - "bash tests/e2e/run.sh login"
+    - "bash tests/e2e/run.sh proxy"
+  unit: []
+  typecheck: []
+  lint:
+    - "php -l login.php"
+    - "php -l coach-proxy.php"
+    - "php -l includes/beta-gate.load.php"
+    - "php -l includes/coach-config.load.php"
+  notes: >
+    E2e uses Playwright + PHP built-in server (ports 8200/8201) with a stub
+    backend (tests/e2e/stub-backend.php). Cannot exercise the genuine
+    Cloudflare IP branch (REMOTE_ADDR is always loopback) — see cloudflare-infra
+    unit test for that. Run full suite: bash tests/e2e/run.sh
+
+# ── cloudflare-infra (cloudflare-ips.php, .htaccess, dashboard) ────────
+- target: cloudflare-infra
+  e2e:
+    - "bash tests/e2e/run.sh proxy"
+  unit:
+    - "php tests/unit/test-cloudflare-ip-trust.php"
+    - "python3 tests/unit/test_allocate_cloudflare_token.py"
+  typecheck: []
+  lint:
+    - "php -l includes/cloudflare-ips.php"
+    - "php -l includes/cloudflare-logs.class.php"
+    - "php -l dashboard.php"
+  validation:
+    - "php scripts/verify-cloudflare-ips.php"
+    - "python3 scripts/cloudflare_migrate.py"
+  notes: >
+    test-cloudflare-ip-trust.php is a standalone PHP script (no framework) that
+    calls qa_is_cloudflare_ip() / qa_resolve_client_ip_headers() directly with
+    synthetic REMOTE_ADDR values. test_allocate_cloudflare_token.py uses
+    unittest with mocks (no live Cloudflare calls). verify-cloudflare-ips.php
+    requires network access to cloudflare.com. cloudflare_migrate.py is
+    dry-run by default (--apply to converge).
+
+# ── contact-form (contact-handler.php) ─────────────────────────────────
+- target: contact-form
+  e2e: []
+  unit: []
+  typecheck: []
+  lint:
+    - "php -l contact-handler.php"
+    - "php -l turnstile-sitekey.php"
+  notes: >
+    No e2e or unit test coverage for contact-handler.php (OBSERVED — confirmed
+    by full tree search). Rate limiting, Turnstile verification, and mail()
+    sending are untested. Staging guard can be exercised manually on
+    aikifield.peec.biz (no-op mode).
+
+# ── beta-assessment (beta/*.php, beta/js/assessment.js) ────────────────
+- target: beta-assessment
+  e2e:
+    - "bash tests/e2e/run.sh"
+  unit: []
+  typecheck: []
+  lint:
+    - "php -l beta/index.php"
+    - "php -l beta/assessment.php"
+    - "php -l beta/assessment-organisation.php"
+    - "php -l beta/assessment-leadership.php"
+    - "php -l beta/assessment-crossview.php"
+    - "php -l beta/data.php"
+  notes: >
+    E2e suite covers login flow which gates /beta/ access. Assessment scoring
+    logic (localStorage, radar viz) is client-side JS with no unit tests.
+
+# ── i18n (locale-utils.js, language-selector.js, data/i18n-*) ──────────
+- target: i18n
+  e2e: []
+  unit:
+    - "node tests/test_locale_path.js"
+  typecheck: []
+  lint: []
+  notes: >
+    test_locale_path.js is a standalone Node.js script testing locale-utils.js
+    path detection, URL building, and canonical link logic with mock browser
+    environment. tests/locale-router.php is a PHP built-in server router for
+    manual local testing (php -S 0.0.0.0:8080 tests/locale-router.php), not
+    an automated test.
+
+# ── redirects (.htaccess rewrite rules) ────────────────────────────────
+- target: redirects
+  e2e:
+    - "bash tests/e2e/run.sh redirects"
+  unit: []
+  typecheck: []
+  lint: []
+  notes: >
+    redirects.spec.js tests .htaccess rewrite rules (projects.html → projects.php,
+    beta/assessment.html → beta/assessment.php).
+
+# ── static-marketing (HTML pages, CSS, JS) ─────────────────────────────
+- target: static-marketing
+  e2e:
+    - "bash tests/e2e/run.sh homepage"
+  unit: []
+  typecheck: []
+  lint: []
+  notes: >
+    homepage.spec.js tests public page loading. No accessibility or visual
+    regression tests.
+
+# ── dashboard (dashboard.php) ──────────────────────────────────────────
+- target: dashboard
+  e2e: []
+  unit: []
+  typecheck: []
+  lint:
+    - "php -l dashboard.php"
+  notes: >
+    No automated test coverage for dashboard.php. Key auth (hash_equals) and
+    Cloudflare GraphQL API calls are untested. Can be exercised manually with
+    ?key= param or X-Dashboard-Key header.
+
+# ── deploy (sync.sh) ───────────────────────────────────────────────────
+- target: deploy
+  e2e: []
+  unit: []
+  typecheck: []
+  lint:
+    - "find . -name '*.php' -not -path '*/vendor/*' -not -path '*/tests/*' -exec php -l {} +"
+  validation:
+    - "./sync.sh dryrun"
+    - "./sync.sh dryrun --staging"
+  notes: >
+    sync.sh runs php_lint() as a pre-deploy gate (aborts on syntax error) and
+    verify-cloudflare-ips.php as a warn-only check. SKIP_PHP_LINT=1 bypasses
+    the lint gate. dryrun requires SSH key + network to peec.biz. No automated
+    test for the deploy process itself.
+
+# ── full-suite (run everything) ────────────────────────────────────────
+- target: full-suite
+  e2e:
+    - "bash tests/e2e/run.sh"
+  unit:
+    - "php tests/unit/test-cloudflare-ip-trust.php"
+    - "python3 tests/unit/test_allocate_cloudflare_token.py"
+    - "node tests/test_locale_path.js"
+  typecheck: []
+  lint:
+    - "find . -name '*.php' -not -path '*/vendor/*' -not -path '*/tests/*' -exec php -l {} +"
+  notes: >
+    No CI/CD pipeline exists (no .github/workflows/). All validation is manual.
+    E2e suite requires PHP + Node.js + Playwright (npm install in tests/e2e/).

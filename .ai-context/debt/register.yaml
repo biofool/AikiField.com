@@ -1,0 +1,304 @@
+# Technical Debt Register
+# Stable IDs, sorted by priority_score (impact × likelihood × reach, 1-5 each).
+# Classification: confirmed-defect / architectural-risk / code-smell /
+# improvement-opportunity / evidence-gap.
+# Revision: f8b3b868273b42006194d56005765316d68548d8
+
+- id: DEBT-001
+  classification: confirmed-defect
+  summary: >
+    coach-proxy.php OAuth Location rewrite targets /projects.php, but
+    projects.php no longer loads coach-login.js (moved to /login.php). If
+    Google OAuth is re-enabled, the OTC exchange would break — the user
+    would land on /projects.php which has no coach-login.js to complete
+    the flow.
+  impact: 4
+  likelihood: 2
+  reach: 3
+  priority_score: 24
+  evidence:
+    - path: coach-proxy.php
+      lines: "246-261"
+      evidence_type: source
+      note: "str_replace('/login.html', '/projects.php', ...) — stale target"
+    - path: coach-proxy.php
+      lines: "8-9"
+      evidence_type: source
+      note: "docblock says 'targets /projects.php (AikiField's login page)'"
+    - path: docs/coach-auth-prd.md
+      lines: "178-181"
+      evidence_type: doc
+      note: "PRD says rewrite should target /login.php, not /projects.php"
+    - path: projects.php
+      lines: "7-14"
+      evidence_type: source
+      note: "projects.php is now public — no login or chat on this page"
+  remediation: >
+    Change str_replace target from '/projects.php' to '/login.php' in
+    coach-proxy.php line 259. Update the docblock on lines 8-9. Verify
+    coach-login.js on login.php handles the oauth_code OTC query param.
+  status: open
+
+- id: DEBT-002
+  classification: architectural-risk
+  summary: >
+    beta-gate.load.php fails open on backend unreachable — revoked or
+    disabled sessions remain valid for up to 6h during a backend outage.
+    The sister repo (quantumaikido.com) now verifies sessions per-request;
+    AikiField uses a 6h cadence.
+  impact: 4
+  likelihood: 3
+  reach: 3
+  priority_score: 36
+  evidence:
+    - path: includes/beta-gate.load.php
+      lines: "106-113"
+      evidence_type: source
+      note: "null return → fail open, record failure for backoff"
+    - path: includes/beta-gate.load.php
+      lines: "80"
+      evidence_type: source
+      note: "BETA_REVALIDATE_INTERVAL_SECONDS = 6 * 3600"
+    - path: docs/coach-auth-prd.md
+      lines: "215"
+      evidence_type: doc
+      note: "QA now per-request; AikiField 6h deemed sufficient"
+  remediation: >
+    Consider shortening revalidation interval or adding a fail-closed mode
+    for security-sensitive beta pages. Document the tradeoff explicitly.
+  status: open
+
+- id: DEBT-003
+  classification: architectural-risk
+  summary: >
+    Dashboard admin key passed via ?key= query parameter — may be logged
+    by proxies, Cloudflare edge, or browser history. The X-Dashboard-Key
+    header alternative exists but the HTML UI links embed the key in URLs.
+  impact: 3
+  likelihood: 4
+  reach: 2
+  priority_score: 24
+  evidence:
+    - path: dashboard.php
+      lines: "22, 176-179"
+      evidence_type: source
+      note: "$_GET['key'] accepted; nav links embed ?key= in href"
+    - path: dashboard.php
+      lines: "29"
+      evidence_type: source
+      note: "hash_equals() used — timing-safe, but key still in URL"
+  remediation: >
+    Prefer X-Dashboard-Key header for API access. For HTML UI, consider
+    session-based auth or a short-lived token cookie instead of query param.
+  status: open
+
+- id: DEBT-004
+  classification: improvement-opportunity
+  summary: >
+    No CI/CD pipeline — no .github/workflows/ directory exists. All
+    validation (e2e, unit, lint) is manual. PHP lint only runs as a
+    sync.sh pre-deploy gate.
+  impact: 3
+  likelihood: 4
+  reach: 5
+  priority_score: 60
+  evidence:
+    - path: .github/workflows/
+      evidence_type: source
+      note: "directory does not exist (OBSERVED via ls)"
+    - path: sync.sh
+      lines: "115-136"
+      evidence_type: source
+      note: "php_lint() is the only automated gate, and only on deploy"
+  remediation: >
+    Add a GitHub Actions workflow running php -l, unit tests, and e2e suite
+    on push/PR. The e2e suite is self-contained (PHP built-in server + stub
+    backend, no external dependencies).
+  status: open
+
+- id: DEBT-005
+  classification: improvement-opportunity
+  summary: >
+    No test coverage for contact-handler.php — rate limiting, Turnstile
+    verification, header injection guards, staging guard, and mail() sending
+    are all untested by any automated test.
+  impact: 3
+  likelihood: 3
+  reach: 3
+  priority_score: 27
+  evidence:
+    - path: contact-handler.php
+      lines: "1-275"
+      evidence_type: source
+    - path: tests/
+      evidence_type: source
+      note: "no spec file references contact-handler (OBSERVED via grep)"
+  remediation: >
+    Add a Playwright spec or standalone PHP test exercising the contact form
+    POST, rate limiting, honeypot, and staging guard. Turnstile can be
+    tested with a mock siteverify endpoint.
+  status: open
+
+- id: DEBT-006
+  classification: improvement-opportunity
+  summary: >
+    No test coverage for dashboard.php — key auth (hash_equals), Cloudflare
+    GraphQL API calls, and JSON/HTML rendering are untested.
+  impact: 2
+  likelihood: 3
+  reach: 2
+  priority_score: 12
+  evidence:
+    - path: dashboard.php
+      lines: "1-217"
+      evidence_type: source
+    - path: tests/
+      evidence_type: source
+      note: "no spec file references dashboard (OBSERVED via grep)"
+  remediation: >
+    Add a standalone PHP test for hash_equals auth path and a mock-based
+    test for the CloudflareLogsScanner class.
+  status: open
+
+- id: DEBT-007
+  classification: code-smell
+  summary: >
+    Session cookie setup is duplicated between login.php and
+    beta-gate.load.php — same session_set_cookie_params() block copied
+    verbatim. Drift between the two would break the shared session contract.
+  impact: 4
+  likelihood: 2
+  reach: 4
+  priority_score: 32
+  evidence:
+    - path: login.php
+      lines: "126-136"
+      evidence_type: source
+    - path: includes/beta-gate.load.php
+      lines: "54-64"
+      evidence_type: source
+      note: "identical cookie params (7-day, path=/, httponly, samesite=Lax)"
+  remediation: >
+    Extract session initialization into a shared include (e.g.
+    includes/session.load.php) that both files require_once.
+  status: open
+
+- id: DEBT-008
+  classification: architectural-risk
+  summary: >
+    Cloudflare IP list in includes/cloudflare-ips.php is a static snapshot
+    (2026-08-11) that can go stale. .htaccess mirrors a separate IP list
+    for mod_authz_host. Both must be manually updated and kept in sync.
+    Stale lists degrade rate-limiting accuracy and origin-lock security.
+  impact: 4
+  likelihood: 3
+  reach: 4
+  priority_score: 48
+  evidence:
+    - path: includes/cloudflare-ips.php
+      lines: "1-178"
+      evidence_type: source
+      note: "snapshot from cloudflare.com/ips-v4 and /ips-v6 (2026-08-11)"
+    - path: .htaccess
+      evidence_type: source
+      note: "separate Require ip directives with CIDR ranges"
+    - path: scripts/verify-cloudflare-ips.php
+      evidence_type: source
+      note: "exists but is warn-only in sync.sh, not automated"
+  remediation: >
+    Automate verify-cloudflare-ips.php in CI or a cron job. Consider
+    generating .htaccess IP directives from cloudflare-ips.php to eliminate
+    dual-maintenance.
+  status: open
+
+- id: DEBT-009
+  classification: improvement-opportunity
+  summary: >
+    i18n-config.json declares fr/de/pt/ja/zh/ko/ar/he/fa/hi as "stubs" in
+    a comment, but the actual translation files contain real translations
+    (only 2-70 of 1109 strings are identical to en.json). The
+    supportedLocales array only lists ["en", "es"], so 10 completed
+    translations are not offered to users.
+  impact: 2
+  likelihood: 5
+  reach: 4
+  priority_score: 40
+  evidence:
+    - path: data/i18n-config.json
+      lines: "7-8"
+      evidence_type: source
+      note: "_supportedLocalesNote says fr/de/pt/ja/zh/ko/ar/he/fa/hi are stubs"
+    - path: data/i18n-strings/
+      evidence_type: source
+      note: "OBSERVED: 10 locale files have real translations (2-70/1109 strings match en)"
+  remediation: >
+    Verify translation quality, then move verified locales into
+    supportedLocales. Update the _supportedLocalesNote comment.
+  status: open
+
+- id: DEBT-010
+  classification: code-smell
+  summary: >
+    Turnstile CAPTCHA fails open when TURNSTILE_SECRET_KEY is unset in
+    both contact-handler.php and login.php's widget. This is intentional
+    for pre-configuration, but means a misconfigured production deployment
+    would have no CAPTCHA protection.
+  impact: 3
+  likelihood: 2
+  reach: 3
+  priority_score: 18
+  evidence:
+    - path: contact-handler.php
+      lines: "173-175"
+      evidence_type: source
+      note: "returns true when TURNSTILE_SECRET_KEY is empty"
+    - path: coach-config.php
+      lines: "46"
+      evidence_type: source
+      note: "comment documents the fail-open behavior"
+  remediation: >
+    Consider failing closed in production (detect via hostname or a
+    PRODUCTION env flag) while keeping fail-open for local dev.
+  status: open
+
+- id: DEBT-011
+  classification: code-smell
+  summary: >
+    Rate limiter in contact-handler.php fails open if local storage
+    (data/ratelimit/) is unavailable — returns false (not rate-limited).
+    A disk-full or permission-denied scenario would disable rate limiting
+    silently.
+  impact: 3
+  likelihood: 2
+  reach: 2
+  priority_score: 12
+  evidence:
+    - path: contact-handler.php
+      lines: "108-114"
+      evidence_type: source
+      note: "returns false on empty IP, mkdir failure, or fopen failure"
+  remediation: >
+    Log the failure explicitly (error_log) when rate limiter fails open,
+    so operators can detect storage issues.
+  status: open
+
+- id: DEBT-012
+  classification: improvement-opportunity
+  summary: >
+    No PHP unit test framework (no PHPUnit/Pest) — the single PHP unit
+    test (test-cloudflare-ip-trust.php) is a standalone script with manual
+    assertions. Adding PHPUnit would enable better test organization and
+    coverage reporting.
+  impact: 2
+  likelihood: 4
+  reach: 3
+  priority_score: 24
+  evidence:
+    - path: tests/unit/test-cloudflare-ip-trust.php
+      lines: "1-15"
+      evidence_type: source
+      note: "docblock confirms 'no PHP unit-test framework' in repo"
+  remediation: >
+    Consider adding PHPUnit as a dev dependency via composer, or keep the
+    standalone approach but add more test scripts for other PHP components.
+  status: open

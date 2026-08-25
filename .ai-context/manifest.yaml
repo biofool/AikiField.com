@@ -1,0 +1,153 @@
+repository_revision: f8b3b868273b42006194d56005765316d68548d8
+analysis_timestamp: "2026-08-22T09:14:57Z"
+analyzer_version: context-compiler-v2
+pass_plan:
+  session_scope: full
+  stages_executed: [0, 1, 2, 3, 4, 5, 6, 7, 8]
+  stages_deferred: []
+  components_in_scope:
+    - coaching-auth
+    - beta-assessment
+    - contact-form
+    - cloudflare-infra
+    - i18n
+    - static-marketing
+    - deploy-sync
+  components_deferred: []
+  depth: medium
+  notes: >
+    Medium repo (607 files, ~12.4K LOC app code). Full pass — all major
+    components in scope. Prioritized runtime-critical paths (coaching auth,
+    beta gate, contact form) and security-sensitive areas (Cloudflare origin
+    lock, IP trust, session revalidation). input/ directory excluded (source
+    materials, gitignored). node_modules/ excluded (Playwright deps only).
+coverage:
+  analyzed_domains:
+    - static-marketing
+    - coaching-auth
+    - beta-assessment
+    - contact-form
+    - cloudflare-infra
+    - i18n
+    - deploy
+  excluded_paths:
+    - input/
+    - node_modules/
+    - .git/
+    - .dvc/cache/
+    - .pytest_cache/
+    - __pycache__/
+commands_run:
+  - "git rev-parse HEAD"
+  - "git log --oneline -5"
+  - "find . -type f -not -path './.git/*' | wc -l"
+  - "find . -type f ... | xargs wc -l"
+  - "ls -la"
+  - "find . -type f -not -path './input/*' ... | sort"
+  - "ls scripts/ data/ beta/data/ tests/"
+commands_not_run:
+  - "bash tests/e2e/run.sh (requires PHP + Node + Playwright install)"
+  - "php tests/unit/test-cloudflare-ip-trust.php (requires PHP runtime)"
+  - "python3 tests/unit/test_allocate_cloudflare_token.py (requires Python)"
+  - "./sync.sh dryrun (requires SSH key + network to peec.biz)"
+  - "php scripts/verify-cloudflare-ips.php (requires PHP + network)"
+limitations:
+  - "No runtime verification performed — all claims are from source analysis"
+  - "Cloudflare zone state not verified (requires API token in .env.secrets)"
+  - "Backend (AIRichardMoon) behavior inferred from PRD + proxy code, not directly inspected"
+  - "coach-config.local.php is gitignored — secret values not verified"
+artifacts:
+  - path: .ai-context/index.md
+    source_paths: [AGENTS.md, CLAUDE.md, README.md, docs/coach-auth-prd.md]
+    last_verified_revision: f8b3b868273b42006194d56005765316d68548d8
+  - path: .ai-context/quickstart.md
+    source_paths: [AGENTS.md, CLAUDE.md, sync.sh, tests/e2e/run.sh]
+    last_verified_revision: f8b3b868273b42006194d56005765316d68548d8
+  - path: .ai-context/manifest.yaml
+    source_paths: []
+    last_verified_revision: f8b3b868273b42006194d56005765316d68548d8
+  - path: .ai-context/architecture/index.md
+    source_paths: [docs/coach-auth-prd.md, .htaccess, coach-proxy.php, login.php]
+    last_verified_revision: f8b3b868273b42006194d56005765316d68548d8
+  - path: .ai-context/architecture/system-overview.md
+    source_paths: [docs/coach-auth-prd.md, AGENTS.md, .htaccess, sync.sh]
+    last_verified_revision: f8b3b868273b42006194d56005765316d68548d8
+  - path: .ai-context/architecture/frontend.md
+    source_paths: [index.html, css/redesign.css, js/, beta/]
+    last_verified_revision: f8b3b868273b42006194d56005765316d68548d8
+  - path: .ai-context/architecture/backend.md
+    source_paths: [coach-proxy.php, login.php, contact-handler.php, dashboard.php, includes/]
+    last_verified_revision: f8b3b868273b42006194d56005765316d68548d8
+  - path: .ai-context/architecture/infrastructure.md
+    source_paths: [.htaccess, sync.sh, scripts/cloudflare_migrate.py, includes/cloudflare-ips.php]
+    last_verified_revision: f8b3b868273b42006194d56005765316d68548d8
+  - path: .ai-context/architecture/data.md
+    source_paths: [beta/data/, data/i18n-config.json, data/i18n-strings/, data/translations/]
+    last_verified_revision: f8b3b868273b42006194d56005765316d68548d8
+  - path: .ai-context/components/index.md
+    source_paths: []
+    last_verified_revision: f8b3b868273b42006194d56005765316d68548d8
+  - path: .ai-context/components/coaching-auth.md
+    source_paths: [login.php, coach-proxy.php, coach-login.js, coach-auth.css, includes/coach-config.load.php, includes/beta-gate.load.php, coach-config.php]
+    last_verified_revision: f8b3b868273b42006194d56005765316d68548d8
+  - path: .ai-context/components/beta-assessment.md
+    source_paths: [beta/index.php, beta/assessment.php, beta/assessment-organisation.php, beta/assessment-leadership.php, beta/assessment-crossview.php, beta/data.php, beta/js/assessment.js, beta/css/assessment.css, beta/data/]
+    last_verified_revision: f8b3b868273b42006194d56005765316d68548d8
+  - path: .ai-context/components/contact-form.md
+    source_paths: [contact.html, contact-handler.php, turnstile-sitekey.php]
+    last_verified_revision: f8b3b868273b42006194d56005765316d68548d8
+  - path: .ai-context/components/cloudflare-infra.md
+    source_paths: [.htaccess, includes/cloudflare-ips.php, includes/cloudflare-logs.class.php, dashboard.php, scripts/cloudflare_migrate.py, scripts/allocate_cloudflare_token.py, scripts/verify-cloudflare-ips.php, scripts/generate_cf_ip_allowlist.sh]
+    last_verified_revision: f8b3b868273b42006194d56005765316d68548d8
+  - path: .ai-context/components/i18n.md
+    source_paths: [data/i18n-config.json, data/i18n-strings/, js/locale-utils.js, js/language-selector.js, scripts/extract_i18n_strings.py, scripts/translate-strings.py, scripts/generate_locale_files.py, scripts/apply_i18n_attrs.py]
+    last_verified_revision: f8b3b868273b42006194d56005765316d68548d8
+  - path: .ai-context/components/static-marketing.md
+    source_paths: [index.html, approach.html, services.html, process.html, projects.php, assessment.html, contact.html, case-studies.html, css/redesign.css, js/carousel.js]
+    last_verified_revision: f8b3b868273b42006194d56005765316d68548d8
+  - path: .ai-context/workflows/coaching-auth-flow.md
+    source_paths: [login.php, coach-proxy.php, coach-login.js, includes/coach-config.load.php, includes/beta-gate.load.php, .htaccess]
+    last_verified_revision: f8b3b868273b42006194d56005765316d68548d8
+  - path: .ai-context/workflows/contact-form.md
+    source_paths: [contact.html, contact-handler.php, turnstile-sitekey.php, includes/cloudflare-ips.php]
+    last_verified_revision: f8b3b868273b42006194d56005765316d68548d8
+  - path: .ai-context/workflows/deploy.md
+    source_paths: [sync.sh, .htaccess, scripts/verify-cloudflare-ips.php]
+    last_verified_revision: f8b3b868273b42006194d56005765316d68548d8
+  - path: .ai-context/change-impact/relationships.yaml
+    source_paths: [login.php, coach-proxy.php, includes/beta-gate.load.php, includes/coach-config.load.php, includes/cloudflare-ips.php, contact-handler.php, dashboard.php, .htaccess, sync.sh]
+    last_verified_revision: f8b3b868273b42006194d56005765316d68548d8
+  - path: .ai-context/conventions/coding-patterns.md
+    source_paths: [AGENTS.md, CLAUDE.md, login.php, coach-proxy.php, contact-handler.php]
+    last_verified_revision: f8b3b868273b42006194d56005765316d68548d8
+  - path: .ai-context/conventions/configuration.md
+    source_paths: [includes/coach-config.load.php, coach-config.php, coach-config.staging.php, .gitignore]
+    last_verified_revision: f8b3b868273b42006194d56005765316d68548d8
+  - path: .ai-context/conventions/errors.md
+    source_paths: [login.php, coach-proxy.php, includes/beta-gate.load.php, contact-handler.php, AGENTS.md]
+    last_verified_revision: f8b3b868273b42006194d56005765316d68548d8
+  - path: .ai-context/testing/test-map.yaml
+    source_paths: [tests/e2e/run.sh, tests/e2e/playwright.config.js, tests/unit/test-cloudflare-ip-trust.php, tests/unit/test_allocate_cloudflare_token.py, sync.sh]
+    last_verified_revision: f8b3b868273b42006194d56005765316d68548d8
+  - path: .ai-context/decisions/architecture-decisions.md
+    source_paths: [docs/coach-auth-prd.md, AGENTS.md, CLAUDE.md, .htaccess, includes/beta-gate.load.php]
+    last_verified_revision: f8b3b868273b42006194d56005765316d68548d8
+  - path: .ai-context/decisions/conflicts.yaml
+    source_paths: [docs/coach-auth-prd.md, coach-proxy.php, coach-login.js]
+    last_verified_revision: f8b3b868273b42006194d56005765316d68548d8
+  - path: .ai-context/debt/register.yaml
+    source_paths: [login.php, coach-proxy.php, includes/beta-gate.load.php, contact-handler.php, .htaccess, coach-login.js]
+    last_verified_revision: f8b3b868273b42006194d56005765316d68548d8
+  - path: .ai-context/unknowns/register.yaml
+    source_paths: [docs/coach-auth-prd.md, coach-config.local.php, .env.secrets, sync.sh]
+    last_verified_revision: f8b3b868273b42006194d56005765316d68548d8
+  - path: .ai-context/deltas/latest.yaml
+    source_paths: []
+    last_verified_revision: f8b3b868273b42006194d56005765316d68548d8
+unresolved_unknowns:
+  - "coach-config.local.php contents (gitignored) — real PROXY_SECRET and Turnstile keys not verified"
+  - "Cloudflare zone live state — not verified (requires API token)"
+  - "Backend (AIRichardMoon) runtime behavior — inferred from PRD + proxy code"
+  - "PHP version on peec.biz — code requires PHP 8.0+ (str_starts_with, str_contains)"
+  - "Whether staging subdomain (aikifield.peec.biz) is actually live"
+prior_analyzed_revision: null

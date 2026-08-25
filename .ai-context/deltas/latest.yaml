@@ -1,0 +1,51 @@
+# Context Delta — Latest Compilation
+# Initial compilation: all artifacts are new (added).
+# Revision: f8b3b868273b42006194d56005765316d68548d8
+
+from_revision: null
+to_revision: f8b3b868273b42006194d56005765316d68548d8
+added:
+  - .ai-context/index.md
+  - .ai-context/quickstart.md
+  - .ai-context/manifest.yaml
+  - .ai-context/architecture/index.md
+  - .ai-context/architecture/system-overview.md
+  - .ai-context/architecture/frontend.md
+  - .ai-context/architecture/backend.md
+  - .ai-context/architecture/infrastructure.md
+  - .ai-context/architecture/data.md
+  - .ai-context/components/index.md
+  - .ai-context/components/coaching-auth.md
+  - .ai-context/components/beta-assessment.md
+  - .ai-context/components/contact-form.md
+  - .ai-context/components/cloudflare-infra.md
+  - .ai-context/components/i18n.md
+  - .ai-context/components/static-marketing.md
+  - .ai-context/workflows/index.md
+  - .ai-context/workflows/coaching-auth-flow.md
+  - .ai-context/workflows/contact-form.md
+  - .ai-context/workflows/deploy.md
+  - .ai-context/change-impact/relationships.yaml
+  - .ai-context/testing/test-map.yaml
+  - .ai-context/decisions/conflicts.yaml
+  - .ai-context/debt/register.yaml
+  - .ai-context/unknowns/register.yaml
+  - .ai-context/deltas/latest.yaml
+changed: []
+invalidated: []
+conflicts:
+  - id: CONFLICT-001
+    summary: "coach-proxy.php OAuth Location rewrite targets /projects.php (stale); PRD says /login.php"
+  - id: CONFLICT-002
+    summary: "i18n-config.json declares 10 locales as stubs, but translation files contain real translations"
+reverified: []
+unknowns_added:
+  - UNKNOWN-001
+  - UNKNOWN-002
+  - UNKNOWN-003
+  - UNKNOWN-004
+  - UNKNOWN-005
+  - UNKNOWN-006
+  - UNKNOWN-007
+  - UNKNOWN-008
+unknowns_resolved: []

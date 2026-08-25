@@ -1,0 +1,349 @@
+# Change-Impact Relationships
+
+# ── coaching-auth ──────────────────────────────────────────────────────
+- component:
+    name: coaching-auth
+    path: login.php
+  depends_on:
+    - {type: code, target: includes/coach-config.load.php}
+    - {type: code, target: coach-login.js}
+    - {type: code, target: coach-auth.css}
+    - {type: config, target: COACH_BACKEND_URL}
+    - {type: config, target: COACH_PROXY_SECRET}
+    - {type: config, target: TURNSTILE_SITE_KEY}
+    - {type: config, target: COACH_LOGIN_REDIRECT}
+    - {type: external, target: AIRichardMoon backend /v1/auth/check-session}
+    - {type: runtime, target: PHP 8.0+ with cURL}
+  used_by:
+    - {type: code, target: includes/beta-gate.load.php}
+    - {type: runtime, target: "browser → /login.php"}
+  interfaces:
+    - "GET /login.php?next=<path>"
+    - "POST /login.php action=backend-login"
+    - "POST /login.php action=logout"
+  data_stores:
+    - "PHP session (qa_email, qa_session_token, qa_target_env, qa_is_admin, qa_session_checked_at)"
+  configuration:
+    - coach-config.php
+    - coach-config.local.php
+    - coach-config.staging.php
+    - includes/coach-config.load.php
+  runtime_workflows:
+    - coaching-auth-flow
+  decisions:
+    - "Blind URL (noindex,nofollow, not in nav)"
+    - "Same-origin PHP session (7-day cookie, path=/)"
+    - "Triple-PRD rule for cross-repo changes"
+  known_risks:
+    - "Session revalidation fails open on backend unreachable"
+    - "6h revalidation cadence vs QA's per-request"
+  security_sensitive: true
+  operationally_sensitive: true
+  before_modifying:
+    - "Read docs/coach-auth-prd.md"
+    - "Check triple-PRD rule (AGENTS.md:188-191)"
+    - "Session cookie params must match beta-gate.load.php"
+    - "coach-login.js POST contract must match"
+  test_map_target: coaching-auth
+  evidence:
+    - {path: login.php, lines: "1-528", evidence_type: source}
+    - {path: coach-login.js, lines: "1-523", evidence_type: source}
+    - {path: docs/coach-auth-prd.md, lines: "1-605", evidence_type: doc}
+
+- component:
+    name: coach-proxy
+    path: coach-proxy.php
+  depends_on:
+    - {type: code, target: includes/coach-config.load.php}
+    - {type: code, target: includes/cloudflare-ips.php}
+    - {type: config, target: COACH_BACKEND_URL}
+    - {type: config, target: COACH_PROXY_SECRET}
+    - {type: config, target: COACH_VERIFY_TLS}
+    - {type: config, target: COACH_TIMEOUT}
+    - {type: external, target: AIRichardMoon backend}
+    - {type: runtime, target: PHP 8.0+ with cURL}
+    - {type: infra, target: ".htaccess RewriteRule ^coach-api"}
+  used_by:
+    - {type: code, target: coach-login.js}
+    - {type: runtime, target: "browser → /coach-api/*"}
+  interfaces:
+    - "ANY /coach-api/* → backend"
+  data_stores: []
+  configuration:
+    - coach-config.php
+    - coach-config.local.php
+    - includes/coach-config.load.php
+  runtime_workflows:
+    - coaching-auth-flow
+  decisions:
+    - "Method allow-list (GET/POST/PUT/PATCH/DELETE)"
+    - "IP trust: only forward CF headers when REMOTE_ADDR is CF edge"
+    - "OAuth Location rewrite to /projects.php (future)"
+  known_risks:
+    - "Empty COACH_PROXY_SECRET → registration requires Turnstile"
+    - "Stale cloudflare-ips.php → rate-limiting accuracy degrades"
+  security_sensitive: true
+  operationally_sensitive: true
+  before_modifying:
+    - "Check includes/cloudflare-ips.php sync with .htaccess"
+    - "Verify method allow-list doesn't widen attack surface"
+    - "Check triple-PRD rule if proxy routing changes"
+  test_map_target: coaching-auth
+  evidence:
+    - {path: coach-proxy.php, lines: "1-267", evidence_type: source}
+
+- component:
+    name: beta-gate
+    path: includes/beta-gate.load.php
+  depends_on:
+    - {type: code, target: includes/coach-config.load.php}
+    - {type: config, target: COACH_BACKEND_URL}
+    - {type: config, target: COACH_PROXY_SECRET}
+    - {type: external, target: "AIRichardMoon /v1/auth/check-session"}
+    - {type: runtime, target: "PHP 8.0+ with cURL"}
+  used_by:
+    - {type: code, target: beta/index.php}
+    - {type: code, target: beta/assessment.php}
+    - {type: code, target: beta/assessment-organisation.php}
+    - {type: code, target: beta/assessment-leadership.php}
+    - {type: code, target: beta/assessment-crossview.php}
+    - {type: code, target: beta/data.php}
+  interfaces:
+    - "require_once (PHP include)"
+    - "Redirects to /login.php?next=<path> if unauthed"
+  data_stores:
+    - "PHP session (same keys as login.php)"
+  configuration:
+    - includes/coach-config.load.php
+  runtime_workflows:
+    - coaching-auth-flow
+  decisions:
+    - "Fails open on backend unreachable (null)"
+    - "6h revalidation cadence"
+    - "60s retry backoff after failed check"
+  known_risks:
+    - "Fails open = revoked sessions stay valid during outage"
+    - "6h window vs QA's per-request check"
+  security_sensitive: true
+  operationally_sensitive: false
+  before_modifying:
+    - "Session cookie params must match login.php exactly"
+    - "Session keys must match login.php"
+    - "Check triple-PRD rule if session model changes"
+  test_map_target: coaching-auth
+  evidence:
+    - {path: includes/beta-gate.load.php, lines: "1-125", evidence_type: source}
+
+- component:
+    name: config-loader
+    path: includes/coach-config.load.php
+  depends_on:
+    - {type: runtime, target: "PHP 8.0+"}
+    - {type: config, target: "COACH_CONFIG_FILE env var (optional)"}
+  used_by:
+    - {type: code, target: login.php}
+    - {type: code, target: coach-proxy.php}
+    - {type: code, target: includes/beta-gate.load.php}
+    - {type: code, target: contact-handler.php}
+    - {type: code, target: dashboard.php}
+    - {type: code, target: turnstile-sitekey.php}
+  interfaces:
+    - "require_once (PHP include)"
+    - "Defines constants: COACH_BACKEND_URL, COACH_PROXY_SECRET, etc."
+  data_stores: []
+  configuration:
+    - coach-config.php
+    - coach-config.local.php
+    - coach-config.staging.php
+  runtime_workflows:
+    - coaching-auth-flow
+    - contact-form
+  decisions:
+    - "File-existence precedence: env → local → staging → prod"
+    - "First file found wins (define() is idempotent)"
+  known_risks:
+    - "Missing config → defaults to localhost:8001 (logged)"
+  security_sensitive: true
+  operationally_sensitive: false
+  before_modifying:
+    - "Adding a new constant requires adding it to all config files"
+    - "Changing precedence affects all consumers"
+  test_map_target: coaching-auth
+  evidence:
+    - {path: includes/coach-config.load.php, lines: "1-95", evidence_type: source}
+
+- component:
+    name: cloudflare-ips
+    path: includes/cloudflare-ips.php
+  depends_on:
+    - {type: runtime, target: "PHP 8.0+ (inet_pton, filter_var)"}
+  used_by:
+    - {type: code, target: coach-proxy.php}
+    - {type: code, target: contact-handler.php}
+    - {type: infra, target: ".htaccess (mirrored IP list)"}
+  interfaces:
+    - "qa_is_cloudflare_ip(string): bool"
+    - "qa_resolve_client_ip_headers(string, ?string, ?string): array"
+    - "qa_ip_in_cidr(string, string): bool"
+  data_stores: []
+  configuration: []
+  runtime_workflows:
+    - coaching-auth-flow
+    - contact-form
+  decisions:
+    - "Snapshot from cloudflare.com/ips-v4 and /ips-v6 (2026-08-11)"
+    - "Unwraps IPv4-mapped-IPv6 (::ffff:) for dual-stack"
+    - "Fails closed (overwrites with REMOTE_ADDR) when not CF"
+  known_risks:
+    - "Stale list → misclassification of CF edge IPs"
+    - "Must stay in sync with .htaccess IP allow-list"
+  security_sensitive: true
+  operationally_sensitive: true
+  before_modifying:
+    - "Update .htaccess IP list to match"
+    - "Run scripts/verify-cloudflare-ips.php after changes"
+    - "Run tests/unit/test-cloudflare-ip-trust.php"
+  test_map_target: cloudflare-infra
+  evidence:
+    - {path: includes/cloudflare-ips.php, lines: "1-178", evidence_type: source}
+
+- component:
+    name: contact-handler
+    path: contact-handler.php
+  depends_on:
+    - {type: code, target: includes/coach-config.load.php}
+    - {type: code, target: includes/cloudflare-ips.php}
+    - {type: config, target: TURNSTILE_SECRET_KEY}
+    - {type: external, target: "Cloudflare Turnstile siteverify API"}
+    - {type: runtime, target: "PHP 8.0+ with cURL, mail()"}
+  used_by:
+    - {type: runtime, target: "browser → POST /contact-handler.php"}
+  interfaces:
+    - "POST /contact-handler.php"
+  data_stores:
+    - "data/ratelimit/<sha256(ip)>.json"
+  configuration:
+    - coach-config.local.php
+  runtime_workflows:
+    - contact-form
+  decisions:
+    - "Staging guard: no-op on aikifield.peec.biz or STAGING=1"
+    - "Rate limit: 5 req / 600s per IP (fixed window)"
+    - "Turnstile fails open when secret unset"
+    - "Honeypot: website field"
+  known_risks:
+    - "No e2e test coverage"
+    - "Rate limiter fails open if storage unavailable"
+  security_sensitive: true
+  operationally_sensitive: false
+  before_modifying:
+    - "Check shared Turnstile config with login.php"
+    - "Verify staging guard still works"
+    - "Test rate limiting manually"
+  test_map_target: contact-form
+  evidence:
+    - {path: contact-handler.php, lines: "1-275", evidence_type: source}
+
+- component:
+    name: dashboard
+    path: dashboard.php
+  depends_on:
+    - {type: code, target: includes/coach-config.load.php}
+    - {type: code, target: includes/cloudflare-logs.class.php}
+    - {type: config, target: DASHBOARD_ADMIN_KEY}
+    - {type: config, target: CLOUDFLARE_API_TOKEN}
+    - {type: config, target: CLOUDFLARE_ZONE_ID}
+    - {type: external, target: "Cloudflare GraphQL Analytics API"}
+    - {type: runtime, target: "PHP 8.0+ with cURL"}
+  used_by:
+    - {type: runtime, target: "operator → /dashboard.php?key=..."}
+  interfaces:
+    - "GET /dashboard.php?key=<key>&hours=24|48|168&format=json|html"
+  data_stores: []
+  configuration:
+    - coach-config.local.php
+  runtime_workflows: []
+  decisions:
+    - "Blind URL (not in nav, noindex,nofollow)"
+    - "hash_equals() for timing-safe key comparison"
+  known_risks:
+    - "Key in URL (query param) — may be logged by proxies"
+  security_sensitive: true
+  operationally_sensitive: true
+  before_modifying:
+    - "Check key comparison uses hash_equals()"
+    - "Verify noindex,nofollow maintained"
+  test_map_target: dashboard
+  evidence:
+    - {path: dashboard.php, lines: "1-217", evidence_type: source}
+
+- component:
+    name: htaccess
+    path: .htaccess
+  depends_on:
+    - {type: runtime, target: "Apache mod_rewrite, mod_headers, mod_authz_host, mod_expires"}
+  used_by:
+    - {type: code, target: coach-proxy.php}
+    - {type: infra, target: "all requests (origin lock, security headers, caching)"}
+  interfaces:
+    - "RewriteRule ^coach-api(/.*)?$ coach-proxy.php [L]"
+    - "RewriteRule ^projects.html$ /projects.php [R=301,L]"
+    - "RewriteRule ^beta/assessment.html$ /beta/assessment.php [R=301,L]"
+    - "Require ip <Cloudflare CIDR ranges>"
+  data_stores: []
+  configuration: []
+  runtime_workflows:
+    - coaching-auth-flow
+    - deploy
+  decisions:
+    - "Origin lock: CF IP allow-list only"
+    - "HSTS: max-age=63072000; includeSubDomains"
+    - "HTML cache 1h, assets cache 1yr immutable"
+  known_risks:
+    - "IP list must stay in sync with includes/cloudflare-ips.php"
+    - "mod_authz_host fallback (mod_rewrite) is IPv4-only"
+  security_sensitive: true
+  operationally_sensitive: true
+  before_modifying:
+    - "Update includes/cloudflare-ips.php to match IP changes"
+    - "Test redirect rules with tests/e2e/specs/redirects.spec.js"
+    - "Verify security headers don't conflict with Cloudflare edge settings"
+  test_map_target: redirects
+  evidence:
+    - {path: .htaccess, lines: "1-162", evidence_type: source}
+
+- component:
+    name: sync-deploy
+    path: sync.sh
+  depends_on:
+    - {type: runtime, target: "rsync, ssh, php (for lint), bash"}
+    - {type: config, target: ".env.secrets (CLOUDFLARE_API_TOKEN)"}
+    - {type: external, target: "peec.biz (SSH)"}
+    - {type: code, target: scripts/verify-cloudflare-ips.php}
+  used_by:
+    - {type: operator, target: "human → ./sync.sh deploy"}
+  interfaces:
+    - "./sync.sh dryrun|deploy|upload|download|logs|report|help"
+    - "--staging | --prod"
+  data_stores: []
+  configuration:
+    - ".env.secrets"
+  runtime_workflows:
+    - deploy
+  decisions:
+    - "PHP lint pre-deploy gate (aborts on error)"
+    - "CF IP check pre-deploy (warn-only)"
+    - "coach-config.staging.php excluded from prod"
+    - "All *.md, *.py, *.sh, scripts/, tests/ excluded from deploy"
+  known_risks:
+    - "Production-sensitive — always dryrun first"
+    - "SSH key required (quantumaikido_ed25519)"
+  security_sensitive: true
+  operationally_sensitive: true
+  before_modifying:
+    - "Verify EXCLUDES still excludes secrets"
+    - "Test with dryrun before deploy"
+    - "Check that coach-config.local.php reaches server (NOT excluded)"
+  test_map_target: deploy
+  evidence:
+    - {path: sync.sh, lines: "1-670", evidence_type: source}
