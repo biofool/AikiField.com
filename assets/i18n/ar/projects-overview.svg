@@ -1,6 +1,6 @@
 <svg direction="rtl" xml:lang="ar" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 760" font-family="Noto Sans JP, Noto Sans SC, Noto Sans KR, Noto Naskh Arabic, Noto Sans Hebrew, Noto Sans Devanagari, Public Sans, sans-serif" role="img" aria-labelledby="ov-title ov-desc">
   <title id="ov-title">AikiField المشاريع المدعومة — نظرة عامة</title>
-  <desc id="ov-desc">مشروعان مدعومان ينبثقان من AikiField: AikiField AI Chat (تدريب بالذكاء الاصطناعي) و World Studio Finder (اكتشاف الاستوديوهات العالمية والتواصل معها).</desc>
+  <desc id="ov-desc">مشروعان مدعومان ينبثقان من AikiField: AI Ki Questions Fielded (تدريب بالذكاء الاصطناعي) و World Studio Finder (اكتشاف الاستوديوهات العالمية والتواصل معها).</desc>
 
   <defs>
     <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
@@ -28,7 +28,7 @@
     <rect x="40" y="170" width="480" height="560" rx="18" fill="#ffffff" stroke="#E0D9CB" stroke-width="1.5"/>
     <rect x="40" y="170" width="480" height="56" rx="18" fill="#0E4E44"/>
     <rect x="40" y="200" width="480" height="26" fill="#0E4E44"/>
-    <text x="280" y="198" text-anchor="middle" fill="#fff" font-family="'Source Serif 4', Georgia, serif" font-size="19" font-weight="600">AikiField AI Chat</text>
+    <text x="280" y="198" text-anchor="middle" fill="#fff" font-family="'Source Serif 4', Georgia, serif" font-size="19" font-weight="600">AI Ki Questions Fielded</text>
     <text x="280" y="216" text-anchor="middle" fill="#8FE6C9" font-size="11" letter-spacing="0.08em">تدريب بالذكاء الاصطناعي · quantumaikido.com</text>
 
     <!-- المدخلات -->

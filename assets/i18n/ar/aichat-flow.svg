@@ -1,5 +1,5 @@
 <svg direction="rtl" xml:lang="ar" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 1000" font-family="Noto Sans JP, Noto Sans SC, Noto Sans KR, Noto Naskh Arabic, Noto Sans Hebrew, Noto Sans Devanagari, Public Sans, sans-serif" role="img" aria-labelledby="ai-title ai-desc">
-  <title id="ai-title">AikiField AI Chat — تدفق الطلب</title>
+  <title id="ai-title">AI Ki Questions Fielded — تدفق الطلب</title>
   <desc id="ai-desc">خط أنابيب عمودي: يطرح العضو سؤالاً، يقوم النظام بالمصادقة، ويبحث في المستودع، ويصيغ إجابة مستشهد بها عبر Gemini، ويحدد المعدل، ويعيد الإجابة أو يصعدها إلى مدرب بشري.</desc>
 
   <defs>
@@ -17,7 +17,7 @@
   <rect width="780" height="1000" fill="#F6F2EA"/>
 
   <!-- title -->
-  <text x="390" y="44" text-anchor="middle" fill="#16201C" font-family="'Source Serif 4', Georgia, serif" font-size="22" font-weight="600">AikiField AI Chat — تدفق الطلب</text>
+  <text x="390" y="44" text-anchor="middle" fill="#16201C" font-family="'Source Serif 4', Georgia, serif" font-size="22" font-weight="600">AI Ki Questions Fielded — تدفق الطلب</text>
   <text x="390" y="68" text-anchor="middle" fill="#5A655F" font-size="13">من سؤال العضو إلى إجابة مستشهد بها أو تصعيد إلى مدرب بشري</text>
 
   <!-- Step 1: Member asks -->

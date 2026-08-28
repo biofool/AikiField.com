@@ -1,5 +1,5 @@
 <svg xml:lang="es" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 1000" font-family="Noto Sans JP, Noto Sans SC, Noto Sans KR, Noto Naskh Arabic, Noto Sans Hebrew, Noto Sans Devanagari, Public Sans, sans-serif" role="img" aria-labelledby="ai-title ai-desc">
-  <title id="ai-title">AikiField AI Chat — Flujo de Solicitud</title>
+  <title id="ai-title">AI Ki Questions Fielded — Flujo de Solicitud</title>
   <desc id="ai-desc">Pipeline vertical: el miembro hace una pregunta, el sistema autentica, busca en el corpus, redacta una respuesta citada a través de Gemini, limita la tasa y devuelve la respuesta o la escala a un coach humano.</desc>
 
   <defs>
@@ -17,7 +17,7 @@
   <rect width="780" height="1000" fill="#F6F2EA"/>
 
   <!-- title -->
-  <text x="390" y="44" text-anchor="middle" fill="#16201C" font-family="'Source Serif 4', Georgia, serif" font-size="22" font-weight="600">AikiField AI Chat — Flujo de Solicitud</text>
+  <text x="390" y="44" text-anchor="middle" fill="#16201C" font-family="'Source Serif 4', Georgia, serif" font-size="22" font-weight="600">AI Ki Questions Fielded — Flujo de Solicitud</text>
   <text x="390" y="68" text-anchor="middle" fill="#5A655F" font-size="13">De la pregunta del miembro a la respuesta citada o escalada a un coach humano</text>
 
   <!-- Step 1: Member asks -->

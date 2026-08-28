@@ -3,11 +3,17 @@
 ## Summary
 
 AikiField.com (a static marketing site for a fractional-CISO consultancy)
-authenticates against the **Quantum Aikido coaching backend**
+authenticates against the **AI Ki Questions Fielded backend**
 (`AIRichardMoon`, FastAPI on Google Cloud Run) — the same backend that
 powers `quantumaikido.com/members.php`. The auth surface is now a **blind
 `/login.php` page** that exists solely to gate the pre-release `/beta/`
 assessment pages. It is NOT linked from the public navigation.
+
+> **Product name:** The chatbot is branded **"AI Ki Questions Fielded"** across
+> all three repos (QA frontend, AIRichardMoon backend, AikiField marketing).
+> Previously branded "Aikifield AI Chat" / "Quantum Aikido Coach" — renamed
+> 2026-08-29. Infrastructure identifiers (Cloud Run service names, Worker
+> names) remain `quantum-aikido-coach*` for continuity.
 
 **History:** AikiField.com previously hosted a coaching login + inline AI
 Chat on its public **Demonstration Technologies** page (`projects.php`) as a

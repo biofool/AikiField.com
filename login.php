@@ -14,7 +14,7 @@
  * handler were extracted here so /beta/ gating keeps working without a
  * public login on the marketing site.
  *
- * Authenticates against the Quantum Aikido coaching backend (AIRichardMoon
+ * Authenticates against the AI Ki Questions Fielded backend (AIRichardMoon
  * on Cloud Run) via coach-proxy.php, using the same PHP session cookie
  * contract as the former projects.php integration (session keys: qa_email,
  * qa_session_token, qa_target_env, qa_is_admin). includes/beta-gate.load.php
@@ -387,7 +387,7 @@ $coachLoginUrl = $_SERVER['SCRIPT_NAME'] ?? '/login.php';
               <select id="coach-reg-language" class="coach-input">
                 <option value="">English (auto-detect)</option>
               </select>
-              <p class="coach-reg-hint">Overrides auto-detection. The coach will respond in this language.</p>
+              <p class="coach-reg-hint">Overrides auto-detection. AI Ki Questions Fielded will respond in this language.</p>
             </div>
           </div>
 
@@ -445,7 +445,7 @@ $coachLoginUrl = $_SERVER['SCRIPT_NAME'] ?? '/login.php';
             This sign-in gates the pre-release assessment tools under
             <code>/beta/</code>. The same account works on
             <a href="https://quantumaikido.com">quantumaikido.com</a> if you
-            are a Quantum Aikido member.
+            are an AI Ki Questions Fielded member.
           </p>
           <ul class="coach-intro-features">
             <li>Register with an invitation code, or sign in if you already have an account.</li>
@@ -459,7 +459,7 @@ $coachLoginUrl = $_SERVER['SCRIPT_NAME'] ?? '/login.php';
           <h2>Before you begin</h2>
           <ul class="coach-privacy-list">
             <li>Your session is stored in a cookie so you can return to the beta pages without signing in again.</li>
-            <li>Authentication is handled by the Quantum Aikido coaching backend on Google Cloud Run.</li>
+            <li>Authentication is handled by the AI Ki Questions Fielded backend on Google Cloud Run.</li>
             <li>Please do not enter sensitive personal information.</li>
           </ul>
           <div class="coach-privacy-links">

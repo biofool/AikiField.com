@@ -1,7 +1,7 @@
 # AikiField.com — Apache rewrite rules + caching + security headers
 # The site is static HTML; the only rewrite needed is the coach API proxy,
-# which forwards /coach-api/* to coach-proxy.php (PHP proxy to the Quantum
-# Aikido coaching backend on Cloud Run). The proxy is used by the blind
+# which forwards /coach-api/* to coach-proxy.php (PHP proxy to the AI Ki
+# Questions Fielded backend on Cloud Run). The proxy is used by the blind
 # /login.php page that gates the /beta/ assessment pages. See
 # docs/coach-auth-prd.md.
 
