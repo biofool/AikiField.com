@@ -253,7 +253,12 @@ the shared proxy IP.
 
 - PHP session cookie on `aikifield.com` (HttpOnly, Secure on HTTPS,
   SameSite=Lax, 7-day lifetime). Session keys: `qa_email`,
-  `qa_session_token`, `qa_target_env`, `qa_is_admin` — identical to QA.
+  `qa_session_token`, `qa_target_env`, `qa_is_admin`, `qa_premium` — identical to QA.
+  The `qa_premium` key reflects the backend `premium` flag (Phase 20) and
+  controls visibility of the "Video with a Coach" feature. AikiField's
+  marketing copy (`projects.php`) notes the video coach handoff is a premium
+  feature. No live handoff UI exists on AikiField — the feature lives on
+  `quantumaikido.com/members.php`.
 - `coach-login.js` posts `email` + `sessionToken` to `login.php`
   (`action=backend-login`), which verifies against
   `/v1/auth/check-session` and stores the session. The backend also
