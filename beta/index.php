@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex,nofollow">
   <title>AikiField — Beta Index</title>
-  <meta name="description" content="Index of unreleased beta previews on aikifield.com. Gated — requires Activating Infinite Creativity login.">
+  <meta name="description" content="Index of unreleased beta previews on aikifield.com. Gated — requires Ask Richard Creativity Questions login.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preload" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Public+Sans:wght@400;600;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
@@ -58,7 +58,7 @@
     <div class="bta-container bta-hero__inner">
       <p class="bta-eyebrow">Beta preview</p>
       <h1 class="bta-h1">What&rsquo;s in here</h1>
-      <p class="bta-lead">Unreleased previews behind the Activating Infinite Creativity login. Nothing here is linked from the main site, and the content is still changing.</p>
+      <p class="bta-lead">Unreleased previews behind the Ask Richard Creativity Questions login. Nothing here is linked from the main site, and the content is still changing.</p>
     </div>
   </section>
 

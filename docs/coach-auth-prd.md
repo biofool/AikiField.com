@@ -3,13 +3,13 @@
 ## Summary
 
 AikiField.com (a static marketing site for a fractional-CISO consultancy)
-authenticates against the **Activating Infinite Creativity backend**
+authenticates against the **Ask Richard Creativity Questions backend**
 (`AIRichardMoon`, FastAPI on Google Cloud Run) — the same backend that
 powers `quantumaikido.com/members.php`. The auth surface is now a **blind
 `/login.php` page** that exists solely to gate the pre-release `/beta/`
 assessment pages. It is NOT linked from the public navigation.
 
-> **Product name:** The chatbot is branded **"Activating Infinite Creativity"** across
+> **Product name:** The chatbot is branded **"Ask Richard Creativity Questions"** across
 > all three repos (QA frontend, AIRichardMoon backend, AikiField marketing).
 > Previously branded "Aikifield AI Chat" / "Quantum Aikido Coach" — renamed
 > 2026-08-29. Infrastructure identifiers (Cloud Run service names, Worker

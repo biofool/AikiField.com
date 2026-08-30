@@ -7,7 +7,7 @@
  * public — there is no login or chat on this page anymore.
  *
  * History: this page previously hosted an inline coaching login + AI Chat
- * (a public CTA authenticating against the Activating Infinite Creativity backend
+ * (a public CTA authenticating against the Ask Richard Creativity Questions backend
  * on Cloud Run via coach-proxy.php). That surface was removed — the page
  * now shows an invitation card pointing visitors to the contact form to
  * request a live demo. The coaching login was extracted to a blind
@@ -120,7 +120,7 @@
               <span class="af-svc__tag af-svc__tag--flagship">AI Coaching</span>
               <span class="af-svc__tag af-svc__tag--built">Built by AikiField</span>
             </div>
-            <h2 class="af-svc__title">Activating Infinite Creativity</h2>
+            <h2 class="af-svc__title">Ask Richard Creativity Questions</h2>
             <p class="af-svc__lead">Corpus-specific AI Chat. Designed to provide hallucination-free Q&amp;A against a specific knowledge base. Free your team to handle the hard questions; give your customers a better interface to the documentation &mdash; because, who wants to read docs?</p>
             <p class="af-svc__bestfor">Live at <a href="https://quantumaikido.com">quantumaikido.com</a> &mdash; a public chat plus a members area (invitation-only, with email or Google login).</p>
             <p class="af-svc__bestfor">How it works: it searches the teaching archive for relevant passages, drafts an answer with citations, keeps costs under control, and hands off to a human coach by video (a premium feature) when it can&rsquo;t help or the member asks.</p>
@@ -143,8 +143,8 @@
 
             <div class="af-diagram">
               <figure class="af-diagram__figure">
-                <img src="assets/aichat-flow.svg" data-af-diagram="aichat-flow" data-i18n-attr="alt:svg.aichat_flow.alt" alt="Activating Infinite Creativity request flow: step 1 member asks a question; step 2a authenticate (email, password, Google OAuth, Turnstile) and 2b rate limit and queue; step 3 search teaching corpus via SQLite FTS5; step 4 Gemini drafts cited answer; step 5 decision — can it answer confidently? YES leads to 6a return cited answer (24/7, free, within budget), NO leads to 6b escalate to human coach via video link; step 7 member receives response. Infrastructure: Cloud Run, Firestore, Secret Manager, Pub/Sub, Cloud Functions, Docker, OpenTofu, DVC plus GCS." class="af-diagram__img" width="780" height="980" loading="lazy"/>
-                <figcaption class="af-diagram__caption"><strong>Figure 1.</strong> Activating Infinite Creativity request flow &mdash; from member question through corpus search, Gemini-drafted answer, and the decision to return a cited answer or escalate to a live human coach. <a href="assets/aichat-flow.png" class="af-diagram__download" download>Download PNG &darr;</a></figcaption>
+                <img src="assets/aichat-flow.svg" data-af-diagram="aichat-flow" data-i18n-attr="alt:svg.aichat_flow.alt" alt="Ask Richard Creativity Questions request flow: step 1 member asks a question; step 2a authenticate (email, password, Google OAuth, Turnstile) and 2b rate limit and queue; step 3 search teaching corpus via SQLite FTS5; step 4 Gemini drafts cited answer; step 5 decision — can it answer confidently? YES leads to 6a return cited answer (24/7, free, within budget), NO leads to 6b escalate to human coach via video link; step 7 member receives response. Infrastructure: Cloud Run, Firestore, Secret Manager, Pub/Sub, Cloud Functions, Docker, OpenTofu, DVC plus GCS." class="af-diagram__img" width="780" height="980" loading="lazy"/>
+                <figcaption class="af-diagram__caption"><strong>Figure 1.</strong> Ask Richard Creativity Questions request flow &mdash; from member question through corpus search, Gemini-drafted answer, and the decision to return a cited answer or escalate to a live human coach. <a href="assets/aichat-flow.png" class="af-diagram__download" download>Download PNG &darr;</a></figcaption>
               </figure>
             </div>
           </article>
@@ -302,7 +302,7 @@
             </div>
             <h2 class="af-svc__title">Want to see it in action?</h2>
             <p class="af-svc__lead">If you want to see it live, request an invitation when you <a href="contact.html">contact us</a> &mdash; we&rsquo;re happy to show you how easy it is to stand one up.</p>
-            <p class="af-svc__bestfor">The Activating Infinite Creativity runs in production at <a href="https://quantumaikido.com">quantumaikido.com</a>. We can walk you through a live demo, then design and build a corpus-specific chat grounded in your own knowledge base &mdash; runbooks, policies, product docs, or any body of text your team or customers keep asking about.</p>
+            <p class="af-svc__bestfor">The Ask Richard Creativity Questions runs in production at <a href="https://quantumaikido.com">quantumaikido.com</a>. We can walk you through a live demo, then design and build a corpus-specific chat grounded in your own knowledge base &mdash; runbooks, policies, product docs, or any body of text your team or customers keep asking about.</p>
             <a href="contact.html" class="af-btn af-btn--light af-svc__cta">Request an invitation</a>
             <p class="af-svc__fineprint">No account needed to look around this page &mdash; the project cards on the left describe what each system does and how the same pattern fits your needs.</p>
           </aside>
@@ -319,7 +319,7 @@
       <p class="af-lead af-lead--wide">All six systems were designed and built by AikiField and run in production today &mdash; AI-grounded coaching, global studio outreach, multi-cloud cost control, resilience engineering, media intelligence, and AI governance research. The engineering patterns behind them are directly available to your engagement.</p>
       <div class="af-diagram">
         <figure class="af-diagram__figure">
-          <img src="assets/projects-overview.svg" data-af-diagram="projects-overview" data-i18n-attr="alt:svg.projects_overview.alt" alt="Overview diagram: AikiField sponsors two projects — Activating Infinite Creativity (inputs: member question and teaching corpus; core: Gemini API, SQLite FTS5, Cloud Run, Firestore, rate limiter, auth; outputs: cited answer and human coach escalation) and World Studio Finder (inputs: Google Maps, Places API, Hunter.io; core: Playwright scraper, email verifier, SQLite SCD Type 2, Google Sheets sync, geo-filter, Compute Engine; outputs: YAMM email campaigns and web form submission)." class="af-diagram__img" width="1120" height="760" loading="lazy"/>
+          <img src="assets/projects-overview.svg" data-af-diagram="projects-overview" data-i18n-attr="alt:svg.projects_overview.alt" alt="Overview diagram: AikiField sponsors two projects — Ask Richard Creativity Questions (inputs: member question and teaching corpus; core: Gemini API, SQLite FTS5, Cloud Run, Firestore, rate limiter, auth; outputs: cited answer and human coach escalation) and World Studio Finder (inputs: Google Maps, Places API, Hunter.io; core: Playwright scraper, email verifier, SQLite SCD Type 2, Google Sheets sync, geo-filter, Compute Engine; outputs: YAMM email campaigns and web form submission)." class="af-diagram__img" width="1120" height="760" loading="lazy"/>
           <figcaption class="af-diagram__caption"><strong>Figure 3.</strong> Overview of the two systems AikiField built, showing inputs, core components, and outputs for each. <a href="assets/projects-overview.png" class="af-diagram__download" download>Download PNG &darr;</a></figcaption>
         </figure>
       </div>

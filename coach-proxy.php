@@ -1,7 +1,7 @@
 <?php
 /**
  * Coach API Proxy for AikiField — forwards /coach-api/* requests to the
- * Activating Infinite Creativity backend (AIRichardMoon on Cloud Run).
+ * Ask Richard Creativity Questions backend (AIRichardMoon on Cloud Run).
  *
  * Ported from quantumaikido.com/web/coach-proxy.php, trimmed for AikiField:
  *   - No staging folder (AikiField has no /staging/ wrapper).
