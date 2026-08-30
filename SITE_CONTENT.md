@@ -160,7 +160,7 @@ Where a leader places attention determines the security posture of the whole org
 **Mini links:**
 - Self-Assessment — Measure your security maturity and leadership presence — Two assessments in one — honest self-inquiry across five security categories and seven presence dimensions. (→ assessment.html)
 - Engagement Process — Six phases to a program that fits — A collaborative design cycle tailored to your stage, risks, and customers. (→ process.html)
-- Demonstration Technologies — Technology we built, ready to fit your needs — AI Ki Questions Fielded, a cited coaching backend for the Quantum Aikido corpus; World Studio Finder, a global studio discovery pipeline; and MultiCloud-MultiPass, a multi-cloud cost kill switch. All built by AikiField; the same engineering is available to your organization. (→ projects.php)
+- Demonstration Technologies — Technology we built, ready to fit your needs — Activating Infinite Creativity, a cited coaching backend for the Quantum Aikido corpus; World Studio Finder, a global studio discovery pipeline; and MultiCloud-MultiPass, a multi-cloud cost kill switch. All built by AikiField; the same engineering is available to your organization. (→ projects.php)
 
 ### CTA
 
@@ -622,11 +622,11 @@ The composure and curiosity to adapt to emerging threats and AI risk.
 - Title: Technology we built — ready to fit your needs.
 - Lead: AikiField designs, builds, and operates the systems below — production AI and data pipelines running today, not demos or slide-ware. The same engineering capability, cost discipline, and leadership judgment that built them is available to your organization, tailored to fit your security program and your stage.
 
-### Project 1: AI Ki Questions Fielded
+### Project 1: Activating Infinite Creativity
 
 **Tag:** AI Coaching
 **Built-by tag:** Built by AikiField
-**Title:** AI Ki Questions Fielded
+**Title:** Activating Infinite Creativity
 **Lead:** Corpus-specific AI Chat. Designed to provide hallucination-free Q&A against a specific knowledge base. Free your team to handle the hard questions; give your customers a better interface to the documentation — because, who wants to read docs?
 **Live at:** quantumaikido.com — a public chat plus a members area (invitation-only, with email or Google login).
 **How it works:** It searches the teaching archive for relevant passages, drafts an answer with citations, keeps costs under control, and hands off to a human coach by video when it can't help or the member asks.
@@ -741,7 +741,7 @@ blind `/login.php` page that gates only the `/beta/` assessment pages — see
 **Tags:** See it live | Free
 **Heading:** Want to see it in action?
 **Lead:** If you want to see it live, request an invitation when you contact us — we're happy to show you how easy it is to stand one up.
-**Body:** The AI Ki Questions Fielded runs in production at quantumaikido.com. We can walk you through a live demo, then design and build a corpus-specific chat grounded in your own knowledge base — runbooks, policies, product docs, or any body of text your team or customers keep asking about.
+**Body:** The Activating Infinite Creativity runs in production at quantumaikido.com. We can walk you through a live demo, then design and build a corpus-specific chat grounded in your own knowledge base — runbooks, policies, product docs, or any body of text your team or customers keep asking about.
 **Button:** Request an invitation (links to contact.html)
 **Fine print:** No account needed to look around this page — the project cards on the left describe what each system does and how the same pattern fits your needs.
 
