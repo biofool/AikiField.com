@@ -321,6 +321,12 @@ $coachLoginUrl = $_SERVER['SCRIPT_NAME'] ?? '/login.php';
           <label for="coach-password" class="coach-label">Password</label>
           <input type="password" id="coach-password" class="coach-input" placeholder="Password" required autocomplete="current-password" minlength="8">
 
+          <div id="coach-login-validation" class="coach-login-validation" hidden>
+              <label for="coach-login-validation-code" class="coach-label">Email validation code <span class="coach-reg-hint" style="display:inline;font-weight:normal;">(sent to your email)</span></label>
+              <input type="text" id="coach-login-validation-code" class="coach-input" placeholder="Enter the 6-digit code from your email" autocomplete="off" inputmode="numeric" pattern="[0-9]{6}" maxlength="6">
+              <button type="button" id="coach-login-resend-code-btn" class="btn btn-link coach-reg-send-code-btn">Resend validation code</button>
+          </div>
+
           <button type="submit" class="btn btn-primary" id="coach-login-btn">Sign in</button>
           <button type="button" id="coach-forgot-btn" class="btn btn-link coach-forgot-link">Forgot password?</button>
 
@@ -367,6 +373,12 @@ $coachLoginUrl = $_SERVER['SCRIPT_NAME'] ?? '/login.php';
 
               <label for="coach-reg-email" class="coach-label">Email address</label>
               <input type="email" id="coach-reg-email" class="coach-input" placeholder="name@example.com" required autocomplete="email">
+
+              <button type="button" id="coach-reg-send-code-btn" class="btn btn-link coach-reg-send-code-btn">Send validation code</button>
+              <div id="coach-reg-email-status" class="coach-status" role="alert" hidden></div>
+
+              <label for="coach-reg-validation-code" class="coach-label">Email validation code <span class="coach-reg-hint" style="display:inline;font-weight:normal;">(sent to your email)</span></label>
+              <input type="text" id="coach-reg-validation-code" class="coach-input" placeholder="Enter the 6-digit code from your email" autocomplete="off" inputmode="numeric" pattern="[0-9]{6}" maxlength="6">
 
               <label for="coach-reg-password" class="coach-label">Password</label>
               <input type="password" id="coach-reg-password" class="coach-input" placeholder="Choose a password (min 8 chars)" required autocomplete="new-password" minlength="8">
