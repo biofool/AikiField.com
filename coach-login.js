@@ -57,6 +57,7 @@
         window.COACH_LOGIN_REDIRECT || "/members.php",
     );
     let currentEmail = "";
+    let pendingValidationEmail = "";
 
     // --- DOM refs ---
     const loginStep      = document.getElementById("coach-login");
@@ -77,11 +78,19 @@
     // Register form
     const registerForm   = document.getElementById("coach-register-form");
     const regEmailInput  = document.getElementById("coach-reg-email");
+    const regSendCodeBtn = document.getElementById("coach-reg-send-code-btn");
+    const regEmailStatus = document.getElementById("coach-reg-email-status");
+    const regValidationCodeInput = document.getElementById("coach-reg-validation-code");
     const regPasswordInput = document.getElementById("coach-reg-password");
     const regCodeInput   = document.getElementById("coach-reg-code");
     const regAliasInput  = document.getElementById("coach-reg-alias");
     const registerBtn    = document.getElementById("coach-register-btn");
     const registerStatus = document.getElementById("coach-register-status");
+
+    // Login-time activation form (shown when login returns needsValidation)
+    const loginValidationContainer = document.getElementById("coach-login-validation");
+    const loginValidationCodeInput = document.getElementById("coach-login-validation-code");
+    const loginResendCodeBtn = document.getElementById("coach-login-resend-code-btn");
 
     // Reset form
     const resetForm      = document.getElementById("coach-reset-form");
@@ -340,6 +349,45 @@
         const password = passwordInput.value;
         if (!email || !password) return;
         currentEmail = email;
+
+        // If the validation code field is visible and filled, call activate
+        // instead of verify. This handles the login-time activation flow.
+        const validationCode = loginValidationCodeInput && !loginValidationContainer.hidden
+            ? loginValidationCodeInput.value.trim()
+            : "";
+        if (validationCode) {
+            loginBtn.disabled = true;
+            showStatus(loginStatus, "Activating your account...", "loading");
+            try {
+                const resp = await fetchWithTimeout(API + "/v1/auth/activate-with-code", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        email,
+                        code: validationCode,
+                        password,
+                        captchaToken: getCaptchaToken(),
+                    }),
+                });
+                const data = await resp.json();
+                loginBtn.disabled = false;
+                if (data.ok && data.sessionToken) {
+                    showStatus(loginStatus, "Account activated! Redirecting...", "success");
+                    establishServerSession(data.email || email, data.sessionToken);
+                } else {
+                    showStatus(loginStatus, data.error || "Activation failed. Please check your code and try again.", "error");
+                }
+                resetCaptchaToken("login");
+            } catch (err) {
+                loginBtn.disabled = false;
+                const msg = err && err.name === "AbortError"
+                    ? "The request timed out. Please try again."
+                    : "Network error: " + (err && err.message ? err.message : "unknown");
+                showStatus(loginStatus, msg, "error");
+            }
+            return;
+        }
+
         loginBtn.disabled = true;
         showStatus(loginStatus, "Signing in...", "loading");
 
@@ -356,6 +404,15 @@
                 const authEmail = data.email || email;
                 showStatus(loginStatus, "Signed in! Redirecting...", "success");
                 establishServerSession(authEmail, data.sessionToken);
+            } else if (data.needsValidation) {
+                // Account exists but isn't activated. Show the validation code
+                // field so the user can enter the code that was just emailed.
+                if (loginValidationContainer) {
+                    loginValidationContainer.hidden = false;
+                    loginValidationCodeInput.focus();
+                }
+                showStatus(loginStatus, data.error || "A validation code has been sent to your email. Enter it below to complete sign-in.", "info");
+                pendingValidationEmail = data.email || email;
             } else if (data.pending) {
                 showStatus(loginStatus, data.error || "Your account is pending confirmation.", "error");
             } else {
@@ -370,6 +427,37 @@
             showStatus(loginStatus, msg, "error");
         }
     });
+
+    // --- Login-time activation: resend code ---
+    if (loginResendCodeBtn) {
+        loginResendCodeBtn.addEventListener("click", async () => {
+            const email = pendingValidationEmail || emailInput.value.trim().toLowerCase();
+            if (!email || !email.includes("@")) {
+                showStatus(loginStatus, "Enter your email address first.", "error");
+                return;
+            }
+            loginResendCodeBtn.disabled = true;
+            showStatus(loginStatus, "Sending validation code...", "loading");
+            try {
+                const resp = await fetchWithTimeout(API + "/v1/auth/send-validation-code", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ email, captchaToken: getCaptchaToken() }),
+                });
+                const data = await resp.json();
+                loginResendCodeBtn.disabled = false;
+                if (data.ok) {
+                    showStatus(loginStatus, data.message || "A new validation code has been sent to your email.", "success");
+                } else {
+                    showStatus(loginStatus, data.error || "Failed to send validation code.", "error");
+                }
+                resetCaptchaToken("login");
+            } catch (err) {
+                loginResendCodeBtn.disabled = false;
+                showStatus(loginStatus, "Network error: " + (err.message || "please try again."), "error");
+            }
+        });
+    }
 
     // --- Forgot password ---
     let forgotCaptchaShown = false;
@@ -429,10 +517,71 @@
         emailInput.focus();
     });
 
+    // --- Send email validation code ---
+    // Triggered automatically when the email field loses focus with a valid
+    // email, or manually via the "Send validation code" button. The backend
+    // generates a 6-digit code and emails it. The code must be entered in the
+    // validation-code field to complete registration.
+    let lastSentEmail = "";
+
+    async function sendRegValidationCode() {
+        const email = regEmailInput.value.trim().toLowerCase();
+        if (!email || !email.includes("@") || email.indexOf("@") === email.length - 1) {
+            showStatus(regEmailStatus, "Please enter a valid email address.", "error");
+            return;
+        }
+        // Don't re-send if the email hasn't changed since the last successful send.
+        if (email === lastSentEmail) {
+            showStatus(regEmailStatus, "A validation code was already sent to " + email + ". Check your inbox (and spam folder).", "info");
+            return;
+        }
+        if (regSendCodeBtn) regSendCodeBtn.disabled = true;
+        showStatus(regEmailStatus, "Sending validation code to " + email + "...", "loading");
+        try {
+            const resp = await fetchWithTimeout(API + "/v1/auth/send-validation-code", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    email,
+                    captchaToken: getCaptchaToken(),
+                }),
+            });
+            const data = await resp.json();
+            if (regSendCodeBtn) regSendCodeBtn.disabled = false;
+            if (data.ok) {
+                lastSentEmail = email;
+                showStatus(regEmailStatus, data.message || "A validation code has been sent to " + email + ". Enter it below to continue.", "success");
+            } else {
+                showStatus(regEmailStatus, data.error || "Failed to send validation code.", "error");
+            }
+            resetCaptchaToken("reg");
+        } catch (err) {
+            if (regSendCodeBtn) regSendCodeBtn.disabled = false;
+            showStatus(regEmailStatus, "Network error: " + (err.message || "please try again."), "error");
+        }
+    }
+
+    // Auto-send when the email field loses focus with a valid address.
+    if (regEmailInput) {
+        regEmailInput.addEventListener("blur", () => {
+            const email = regEmailInput.value.trim().toLowerCase();
+            // Only auto-send if the email looks valid and hasn't already been sent.
+            if (email && email.includes("@") && email.indexOf("@") < email.length - 1 && email !== lastSentEmail) {
+                sendRegValidationCode();
+            }
+        });
+    }
+
+    // Manual send via button (still available as a resend / fallback).
+    if (regSendCodeBtn) {
+        regSendCodeBtn.addEventListener("click", sendRegValidationCode);
+    }
+
     // --- Register form ---
     registerForm.addEventListener("submit", async (e) => {
         e.preventDefault();
         const email = regEmailInput.value.trim().toLowerCase();
+        const validationCode = regValidationCodeInput ? regValidationCodeInput.value.trim() : "";
         const password = regPasswordInput.value;
         const invitationCode = regCodeInput.value.trim();
         const alias = regAliasInput ? regAliasInput.value.trim() : "";
@@ -448,6 +597,11 @@
                 invitationCode,
                 captchaToken: getCaptchaToken(),
             };
+            // Include validationCode when provided. The backend treats it as
+            // optional — if omitted, registration proceeds without email
+            // validation (backward compatible). When present and valid, the
+            // account is activated immediately.
+            if (validationCode) body.validationCode = validationCode;
             // Only include alias if the user provided one (empty string is
             // fine server-side, but omitting keeps the payload clean).
             if (alias) body.alias = alias;

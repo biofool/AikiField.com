@@ -253,6 +253,16 @@
     margin: 0;
     line-height: 1.4;
 }
+
+/* "Send validation code" / "Resend validation code" button — a compact
+   link-style button placed between the email input and the validation-code
+   field in the registration form, and inside the login-time activation
+   container. */
+.coach-reg-send-code-btn {
+    padding: 0.25rem 0;
+    font-size: 0.8rem;
+    margin-top: -0.25rem;
+}
 /* RTL toggle: swap columns (language/culture choice — not yet implemented) */
 .coach-reg-rtl .coach-reg-columns {
     flex-direction: row-reverse;

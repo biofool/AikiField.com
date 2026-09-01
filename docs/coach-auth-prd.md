@@ -13,7 +13,11 @@ assessment pages. It is NOT linked from the public navigation.
 > all three repos (QA frontend, AIRichardMoon backend, AikiField marketing).
 > Previously branded "Aikifield AI Chat" / "Quantum Aikido Coach" — renamed
 > 2026-08-29. Infrastructure identifiers (Cloud Run service names, Worker
-> names) remain `quantum-aikido-coach*` for continuity.
+> names) were `quantum-aikido-coach*` for continuity at the time of that
+> rename. **Superseded 2026-09-02:** the AIQA/krishnafats GCP project
+> cutover (below) moved the live Cloud Run services to `aiqa-coach*`
+> naming; `quantum-aikido-coach*` now refers only to the legacy project's
+> services, pending decommission.
 
 **History:** AikiField.com previously hosted a coaching login + inline AI
 Chat on its public **Demonstration Technologies** page (`projects.php`) as a
@@ -24,13 +28,29 @@ demo. The login form + PHP session handler were extracted to the blind
 marketing site. The inline AI Chat (`coach-chat.js`) was removed entirely;
 the live chat lives on `quantumaikido.com`.
 
-### AIQA / krishnafats cutover (#318)
+### AIQA / krishnafats cutover (#318) — COMPLETE 2026-09-02
 
-`coach-config.php` `COACH_BACKEND_URL` stays on
-`https://quantum-aikido-coach-6bfpsd3kkq-uc.a.run.app` until AIQA Cloud Run
-exists (AIRichardMoon Phase 8). Do **not** deploy a live URL change in this
-window. Cutover placeholders:
+**Status: DONE, not pending.** The AIQA production cutover (AIRichardMoon
+backend + quantumaikido.com frontend) completed 2026-09-02; live
+`quantumaikido.com` traffic now runs on the `aiqa-coaching` GCP project's
+Cloud Run services. AikiField's own `coach-config.php` `COACH_BACKEND_URL`
+should be updated to the new host,
+`https://aiqa-coach-uj5nyskptq-uc.a.run.app` (was
+`https://quantum-aikido-coach-6bfpsd3kkq-uc.a.run.app`, now legacy —
+pending decommission, not yet torn down). Cutover state file (historical):
 `~/projects/AIRichardMoon/backend/data/migration/aiqa_frontend_cutover.json`.
+
+**Note — this is a separate config surface.** AikiField's
+`coach-config.php` `COACH_BACKEND_URL` is a **PHP config constant on
+peec.biz shared hosting**, distinct from both (a) quantumaikido.com's
+Cloudflare Pages secret of the same name (edited via
+`wrangler pages secret put COACH_BACKEND_URL --project-name=quantumaikido`
++ redeploy) and (b) the separate, currently-dead standalone Cloudflare
+Worker `quantum-aikido-coach` (zero Workers Routes on the zone; does not
+affect any live traffic, including AikiField's). Fixing one of these
+three does NOT fix the others. Full detail:
+`AIRichardMoon/backend/PRD.md` § "Two Cloudflare backend-routing
+mechanisms".
 
 AikiField.com remains a **third frontend surface** for the shared coaching
 auth flow (same backend user store, same session contract), alongside
@@ -178,6 +198,8 @@ aikifield.com/coach-api/*  ──▶  coach-proxy.php  ──▶  AIRichardMoon 
                                                           ▼
                                                   /v1/auth/verify
                                                   /v1/auth/register-with-password
+                                                  /v1/auth/send-validation-code
+                                                  /v1/auth/activate-with-code
                                                   /v1/auth/check-session
                                                   /v1/auth/request-reset
                                                   /v1/auth/reset-password
@@ -210,6 +232,18 @@ concrete thresholds remain in server logs and admin alerts only.
 AikiField's `coach-proxy.php` forwards `CF-Connecting-IP` and
 `X-Forwarded-For` so the backend rate-limits per real visitor IP rather than
 the shared proxy IP.
+
+### Registration + login-time activation flow (issue #228)
+
+The registration form on `login.php` includes an email validation code step
+(always visible — no runtime toggle):
+
+1. User enters email → clicks "Send validation code" → `POST /v1/auth/send-validation-code` generates + emails a 6-digit OTP (captcha-gated, rate-limited, anti-enumeration).
+2. User enters the 6-digit code + password + invitation code (optional) → `POST /v1/auth/register-with-password` verifies the code and **activates the account immediately** (`active=true, email_confirmed=true`) → issues a session token → user is signed in. No confirmation link email is sent.
+
+**Login-time activation:** When a user with an inactive/unconfirmed account tries to log in, `POST /v1/auth/verify` returns `needsValidation: true` and the backend auto-sends a validation code. The login form shows a validation code input (below the password field). The user enters the code and clicks "Sign in" again → `POST /v1/auth/activate-with-code` verifies the code + password, activates the account, and issues a session token. A "Resend validation code" link is provided.
+
+See `backend/PRD.md` in AIRichardMoon for full endpoint details.
 
 ### File inventory (AikiField.com)
 
@@ -417,7 +451,9 @@ Completed optimizations deployed to production:
    `peec.biz:public_html/aikifield.peec.biz/`.
 2. Ensure `coach-config.staging.php` defines `COACH_STAGING_URL` pointing
    to the staging Cloud Run backend
-   (`https://quantum-aikido-coach-staging-6bfpsd3kkq-uc.a.run.app`).
+   (`https://aiqa-coach-staging-uj5nyskptq-uc.a.run.app` — legacy host
+   `https://quantum-aikido-coach-staging-6bfpsd3kkq-uc.a.run.app` pending
+   decommission).
 3. `./sync.sh staging deploy` (or `./sync.sh --staging deploy`) — push to staging.
 4. Confirm `https://aikifield.peec.biz/staging/login.php` loads the login
    form with `window.COACH_API_BASE = "/staging/coach-api"` and
@@ -464,7 +500,9 @@ anywhere — one implementation, two environments.
   as QA #115).
 - **`coach-config.staging.php`** — must define `COACH_STAGING_URL` pointing
   to the staging Cloud Run backend
-  (`https://quantum-aikido-coach-staging-6bfpsd3kkq-uc.a.run.app`).
+  (`https://aiqa-coach-staging-uj5nyskptq-uc.a.run.app` — legacy host
+  `https://quantum-aikido-coach-staging-6bfpsd3kkq-uc.a.run.app` pending
+  decommission).
   Currently this file defines `COACH_BACKEND_URL` as a non-resolving
   `.invalid` placeholder. When the staging folder is deployed, either:
   - **Option A (recommended):** set `COACH_STAGING_URL` to the staging
