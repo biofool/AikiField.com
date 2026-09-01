@@ -54,16 +54,68 @@
     return Promise.resolve(config);
   }
 
+  // ── Path-based locale detection ────────────────────────────────────
+  // Extracts the locale from the URL path prefix (e.g. /es/approach.html → es).
+  // Returns the locale string if the first path segment is a supported locale,
+  // or null if there is no locale prefix or the prefix is not supported.
+  // Used by detectLocale() (path takes priority) and buildLocaleUrl().
+  function localeFromPath() {
+    if (!global.location || !global.location.pathname) return null;
+    var path = global.location.pathname;
+    // Match /xx/ or /xx (where xx is a 2-letter locale prefix)
+    var m = path.match(/^\/([a-z]{2})(\/|$)/i);
+    if (!m) return null;
+    var locale = m[1].toLowerCase();
+    if (!isSupported(locale)) return null;
+    return locale;
+  }
+
+  // Builds a URL for the given locale by adding/replacing/removing the path
+  // prefix. Returns null when no navigation is needed (same locale already
+  // active). Preserves the query string and hash.
+  function buildLocaleUrl(locale) {
+    if (!global.location) return null;
+    var path = global.location.pathname;
+    var search = global.location.search || '';
+    var hash = global.location.hash || '';
+
+    var currentLocale = localeFromPath();
+    var defaultLocale = (config && config.defaultLocale) || DEFAULT_LOCALE;
+
+    // No navigation needed if the target locale is already active.
+    if (locale === currentLocale) return null;
+    if (locale === defaultLocale && currentLocale === null) return null;
+
+    // Strip the current locale prefix to get the base path.
+    var basePath = path;
+    if (currentLocale) {
+      basePath = path.replace(/^\/[a-z]{2}/i, '');
+      if (basePath === '') basePath = '/';
+    }
+
+    // Build the new path: prefix with locale (or strip prefix for default).
+    var newPath;
+    if (locale === defaultLocale) {
+      newPath = basePath;
+    } else {
+      newPath = '/' + locale + basePath;
+    }
+
+    return newPath + search + hash;
+  }
+
   // ── Locale detection & persistence ────────────────────────────────
-  // Priority: stored preference > navigator.language > default.
+  // Priority: URL path prefix > ?lang= query param > stored preference >
+  // navigator.language > default.
   // Issue #84: allow stakeholders to explicitly choose their locale rather
   // than relying solely on IP inference. We use browser-language as the
   // *initial* guess but always respect an explicit user choice thereafter.
   function detectLocale() {
-    var stored = null;
-    try { stored = global.localStorage && global.localStorage.getItem(STORAGE_KEY); } catch (e) { /* private mode */ }
-    if (stored && isSupported(stored)) return stored;
-    // Check ?lang= query param (used by the EN/ES toggle links on the home page).
+    // 1. URL path prefix takes priority (e.g. /es/approach.html → es).
+    var pathLocale = localeFromPath();
+    if (pathLocale) return pathLocale;
+
+    // 2. ?lang= query param (used by the EN/ES toggle links on the home page).
     if (global.location && global.location.search) {
       try {
         var qp = new URLSearchParams(global.location.search);
@@ -75,6 +127,13 @@
         }
       } catch (e) { /* URLSearchParams not available */ }
     }
+
+    // 3. Stored preference (localStorage).
+    var stored = null;
+    try { stored = global.localStorage && global.localStorage.getItem(STORAGE_KEY); } catch (e) { /* private mode */ }
+    if (stored && isSupported(stored)) return stored;
+
+    // 4. Browser language.
     if (global.navigator && global.navigator.language) {
       var nav = global.navigator.language.toLowerCase();
       // Match exact (e.g. "pt-BR") then base (e.g. "pt")
@@ -82,6 +141,7 @@
       var base = nav.split('-')[0];
       if (isSupported(base)) return base;
     }
+
     return DEFAULT_LOCALE;
   }
 
@@ -486,6 +546,8 @@
     localizedTerm: localizedTerm,
     localizedMetric: localizedMetric,
     detectLocale: detectLocale,
+    localeFromPath: localeFromPath,
+    buildLocaleUrl: buildLocaleUrl,
     setLocale: setLocale,
     getLocale: getLocale,
     isRTL: isRTL,

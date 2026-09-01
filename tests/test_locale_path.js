@@ -37,6 +37,12 @@ var globalScope = {
 // ── Set up mock fetch (before loading locale-utils.js) ──────────────────
 var configPath = path.join(__dirname, '..', 'data', 'i18n-config.json');
 var config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+// The production i18n-config.json only lists locales with complete translations
+// in supportedLocales (currently en, es). However, the routing infrastructure
+// (.htaccess, tests/locale-router.php) handles all 12 locale prefixes. Override
+// supportedLocales here so detectLocale/localeFromPath tests can exercise the
+// full path-based routing logic with ja/fr/pt etc.
+config.supportedLocales = ['en','es','fr','de','pt','ja','zh','ko','ar','he','fa','hi'];
 globalScope.fetch = function (url) {
   return Promise.resolve({
     ok: true,
