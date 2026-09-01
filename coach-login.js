@@ -518,40 +518,63 @@
     });
 
     // --- Send email validation code ---
-    // Triggered when the user clicks "Send validation code" after entering
-    // their email. The backend generates a 6-digit code and emails it. The
-    // code must be entered in the validation-code field to complete registration.
-    if (regSendCodeBtn) {
-        regSendCodeBtn.addEventListener("click", async () => {
-            const email = regEmailInput.value.trim().toLowerCase();
-            if (!email || !email.includes("@")) {
-                showStatus(regEmailStatus, "Please enter a valid email address first.", "error");
-                return;
+    // Triggered automatically when the email field loses focus with a valid
+    // email, or manually via the "Send validation code" button. The backend
+    // generates a 6-digit code and emails it. The code must be entered in the
+    // validation-code field to complete registration.
+    let lastSentEmail = "";
+
+    async function sendRegValidationCode() {
+        const email = regEmailInput.value.trim().toLowerCase();
+        if (!email || !email.includes("@") || email.indexOf("@") === email.length - 1) {
+            showStatus(regEmailStatus, "Please enter a valid email address.", "error");
+            return;
+        }
+        // Don't re-send if the email hasn't changed since the last successful send.
+        if (email === lastSentEmail) {
+            showStatus(regEmailStatus, "A validation code was already sent to " + email + ". Check your inbox (and spam folder).", "info");
+            return;
+        }
+        if (regSendCodeBtn) regSendCodeBtn.disabled = true;
+        showStatus(regEmailStatus, "Sending validation code to " + email + "...", "loading");
+        try {
+            const resp = await fetchWithTimeout(API + "/v1/auth/send-validation-code", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    email,
+                    captchaToken: getCaptchaToken(),
+                }),
+            });
+            const data = await resp.json();
+            if (regSendCodeBtn) regSendCodeBtn.disabled = false;
+            if (data.ok) {
+                lastSentEmail = email;
+                showStatus(regEmailStatus, data.message || "A validation code has been sent to " + email + ". Enter it below to continue.", "success");
+            } else {
+                showStatus(regEmailStatus, data.error || "Failed to send validation code.", "error");
             }
-            regSendCodeBtn.disabled = true;
-            showStatus(regEmailStatus, "Sending validation code...", "loading");
-            try {
-                const resp = await fetchWithTimeout(API + "/v1/auth/send-validation-code", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        email,
-                        captchaToken: getCaptchaToken(),
-                    }),
-                });
-                const data = await resp.json();
-                regSendCodeBtn.disabled = false;
-                if (data.ok) {
-                    showStatus(regEmailStatus, data.message || "A validation code has been sent to your email. Enter it below to continue.", "success");
-                } else {
-                    showStatus(regEmailStatus, data.error || "Failed to send validation code.", "error");
-                }
-                resetCaptchaToken("reg");
-            } catch (err) {
-                regSendCodeBtn.disabled = false;
-                showStatus(regEmailStatus, "Network error: " + (err.message || "please try again."), "error");
+            resetCaptchaToken("reg");
+        } catch (err) {
+            if (regSendCodeBtn) regSendCodeBtn.disabled = false;
+            showStatus(regEmailStatus, "Network error: " + (err.message || "please try again."), "error");
+        }
+    }
+
+    // Auto-send when the email field loses focus with a valid address.
+    if (regEmailInput) {
+        regEmailInput.addEventListener("blur", () => {
+            const email = regEmailInput.value.trim().toLowerCase();
+            // Only auto-send if the email looks valid and hasn't already been sent.
+            if (email && email.includes("@") && email.indexOf("@") < email.length - 1 && email !== lastSentEmail) {
+                sendRegValidationCode();
             }
         });
+    }
+
+    // Manual send via button (still available as a resend / fallback).
+    if (regSendCodeBtn) {
+        regSendCodeBtn.addEventListener("click", sendRegValidationCode);
     }
 
     // --- Register form ---
