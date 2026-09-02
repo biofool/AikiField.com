@@ -104,6 +104,14 @@ RewriteRule ^(.*)$ https://aikifield.com/$1 [R=301,L]
 
 # ── Rewrites ────────────────────────────────────────────────────────────────
 
+# Locale path prefix — strip /xx/ and serve the underlying file internally.
+# e.g. /es/projects.php → /projects.php, /es/ → /index.html
+# The locale is detected client-side by locale-utils.js (localeFromPath()).
+# Only 2-letter locale prefixes that have real translations are listed.
+# 'en' is the default locale — /en/ redirects to the non-prefixed URL.
+RewriteRule ^(en|es)/?$ /index.html [L]
+RewriteRule ^(en|es)/(.+)$ /$2 [L]
+
 # Coach API proxy — forward /coach-api/* to coach-proxy.php
 RewriteRule ^coach-api(/.*)?$ coach-proxy.php [L]
 
