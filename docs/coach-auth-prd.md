@@ -236,12 +236,16 @@ the shared proxy IP.
 ### Registration + login-time activation flow (issue #228)
 
 The registration form on `login.php` includes an email validation code step
-(always visible — no runtime toggle):
+(always visible — no runtime toggle), auth navigation tab switcher, password
+reveal eye toggles, and segmented 6-digit OTP boxes:
 
 1. User enters email → clicks "Send validation code" → `POST /v1/auth/send-validation-code` generates + emails a 6-digit OTP (captcha-gated, rate-limited, anti-enumeration).
-2. User enters the 6-digit code + password + invitation code (optional) → `POST /v1/auth/register-with-password` verifies the code and **activates the account immediately** (`active=true, email_confirmed=true`) → issues a session token → user is signed in. No confirmation link email is sent.
-
-**Login-time activation:** When a user with an inactive/unconfirmed account tries to log in, `POST /v1/auth/verify` returns `needsValidation: true` and the backend auto-sends a validation code. The login form shows a validation code input (below the password field). The user enters the code and clicks "Sign in" again → `POST /v1/auth/activate-with-code` verifies the code + password, activates the account, and issues a session token. A "Resend validation code" link is provided.
+2. User enters the 6-digit code in the OTP boxes + password + optional invitation code → `POST /v1/auth/register-with-password`:
+   - **With valid invitation code:** Verifies the code, redeems it, and **activates the account immediately** (`active=true, email_confirmed=true`) → issues a session token → user is signed in.
+   - **Without invitation code:** Creates account in `active=false, email_confirmed=true, pending=true` state, awaiting administrator approval.
+3. **Login-time activation & pending approval:**
+   - When a user with an unconfirmed email attempts login, `POST /v1/auth/verify` returns `ok: false, pending: true, needsValidation: true` and auto-sends a code. The user enters the OTP code → `POST /v1/auth/activate-with-code` activates the account and signs them in.
+   - When a user with a verified email awaiting admin approval attempts login, `POST /v1/auth/verify` returns `ok: false, pending: true, needsValidation: false` displaying "Your account is pending administrator approval."
 
 See `backend/PRD.md` in AIRichardMoon for full endpoint details.
 
