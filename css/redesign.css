@@ -509,6 +509,48 @@ a.af-card:hover .af-card__arrow { text-decoration: underline; }
   }
 }
 
+/* ---------- Invitation card collapsible (projects.php) ---------- */
+/* The "See it live" card is a native <details>/<summary> so it collapses
+   into a compact tag header by default and expands on click — no JS needed
+   for the toggle. A small inline script auto-opens it on #see-it-live. */
+.af-invite-collapse { padding: 0; }
+.af-invite-collapse > .af-invite-collapse__body { padding: 28px 32px; }
+.af-invite-collapse__summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 14px;
+  padding: 22px 32px;
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+}
+.af-invite-collapse__summary::-webkit-details-marker { display: none; }
+.af-invite-collapse__summary .af-svc__tag { margin: 0; }
+.af-invite-collapse__hint {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--af-ink, #1a2a3a);
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.af-invite-collapse__chevron {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  color: var(--af-muted, #6b7a88);
+  transition: transform 0.2s ease;
+}
+.af-invite-collapse[open] .af-invite-collapse__chevron { transform: rotate(180deg); }
+.af-invite-collapse[open] .af-invite-collapse__summary { border-bottom: 1px solid var(--af-border, #e2e8ee); }
+.af-invite-collapse__summary:focus-visible {
+  outline: 2px solid var(--af-primary, #0E4E44);
+  outline-offset: -2px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .af-invite-collapse__chevron { transition: none; }
+}
+
 /* ---------- Principle strip (top-border cards) ---------- */
 .af-principle { border-top: 3px solid var(--af-primary); padding-top: 22px; }
 .af-principle__tag {
