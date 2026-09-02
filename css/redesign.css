@@ -486,7 +486,6 @@ a.af-card:hover .af-card__arrow { text-decoration: underline; }
    from the green header as a white card with the invitation copy. */
 .af-invite-dropdown {
   margin-top: 24px;
-  max-width: 640px;
   animation: af-invite-drop 0.22s ease-out;
 }
 .af-invite-dropdown__inner {
