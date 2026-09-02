@@ -117,6 +117,36 @@
         el.textContent = msg;
     }
 
+    // Resend cooldown (ticket #510): after any send, disable the button for
+    // COOLDOWN_SECONDS with a visible countdown. Prevents rapid-fire code
+    // generation that floods the user's inbox. The backend keeps up to 2
+    // concurrent codes valid, so this is a UX guard, not a correctness one.
+    const RESEND_COOLDOWN_SECONDS = 60;
+    let _cooldownTimers = {};
+    function startResendCooldown(btn, seconds) {
+        const secs = seconds || RESEND_COOLDOWN_SECONDS;
+        const originalText = btn.dataset.originalText || btn.textContent;
+        btn.dataset.originalText = originalText;
+        let remaining = secs;
+        btn.disabled = true;
+        btn.textContent = "Resend code (" + remaining + "s)";
+        if (_cooldownTimers[btn.id]) clearInterval(_cooldownTimers[btn.id]);
+        _cooldownTimers[btn.id] = setInterval(() => {
+            remaining--;
+            if (remaining <= 0) {
+                clearInterval(_cooldownTimers[btn.id]);
+                delete _cooldownTimers[btn.id];
+                btn.disabled = false;
+                btn.textContent = originalText;
+            } else {
+                btn.textContent = "Resend code (" + remaining + "s)";
+            }
+        }, 1000);
+    }
+    function isOnCooldown(btn) {
+        return btn.disabled && _cooldownTimers[btn.id] != null;
+    }
+
     // --- Field validation ------------------------------------------------
     // These forms carry `novalidate`, so the browser never blocks submit on
     // its own. That is deliberate: native constraint validation rejects a
@@ -551,6 +581,7 @@
                 showStatus(loginStatus, "Enter your email address first.", "error");
                 return;
             }
+            if (isOnCooldown(loginResendCodeBtn)) return;
             loginResendCodeBtn.disabled = true;
             showStatus(loginStatus, "Sending validation code...", "loading");
             try {
@@ -560,10 +591,11 @@
                     body: JSON.stringify({ email, captchaToken: getCaptchaToken() }),
                 });
                 const data = await resp.json();
-                loginResendCodeBtn.disabled = false;
                 if (data.ok) {
                     showStatus(loginStatus, data.message || "A new validation code has been sent to your email.", "success");
+                    startResendCooldown(loginResendCodeBtn);
                 } else {
+                    loginResendCodeBtn.disabled = false;
                     showStatus(loginStatus, data.error || "Failed to send validation code.", "error");
                 }
                 resetCaptchaToken("login");
@@ -714,6 +746,7 @@
             showStatus(regEmailStatus, "A validation code was already sent to " + email + ". Check your inbox (and spam folder).", "info");
             return;
         }
+        if (regSendCodeBtn && isOnCooldown(regSendCodeBtn)) return;
         if (regSendCodeBtn) regSendCodeBtn.disabled = true;
         showStatus(regEmailStatus, "Sending validation code to " + email + "...", "loading");
         try {
@@ -726,11 +759,12 @@
                 }),
             });
             const data = await resp.json();
-            if (regSendCodeBtn) regSendCodeBtn.disabled = false;
             if (data.ok) {
                 lastSentEmail = email;
                 showStatus(regEmailStatus, data.message || "A validation code has been sent to " + email + ". Enter it below to continue.", "success");
+                if (regSendCodeBtn) startResendCooldown(regSendCodeBtn);
             } else {
+                if (regSendCodeBtn) regSendCodeBtn.disabled = false;
                 showStatus(regEmailStatus, data.error || "Failed to send validation code.", "error");
             }
             resetCaptchaToken("reg");
