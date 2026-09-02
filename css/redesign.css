@@ -474,81 +474,37 @@ a.af-card:hover .af-card__arrow { text-decoration: underline; }
   gap: 32px;
   align-items: start;
 }
+.af-projects-split--full { grid-template-columns: 1fr; }
 .af-projects-split__projects { display: grid; gap: 24px; }
-/* Sticky rail: cap the height and scroll internally, otherwise a chat stack
-   taller than the viewport pins at the top and its lower half becomes
-   unreachable — page scroll no longer moves it and it has no scroll of its own. */
-.af-projects-split__chat {
-  position: sticky;
-  top: 80px;
-  max-height: calc(100vh - 100px);
-  overflow-y: auto;
-  overscroll-behavior: contain;
-}
-.af-projects-split__chat .coach-shell {
-  max-width: none;
-  margin: 0;
-  padding: 0;
-}
 @media (max-width: 980px) {
   .af-projects-split { grid-template-columns: 1fr; }
-  /* On mobile, put the chat rail ABOVE the projects list so users don't
-     have to scroll past every project card to reach the chat — it may be
-     their primary destination. The chat is sticky on desktop but static
-     on mobile, so this reordering doesn't affect the desktop layout. */
-  .af-projects-split__chat { order: -1; }
-  .af-projects-split__chat {
-    position: static;
-    max-height: none;
-    overflow-y: visible;
-  }
-  .af-projects-split__chat .coach-shell {
-    max-width: 700px;
-    margin: 2rem auto;
-    padding: 0 1rem;
-  }
 }
 
-/* ---------- Invitation card collapsible (projects.php) ---------- */
-/* The "See it live" card is a native <details>/<summary> so it collapses
-   into a compact tag header by default and expands on click — no JS needed
-   for the toggle. A small inline script auto-opens it on #see-it-live. */
-.af-invite-collapse { padding: 0; }
-.af-invite-collapse > .af-invite-collapse__body { padding: 28px 32px; }
-.af-invite-collapse__summary {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 10px 14px;
-  padding: 22px 32px;
-  cursor: pointer;
-  list-style: none;
-  user-select: none;
+/* ---------- Invitation dropdown panel (projects.php page header) ---------- */
+/* The "See it live" pill in the page header is a <button> that toggles this
+   dropdown panel. When hidden it takes no space; when shown it drops down
+   from the green header as a white card with the invitation copy. */
+.af-invite-dropdown {
+  margin-top: 24px;
+  max-width: 640px;
+  animation: af-invite-drop 0.22s ease-out;
 }
-.af-invite-collapse__summary::-webkit-details-marker { display: none; }
-.af-invite-collapse__summary .af-svc__tag { margin: 0; }
-.af-invite-collapse__hint {
-  font-size: 17px;
-  font-weight: 600;
-  color: var(--af-ink, #1a2a3a);
-  flex: 1 1 auto;
-  min-width: 0;
+.af-invite-dropdown__inner {
+  background: var(--af-white, #fff);
+  border-radius: 16px;
+  padding: 28px 32px;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.22);
 }
-.af-invite-collapse__chevron {
-  flex: none;
-  width: 22px;
-  height: 22px;
-  color: var(--af-muted, #6b7a88);
-  transition: transform 0.2s ease;
-}
-.af-invite-collapse[open] .af-invite-collapse__chevron { transform: rotate(180deg); }
-.af-invite-collapse[open] .af-invite-collapse__summary { border-bottom: 1px solid var(--af-border, #e2e8ee); }
-.af-invite-collapse__summary:focus-visible {
-  outline: 2px solid var(--af-primary, #0E4E44);
-  outline-offset: -2px;
+.af-invite-dropdown__inner .af-svc__tag { margin-bottom: 14px; }
+.af-invite-dropdown__inner .af-svc__tag + .af-svc__tag { margin-left: 8px; }
+.af-invite-dropdown__inner .af-svc__title { margin-top: 4px; }
+.af-invite-dropdown__inner .af-svc__fineprint { margin-top: 16px; }
+@keyframes af-invite-drop {
+  from { opacity: 0; transform: translateY(-12px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 @media (prefers-reduced-motion: reduce) {
-  .af-invite-collapse__chevron { transition: none; }
+  .af-invite-dropdown { animation: none; }
 }
 
 /* ---------- Principle strip (top-border cards) ---------- */
@@ -753,14 +709,15 @@ a.af-card:hover .af-card__arrow { text-decoration: underline; }
 .af-page-header--green .af-lead,
 .af-page-header--green .af-page-header__lead { color: var(--af-dark-card-text); }
 
-/* Chat CTA — points at the sticky login/chat rail (#ai-chat) so the AI Chat
-   isn't just one card among the project cards; the page header calls it out. */
+/* Chat CTA — a pill button in the page header that toggles the "See it live"
+   invitation dropdown panel below it. */
 .af-page-header__chat-cta {
   display: inline-flex;
   align-items: center;
   gap: 10px;
   margin-top: 28px;
   padding: 12px 20px;
+  border: none;
   border-radius: 999px;
   background: var(--af-mint);
   color: var(--af-primary-dk, #0A3A33);
@@ -768,11 +725,16 @@ a.af-card:hover .af-card__arrow { text-decoration: underline; }
   font-weight: 700;
   font-size: 15px;
   text-decoration: none;
+  cursor: pointer;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 .af-page-header__chat-cta:hover {
   transform: translateY(-1px);
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+}
+.af-page-header__chat-cta:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
 }
 .af-page-header__chat-cta-badge {
   background: var(--af-primary-dk, #0A3A33);
@@ -786,6 +748,11 @@ a.af-card:hover .af-card__arrow { text-decoration: underline; }
 }
 .af-page-header__chat-cta-arrow {
   animation: af-chat-cta-bounce 1.6s ease-in-out infinite;
+  transition: transform 0.2s ease;
+}
+.af-page-header__chat-cta--open .af-page-header__chat-cta-arrow {
+  animation: none;
+  transform: rotate(180deg);
 }
 @keyframes af-chat-cta-bounce {
   0%, 100% { transform: translateY(0); }

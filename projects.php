@@ -91,25 +91,35 @@
       <p class="af-eyebrow">Built by AikiField</p>
       <h1 class="af-h1">Technology we built &mdash; ready to fit your needs.</h1>
       <p class="af-lead af-lead--wide af-page-header__lead">AikiField designs, builds, and operates the systems below &mdash; production AI and data pipelines running today, not demos or slide-ware. The same engineering capability, cost discipline, and leadership judgment that built them is available to your organization, tailored to fit your security program and your stage.</p>
-      <a href="#see-it-live" class="af-page-header__chat-cta">
+      <button type="button" id="see-it-live-toggle" class="af-page-header__chat-cta" aria-expanded="false" aria-controls="see-it-live-panel">
         <span class="af-page-header__chat-cta-badge">Free</span>
         See it live &mdash; request an invitation below
         <span class="af-page-header__chat-cta-arrow" aria-hidden="true">&darr;</span>
-      </a>
+      </button>
+      <!-- Dropdown invitation panel — drops down from the pill when toggled -->
+      <div id="see-it-live-panel" class="af-invite-dropdown" hidden>
+        <div class="af-invite-dropdown__inner">
+          <span class="af-svc__tag af-svc__tag--flagship">See it live</span>
+          <span class="af-svc__tag af-svc__tag--built">Free</span>
+          <h2 class="af-svc__title">Want to see it in action?</h2>
+          <p class="af-svc__lead">If you want to see it live, request an invitation when you <a href="contact.html">contact us</a> &mdash; we&rsquo;re happy to show you how easy it is to stand one up.</p>
+          <p class="af-svc__bestfor">The Ask Richard Creativity Questions runs in production at <a href="https://quantumaikido.com">quantumaikido.com</a>. We can walk you through a live demo, then design and build a corpus-specific chat grounded in your own knowledge base &mdash; runbooks, policies, product docs, or any body of text your team or customers keep asking about.</p>
+          <a href="contact.html" class="af-btn af-btn--light af-svc__cta">Request an invitation</a>
+          <p class="af-svc__fineprint">No account needed to look around this page &mdash; the project cards below describe what each system does and how the same pattern fits your needs.</p>
+        </div>
+      </div>
     </div>
   </section>
 
   <!-- ============================================================ -->
-  <!-- PROJECTS + INVITATION CARD — two-column split                 -->
-  <!-- Left: the sponsored project cards.                            -->
-  <!-- Right: invitation card (request a live demo), sticky.         -->
-  <!-- No --white modifier: falls through to body's --af-bg (warm    -->
-  <!-- paper), so the page reads dark green header -> paper section  -->
-  <!-- -> white cards, instead of white section -> paper cards.      -->
+  <!-- PROJECTS — full-width single column                           -->
+  <!-- The invitation card now lives in the page-header dropdown     -->
+  <!-- (toggled by the "See it live" pill above), so the project     -->
+  <!-- cards use the full width.                                     -->
   <!-- ============================================================ -->
   <section class="af-section">
     <div class="af-container">
-      <div class="af-projects-split">
+      <div class="af-projects-split af-projects-split--full">
 
         <!-- LEFT COLUMN: sponsored projects -->
         <div class="af-projects-split__projects">
@@ -293,28 +303,6 @@
 
         </div><!-- /.af-projects-split__projects -->
 
-        <!-- RIGHT COLUMN: invitation card (request a live demo) — sticky.
-             Collapsed by default into a tag header; expands to reveal the
-             full invitation copy. Auto-opens when navigated to via #see-it-live
-             (e.g. from the page-header CTA). -->
-        <div class="af-projects-split__chat" id="see-it-live">
-          <details class="af-svc af-svc--invite af-invite-collapse">
-            <summary class="af-invite-collapse__summary">
-              <span class="af-svc__tag af-svc__tag--flagship">See it live</span>
-              <span class="af-svc__tag af-svc__tag--built">Free</span>
-              <span class="af-invite-collapse__hint">Want to see it in action?</span>
-              <svg class="af-invite-collapse__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
-            </summary>
-            <div class="af-invite-collapse__body">
-              <h2 class="af-svc__title">Want to see it in action?</h2>
-              <p class="af-svc__lead">If you want to see it live, request an invitation when you <a href="contact.html">contact us</a> &mdash; we&rsquo;re happy to show you how easy it is to stand one up.</p>
-              <p class="af-svc__bestfor">The Ask Richard Creativity Questions runs in production at <a href="https://quantumaikido.com">quantumaikido.com</a>. We can walk you through a live demo, then design and build a corpus-specific chat grounded in your own knowledge base &mdash; runbooks, policies, product docs, or any body of text your team or customers keep asking about.</p>
-              <a href="contact.html" class="af-btn af-btn--light af-svc__cta">Request an invitation</a>
-              <p class="af-svc__fineprint">No account needed to look around this page &mdash; the project cards on the left describe what each system does and how the same pattern fits your needs.</p>
-            </div>
-          </details>
-        </div><!-- /.af-projects-split__chat -->
-
       </div><!-- /.af-projects-split -->
     </div>
   </section>
@@ -443,19 +431,30 @@
 <script src="/js/locale-utils.js?v=20260818i18n"></script>
 <script src="/js/language-selector.js?v=20260818i18n"></script>
 <script>
-  // Auto-expand the "See it live" invitation card when the page is navigated
-  // to with #see-it-live (e.g. from the page-header CTA). The card is collapsed
-  // by default for a compact sticky rail; this ensures the CTA still works.
+  // Toggle the "See it live" invitation dropdown from the page-header pill.
+  // The pill is a <button> that shows/hides the invitation panel below it.
   (function () {
-    var details = document.querySelector('.af-invite-collapse');
-    if (!details) return;
-    function openIfTarget() {
-      if (window.location.hash === '#see-it-live') {
-        details.open = true;
-      }
+    var toggle = document.getElementById('see-it-live-toggle');
+    var panel = document.getElementById('see-it-live-panel');
+    if (!toggle || !panel) return;
+    function openPanel() {
+      panel.hidden = false;
+      toggle.setAttribute('aria-expanded', 'true');
+      toggle.classList.add('af-page-header__chat-cta--open');
     }
-    openIfTarget();
-    window.addEventListener('hashchange', openIfTarget);
+    function closePanel() {
+      panel.hidden = true;
+      toggle.setAttribute('aria-expanded', 'false');
+      toggle.classList.remove('af-page-header__chat-cta--open');
+    }
+    toggle.addEventListener('click', function () {
+      if (panel.hidden) { openPanel(); } else { closePanel(); }
+    });
+    // Auto-open if navigated with #see-it-live (e.g. from another page link)
+    if (window.location.hash === '#see-it-live') { openPanel(); }
+    window.addEventListener('hashchange', function () {
+      if (window.location.hash === '#see-it-live') { openPanel(); }
+    });
   })();
 </script>
 </body>

@@ -730,32 +730,30 @@ Both systems are built to sense and adapt — cost monitoring and data quality c
 **Body:** We built the systems above end-to-end — architecture, code, cost controls, and operation. The same engineering can be tailored to fit your security program, your stack, and your budget. Let's talk about what you need built.
 **Button:** Book a Discovery Call
 
-### Invitation card (right column on projects.php)
+### Invitation dropdown (page header on projects.php)
 
-The projects page no longer hosts a coaching login or an inline AI Chat.
-Instead the right column shows an invitation card pointing visitors to the
-contact form to request a live demo. (The coaching login was extracted to a
-blind `/login.php` page that gates only the `/beta/` assessment pages — see
+The projects page no longer hosts a coaching login or an inline AI Chat, and
+no longer has a right-column invitation card. Instead, the page-header pill
+("Free / See it live — request an invitation below") is a toggle button that
+drops down an invitation panel directly below it. The project cards use the
+full page width. (The coaching login was extracted to a blind `/login.php`
+page that gates only the `/beta/` assessment pages — see
 `docs/coach-auth-prd.md`.)
 
-The card is a collapsible dropdown (native `<details>`/`<summary>`): collapsed
-by default into a compact header showing the tags + a one-line hint, expanding
-on click to reveal the full invitation copy. The page-header CTA
-(`#see-it-live`) auto-expands it via a small inline script.
+The pill is collapsed by default; clicking it drops down the invitation panel
+(a white card with the copy below). The arrow rotates 180° when open.
+Navigating to `#see-it-live` auto-opens the panel via a small inline script.
 
-**Collapsed header tags:** See it live | Free
-**Collapsed header hint:** Want to see it in action?
-**Heading (expanded):** Want to see it in action?
+**Pill badge:** Free
+**Pill text:** See it live — request an invitation below
+**Pill arrow:** ↓ (rotates to ↑ when open)
+
+**Dropdown panel tags:** See it live | Free
+**Heading:** Want to see it in action?
 **Lead:** If you want to see it live, request an invitation when you contact us — we're happy to show you how easy it is to stand one up.
 **Body:** The Ask Richard Creativity Questions runs in production at quantumaikido.com. We can walk you through a live demo, then design and build a corpus-specific chat grounded in your own knowledge base — runbooks, policies, product docs, or any body of text your team or customers keep asking about.
 **Button:** Request an invitation (links to contact.html)
-**Fine print:** No account needed to look around this page — the project cards on the left describe what each system does and how the same pattern fits your needs.
-
-### Page-header CTA (projects.php)
-
-**Badge:** Free
-**Text:** See it live — request an invitation below
-**Arrow:** ↓ (anchors to #see-it-live, the invitation card)
+**Fine print:** No account needed to look around this page — the project cards below describe what each system does and how the same pattern fits your needs.
 
 ---
 
