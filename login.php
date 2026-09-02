@@ -365,54 +365,78 @@ $coachLoginUrl = $_SERVER['SCRIPT_NAME'] ?? '/login.php';
         <h2>Create Account</h2>
         <p class="coach-intro">Sign up with your email and password to access the beta pages.</p>
 
+        <!-- Multi-step wizard: Step 1 (email) → Step 2 (account) → Step 3 (invitation) -->
+        <div class="coach-reg-progress" id="coach-reg-progress">
+          <span class="coach-reg-step-dot active" data-step="1">1</span>
+          <span class="coach-reg-step-bar"></span>
+          <span class="coach-reg-step-dot" data-step="2">2</span>
+          <span class="coach-reg-step-bar"></span>
+          <span class="coach-reg-step-dot" data-step="3">3</span>
+        </div>
+        <div class="coach-reg-step-labels">
+          <span class="coach-reg-step-label active" data-step="1">Email</span>
+          <span class="coach-reg-step-label" data-step="2">Account</span>
+          <span class="coach-reg-step-label" data-step="3">Invitation</span>
+        </div>
+
         <form id="coach-register-form" class="coach-form" novalidate>
-          <div class="coach-reg-columns">
-            <!-- Left column: required fields -->
-            <div class="coach-reg-col coach-reg-required">
-              <h3 class="coach-reg-col-heading">Required</h3>
+          <!-- Step 1: Confirm email -->
+          <div class="coach-reg-step" id="coach-reg-step-1" data-step="1">
+            <label for="coach-reg-email" class="coach-label">Email address</label>
+            <input type="email" id="coach-reg-email" class="coach-input" placeholder="name@example.com" required autocomplete="email">
 
-              <label for="coach-reg-email" class="coach-label">Email address</label>
-              <input type="email" id="coach-reg-email" class="coach-input" placeholder="name@example.com" required autocomplete="email">
+            <button type="button" id="coach-reg-send-code-btn" class="btn btn-link coach-reg-send-code-btn">Send validation code</button>
+            <div id="coach-reg-email-status" class="coach-status" role="alert" hidden></div>
 
-              <button type="button" id="coach-reg-send-code-btn" class="btn btn-link coach-reg-send-code-btn">Send validation code</button>
-              <div id="coach-reg-email-status" class="coach-status" role="alert" hidden></div>
+            <label for="coach-reg-validation-code" class="coach-label">Email validation code <span class="coach-reg-hint" style="display:inline;font-weight:normal;">(optional — sent to your email)</span></label>
+            <input type="text" id="coach-reg-validation-code" class="coach-input" placeholder="Enter the 6-digit code from your email" autocomplete="off" inputmode="numeric" pattern="[0-9]{6}">
+            <p class="coach-reg-hint">Enter the code now to activate immediately, or skip this and validate at first login.</p>
 
-              <label for="coach-reg-validation-code" class="coach-label">Email validation code <span class="coach-reg-hint" style="display:inline;font-weight:normal;">(sent to your email)</span></label>
-              <input type="text" id="coach-reg-validation-code" class="coach-input" placeholder="Enter the 6-digit code from your email" autocomplete="off" inputmode="numeric" pattern="[0-9]{6}">
+            <button type="button" class="btn btn-primary coach-reg-next-btn" data-next="2">Continue</button>
+          </div>
 
-              <label for="coach-reg-password" class="coach-label">Password</label>
-              <input type="password" id="coach-reg-password" class="coach-input" placeholder="Choose a password (min 12 characters)" required autocomplete="new-password">
+          <!-- Step 2: Account details -->
+          <div class="coach-reg-step" id="coach-reg-step-2" data-step="2" hidden>
+            <label for="coach-reg-password" class="coach-label">Password</label>
+            <input type="password" id="coach-reg-password" class="coach-input" placeholder="Choose a password (min 12 characters)" required autocomplete="new-password">
 
-              <label for="coach-reg-code" class="coach-label">Invitation code <span class="coach-reg-hint" style="display:inline;font-weight:normal;">(if you have one)</span></label>
-              <input type="text" id="coach-reg-code" class="coach-input" placeholder="Enter your invitation code (optional)" autocomplete="off">
-            </div>
+            <label for="coach-reg-alias" class="coach-label">Alias / username <span class="coach-reg-hint" style="display:inline;font-weight:normal;">(optional)</span></label>
+            <input type="text" id="coach-reg-alias" class="coach-input" placeholder="Choose a login name (or leave blank)" autocomplete="username">
+            <p class="coach-reg-hint">If set, you can log in with this instead of your email. Letters, numbers, hyphens, underscores, and dots only.</p>
 
-            <!-- Right column: optional fields -->
-            <div class="coach-reg-col coach-reg-optional">
-              <h3 class="coach-reg-col-heading">Optional</h3>
+            <label for="coach-reg-language" class="coach-label">Preferred language <span class="coach-reg-hint" style="display:inline;font-weight:normal;">(optional)</span></label>
+            <select id="coach-reg-language" class="coach-input">
+              <option value="">English (auto-detect)</option>
+            </select>
+            <p class="coach-reg-hint">Overrides auto-detection. AI Ki Questions Fielded will respond in this language.</p>
 
-              <label for="coach-reg-alias" class="coach-label">Alias / username</label>
-              <input type="text" id="coach-reg-alias" class="coach-input" placeholder="Choose a login name (or leave blank)" autocomplete="username">
-              <p class="coach-reg-hint">If set, you can log in with this instead of your email. Letters, numbers, hyphens, underscores, and dots only.</p>
-
-              <label for="coach-reg-language" class="coach-label">Preferred language</label>
-              <select id="coach-reg-language" class="coach-input">
-                <option value="">English (auto-detect)</option>
-              </select>
-              <p class="coach-reg-hint">Overrides auto-detection. AI Ki Questions Fielded will respond in this language.</p>
+            <div class="coach-reg-step-nav">
+              <button type="button" class="btn btn-link coach-reg-back-btn" data-back="1">Back</button>
+              <button type="button" class="btn btn-primary coach-reg-next-btn" data-next="3">Continue</button>
             </div>
           </div>
 
-          <?php if (defined('TURNSTILE_SITE_KEY') && TURNSTILE_SITE_KEY): ?>
-          <div class="cf-turnstile"
-               data-sitekey="<?php echo htmlspecialchars(TURNSTILE_SITE_KEY); ?>"
-               data-callback="onTurnstileSuccess"
-               data-error-callback="onTurnstileError"
-               data-expired-callback="onTurnstileExpired"
-               style="margin-top:0.5rem;"></div>
-          <?php endif; ?>
+          <!-- Step 3: Invitation code + submit -->
+          <div class="coach-reg-step" id="coach-reg-step-3" data-step="3" hidden>
+            <div id="coach-reg-validation-summary" class="coach-reg-validation-summary"></div>
 
-          <button type="submit" class="btn btn-primary" id="coach-register-btn">Create account</button>
+            <label for="coach-reg-code" class="coach-label">Invitation code</label>
+            <input type="text" id="coach-reg-code" class="coach-input" placeholder="Enter your invitation code" autocomplete="off">
+
+            <?php if (defined('TURNSTILE_SITE_KEY') && TURNSTILE_SITE_KEY): ?>
+            <div class="cf-turnstile"
+                 data-sitekey="<?php echo htmlspecialchars(TURNSTILE_SITE_KEY); ?>"
+                 data-callback="onTurnstileSuccess"
+                 data-error-callback="onTurnstileError"
+                 data-expired-callback="onTurnstileExpired"
+                 style="margin-top:0.5rem;"></div>
+            <?php endif; ?>
+
+            <div class="coach-reg-step-nav">
+              <button type="button" class="btn btn-link coach-reg-back-btn" data-back="2">Back</button>
+              <button type="submit" class="btn btn-primary" id="coach-register-btn">Create account</button>
+            </div>
+          </div>
         </form>
 
         <div id="coach-register-status" class="coach-status" hidden></div>

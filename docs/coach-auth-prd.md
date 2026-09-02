@@ -199,6 +199,8 @@ aikifield.com/coach-api/*  ──▶  coach-proxy.php  ──▶  AIRichardMoon 
                                                   /v1/auth/verify
                                                   /v1/auth/register-with-password
                                                   /v1/auth/send-validation-code
+                                                  /v1/auth/verify-validation-code
+                                                  /v1/auth/verify-validation-token
                                                   /v1/auth/activate-with-code
                                                   /v1/auth/check-session
                                                   /v1/auth/request-reset
@@ -235,11 +237,12 @@ the shared proxy IP.
 
 ### Registration + login-time activation flow (issue #228)
 
-The registration form on `login.php` includes an email validation code step
-(always visible — no runtime toggle):
+The registration form on `login.php` is a 3-step wizard
+(Email → Account → Invitation):
 
-1. User enters email → clicks "Send validation code" → `POST /v1/auth/send-validation-code` generates + emails a 6-digit OTP (captcha-gated, rate-limited, anti-enumeration).
-2. User enters the 6-digit code + password + invitation code (optional) → `POST /v1/auth/register-with-password` verifies the code and **activates the account immediately** (`active=true, email_confirmed=true`) → issues a session token → user is signed in. No confirmation link email is sent.
+1. **Step 1 (Email):** User enters email → clicks "Send validation code" → `POST /v1/auth/send-validation-code` generates + emails a 6-digit OTP **and** a clickable link (`?validate=<token>&email=<email>`) (captcha-gated, rate-limited, anti-enumeration). User may enter the 6-digit code now (optional) or skip it. If the user arrived via the email link, the token is verified and the wizard skips to Step 2.
+2. **Step 2 (Account):** User enters password (min 12 chars) + optional alias + preferred language.
+3. **Step 3 (Invitation):** Validation summary shows verified/pending status. User enters invitation code (optional) and submits → `POST /v1/auth/register-with-password` verifies the code or consumes the token if present and **activates the account immediately** (`active=true, email_confirmed=true`) → issues a session token → user is signed in. If no code/token is provided, the account is created as inactive and the login-time activation flow asks for a validation code at first login.
 
 **Login-time activation:** When a user with an inactive/unconfirmed account tries to log in, `POST /v1/auth/verify` returns `needsValidation: true` and the backend auto-sends a validation code. The login form shows a validation code input (below the password field). The user enters the code and clicks "Sign in" again → `POST /v1/auth/activate-with-code` verifies the code + password, activates the account, and issues a session token. A "Resend validation code" link is provided.
 

@@ -86,6 +86,7 @@
     const regAliasInput  = document.getElementById("coach-reg-alias");
     const registerBtn    = document.getElementById("coach-register-btn");
     const registerStatus = document.getElementById("coach-register-status");
+    const regValidationSummary = document.getElementById("coach-reg-validation-summary");
 
     // Login-time activation form (shown when login returns needsValidation)
     const loginValidationContainer = document.getElementById("coach-login-validation");
@@ -375,6 +376,45 @@
         return true;
     }
 
+    // --- Validation link handling (?validate=token&email=email) ---
+    // When the user clicks the link in the validation email, verify the token
+    // server-side, pre-fill the email field, and mark the email as validated.
+    // The user still enters password + invitation code to complete registration.
+    let pendingValidationToken = "";
+
+    async function handleValidationLink() {
+        const params = new URLSearchParams(window.location.search);
+        const token = params.get("validate");
+        if (!token) return false;
+        const email = params.get("email") || "";
+        // Show the registration step
+        if (registerStep) registerStep.scrollIntoView({ behavior: "smooth", block: "start" });
+        if (regEmailInput && email) regEmailInput.value = email;
+        showStatus(regEmailStatus, "Verifying your email link...", "loading");
+        try {
+            const resp = await fetchWithTimeout(API + "/v1/auth/verify-validation-token", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email, token }),
+            });
+            const data = await resp.json();
+            if (data.ok) {
+                pendingValidationToken = token;
+                lastSentEmail = email;
+                showStatus(regEmailStatus, "Your email is verified!", "success");
+                // Skip to step 2 (password) since email is already verified
+                goToRegStep(2);
+                if (regPasswordInput) regPasswordInput.focus();
+            } else {
+                showStatus(regEmailStatus, data.error || "This validation link is invalid or expired. Please request a new code.", "error");
+            }
+        } catch (err) {
+            showStatus(regEmailStatus, "Network error: " + err.message, "error");
+        }
+        history.replaceState(null, "", window.location.pathname);
+        return true;
+    }
+
     // --- Load OAuth providers ---
     async function loadProviders() {
         try {
@@ -592,6 +632,70 @@
         emailInput.focus();
     });
 
+    // --- Multi-step registration wizard (ticket #510) ---
+    // Step 1: Email + validation code (optional)
+    // Step 2: Password + alias + language
+    // Step 3: Invitation code + submit
+    let regCurrentStep = 1;
+
+    function goToRegStep(step) {
+        regCurrentStep = step;
+        document.querySelectorAll(".coach-reg-step").forEach(el => {
+            el.hidden = parseInt(el.dataset.step, 10) !== step;
+        });
+        document.querySelectorAll(".coach-reg-step-dot").forEach(el => {
+            const s = parseInt(el.dataset.step, 10);
+            el.classList.toggle("active", s === step);
+            el.classList.toggle("done", s < step);
+        });
+        document.querySelectorAll(".coach-reg-step-label").forEach(el => {
+            el.classList.toggle("active", parseInt(el.dataset.step, 10) === step);
+        });
+        if (step === 3) updateValidationSummary();
+        if (registerStep) registerStep.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    function updateValidationSummary() {
+        if (!regValidationSummary) return;
+        const hasCode = regValidationCodeInput && regValidationCodeInput.value.trim();
+        const hasToken = !!pendingValidationToken;
+        if (hasCode || hasToken) {
+            regValidationSummary.className = "coach-reg-validation-summary verified";
+            regValidationSummary.textContent = "Email verified — your account will be activated immediately.";
+        } else {
+            regValidationSummary.className = "coach-reg-validation-summary pending";
+            regValidationSummary.textContent = "Email not yet verified — you'll be asked for a validation code at first login.";
+        }
+    }
+
+    registerForm.addEventListener("click", (e) => {
+        if (e.target.matches(".coach-reg-next-btn")) {
+            const next = parseInt(e.target.dataset.next, 10);
+            if (regCurrentStep === 1) {
+                const email = regEmailInput.value.trim().toLowerCase();
+                if (!email || !email.includes("@") || email.indexOf("@") === email.length - 1) {
+                    showStatus(regEmailStatus, "Please enter a valid email address.", "error");
+                    return;
+                }
+            }
+            if (regCurrentStep === 2) {
+                const password = regPasswordInput.value;
+                const pwProblem = newPasswordProblem(password);
+                if (pwProblem) {
+                    showStatus(registerStatus, pwProblem, "error");
+                    return;
+                }
+            }
+            showStatus(registerStatus, "", "");
+            goToRegStep(next);
+        }
+        if (e.target.matches(".coach-reg-back-btn")) {
+            const back = parseInt(e.target.dataset.back, 10);
+            showStatus(registerStatus, "", "");
+            goToRegStep(back);
+        }
+    });
+
     // --- Send email validation code ---
     // Triggered automatically when the email field loses focus with a valid
     // email, or manually via the "Send validation code" button. The backend
@@ -662,7 +766,6 @@
         const alias = regAliasInput ? regAliasInput.value.trim() : "";
         const regProblem = emailProblem(email)
             || newPasswordProblem(password)
-            || (!invitationCode ? "Enter your invitation code." : null)
             || (alias && alias.length > ALIAS_MAX
                 ? "Login name must be " + ALIAS_MAX + " characters or fewer — yours is "
                   + alias.length + "." : null)
@@ -680,14 +783,19 @@
             const body = {
                 email,
                 password,
-                invitationCode,
                 captchaToken: getCaptchaToken(),
             };
+            // Include invitationCode when provided (optional).
+            if (invitationCode) body.invitationCode = invitationCode;
             // Include validationCode when provided. The backend treats it as
             // optional — if omitted, registration proceeds without email
             // validation (backward compatible). When present and valid, the
             // account is activated immediately.
             if (validationCode) body.validationCode = validationCode;
+            // Include validationToken when the user arrived via the email link
+            // (?validate=...). The backend consumes it as an alternative to
+            // the 6-digit code.
+            if (pendingValidationToken) body.validationToken = pendingValidationToken;
             // Only include alias if the user provided one (empty string is
             // fine server-side, but omitting keeps the payload clean).
             if (alias) body.alias = alias;
@@ -765,6 +873,14 @@
         return;
     }
     if (handleResetLink()) {
+        return;
+    }
+    // handleValidationLink is async — it returns a Promise that resolves to
+    // true/false. We check synchronously whether ?validate= is in the URL;
+    // if so, we kick off the async handler and skip the rest of init (the
+    // handler will pre-fill the form and focus the password field).
+    if (_oauthParams.get("validate")) {
+        handleValidationLink();
         return;
     }
     handleQueryError();
