@@ -293,19 +293,26 @@
 
         </div><!-- /.af-projects-split__projects -->
 
-        <!-- RIGHT COLUMN: invitation card (request a live demo) — sticky -->
+        <!-- RIGHT COLUMN: invitation card (request a live demo) — sticky.
+             Collapsed by default into a tag header; expands to reveal the
+             full invitation copy. Auto-opens when navigated to via #see-it-live
+             (e.g. from the page-header CTA). -->
         <div class="af-projects-split__chat" id="see-it-live">
-          <aside class="af-svc af-svc--invite">
-            <div class="af-svc__tag-row">
+          <details class="af-svc af-svc--invite af-invite-collapse">
+            <summary class="af-invite-collapse__summary">
               <span class="af-svc__tag af-svc__tag--flagship">See it live</span>
               <span class="af-svc__tag af-svc__tag--built">Free</span>
+              <span class="af-invite-collapse__hint">Want to see it in action?</span>
+              <svg class="af-invite-collapse__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+            </summary>
+            <div class="af-invite-collapse__body">
+              <h2 class="af-svc__title">Want to see it in action?</h2>
+              <p class="af-svc__lead">If you want to see it live, request an invitation when you <a href="contact.html">contact us</a> &mdash; we&rsquo;re happy to show you how easy it is to stand one up.</p>
+              <p class="af-svc__bestfor">The Ask Richard Creativity Questions runs in production at <a href="https://quantumaikido.com">quantumaikido.com</a>. We can walk you through a live demo, then design and build a corpus-specific chat grounded in your own knowledge base &mdash; runbooks, policies, product docs, or any body of text your team or customers keep asking about.</p>
+              <a href="contact.html" class="af-btn af-btn--light af-svc__cta">Request an invitation</a>
+              <p class="af-svc__fineprint">No account needed to look around this page &mdash; the project cards on the left describe what each system does and how the same pattern fits your needs.</p>
             </div>
-            <h2 class="af-svc__title">Want to see it in action?</h2>
-            <p class="af-svc__lead">If you want to see it live, request an invitation when you <a href="contact.html">contact us</a> &mdash; we&rsquo;re happy to show you how easy it is to stand one up.</p>
-            <p class="af-svc__bestfor">The Ask Richard Creativity Questions runs in production at <a href="https://quantumaikido.com">quantumaikido.com</a>. We can walk you through a live demo, then design and build a corpus-specific chat grounded in your own knowledge base &mdash; runbooks, policies, product docs, or any body of text your team or customers keep asking about.</p>
-            <a href="contact.html" class="af-btn af-btn--light af-svc__cta">Request an invitation</a>
-            <p class="af-svc__fineprint">No account needed to look around this page &mdash; the project cards on the left describe what each system does and how the same pattern fits your needs.</p>
-          </aside>
+          </details>
         </div><!-- /.af-projects-split__chat -->
 
       </div><!-- /.af-projects-split -->
@@ -435,5 +442,21 @@
 
 <script src="/js/locale-utils.js?v=20260818i18n"></script>
 <script src="/js/language-selector.js?v=20260818i18n"></script>
+<script>
+  // Auto-expand the "See it live" invitation card when the page is navigated
+  // to with #see-it-live (e.g. from the page-header CTA). The card is collapsed
+  // by default for a compact sticky rail; this ensures the CTA still works.
+  (function () {
+    var details = document.querySelector('.af-invite-collapse');
+    if (!details) return;
+    function openIfTarget() {
+      if (window.location.hash === '#see-it-live') {
+        details.open = true;
+      }
+    }
+    openIfTarget();
+    window.addEventListener('hashchange', openIfTarget);
+  })();
+</script>
 </body>
 </html>

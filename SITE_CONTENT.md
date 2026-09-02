@@ -738,8 +738,14 @@ contact form to request a live demo. (The coaching login was extracted to a
 blind `/login.php` page that gates only the `/beta/` assessment pages — see
 `docs/coach-auth-prd.md`.)
 
-**Tags:** See it live | Free
-**Heading:** Want to see it in action?
+The card is a collapsible dropdown (native `<details>`/`<summary>`): collapsed
+by default into a compact header showing the tags + a one-line hint, expanding
+on click to reveal the full invitation copy. The page-header CTA
+(`#see-it-live`) auto-expands it via a small inline script.
+
+**Collapsed header tags:** See it live | Free
+**Collapsed header hint:** Want to see it in action?
+**Heading (expanded):** Want to see it in action?
 **Lead:** If you want to see it live, request an invitation when you contact us — we're happy to show you how easy it is to stand one up.
 **Body:** The Ask Richard Creativity Questions runs in production at quantumaikido.com. We can walk you through a live demo, then design and build a corpus-specific chat grounded in your own knowledge base — runbooks, policies, product docs, or any body of text your team or customers keep asking about.
 **Button:** Request an invitation (links to contact.html)
