@@ -132,7 +132,7 @@ die_usage() {
 LOCAL_PATH="$(cd "$(dirname "$0")" && pwd)/"
 REMOTE_HOST="peec.biz"
 REMOTE_USER="peecbiz"
-REMOTE_PATH="public_html/aikifield/"
+REMOTE_PATH="public_html/aikifield.peec.biz/"
 REMOTE_NAME="prod"
 SSH_KEY="$HOME/.ssh/quantumaikido_ed25519"
 
@@ -141,7 +141,7 @@ SSH_KEY="$HOME/.ssh/quantumaikido_ed25519"
 # and is also used to keep staging-only files out of the prod sync — see the
 # coach-config.staging.php exclude below.
 KNOWN_REMOTES=(
-    "prod|peec.biz|peecbiz|public_html/aikifield/|Production server (peec.biz)"
+    "prod|peec.biz|peecbiz|public_html/aikifield.peec.biz/|Production server (aikifield.com — cPanel docroot is aikifield.peec.biz/)"
     "staging|peec.biz|peecbiz|public_html/aikifield.peec.biz/|Staging server (aikifield.peec.biz)"
 )
 DEFAULT_REMOTE_NAME="prod"
