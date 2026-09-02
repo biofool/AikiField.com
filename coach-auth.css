@@ -274,6 +274,100 @@
     font-weight: 600;
 }
 
+/* Auth tabs header switcher */
+.coach-auth-tab-bar {
+    display: flex;
+    gap: 0.5rem;
+    background: var(--primary-bg);
+    padding: 0.25rem;
+    border-radius: 0.5rem;
+    margin-bottom: 1.25rem;
+    border: 1px solid var(--coach-border);
+}
+.coach-auth-tab {
+    flex: 1;
+    padding: 0.6rem 1rem;
+    border: none;
+    border-radius: 0.375rem;
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease-in-out;
+}
+.coach-auth-tab:hover {
+    color: var(--text-primary);
+}
+.coach-auth-tab.active {
+    background: var(--secondary-bg);
+    color: var(--accent);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+/* Password input with show/hide toggle */
+.coach-password-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+.coach-password-input {
+    width: 100%;
+    padding-right: 2.75rem !important;
+}
+.coach-password-toggle {
+    position: absolute;
+    right: 0.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    padding: 0.4rem;
+    color: var(--text-muted);
+    cursor: pointer;
+    border-radius: 0.375rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+.coach-password-toggle:hover {
+    color: var(--text-primary);
+}
+.coach-eye-icon {
+    width: 1.2rem;
+    height: 1.2rem;
+}
+
+/* Segmented 6-digit OTP code input */
+.coach-otp-wrapper {
+    margin: 0.5rem 0 0.25rem 0;
+}
+.coach-otp-digits {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: space-between;
+    max-width: 320px;
+}
+.coach-otp-digit {
+    width: 2.75rem;
+    height: 3rem;
+    text-align: center;
+    font-size: 1.4rem;
+    font-weight: 700;
+    font-family: monospace;
+    border: 1.5px solid var(--coach-border);
+    border-radius: 0.5rem;
+    background: var(--primary-bg);
+    color: var(--text-primary);
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+.coach-otp-digit:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(14, 78, 68, 0.15);
+}
+
 .coach-input {
     background: var(--primary-bg);
     border: 1px solid var(--coach-border);
