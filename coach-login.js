@@ -116,6 +116,42 @@
         el.textContent = msg;
     }
 
+    // --- Field validation ------------------------------------------------
+    // These forms carry `novalidate`, so the browser never blocks submit on
+    // its own. That is deliberate: native constraint validation rejects a
+    // field with only a small tooltip, which reads as the button doing
+    // nothing at all. Every rejection below produces a visible status line.
+    //
+    // The backend requires 12-128 characters when a password is *set*
+    // (register / reset / change) — AIRichardMoon `backend/app/auth.py`.
+    // Signing in has NO length rule there, so an existing shorter password
+    // must still be accepted; the sign-in form only checks for emptiness.
+    const PASSWORD_MIN = 12;
+    const PASSWORD_MAX = 128;
+    const ALIAS_MAX = 40;
+
+    function newPasswordProblem(pw) {
+        if (!pw) return "Choose a password.";
+        if (pw.length < PASSWORD_MIN) {
+            return "Password must be at least " + PASSWORD_MIN
+                + " characters — yours is " + pw.length + ".";
+        }
+        if (pw.length > PASSWORD_MAX) {
+            return "Password must be " + PASSWORD_MAX
+                + " characters or fewer — yours is " + pw.length + ".";
+        }
+        return null;
+    }
+
+    function emailProblem(value) {
+        if (!value) return "Enter your email address.";
+        const at = value.indexOf("@");
+        if (at < 1 || at === value.length - 1 || /\s/.test(value)) {
+            return "Enter a valid email address.";
+        }
+        return null;
+    }
+
     // Fetch with timeout and bounded retry/backoff (issue #17).
     async function fetchWithTimeout(url, opts, { timeoutMs = 15000, retries = 2, baseDelayMs = 500 } = {}) {
         let lastErr;
@@ -162,26 +198,54 @@
     // --- Establish server-side session ---
     // Posts email + sessionToken to login.php, which stores them in the PHP
     // session cookie. Then redirects to the destination.
-    async function establishServerSession(email, sessionToken) {
+    async function establishServerSession(email, sessionToken, statusEl) {
+        // login.php always replies 200 with {"ok":true|false} — false when the
+        // backend check-session call failed or was rejected (its curl timeout
+        // is 10s, which a cold Cloud Run start can exceed). The status code
+        // alone therefore says nothing; the body has to be read.
+        let established = false;
         try {
-            await fetchWithTimeout(window.location.pathname, {
+            const resp = await fetchWithTimeout(window.location.pathname, {
                 method: "POST",
                 headers: { "Content-Type": "application/x-www-form-urlencoded" },
                 body: "action=backend-login&email=" + encodeURIComponent(email)
                     + "&sessionToken=" + encodeURIComponent(sessionToken),
             });
-        } catch (_) {
+            const data = resp.ok ? await resp.json().catch(() => null) : null;
+            established = !!(data && data.ok);
+            if (!established) {
+                console.error(
+                    "establishServerSession: server session not created (status "
+                    + resp.status + ", ok=" + (data && data.ok) + ")");
+            }
+        } catch (err) {
+            console.error("establishServerSession: request failed", err);
             // If the server-side session POST fails, the httpOnly PHP session
-            // cookie won't be set and the redirect below will bounce back to
-            // login. There is no sessionStorage fallback on AikiField: the
+            // cookie won't be set, so we must NOT redirect — that is handled
+            // below. There is no sessionStorage fallback on AikiField: the
             // inline AI Chat that used to read qa_session_token from
             // sessionStorage has been removed from this site, so persisting
             // the raw bearer token client-side (readable by any script in
             // this origin, including future XSS) has no functional benefit
             // here — see AGENTS.md and projects.php's header comment.
         }
+
+        if (!established) {
+            // Redirecting without the session cookie bounces the user straight
+            // back to login with nothing shown — the silent-login failure.
+            // Surface it instead of navigating away.
+            const el = statusEl || loginStatus;
+            if (el) {
+                showStatus(el,
+                    "Signed in, but the session could not be established. "
+                    + "Please try again in a moment.", "error");
+            }
+            return false;
+        }
+
         // Redirect to destination
         window.location.href = REDIRECT;
+        return true;
     }
 
     // --- Turnstile captcha helpers ---
@@ -286,7 +350,7 @@
             if (data.ok && data.sessionToken) {
                 confirmText.textContent = data.message || "Your email is confirmed!";
                 showStatus(confirmStatus, "Redirecting...", "success");
-                establishServerSession(data.email, data.sessionToken);
+                establishServerSession(data.email, data.sessionToken, confirmStatus);
             } else {
                 confirmText.textContent = "";
                 showStatus(confirmStatus, data.error || "Confirmation failed.", "error");
@@ -347,7 +411,18 @@
         e.preventDefault();
         const email = emailInput.value.trim().toLowerCase();
         const password = passwordInput.value;
-        if (!email || !password) return;
+        // Sign-in deliberately applies no length rule — the backend has none,
+        // and accounts predating the 12-character minimum must still work.
+        if (!email) {
+            showStatus(loginStatus, "Enter your email address or login ID.", "error");
+            emailInput.focus();
+            return;
+        }
+        if (!password) {
+            showStatus(loginStatus, "Enter your password.", "error");
+            passwordInput.focus();
+            return;
+        }
         currentEmail = email;
 
         // If the validation code field is visible and filled, call activate
@@ -585,7 +660,18 @@
         const password = regPasswordInput.value;
         const invitationCode = regCodeInput.value.trim();
         const alias = regAliasInput ? regAliasInput.value.trim() : "";
-        if (!email || !password || !invitationCode) return;
+        const regProblem = emailProblem(email)
+            || newPasswordProblem(password)
+            || (!invitationCode ? "Enter your invitation code." : null)
+            || (alias && alias.length > ALIAS_MAX
+                ? "Login name must be " + ALIAS_MAX + " characters or fewer — yours is "
+                  + alias.length + "." : null)
+            || (validationCode && !/^\d{6}$/.test(validationCode)
+                ? "The validation code is the 6 digits from your email." : null);
+        if (regProblem) {
+            showStatus(registerStatus, regProblem, "error");
+            return;
+        }
 
         registerBtn.disabled = true;
         showStatus(registerStatus, "Creating your account...", "loading");
@@ -631,7 +717,17 @@
         e.preventDefault();
         const token = resetForm.dataset.token;
         const newPassword = resetPasswordInput.value;
-        if (!token || !newPassword) return;
+        if (!token) {
+            showStatus(resetStatus,
+                "This reset link is invalid or has expired. Request a new one.", "error");
+            return;
+        }
+        const resetProblem = newPasswordProblem(newPassword);
+        if (resetProblem) {
+            showStatus(resetStatus, resetProblem, "error");
+            resetPasswordInput.focus();
+            return;
+        }
 
         resetBtn.disabled = true;
         showStatus(resetStatus, "Resetting password...", "loading");
@@ -647,7 +743,7 @@
 
             if (data.ok && data.sessionToken) {
                 showStatus(resetStatus, data.message || "Password reset. Redirecting...", "success");
-                establishServerSession(data.email, data.sessionToken);
+                establishServerSession(data.email, data.sessionToken, resetStatus);
             } else {
                 showStatus(resetStatus, data.error || "Reset failed.", "error");
             }
