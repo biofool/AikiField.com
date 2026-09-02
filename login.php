@@ -314,16 +314,16 @@ $coachLoginUrl = $_SERVER['SCRIPT_NAME'] ?? '/login.php';
         <div id="coach-divider" class="coach-divider" hidden><span>or</span></div>
 
         <!-- Login form -->
-        <form id="coach-login-form" class="coach-form">
+        <form id="coach-login-form" class="coach-form" novalidate>
           <label for="coach-email" class="coach-label">Email address or login ID</label>
           <input type="text" id="coach-email" class="coach-input" placeholder="name@example.com or your login ID" required autocomplete="username">
 
           <label for="coach-password" class="coach-label">Password</label>
-          <input type="password" id="coach-password" class="coach-input" placeholder="Password" required autocomplete="current-password" minlength="8">
+          <input type="password" id="coach-password" class="coach-input" placeholder="Password" required autocomplete="current-password">
 
           <div id="coach-login-validation" class="coach-login-validation" hidden>
               <label for="coach-login-validation-code" class="coach-label">Email validation code <span class="coach-reg-hint" style="display:inline;font-weight:normal;">(sent to your email)</span></label>
-              <input type="text" id="coach-login-validation-code" class="coach-input" placeholder="Enter the 6-digit code from your email" autocomplete="off" inputmode="numeric" pattern="[0-9]{6}" maxlength="6">
+              <input type="text" id="coach-login-validation-code" class="coach-input" placeholder="Enter the 6-digit code from your email" autocomplete="off" inputmode="numeric" pattern="[0-9]{6}">
               <button type="button" id="coach-login-resend-code-btn" class="btn btn-link coach-reg-send-code-btn">Resend validation code</button>
           </div>
 
@@ -365,7 +365,7 @@ $coachLoginUrl = $_SERVER['SCRIPT_NAME'] ?? '/login.php';
         <h2>Create Account</h2>
         <p class="coach-intro">Sign up with your email and password to access the beta pages.</p>
 
-        <form id="coach-register-form" class="coach-form">
+        <form id="coach-register-form" class="coach-form" novalidate>
           <div class="coach-reg-columns">
             <!-- Left column: required fields -->
             <div class="coach-reg-col coach-reg-required">
@@ -378,10 +378,10 @@ $coachLoginUrl = $_SERVER['SCRIPT_NAME'] ?? '/login.php';
               <div id="coach-reg-email-status" class="coach-status" role="alert" hidden></div>
 
               <label for="coach-reg-validation-code" class="coach-label">Email validation code <span class="coach-reg-hint" style="display:inline;font-weight:normal;">(sent to your email)</span></label>
-              <input type="text" id="coach-reg-validation-code" class="coach-input" placeholder="Enter the 6-digit code from your email" autocomplete="off" inputmode="numeric" pattern="[0-9]{6}" maxlength="6">
+              <input type="text" id="coach-reg-validation-code" class="coach-input" placeholder="Enter the 6-digit code from your email" autocomplete="off" inputmode="numeric" pattern="[0-9]{6}">
 
               <label for="coach-reg-password" class="coach-label">Password</label>
-              <input type="password" id="coach-reg-password" class="coach-input" placeholder="Choose a password (min 8 chars)" required autocomplete="new-password" minlength="8">
+              <input type="password" id="coach-reg-password" class="coach-input" placeholder="Choose a password (min 12 characters)" required autocomplete="new-password">
 
               <label for="coach-reg-code" class="coach-label">Invitation code <span class="coach-reg-hint" style="display:inline;font-weight:normal;">(if you have one)</span></label>
               <input type="text" id="coach-reg-code" class="coach-input" placeholder="Enter your invitation code (optional)" autocomplete="off">
@@ -392,7 +392,7 @@ $coachLoginUrl = $_SERVER['SCRIPT_NAME'] ?? '/login.php';
               <h3 class="coach-reg-col-heading">Optional</h3>
 
               <label for="coach-reg-alias" class="coach-label">Alias / username</label>
-              <input type="text" id="coach-reg-alias" class="coach-input" placeholder="Choose a login name (or leave blank)" autocomplete="username" maxlength="40">
+              <input type="text" id="coach-reg-alias" class="coach-input" placeholder="Choose a login name (or leave blank)" autocomplete="username">
               <p class="coach-reg-hint">If set, you can log in with this instead of your email. Letters, numbers, hyphens, underscores, and dots only.</p>
 
               <label for="coach-reg-language" class="coach-label">Preferred language</label>
@@ -427,9 +427,9 @@ $coachLoginUrl = $_SERVER['SCRIPT_NAME'] ?? '/login.php';
       <div id="coach-reset-step" class="coach-card" hidden>
         <h2>Reset Password</h2>
         <p class="coach-intro">Enter your new password below.</p>
-        <form id="coach-reset-form" class="coach-form">
+        <form id="coach-reset-form" class="coach-form" novalidate>
           <label for="coach-reset-password" class="coach-label">New password</label>
-          <input type="password" id="coach-reset-password" class="coach-input" placeholder="New password (min 8 chars)" required autocomplete="new-password" minlength="8">
+          <input type="password" id="coach-reset-password" class="coach-input" placeholder="New password (min 12 characters)" required autocomplete="new-password">
           <button type="submit" class="btn btn-primary" id="coach-reset-btn">Reset password</button>
         </form>
         <div id="coach-reset-status" class="coach-status" hidden></div>

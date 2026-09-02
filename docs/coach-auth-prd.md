@@ -285,6 +285,27 @@ See `backend/PRD.md` in AIRichardMoon for full endpoint details.
 
 ## Session model
 
+- **Silent field-rejection fix (2026-09-02)**: `login.php`'s three coach forms
+  relied on native HTML5 validation, which blocks submit before `coach-login.js`
+  runs and shows only a browser tooltip — reading as a dead button. The forms now
+  carry `novalidate`; `minlength` is removed from all password inputs and
+  `maxlength` from the validation-code and alias inputs (silent truncation).
+  `coach-login.js` validates explicitly with visible status messages, enforcing
+  the backend's real rule of **12-128 characters** when a password is *set* (the
+  markup previously said "min 8 chars"), and **no length rule on sign-in**, where
+  the backend applies none. Mirrored in `quantumaikido.com`.
+
+- **Silent-login fix (2026-09-02)**: `coach-login.js`'s `establishServerSession()`
+  ignored the response from the `action=backend-login` POST and redirected
+  unconditionally. `login.php` always replies **HTTP 200 with
+  `{"ok":true|false}`** (false when its `check-session` curl call fails — note
+  `CURLOPT_TIMEOUT => 10`, which a cold Cloud Run start can exceed), so a failed
+  establishment set no PHP session cookie, showed no error, and redirected — the
+  beta gate then bounced the user straight back to `/login.php`. The function now
+  reads the body, treats only `ok:true` as success, and surfaces an error instead
+  of navigating away. No sessionStorage fallback was added (deliberate on this
+  site). Backend unchanged; mirrored in `quantumaikido.com/coach-login.js`.
+
 - PHP session cookie on `aikifield.com` (HttpOnly, Secure on HTTPS,
   SameSite=Lax, 7-day lifetime). Session keys: `qa_email`,
   `qa_session_token`, `qa_target_env`, `qa_is_admin`, `qa_premium` — identical to QA.
