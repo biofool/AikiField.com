@@ -368,8 +368,16 @@
         const params = new URLSearchParams(window.location.search);
         const token = params.get("reset");
         if (!token) return false;
+        const email = params.get("email");
         showStep("reset");
         resetForm.dataset.token = token;
+        if (email) {
+            resetForm.dataset.email = email;
+            const intro = document.getElementById("coach-reset-intro");
+            if (intro) {
+                intro.textContent = "Resetting password for " + email + ". Enter your new password below.";
+            }
+        }
         resetPasswordInput.focus();
         history.replaceState(null, "", window.location.pathname);
         return true;
@@ -598,6 +606,32 @@
                 if (eyeHide) eyeHide.hidden = !isPassword;
             });
         });
+    }
+
+    function initPasswordFeedback() {
+        function attach(input, feedbackId) {
+            const feedback = document.getElementById(feedbackId);
+            if (!input || !feedback) return;
+            input.addEventListener("input", () => {
+                const len = input.value.length;
+                if (len === 0) {
+                    feedback.textContent = "Minimum 12 characters. Use a passphrase or password manager.";
+                    feedback.style.color = "";
+                } else if (len < PASSWORD_MIN) {
+                    const diff = PASSWORD_MIN - len;
+                    feedback.textContent = diff + " more character" + (diff === 1 ? "" : "s") + " needed (minimum 12).";
+                    feedback.style.color = "#d9534f";
+                } else if (len > PASSWORD_MAX) {
+                    feedback.textContent = "Password exceeds maximum length of " + PASSWORD_MAX + " characters.";
+                    feedback.style.color = "#d9534f";
+                } else {
+                    feedback.textContent = "✓ Password meets length requirements.";
+                    feedback.style.color = "#2e7d32";
+                }
+            });
+        }
+        attach(regPasswordInput, "coach-reg-password-feedback");
+        attach(resetPasswordInput, "coach-reset-password-feedback");
     }
 
     function initOtpControllers() {
@@ -836,6 +870,7 @@
 
     // --- Init ---
     initPasswordToggles();
+    initPasswordFeedback();
     initOtpControllers();
     initAuthTabs();
 
