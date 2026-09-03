@@ -180,6 +180,15 @@ update or deploy:
 Recorded so the N/A is explicit rather than silent. Anything touching login,
 registration, the session model, or the proxy remains in scope.
 
+**AikiField-specific note (coach contact flow):** AikiField's surface is
+beta-gating only — it does not host the chat UI. The chat features it consumes
+from the backend (chat, handoff, email-coach) are available via the same backend
+endpoints documented in `AIRichardMoon/backend/PRD.md`. If AikiField ports the
+chat UI in the future, it should use the **"Email a Coach" button + email
+composition modal** pattern (see [Coach contact flow (email coach, no
+video)](#coach-contact-flow-email-coach-no-video) below), NOT the old "Request
+human coach" video handoff that has been removed.
+
 **QA file wrap (2026-08-17):** On quantumaikido.com, form-processor pages
 (`login`, `profile`, `dashboard`, and others) are `.html` files that still
 contain PHP. The public login URL is `/login` (old `/login.php` 301s there).
@@ -204,6 +213,7 @@ aikifield.com/coach-api/*  ──▶  coach-proxy.php  ──▶  AIRichardMoon 
                                                   /v1/auth/request-reset
                                                   /v1/auth/reset-password
                                                   /v1/auth/confirm-email
+                                                  /v1/email-coach (POST — send message to human coach)
 ```
 
 `projects.php` is no longer in this diagram — it is a static marketing page
@@ -315,11 +325,14 @@ See `backend/PRD.md` in AIRichardMoon for full endpoint details.
 - PHP session cookie on `aikifield.com` (HttpOnly, Secure on HTTPS,
   SameSite=Lax, 7-day lifetime). Session keys: `qa_email`,
   `qa_session_token`, `qa_target_env`, `qa_is_admin`, `qa_premium` — identical to QA.
-  The `qa_premium` key reflects the backend `premium` flag (Phase 20) and
-  controls visibility of the "Video with a Coach" feature. AikiField's
-  marketing copy (`projects.php`) notes the video coach handoff is a premium
-  feature. No live handoff UI exists on AikiField — the feature lives on
-  `quantumaikido.com/members.php`.
+  The `qa_premium` key reflects the backend `premium` flag (Phase 20). **Premium
+  gating has been removed for coach handoffs / email-coach** — these features are
+  available to ALL users, not just premium. The old "Video with a Coach is
+  available on premium accounts" message is gone. No live handoff or email-coach
+  UI exists on AikiField — the chat surface lives on
+  `quantumaikido.com/members.php`. See [Coach contact flow (email coach, no
+  video)](#coach-contact-flow-email-coach-no-video) below for the current
+  handoff/coach-contact contract.
 - `coach-login.js` posts `email` + `sessionToken` to `login.php`
   (`action=backend-login`), which verifies against
   `/v1/auth/check-session` and stores the session. The backend also
@@ -368,6 +381,72 @@ to `quantumaikido.com` and no cross-domain SSO needed. The account itself is
 shared (same backend user store), so a user who also visits
 `quantumaikido.com/members.php` uses the same credentials — but that's a
 separate session on a separate domain, independent of this integration.
+
+### Coach contact flow (email coach, no video)
+
+The coaching system's coach-contact flow has changed. The old real-time
+video handoff (Jitsi room URL) has been replaced by an **email-based coach
+contact** flow. This section documents the current contract; AikiField does
+not host the chat UI, but the backend endpoints it proxies are affected, and
+any future port of the chat UI must follow this pattern.
+
+**What changed:**
+
+1. **"Request human coach" → "Email a Coach".** The old button triggered a
+   real-time video handoff (the backend created a Jitsi room and returned a
+   `roomUrl` in the ChatResponse). The new button opens an **email
+   composition modal** where the member writes a message (subject + body) to
+   a human coach. The modal submits to `POST /v1/email-coach` (below).
+
+2. **No more video calls.** The handoff system no longer creates Jitsi video
+   call rooms. `roomUrl` in the ChatResponse is now **always `null`**. The
+   "Join video call" link has been removed from the chat UI.
+
+3. **Premium gating removed for handoffs.** Handoffs and the email-coach
+   feature are available to **ALL users**, not just premium. The "Video with
+   a Coach is available on premium accounts" message has been removed from
+   the UI. (The `qa_premium` session key / backend `premium` flag still
+   exists for other purposes, but no longer gates coach contact.)
+
+**New endpoint — `POST /v1/email-coach`:**
+
+Authenticated endpoint (requires a valid session token). Sends a message to
+a human coach by email.
+
+- **Request body:**
+  ```json
+  { "sessionId": "<string>", "subject": "<string>", "message": "<string>", "includeContext": <boolean> }
+  ```
+  - `sessionId` — the active chat session ID.
+  - `subject` — email subject line.
+  - `message` — the member's message body.
+  - `includeContext` — when true, the recent chat transcript is appended to
+    the email so the coach has context.
+- **Response:**
+  ```json
+  { "ok": <boolean>, "message": "<string>" }
+  ```
+- Routed through `coach-proxy.php` as `/coach-api/v1/email-coach` (same proxy
+  path as the auth endpoints; no new proxy route needed).
+
+**New ChatResponse field — `coachEmailSuggestion`:**
+
+`coachEmailSuggestion` is a **boolean** field on the ChatResponse. When
+`true`, the frontend shows a gentle inline suggestion banner prompting the
+member to email a coach. Triggered by an **arithmetic backoff schedule** on
+the message count within a session: first shown at message **3**, then at
+**9, 18, 30, 45, …** (the gaps increase by 6 each step: 3, then +6, +9, +12,
++15, …). The banner is dismissible and non-blocking.
+
+**AikiField note:** AikiField's surface is beta-gating only and does not
+render the chat UI, so neither the "Email a Coach" button/modal nor the
+`coachEmailSuggestion` banner is shown here. These live on
+`quantumaikido.com/members.php`. If AikiField ports the chat UI, it must use
+the "Email a Coach" button + modal pattern and honor the
+`coachEmailSuggestion` banner — not the removed "Request human coach" video
+handoff. The backend endpoints (`/v1/email-coach`, chat, handoff) are
+available via the same `coach-proxy.php` → Cloud Run path; no AikiField-specific
+backend changes are required.
 
 ## Configuration & secrets
 
