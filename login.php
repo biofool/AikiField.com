@@ -301,15 +301,17 @@ $coachLoginUrl = $_SERVER['SCRIPT_NAME'] ?? '/login.php';
       <!-- Left column: auth forms -->
       <div class="coach-login-forms">
 
-      <!-- Segmented Auth Navigation Tabs -->
-      <div class="coach-auth-tab-bar" role="tablist" aria-label="Authentication Options">
+      <!-- Single auth window: the segmented tab switcher is the header row of
+           the form card below it, so login and registration share one panel. -->
+      <div id="coach-auth-panel" class="coach-auth-panel coach-card--highlight">
+
+      <div class="coach-auth-tab-bar coach-auth-tab-bar--header" role="tablist" aria-label="Authentication Options">
         <button type="button" class="coach-auth-tab active" id="coach-tab-login" role="tab" aria-selected="true" aria-controls="coach-login">Sign In</button>
         <button type="button" class="coach-auth-tab" id="coach-tab-register" role="tab" aria-selected="false" aria-controls="coach-register">Create Account</button>
       </div>
 
       <!-- Login step -->
-      <div id="coach-login" class="coach-card coach-card--highlight">
-        <h2>Sign In</h2>
+      <div id="coach-login" class="coach-card" role="tabpanel" aria-labelledby="coach-tab-login">
         <p class="coach-intro">Sign in or register to access the beta assessment pages.</p>
 
         <!-- Social login buttons (shown if OAuth is configured) -->
@@ -383,8 +385,7 @@ $coachLoginUrl = $_SERVER['SCRIPT_NAME'] ?? '/login.php';
       </div>
 
       <!-- Registration form -->
-      <div id="coach-register" class="coach-card" hidden>
-        <h2>Create Account</h2>
+      <div id="coach-register" class="coach-card" role="tabpanel" aria-labelledby="coach-tab-register" hidden>
         <p class="coach-intro">Sign up with your email and password to access the beta pages.</p>
 
         <form id="coach-register-form" class="coach-form" novalidate>
@@ -466,6 +467,8 @@ $coachLoginUrl = $_SERVER['SCRIPT_NAME'] ?? '/login.php';
           <button type="button" id="coach-toggle-back-btn" class="btn btn-link">Sign in</button>
         </div>
       </div>
+
+      </div><!-- /.coach-auth-panel -->
 
       <!-- Password reset form (shown when ?reset=token in URL) -->
       <div id="coach-reset-step" class="coach-card" hidden>

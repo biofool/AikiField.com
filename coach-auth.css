@@ -372,6 +372,54 @@
     margin-bottom: 1.25rem;
     border: 1px solid var(--coach-border);
 }
+
+/* Single auth window: .coach-auth-panel carries the card chrome and holds the
+   tab bar plus both forms, so the switcher is the header row of one box
+   instead of a separate window floating above the form. */
+.coach-auth-panel {
+    background: var(--coach-surface);
+    border: 1px solid var(--coach-border);
+    border-radius: var(--coach-radius);
+    margin-bottom: 1.5rem;
+}
+
+/* The panel owns the border now, so the /beta/ gate highlight rides on it —
+   .coach-card--highlight alone would lose to .coach-auth-panel on source
+   order (equal specificity). */
+.coach-auth-panel.coach-card--highlight {
+    border-color: var(--af-mint, #5FD3B2);
+    border-width: 2px;
+    box-shadow: 0 4px 20px rgba(14, 78, 68, 0.12);
+}
+
+/* Forms inside the panel drop their own chrome — the panel provides it.
+   No display rule here: both cards are toggled with the hidden attribute. */
+.coach-auth-panel > .coach-card {
+    background: none;
+    border: none;
+    border-radius: 0;
+    margin-bottom: 0;
+}
+
+/* Tab bar as the panel's header row: flush with the top edge, only the top
+   corners rounded, and one divider line between it and the form body. */
+.coach-auth-tab-bar--header {
+    margin: 0;
+    padding: 0.4rem;
+    border: none;
+    border-bottom: 1px solid var(--coach-border);
+    border-radius: calc(var(--coach-radius) - 1px) calc(var(--coach-radius) - 1px) 0 0;
+}
+
+/* coach-login.js toggles these with el.hidden, and each sets `display`, which
+   silently beats the browser's [hidden] rule — that is why the "or" divider
+   showed with social login disabled. .coach-forgot-captcha has the same defect
+   but is deliberately left out: Turnstile renders implicitly on load and a
+   widget that starts in a display:none container can fail to run. */
+.coach-social[hidden],
+.coach-divider[hidden] {
+    display: none;
+}
 .coach-auth-tab {
     flex: 1;
     padding: 0.6rem 1rem;

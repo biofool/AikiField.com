@@ -224,6 +224,11 @@
         registerStep.hidden = (step !== "register");
         resetStep.hidden    = (step !== "reset");
         confirmStep.hidden  = (step !== "confirm");
+        // The panel wrapping the tab bar and both forms draws the card
+        // border, so it has to go during the reset/confirm overlays —
+        // otherwise an empty box and a live tab bar are left behind them.
+        const authPanel = document.getElementById("coach-auth-panel");
+        if (authPanel) authPanel.hidden = (step !== "login" && step !== "register");
     }
 
     // --- Establish server-side session ---
