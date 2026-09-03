@@ -1020,7 +1020,13 @@
         handleOAuthCallback();
         return;
     }
-    if (handleConfirmLink()) {
+    // handleConfirmLink is async — it returns a Promise that resolves to
+    // true/false. A Promise is always truthy, so `if (handleConfirmLink())`
+    // always enters the block and returns, blocking handleResetLink() and
+    // every other init step below. Check ?confirm= synchronously instead
+    // (same pattern already used for ?validate= below).
+    if (_oauthParams.get("confirm")) {
+        handleConfirmLink();
         return;
     }
     if (handleResetLink()) {
