@@ -388,6 +388,7 @@ $coachLoginUrl = $_SERVER['SCRIPT_NAME'] ?? '/login.php';
         <p class="coach-intro">Sign up with your email and password to access the beta pages.</p>
 
         <form id="coach-register-form" class="coach-form" novalidate>
+          <!-- Two-column layout: left = required, right = optional. -->
           <div class="coach-reg-columns">
             <!-- Left column: required fields -->
             <div class="coach-reg-col coach-reg-required">
@@ -396,20 +397,23 @@ $coachLoginUrl = $_SERVER['SCRIPT_NAME'] ?? '/login.php';
               <label for="coach-reg-email" class="coach-label">Email address</label>
               <input type="email" id="coach-reg-email" class="coach-input" placeholder="name@example.com" required autocomplete="email">
 
-              <button type="button" id="coach-reg-send-code-btn" class="btn btn-link coach-reg-send-code-btn">Send validation code</button>
-              <div id="coach-reg-email-status" class="coach-status" role="alert" hidden></div>
+              <!-- Email validation code fields -->
+              <div id="coach-reg-email-validation" class="coach-reg-email-validation">
+                <button type="button" id="coach-reg-send-code-btn" class="btn btn-link coach-reg-send-code-btn">Send validation code</button>
+                <div id="coach-reg-email-status" class="coach-status" role="alert" hidden></div>
 
-              <label for="coach-reg-validation-code" class="coach-label">Email validation code <span class="coach-reg-hint" style="display:inline;font-weight:normal;">(sent to your email)</span></label>
-              <div class="coach-otp-wrapper" data-target="coach-reg-validation-code">
-                <div class="coach-otp-digits">
-                  <input type="text" class="coach-otp-digit" maxlength="1" pattern="[0-9]" inputmode="numeric" autocomplete="one-time-code" aria-label="Digit 1">
-                  <input type="text" class="coach-otp-digit" maxlength="1" pattern="[0-9]" inputmode="numeric" aria-label="Digit 2">
-                  <input type="text" class="coach-otp-digit" maxlength="1" pattern="[0-9]" inputmode="numeric" aria-label="Digit 3">
-                  <input type="text" class="coach-otp-digit" maxlength="1" pattern="[0-9]" inputmode="numeric" aria-label="Digit 4">
-                  <input type="text" class="coach-otp-digit" maxlength="1" pattern="[0-9]" inputmode="numeric" aria-label="Digit 5">
-                  <input type="text" class="coach-otp-digit" maxlength="1" pattern="[0-9]" inputmode="numeric" aria-label="Digit 6">
+                <label for="coach-reg-validation-code" class="coach-label">Email validation code <span class="coach-reg-hint" style="display:inline;font-weight:normal;">(sent to your email)</span></label>
+                <div class="coach-otp-wrapper" data-target="coach-reg-validation-code">
+                  <div class="coach-otp-digits">
+                    <input type="text" class="coach-otp-digit" maxlength="1" pattern="[0-9]" inputmode="numeric" autocomplete="one-time-code" aria-label="Digit 1">
+                    <input type="text" class="coach-otp-digit" maxlength="1" pattern="[0-9]" inputmode="numeric" aria-label="Digit 2">
+                    <input type="text" class="coach-otp-digit" maxlength="1" pattern="[0-9]" inputmode="numeric" aria-label="Digit 3">
+                    <input type="text" class="coach-otp-digit" maxlength="1" pattern="[0-9]" inputmode="numeric" aria-label="Digit 4">
+                    <input type="text" class="coach-otp-digit" maxlength="1" pattern="[0-9]" inputmode="numeric" aria-label="Digit 5">
+                    <input type="text" class="coach-otp-digit" maxlength="1" pattern="[0-9]" inputmode="numeric" aria-label="Digit 6">
+                  </div>
+                  <input type="hidden" id="coach-reg-validation-code" name="validationCode" class="coach-otp-value">
                 </div>
-                <input type="hidden" id="coach-reg-validation-code" name="validationCode" class="coach-otp-value">
               </div>
 
               <label for="coach-reg-password" class="coach-label">Password</label>
@@ -422,8 +426,9 @@ $coachLoginUrl = $_SERVER['SCRIPT_NAME'] ?? '/login.php';
               </div>
               <div id="coach-reg-password-feedback" class="coach-reg-hint" aria-live="polite">Minimum 12 characters. Use a passphrase or password manager.</div>
 
-              <label for="coach-reg-code" class="coach-label">Invitation code <span class="coach-reg-hint" style="display:inline;font-weight:normal;">(if you have one)</span></label>
-              <input type="text" id="coach-reg-code" class="coach-input" placeholder="Enter your invitation code (optional)" autocomplete="off">
+              <label for="coach-reg-code" class="coach-label">Invitation code <span class="coach-reg-hint" style="display:inline;font-weight:normal;">(optional &mdash; grants instant access)</span></label>
+              <input type="text" id="coach-reg-code" class="coach-input" placeholder="Enter invitation code (optional)" autocomplete="off">
+              <p class="coach-reg-hint">Without a code, your account will be created and activated after administrator approval.</p>
             </div>
 
             <!-- Right column: optional fields -->

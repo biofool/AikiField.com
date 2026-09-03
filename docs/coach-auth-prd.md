@@ -208,6 +208,8 @@ aikifield.com/coach-api/*  ──▶  coach-proxy.php  ──▶  AIRichardMoon 
                                                   /v1/auth/verify
                                                   /v1/auth/register-with-password
                                                   /v1/auth/send-validation-code
+                                                  /v1/auth/verify-validation-code
+                                                  /v1/auth/verify-validation-token
                                                   /v1/auth/activate-with-code
                                                   /v1/auth/check-session
                                                   /v1/auth/request-reset
