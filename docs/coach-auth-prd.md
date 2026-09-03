@@ -3,13 +3,13 @@
 ## Summary
 
 AikiField.com (a static marketing site for a fractional-CISO consultancy)
-authenticates against the **AI Ki Questions Fielded backend**
+authenticates against the **Ask Richard Creativity Questions backend**
 (`AIRichardMoon`, FastAPI on Google Cloud Run) — the same backend that
 powers `quantumaikido.com/members.php`. The auth surface is now a **blind
 `/login.php` page** that exists solely to gate the pre-release `/beta/`
 assessment pages. It is NOT linked from the public navigation.
 
-> **Product name:** The chatbot is branded **"AI Ki Questions Fielded"** across
+> **Product name:** The chatbot is branded **"Ask Richard Creativity Questions"** across
 > all three repos (QA frontend, AIRichardMoon backend, AikiField marketing).
 > Previously branded "Aikifield AI Chat" / "Quantum Aikido Coach" — renamed
 > 2026-08-29. Infrastructure identifiers (Cloud Run service names, Worker
@@ -180,6 +180,15 @@ update or deploy:
 Recorded so the N/A is explicit rather than silent. Anything touching login,
 registration, the session model, or the proxy remains in scope.
 
+**AikiField-specific note (coach contact flow):** AikiField's surface is
+beta-gating only — it does not host the chat UI. The chat features it consumes
+from the backend (chat, handoff, email-coach) are available via the same backend
+endpoints documented in `AIRichardMoon/backend/PRD.md`. If AikiField ports the
+chat UI in the future, it should use the **"Email a Coach" button + email
+composition modal** pattern (see [Coach contact flow (email coach, no
+video)](#coach-contact-flow-email-coach-no-video) below), NOT the old "Request
+human coach" video handoff that has been removed.
+
 **QA file wrap (2026-08-17):** On quantumaikido.com, form-processor pages
 (`login`, `profile`, `dashboard`, and others) are `.html` files that still
 contain PHP. The public login URL is `/login` (old `/login.php` 301s there).
@@ -206,6 +215,7 @@ aikifield.com/coach-api/*  ──▶  coach-proxy.php  ──▶  AIRichardMoon 
                                                   /v1/auth/request-reset
                                                   /v1/auth/reset-password
                                                   /v1/auth/confirm-email
+                                                  /v1/email-coach (POST — send message to human coach)
 ```
 
 `projects.php` is no longer in this diagram — it is a static marketing page
@@ -235,16 +245,21 @@ AikiField's `coach-proxy.php` forwards `CF-Connecting-IP` and
 `X-Forwarded-For` so the backend rate-limits per real visitor IP rather than
 the shared proxy IP.
 
-### Registration + login-time activation flow (issue #228)
+### Registration + login-time activation flow (issue #228, ticket #535)
 
-The registration form on `login.php` is a 3-step wizard
-(Email → Account → Invitation):
+The registration form on `login.php` is a single-screen layout with persistent input fields (no 3-step wizard), auth navigation tab switcher, password reveal eye toggles with real-time length feedback (min 12 chars), and segmented 6-digit OTP boxes:
 
-1. **Step 1 (Email):** User enters email → clicks "Send validation code" → `POST /v1/auth/send-validation-code` generates + emails a 6-digit OTP **and** a clickable link (`?validate=<token>&email=<email>`) (captcha-gated, rate-limited, anti-enumeration). The "Send validation code" button is disabled for 60 seconds with a visible countdown after each send (ticket #510 resend cooldown). User may enter the 6-digit code now (optional) or skip it. If the user arrived via the email link, the token is verified and the wizard skips to Step 2.
-2. **Step 2 (Account):** User enters password (min 12 chars) + optional alias + preferred language.
-3. **Step 3 (Invitation):** Validation summary shows verified/pending status. User enters invitation code (optional) and submits → `POST /v1/auth/register-with-password` verifies the code or consumes the token if present and **activates the account immediately** (`active=true, email_confirmed=true`) → issues a session token → user is signed in. If no code/token is provided, the account is created as inactive and the login-time activation flow asks for a validation code at first login.
-
-**Login-time activation:** When a user with an inactive/unconfirmed account tries to log in, `POST /v1/auth/verify` returns `needsValidation: true` and the backend auto-sends a validation code (skipped if a code was created within the last 60 seconds — ticket #510 auto-send guard). The login form shows a validation code input (below the password field). The user enters the code and clicks "Sign in" again → `POST /v1/auth/activate-with-code` verifies the code + password, activates the account, and issues a session token. A "Resend validation code" button is provided; it is disabled for 60 seconds with a visible countdown after each send (ticket #510 resend cooldown).
+1. User enters email → optionally clicks "Send validation code" → `POST /v1/auth/send-validation-code` generates + emails a 6-digit OTP and clickable link (captcha-gated, rate-limited, anti-enumeration). All form fields remain visible and editable.
+2. User enters the 6-digit code in the OTP boxes (optional) + password (with live requirements feedback and eye toggle) + optional invitation code → `POST /v1/auth/register-with-password`:
+   - **With valid validation code & invitation code:** Verifies the code, redeems it, and **activates the account immediately** (`active=true, email_confirmed=true`) → issues a session token → user is signed in.
+   - **Without validation code or invitation code:** Creates account in `active=false, email_confirmed=false, pending=true` state, sends confirmation email with clickable link (`?confirm=<token>&email=<email>`) and optional 6-digit code. Account can be confirmed via email link or approved directly by an administrator (`update_access` sets `active=true` and `email_confirmed=true`).
+3. **Login-time activation & pending approval:**
+   - When a user with an unconfirmed email attempts login, `POST /v1/auth/verify` returns `ok: false, pending: true, needsValidation: true` and auto-sends a code. The user enters the OTP code → `POST /v1/auth/activate-with-code` activates the account and signs them in.
+   - When a user with a verified email awaiting admin approval attempts login, `POST /v1/auth/verify` returns `ok: false, pending: true, needsValidation: false` displaying "Your account is pending administrator approval."
+4. **Password Reset Flow (Ticket #535):**
+   - Reset email includes `?reset=<token>&email=<email>`.
+   - `login.php` bypasses authenticated session redirect when `?reset=`, `?confirm=`, or `?validate=` is present.
+   - Reset form explicitly displays target email ("Resetting password for: <email>") and validates new password length in real time.
 
 See `backend/PRD.md` in AIRichardMoon for full endpoint details.
 
@@ -263,7 +278,7 @@ See `backend/PRD.md` in AIRichardMoon for full endpoint details.
 | `coach-config.php` | Non-secret production config (backend URL, empty secret placeholders, `COACH_LOGIN_REDIRECT` default `/beta/`) | new template |
 | `coach-config.local.php` | **gitignored** — holds the real `COACH_PROXY_SECRET` / Turnstile key | operator-provided |
 | `.htaccess` | Routes `/coach-api/*` → `coach-proxy.php`; 301 `projects.html` → `projects.php`; 301s for the old `/beta/*.html` URLs → `/beta/*.php` | new |
-| `includes/beta-gate.load.php` | Page gate for `/beta/*.php` — re-establishes the same `qa_email` / `qa_session_token` session as `login.php` (identical `session_set_cookie_params`) and redirects to `/login.php?next=<original path>` if absent. No new auth endpoint, session model, or proxy route — reuses the session `login.php` sets. Includes periodic re-validation against the backend's `/v1/auth/check-session` (every 6h via `qa_session_checked_at`) — if the backend explicitly rejects the session, the local session is destroyed and the user is redirected to login. Fails open on backend unreachable. **Note (issue #265)**: the sister repo `quantumaikido.com` now verifies sessions on **every request** in its `coach-auth-check.php` (not just every 6h); AikiField's 6h cadence is sufficient here because `/beta/` pages don't have the `coach-auth.js` crash-on-null-elements issue that motivated the per-request check in QA. | updated (was redirecting to `/projects.php#coach-login`) |
+| `includes/beta-gate.load.php` | Page gate for `/beta/*.php` — re-establishes the same `qa_email` / `qa_session_token` session as `login.php` (identical `session_set_cookie_params`) and redirects to `/login.php?next=<original path>` if absent. No new auth endpoint, session model, or proxy route — reuses the session `login.php` sets. Includes periodic re-validation against the backend's `/v1/auth/check-session` (every 6h via `qa_session_checked_at`) — if the backend explicitly rejects the session, the local session is destroyed and the user is redirected to login. Fails open on backend unreachable. **Note (issue #516)**: backend now supports concurrent multi-device sessions (up to 10 active tokens per user) so signing in on multiple devices or browsers does not invalidate existing sessions. **Note (issue #265)**: the sister repo `quantumaikido.com` now verifies sessions on **every request** in its `coach-auth-check.php` (not just every 6h); AikiField's 6h cadence is sufficient here because `/beta/` pages don't have the `coach-auth.js` crash-on-null-elements issue that motivated the per-request check in QA. **Note (ticket #430)**: QA's Cloudflare Pages Functions (`dashboard-spa.js`, `login.js`) now call `verifySession` BEFORE the admin check and re-issue the JWT when admin status changes — see `docs/coach-dashboard-prd.md` §4.1.2. AikiField is unaffected: it uses PHP sessions (not JWT cookies), has no admin-gated dashboard surface, and `beta-gate.load.php` already re-validates against `check-session` every 6h (which returns the current `admin` flag). | updated (was redirecting to `/projects.php#coach-login`) |
 | `beta/data.php` | Session-gated JSON delivery for the beta assessment pages (`beta/js/assessment.js` fetches `data.php?f=<name>` instead of `data/<name>.json` directly); `beta/data/.htaccess` denies direct access to the raw JSON so the gate can't be bypassed by fetching the file straight | new |
 
 ### Removed in this revision
@@ -311,7 +326,15 @@ See `backend/PRD.md` in AIRichardMoon for full endpoint details.
 
 - PHP session cookie on `aikifield.com` (HttpOnly, Secure on HTTPS,
   SameSite=Lax, 7-day lifetime). Session keys: `qa_email`,
-  `qa_session_token`, `qa_target_env`, `qa_is_admin` — identical to QA.
+  `qa_session_token`, `qa_target_env`, `qa_is_admin`, `qa_premium` — identical to QA.
+  The `qa_premium` key reflects the backend `premium` flag (Phase 20). **Premium
+  gating has been removed for coach handoffs / email-coach** — these features are
+  available to ALL users, not just premium. The old "Video with a Coach is
+  available on premium accounts" message is gone. No live handoff or email-coach
+  UI exists on AikiField — the chat surface lives on
+  `quantumaikido.com/members.php`. See [Coach contact flow (email coach, no
+  video)](#coach-contact-flow-email-coach-no-video) below for the current
+  handoff/coach-contact contract.
 - `coach-login.js` posts `email` + `sessionToken` to `login.php`
   (`action=backend-login`), which verifies against
   `/v1/auth/check-session` and stores the session. The backend also
@@ -360,6 +383,72 @@ to `quantumaikido.com` and no cross-domain SSO needed. The account itself is
 shared (same backend user store), so a user who also visits
 `quantumaikido.com/members.php` uses the same credentials — but that's a
 separate session on a separate domain, independent of this integration.
+
+### Coach contact flow (email coach, no video)
+
+The coaching system's coach-contact flow has changed. The old real-time
+video handoff (Jitsi room URL) has been replaced by an **email-based coach
+contact** flow. This section documents the current contract; AikiField does
+not host the chat UI, but the backend endpoints it proxies are affected, and
+any future port of the chat UI must follow this pattern.
+
+**What changed:**
+
+1. **"Request human coach" → "Email a Coach".** The old button triggered a
+   real-time video handoff (the backend created a Jitsi room and returned a
+   `roomUrl` in the ChatResponse). The new button opens an **email
+   composition modal** where the member writes a message (subject + body) to
+   a human coach. The modal submits to `POST /v1/email-coach` (below).
+
+2. **No more video calls.** The handoff system no longer creates Jitsi video
+   call rooms. `roomUrl` in the ChatResponse is now **always `null`**. The
+   "Join video call" link has been removed from the chat UI.
+
+3. **Premium gating removed for handoffs.** Handoffs and the email-coach
+   feature are available to **ALL users**, not just premium. The "Video with
+   a Coach is available on premium accounts" message has been removed from
+   the UI. (The `qa_premium` session key / backend `premium` flag still
+   exists for other purposes, but no longer gates coach contact.)
+
+**New endpoint — `POST /v1/email-coach`:**
+
+Authenticated endpoint (requires a valid session token). Sends a message to
+a human coach by email.
+
+- **Request body:**
+  ```json
+  { "sessionId": "<string>", "subject": "<string>", "message": "<string>", "includeContext": <boolean> }
+  ```
+  - `sessionId` — the active chat session ID.
+  - `subject` — email subject line.
+  - `message` — the member's message body.
+  - `includeContext` — when true, the recent chat transcript is appended to
+    the email so the coach has context.
+- **Response:**
+  ```json
+  { "ok": <boolean>, "message": "<string>" }
+  ```
+- Routed through `coach-proxy.php` as `/coach-api/v1/email-coach` (same proxy
+  path as the auth endpoints; no new proxy route needed).
+
+**New ChatResponse field — `coachEmailSuggestion`:**
+
+`coachEmailSuggestion` is a **boolean** field on the ChatResponse. When
+`true`, the frontend shows a gentle inline suggestion banner prompting the
+member to email a coach. Triggered by an **arithmetic backoff schedule** on
+the message count within a session: first shown at message **3**, then at
+**9, 18, 30, 45, …** (the gaps increase by 6 each step: 3, then +6, +9, +12,
++15, …). The banner is dismissible and non-blocking.
+
+**AikiField note:** AikiField's surface is beta-gating only and does not
+render the chat UI, so neither the "Email a Coach" button/modal nor the
+`coachEmailSuggestion` banner is shown here. These live on
+`quantumaikido.com/members.php`. If AikiField ports the chat UI, it must use
+the "Email a Coach" button + modal pattern and honor the
+`coachEmailSuggestion` banner — not the removed "Request human coach" video
+handoff. The backend endpoints (`/v1/email-coach`, chat, handoff) are
+available via the same `coach-proxy.php` → Cloud Run path; no AikiField-specific
+backend changes are required.
 
 ## Configuration & secrets
 
@@ -677,5 +766,9 @@ maintain a three-branch workflow: `dev` → `staging` → `main`:
 - Bring the inline chat back to `aikifield.com` (would require restoring
   `coach-chat.js` and a chat host page; currently out of scope — the
   invitation card routes demo requests through the contact form instead).
+  If pursued, the chat UI must use the **"Email a Coach" button + email
+  composition modal** pattern and honor the `coachEmailSuggestion` banner —
+  NOT the removed "Request human coach" video handoff. See [Coach contact
+  flow (email coach, no video)](#coach-contact-flow-email-coach-no-video).
 - AikiField profile page (`/profile.php`) if profile management is wanted
   here (currently profile management is only on `quantumaikido.com`).

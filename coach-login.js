@@ -399,8 +399,16 @@
         const params = new URLSearchParams(window.location.search);
         const token = params.get("reset");
         if (!token) return false;
+        const email = params.get("email");
         showStep("reset");
         resetForm.dataset.token = token;
+        if (email) {
+            resetForm.dataset.email = email;
+            const intro = document.getElementById("coach-reset-intro");
+            if (intro) {
+                intro.textContent = "Resetting password for " + email + ". Enter your new password below.";
+            }
+        }
         resetPasswordInput.focus();
         history.replaceState(null, "", window.location.pathname);
         return true;
@@ -653,16 +661,134 @@
         }
     });
 
-    // --- Toggle between login and register ---
-    toggleBtn.addEventListener("click", () => {
-        showStep("register");
-        regEmailInput.focus();
-    });
+    // --- Form UI Helpers (Tabs, OTP, Password Reveal) ---
+    function initPasswordToggles() {
+        document.querySelectorAll(".coach-password-wrap").forEach(wrap => {
+            const input = wrap.querySelector("input");
+            const toggle = wrap.querySelector(".coach-password-toggle");
+            if (!input || !toggle) return;
+            const eyeShow = toggle.querySelector(".eye-show");
+            const eyeHide = toggle.querySelector(".eye-hide");
+            toggle.addEventListener("click", () => {
+                const isPassword = input.type === "password";
+                input.type = isPassword ? "text" : "password";
+                toggle.setAttribute("aria-pressed", isPassword ? "true" : "false");
+                toggle.setAttribute("aria-label", isPassword ? "Hide password" : "Show password");
+                if (eyeShow) eyeShow.hidden = isPassword;
+                if (eyeHide) eyeHide.hidden = !isPassword;
+            });
+        });
+    }
 
-    toggleBackBtn.addEventListener("click", () => {
-        showStep("login");
-        emailInput.focus();
-    });
+    function initPasswordFeedback() {
+        function attach(input, feedbackId) {
+            const feedback = document.getElementById(feedbackId);
+            if (!input || !feedback) return;
+            input.addEventListener("input", () => {
+                const len = input.value.length;
+                if (len === 0) {
+                    feedback.textContent = "Minimum 12 characters. Use a passphrase or password manager.";
+                    feedback.style.color = "";
+                } else if (len < PASSWORD_MIN) {
+                    const diff = PASSWORD_MIN - len;
+                    feedback.textContent = diff + " more character" + (diff === 1 ? "" : "s") + " needed (minimum 12).";
+                    feedback.style.color = "#d9534f";
+                } else if (len > PASSWORD_MAX) {
+                    feedback.textContent = "Password exceeds maximum length of " + PASSWORD_MAX + " characters.";
+                    feedback.style.color = "#d9534f";
+                } else {
+                    feedback.textContent = "✓ Password meets length requirements.";
+                    feedback.style.color = "#2e7d32";
+                }
+            });
+        }
+        attach(regPasswordInput, "coach-reg-password-feedback");
+        attach(resetPasswordInput, "coach-reset-password-feedback");
+    }
+
+    function initOtpControllers() {
+        document.querySelectorAll(".coach-otp-wrapper").forEach(wrapper => {
+            const digits = Array.from(wrapper.querySelectorAll(".coach-otp-digit"));
+            const hiddenValue = wrapper.querySelector(".coach-otp-value");
+            if (!digits.length || !hiddenValue) return;
+
+            function syncValue() {
+                const val = digits.map(d => d.value.trim()).join("");
+                hiddenValue.value = val;
+            }
+
+            digits.forEach((digit, idx) => {
+                digit.addEventListener("input", (e) => {
+                    const val = digit.value.replace(/\D/g, "");
+                    digit.value = val ? val.charAt(val.length - 1) : "";
+                    syncValue();
+                    if (digit.value && idx < digits.length - 1) {
+                        digits[idx + 1].focus();
+                        digits[idx + 1].select();
+                    }
+                });
+
+                digit.addEventListener("keydown", (e) => {
+                    if (e.key === "Backspace" && !digit.value && idx > 0) {
+                        digits[idx - 1].focus();
+                        digits[idx - 1].select();
+                    } else if (e.key === "ArrowLeft" && idx > 0) {
+                        digits[idx - 1].focus();
+                    } else if (e.key === "ArrowRight" && idx < digits.length - 1) {
+                        digits[idx + 1].focus();
+                    }
+                });
+
+                digit.addEventListener("paste", (e) => {
+                    e.preventDefault();
+                    const text = (e.clipboardData || window.clipboardData).getData("text").replace(/\D/g, "");
+                    if (!text) return;
+                    for (let i = 0; i < digits.length; i++) {
+                        digits[i].value = text.charAt(i) || "";
+                    }
+                    syncValue();
+                    const nextIdx = Math.min(text.length, digits.length - 1);
+                    digits[nextIdx].focus();
+                });
+            });
+        });
+    }
+
+    function initAuthTabs() {
+        const tabLogin = document.getElementById("coach-tab-login");
+        const tabRegister = document.getElementById("coach-tab-register");
+
+        function switchTab(target) {
+            if (target === "register") {
+                showStep("register");
+                if (tabRegister) {
+                    tabRegister.classList.add("active");
+                    tabRegister.setAttribute("aria-selected", "true");
+                }
+                if (tabLogin) {
+                    tabLogin.classList.remove("active");
+                    tabLogin.setAttribute("aria-selected", "false");
+                }
+                regEmailInput.focus();
+            } else {
+                showStep("login");
+                if (tabLogin) {
+                    tabLogin.classList.add("active");
+                    tabLogin.setAttribute("aria-selected", "true");
+                }
+                if (tabRegister) {
+                    tabRegister.classList.remove("active");
+                    tabRegister.setAttribute("aria-selected", "false");
+                }
+                emailInput.focus();
+            }
+        }
+
+        if (tabLogin) tabLogin.addEventListener("click", () => switchTab("login"));
+        if (tabRegister) tabRegister.addEventListener("click", () => switchTab("register"));
+        if (toggleBtn) toggleBtn.addEventListener("click", () => switchTab("register"));
+        if (toggleBackBtn) toggleBackBtn.addEventListener("click", () => switchTab("login"));
+    }
 
     // --- Multi-step registration wizard (ticket #510) ---
     // Step 1: Email + validation code (optional)
@@ -729,8 +855,7 @@
     });
 
     // --- Send email validation code ---
-    // Triggered automatically when the email field loses focus with a valid
-    // email, or manually via the "Send validation code" button. The backend
+    // Manually via the "Send validation code" button. The backend
     // generates a 6-digit code and emails it. The code must be entered in the
     // validation-code field to complete registration.
     let lastSentEmail = "";
@@ -755,7 +880,7 @@
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     email,
-                    captchaToken: getCaptchaToken(),
+                    captchaToken: getCaptchaToken("reg"),
                 }),
             });
             const data = await resp.json();
@@ -770,22 +895,11 @@
             resetCaptchaToken("reg");
         } catch (err) {
             if (regSendCodeBtn) regSendCodeBtn.disabled = false;
-            showStatus(regEmailStatus, "Network error: " + (err.message || "please try again."), "error");
+            showStatus(regEmailStatus, friendlyErrorMessage(err), "error");
         }
     }
 
-    // Auto-send when the email field loses focus with a valid address.
-    if (regEmailInput) {
-        regEmailInput.addEventListener("blur", () => {
-            const email = regEmailInput.value.trim().toLowerCase();
-            // Only auto-send if the email looks valid and hasn't already been sent.
-            if (email && email.includes("@") && email.indexOf("@") < email.length - 1 && email !== lastSentEmail) {
-                sendRegValidationCode();
-            }
-        });
-    }
-
-    // Manual send via button (still available as a resend / fallback).
+    // Manual send via button (explicit user action).
     if (regSendCodeBtn) {
         regSendCodeBtn.addEventListener("click", sendRegValidationCode);
     }
@@ -796,7 +910,7 @@
         const email = regEmailInput.value.trim().toLowerCase();
         const validationCode = regValidationCodeInput ? regValidationCodeInput.value.trim() : "";
         const password = regPasswordInput.value;
-        const invitationCode = regCodeInput.value.trim();
+        const invitationCode = regCodeInput ? regCodeInput.value.trim() : "";
         const alias = regAliasInput ? regAliasInput.value.trim() : "";
         const regProblem = emailProblem(email)
             || newPasswordProblem(password)
@@ -817,21 +931,11 @@
             const body = {
                 email,
                 password,
-                captchaToken: getCaptchaToken(),
+                captchaToken: getCaptchaToken("reg"),
             };
-            // Include invitationCode when provided (optional).
             if (invitationCode) body.invitationCode = invitationCode;
-            // Include validationCode when provided. The backend treats it as
-            // optional — if omitted, registration proceeds without email
-            // validation (backward compatible). When present and valid, the
-            // account is activated immediately.
             if (validationCode) body.validationCode = validationCode;
-            // Include validationToken when the user arrived via the email link
-            // (?validate=...). The backend consumes it as an alternative to
-            // the 6-digit code.
             if (pendingValidationToken) body.validationToken = pendingValidationToken;
-            // Only include alias if the user provided one (empty string is
-            // fine server-side, but omitting keeps the payload clean).
             if (alias) body.alias = alias;
             const resp = await fetchWithTimeout(API + "/v1/auth/register-with-password", {
                 method: "POST",
@@ -842,15 +946,23 @@
             registerBtn.disabled = false;
 
             if (data.ok) {
-                showStatus(registerStatus, data.message || "Check your email for a confirmation link.", "success");
-                registerForm.reset();
+                if (data.active && data.sessionToken) {
+                    showStatus(registerStatus, data.message || "Account created! Signing you in...", "success");
+                    establishServerSession(data.email || email, data.sessionToken, registerStatus);
+                } else if (data.pending || data.active === false) {
+                    showStatus(registerStatus, data.message || "Account created. Your email is verified, and your account is pending administrator approval before you can sign in.", "info");
+                    registerForm.reset();
+                } else {
+                    showStatus(registerStatus, data.message || "Check your email for a confirmation link.", "success");
+                    registerForm.reset();
+                }
             } else {
                 showStatus(registerStatus, data.error || "Registration failed.", "error");
             }
             resetCaptchaToken("reg");
         } catch (err) {
             registerBtn.disabled = false;
-            showStatus(registerStatus, "Network error: " + err.message, "error");
+            showStatus(registerStatus, friendlyErrorMessage(err), "error");
         }
     });
 
@@ -891,11 +1003,16 @@
             }
         } catch (err) {
             resetBtn.disabled = false;
-            showStatus(resetStatus, "Network error: " + err.message, "error");
+            showStatus(resetStatus, friendlyErrorMessage(err), "error");
         }
     });
 
     // --- Init ---
+    initPasswordToggles();
+    initPasswordFeedback();
+    initOtpControllers();
+    initAuthTabs();
+
     // handleOAuthCallback is async (one-time code exchange). If there's no
     // oauth_code, it returns false synchronously.
     const _oauthParams = new URLSearchParams(window.location.search);
@@ -918,6 +1035,10 @@
         return;
     }
     handleQueryError();
+    if (_oauthParams.get("register") === "1") {
+        const tabReg = document.getElementById("coach-tab-register");
+        if (tabReg) tabReg.click();
+    }
     // Social login disabled — not worth maintaining OAuth config at the moment.
     // loadProviders();
 })();

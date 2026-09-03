@@ -146,7 +146,7 @@ $nextRaw = $_GET['next'] ?? '';
 $loginRedirect = af_safe_redirect($nextRaw, '/beta/');
 
 // --- If already authed, skip the form and go to ?next= ---
-if ($qaAlreadyAuthed) {
+if ($qaAlreadyAuthed && empty($_GET['error']) && empty($_GET['reset']) && empty($_GET['confirm']) && empty($_GET['validate'])) {
     header('Location: ' . $loginRedirect);
     exit;
 }
@@ -301,6 +301,12 @@ $coachLoginUrl = $_SERVER['SCRIPT_NAME'] ?? '/login.php';
       <!-- Left column: auth forms -->
       <div class="coach-login-forms">
 
+      <!-- Segmented Auth Navigation Tabs -->
+      <div class="coach-auth-tab-bar" role="tablist" aria-label="Authentication Options">
+        <button type="button" class="coach-auth-tab active" id="coach-tab-login" role="tab" aria-selected="true" aria-controls="coach-login">Sign In</button>
+        <button type="button" class="coach-auth-tab" id="coach-tab-register" role="tab" aria-selected="false" aria-controls="coach-register">Create Account</button>
+      </div>
+
       <!-- Login step -->
       <div id="coach-login" class="coach-card coach-card--highlight">
         <h2>Sign In</h2>
@@ -319,11 +325,27 @@ $coachLoginUrl = $_SERVER['SCRIPT_NAME'] ?? '/login.php';
           <input type="text" id="coach-email" class="coach-input" placeholder="name@example.com or your login ID" required autocomplete="username">
 
           <label for="coach-password" class="coach-label">Password</label>
-          <input type="password" id="coach-password" class="coach-input" placeholder="Password" required autocomplete="current-password">
+          <div class="coach-password-wrap">
+            <input type="password" id="coach-password" class="coach-input coach-password-input" placeholder="Password" required autocomplete="current-password">
+            <button type="button" class="coach-password-toggle" aria-label="Show password" aria-pressed="false" tabindex="-1">
+              <svg class="coach-eye-icon eye-show" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+              <svg class="coach-eye-icon eye-hide" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" hidden><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+            </button>
+          </div>
 
           <div id="coach-login-validation" class="coach-login-validation" hidden>
               <label for="coach-login-validation-code" class="coach-label">Email validation code <span class="coach-reg-hint" style="display:inline;font-weight:normal;">(sent to your email)</span></label>
-              <input type="text" id="coach-login-validation-code" class="coach-input" placeholder="Enter the 6-digit code from your email" autocomplete="off" inputmode="numeric" pattern="[0-9]{6}">
+              <div class="coach-otp-wrapper" data-target="coach-login-validation-code">
+                <div class="coach-otp-digits">
+                  <input type="text" class="coach-otp-digit" maxlength="1" pattern="[0-9]" inputmode="numeric" autocomplete="one-time-code" aria-label="Digit 1">
+                  <input type="text" class="coach-otp-digit" maxlength="1" pattern="[0-9]" inputmode="numeric" aria-label="Digit 2">
+                  <input type="text" class="coach-otp-digit" maxlength="1" pattern="[0-9]" inputmode="numeric" aria-label="Digit 3">
+                  <input type="text" class="coach-otp-digit" maxlength="1" pattern="[0-9]" inputmode="numeric" aria-label="Digit 4">
+                  <input type="text" class="coach-otp-digit" maxlength="1" pattern="[0-9]" inputmode="numeric" aria-label="Digit 5">
+                  <input type="text" class="coach-otp-digit" maxlength="1" pattern="[0-9]" inputmode="numeric" aria-label="Digit 6">
+                </div>
+                <input type="hidden" id="coach-login-validation-code" name="validationCode" class="coach-otp-value">
+              </div>
               <button type="button" id="coach-login-resend-code-btn" class="btn btn-link coach-reg-send-code-btn">Resend validation code</button>
           </div>
 
@@ -365,78 +387,76 @@ $coachLoginUrl = $_SERVER['SCRIPT_NAME'] ?? '/login.php';
         <h2>Create Account</h2>
         <p class="coach-intro">Sign up with your email and password to access the beta pages.</p>
 
-        <!-- Multi-step wizard: Step 1 (email) → Step 2 (account) → Step 3 (invitation) -->
-        <div class="coach-reg-progress" id="coach-reg-progress">
-          <span class="coach-reg-step-dot active" data-step="1">1</span>
-          <span class="coach-reg-step-bar"></span>
-          <span class="coach-reg-step-dot" data-step="2">2</span>
-          <span class="coach-reg-step-bar"></span>
-          <span class="coach-reg-step-dot" data-step="3">3</span>
-        </div>
-        <div class="coach-reg-step-labels">
-          <span class="coach-reg-step-label active" data-step="1">Email</span>
-          <span class="coach-reg-step-label" data-step="2">Account</span>
-          <span class="coach-reg-step-label" data-step="3">Invitation</span>
-        </div>
-
         <form id="coach-register-form" class="coach-form" novalidate>
-          <!-- Step 1: Confirm email -->
-          <div class="coach-reg-step" id="coach-reg-step-1" data-step="1">
-            <label for="coach-reg-email" class="coach-label">Email address</label>
-            <input type="email" id="coach-reg-email" class="coach-input" placeholder="name@example.com" required autocomplete="email">
+          <!-- Two-column layout: left = required, right = optional. -->
+          <div class="coach-reg-columns">
+            <!-- Left column: required fields -->
+            <div class="coach-reg-col coach-reg-required">
+              <h3 class="coach-reg-col-heading">Required</h3>
 
-            <button type="button" id="coach-reg-send-code-btn" class="btn btn-link coach-reg-send-code-btn">Send validation code</button>
-            <div id="coach-reg-email-status" class="coach-status" role="alert" hidden></div>
+              <label for="coach-reg-email" class="coach-label">Email address</label>
+              <input type="email" id="coach-reg-email" class="coach-input" placeholder="name@example.com" required autocomplete="email">
 
-            <label for="coach-reg-validation-code" class="coach-label">Email validation code <span class="coach-reg-hint" style="display:inline;font-weight:normal;">(optional — sent to your email)</span></label>
-            <input type="text" id="coach-reg-validation-code" class="coach-input" placeholder="Enter the 6-digit code from your email" autocomplete="off" inputmode="numeric" pattern="[0-9]{6}">
-            <p class="coach-reg-hint">Enter the code now to activate immediately, or skip this and validate at first login.</p>
+              <!-- Email validation code fields -->
+              <div id="coach-reg-email-validation" class="coach-reg-email-validation">
+                <button type="button" id="coach-reg-send-code-btn" class="btn btn-link coach-reg-send-code-btn">Send validation code</button>
+                <div id="coach-reg-email-status" class="coach-status" role="alert" hidden></div>
 
-            <button type="button" class="btn btn-primary coach-reg-next-btn" data-next="2">Continue</button>
-          </div>
+                <label for="coach-reg-validation-code" class="coach-label">Email validation code <span class="coach-reg-hint" style="display:inline;font-weight:normal;">(sent to your email)</span></label>
+                <div class="coach-otp-wrapper" data-target="coach-reg-validation-code">
+                  <div class="coach-otp-digits">
+                    <input type="text" class="coach-otp-digit" maxlength="1" pattern="[0-9]" inputmode="numeric" autocomplete="one-time-code" aria-label="Digit 1">
+                    <input type="text" class="coach-otp-digit" maxlength="1" pattern="[0-9]" inputmode="numeric" aria-label="Digit 2">
+                    <input type="text" class="coach-otp-digit" maxlength="1" pattern="[0-9]" inputmode="numeric" aria-label="Digit 3">
+                    <input type="text" class="coach-otp-digit" maxlength="1" pattern="[0-9]" inputmode="numeric" aria-label="Digit 4">
+                    <input type="text" class="coach-otp-digit" maxlength="1" pattern="[0-9]" inputmode="numeric" aria-label="Digit 5">
+                    <input type="text" class="coach-otp-digit" maxlength="1" pattern="[0-9]" inputmode="numeric" aria-label="Digit 6">
+                  </div>
+                  <input type="hidden" id="coach-reg-validation-code" name="validationCode" class="coach-otp-value">
+                </div>
+              </div>
 
-          <!-- Step 2: Account details -->
-          <div class="coach-reg-step" id="coach-reg-step-2" data-step="2" hidden>
-            <label for="coach-reg-password" class="coach-label">Password</label>
-            <input type="password" id="coach-reg-password" class="coach-input" placeholder="Choose a password (min 12 characters)" required autocomplete="new-password">
+              <label for="coach-reg-password" class="coach-label">Password</label>
+              <div class="coach-password-wrap">
+                <input type="password" id="coach-reg-password" class="coach-input coach-password-input" placeholder="Choose a password (min 12 characters)" required autocomplete="new-password">
+                <button type="button" class="coach-password-toggle" aria-label="Show password" aria-pressed="false" tabindex="-1">
+                  <svg class="coach-eye-icon eye-show" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                  <svg class="coach-eye-icon eye-hide" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" hidden><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+                </button>
+              </div>
+              <div id="coach-reg-password-feedback" class="coach-reg-hint" aria-live="polite">Minimum 12 characters. Use a passphrase or password manager.</div>
 
-            <label for="coach-reg-alias" class="coach-label">Alias / username <span class="coach-reg-hint" style="display:inline;font-weight:normal;">(optional)</span></label>
-            <input type="text" id="coach-reg-alias" class="coach-input" placeholder="Choose a login name (or leave blank)" autocomplete="username">
-            <p class="coach-reg-hint">If set, you can log in with this instead of your email. Letters, numbers, hyphens, underscores, and dots only.</p>
+              <label for="coach-reg-code" class="coach-label">Invitation code <span class="coach-reg-hint" style="display:inline;font-weight:normal;">(optional &mdash; grants instant access)</span></label>
+              <input type="text" id="coach-reg-code" class="coach-input" placeholder="Enter invitation code (optional)" autocomplete="off">
+              <p class="coach-reg-hint">Without a code, your account will be created and activated after administrator approval.</p>
+            </div>
 
-            <label for="coach-reg-language" class="coach-label">Preferred language <span class="coach-reg-hint" style="display:inline;font-weight:normal;">(optional)</span></label>
-            <select id="coach-reg-language" class="coach-input">
-              <option value="">English (auto-detect)</option>
-            </select>
-            <p class="coach-reg-hint">Overrides auto-detection. AI Ki Questions Fielded will respond in this language.</p>
+            <!-- Right column: optional fields -->
+            <div class="coach-reg-col coach-reg-optional">
+              <h3 class="coach-reg-col-heading">Optional</h3>
 
-            <div class="coach-reg-step-nav">
-              <button type="button" class="btn btn-link coach-reg-back-btn" data-back="1">Back</button>
-              <button type="button" class="btn btn-primary coach-reg-next-btn" data-next="3">Continue</button>
+              <label for="coach-reg-alias" class="coach-label">Alias / username</label>
+              <input type="text" id="coach-reg-alias" class="coach-input" placeholder="Choose a login name (or leave blank)" autocomplete="username">
+              <p class="coach-reg-hint">If set, you can log in with this instead of your email. Letters, numbers, hyphens, underscores, and dots only.</p>
+
+              <label for="coach-reg-language" class="coach-label">Preferred language</label>
+              <select id="coach-reg-language" class="coach-input">
+                <option value="">English (auto-detect)</option>
+              </select>
+              <p class="coach-reg-hint">Overrides auto-detection. AI Ki Questions Fielded will respond in this language.</p>
             </div>
           </div>
 
-          <!-- Step 3: Invitation code + submit -->
-          <div class="coach-reg-step" id="coach-reg-step-3" data-step="3" hidden>
-            <div id="coach-reg-validation-summary" class="coach-reg-validation-summary"></div>
+          <?php if (defined('TURNSTILE_SITE_KEY') && TURNSTILE_SITE_KEY): ?>
+          <div class="cf-turnstile"
+               data-sitekey="<?php echo htmlspecialchars(TURNSTILE_SITE_KEY); ?>"
+               data-callback="onTurnstileSuccess"
+               data-error-callback="onTurnstileError"
+               data-expired-callback="onTurnstileExpired"
+               style="margin-top:0.5rem;"></div>
+          <?php endif; ?>
 
-            <label for="coach-reg-code" class="coach-label">Invitation code</label>
-            <input type="text" id="coach-reg-code" class="coach-input" placeholder="Enter your invitation code" autocomplete="off">
-
-            <?php if (defined('TURNSTILE_SITE_KEY') && TURNSTILE_SITE_KEY): ?>
-            <div class="cf-turnstile"
-                 data-sitekey="<?php echo htmlspecialchars(TURNSTILE_SITE_KEY); ?>"
-                 data-callback="onTurnstileSuccess"
-                 data-error-callback="onTurnstileError"
-                 data-expired-callback="onTurnstileExpired"
-                 style="margin-top:0.5rem;"></div>
-            <?php endif; ?>
-
-            <div class="coach-reg-step-nav">
-              <button type="button" class="btn btn-link coach-reg-back-btn" data-back="2">Back</button>
-              <button type="submit" class="btn btn-primary" id="coach-register-btn">Create account</button>
-            </div>
-          </div>
+          <button type="submit" class="btn btn-primary" id="coach-register-btn">Create account</button>
         </form>
 
         <div id="coach-register-status" class="coach-status" hidden></div>
@@ -450,10 +470,17 @@ $coachLoginUrl = $_SERVER['SCRIPT_NAME'] ?? '/login.php';
       <!-- Password reset form (shown when ?reset=token in URL) -->
       <div id="coach-reset-step" class="coach-card" hidden>
         <h2>Reset Password</h2>
-        <p class="coach-intro">Enter your new password below.</p>
+        <p class="coach-intro" id="coach-reset-intro">Enter your new password below.</p>
         <form id="coach-reset-form" class="coach-form" novalidate>
           <label for="coach-reset-password" class="coach-label">New password</label>
-          <input type="password" id="coach-reset-password" class="coach-input" placeholder="New password (min 12 characters)" required autocomplete="new-password">
+          <div class="coach-password-wrap">
+            <input type="password" id="coach-reset-password" class="coach-input coach-password-input" placeholder="New password (min 12 characters)" required autocomplete="new-password">
+            <button type="button" class="coach-password-toggle" aria-label="Show password" aria-pressed="false" tabindex="-1">
+              <svg class="coach-eye-icon eye-show" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+              <svg class="coach-eye-icon eye-hide" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" hidden><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+            </button>
+          </div>
+          <div id="coach-reset-password-feedback" class="coach-reg-hint" aria-live="polite">Minimum 12 characters. Use a passphrase or password manager.</div>
           <button type="submit" class="btn btn-primary" id="coach-reset-btn">Reset password</button>
         </form>
         <div id="coach-reset-status" class="coach-status" hidden></div>

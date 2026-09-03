@@ -7,7 +7,7 @@
  * public — there is no login or chat on this page anymore.
  *
  * History: this page previously hosted an inline coaching login + AI Chat
- * (a public CTA authenticating against the AI Ki Questions Fielded backend
+ * (a public CTA authenticating against the Ask Richard Creativity Questions backend
  * on Cloud Run via coach-proxy.php). That surface was removed — the page
  * now shows an invitation card pointing visitors to the contact form to
  * request a live demo. The coaching login was extracted to a blind
@@ -91,25 +91,35 @@
       <p class="af-eyebrow">Built by AikiField</p>
       <h1 class="af-h1">Technology we built &mdash; ready to fit your needs.</h1>
       <p class="af-lead af-lead--wide af-page-header__lead">AikiField designs, builds, and operates the systems below &mdash; production AI and data pipelines running today, not demos or slide-ware. The same engineering capability, cost discipline, and leadership judgment that built them is available to your organization, tailored to fit your security program and your stage.</p>
-      <a href="#see-it-live" class="af-page-header__chat-cta">
+      <button type="button" id="see-it-live-toggle" class="af-page-header__chat-cta" aria-expanded="false" aria-controls="see-it-live-panel">
         <span class="af-page-header__chat-cta-badge">Free</span>
         See it live &mdash; request an invitation below
         <span class="af-page-header__chat-cta-arrow" aria-hidden="true">&darr;</span>
-      </a>
+      </button>
+      <!-- Dropdown invitation panel — drops down from the pill when toggled -->
+      <div id="see-it-live-panel" class="af-invite-dropdown" hidden>
+        <div class="af-invite-dropdown__inner">
+          <span class="af-svc__tag af-svc__tag--flagship">See it live</span>
+          <span class="af-svc__tag af-svc__tag--built">Free</span>
+          <h2 class="af-svc__title">Want to see it in action?</h2>
+          <p class="af-svc__lead">If you want to see it live, request an invitation when you <a href="contact.html">contact us</a> &mdash; we&rsquo;re happy to show you how easy it is to stand one up.</p>
+          <p class="af-svc__bestfor">The Ask Richard Creativity Questions runs in production at <a href="https://quantumaikido.com">quantumaikido.com</a>. We can walk you through a live demo, then design and build a corpus-specific chat grounded in your own knowledge base &mdash; runbooks, policies, product docs, or any body of text your team or customers keep asking about.</p>
+          <a href="contact.html" class="af-btn af-btn--light af-svc__cta">Request an invitation</a>
+          <p class="af-svc__fineprint">No account needed to look around this page &mdash; the project cards below describe what each system does and how the same pattern fits your needs.</p>
+        </div>
+      </div>
     </div>
   </section>
 
   <!-- ============================================================ -->
-  <!-- PROJECTS + INVITATION CARD — two-column split                 -->
-  <!-- Left: the sponsored project cards.                            -->
-  <!-- Right: invitation card (request a live demo), sticky.         -->
-  <!-- No --white modifier: falls through to body's --af-bg (warm    -->
-  <!-- paper), so the page reads dark green header -> paper section  -->
-  <!-- -> white cards, instead of white section -> paper cards.      -->
+  <!-- PROJECTS — full-width single column                           -->
+  <!-- The invitation card now lives in the page-header dropdown     -->
+  <!-- (toggled by the "See it live" pill above), so the project     -->
+  <!-- cards use the full width.                                     -->
   <!-- ============================================================ -->
   <section class="af-section">
     <div class="af-container">
-      <div class="af-projects-split">
+      <div class="af-projects-split af-projects-split--full">
 
         <!-- LEFT COLUMN: sponsored projects -->
         <div class="af-projects-split__projects">
@@ -120,14 +130,14 @@
               <span class="af-svc__tag af-svc__tag--flagship">AI Coaching</span>
               <span class="af-svc__tag af-svc__tag--built">Built by AikiField</span>
             </div>
-            <h2 class="af-svc__title">AI Ki Questions Fielded</h2>
+            <h2 class="af-svc__title">Ask Richard Creativity Questions</h2>
             <p class="af-svc__lead">Corpus-specific AI Chat. Designed to provide hallucination-free Q&amp;A against a specific knowledge base. Free your team to handle the hard questions; give your customers a better interface to the documentation &mdash; because, who wants to read docs?</p>
             <p class="af-svc__bestfor">Live at <a href="https://quantumaikido.com">quantumaikido.com</a> &mdash; a public chat plus a members area (invitation-only, with email or Google login).</p>
-            <p class="af-svc__bestfor">How it works: it searches the teaching archive for relevant passages, drafts an answer with citations, keeps costs under control, and hands off to a human coach by video when it can&rsquo;t help or the member asks.</p>
+            <p class="af-svc__bestfor">How it works: it searches the teaching archive for relevant passages, drafts an answer with citations, keeps costs under control, and hands off to a human coach by video (a premium feature) when it can&rsquo;t help or the member asks.</p>
             <h3 class="af-svc__bullets-label">What it does</h3>
             <ul class="af-svc__bullets">
               <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Answers grounded in the source teachings</strong> &mdash; with citations back to origin.</span></li>
-              <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Escalates to a live human coach</strong> &mdash; via video link when a question needs it.</span></li>
+              <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Escalates to a live human coach</strong> &mdash; via video link (premium feature) when a question needs it.</span></li>
               <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Runs on a fixed budget</strong> &mdash; so coaching stays free, with no surprise bills.</span></li>
               <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Queues questions</strong> &mdash; so no single user crowds out the rest.</span></li>
               <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Works on any cloud</strong> &mdash; without rewriting the code.</span></li>
@@ -143,8 +153,8 @@
 
             <div class="af-diagram">
               <figure class="af-diagram__figure">
-                <img src="assets/aichat-flow.svg" data-af-diagram="aichat-flow" data-i18n-attr="alt:svg.aichat_flow.alt" alt="AI Ki Questions Fielded request flow: step 1 member asks a question; step 2a authenticate (email, password, Google OAuth, Turnstile) and 2b rate limit and queue; step 3 search teaching corpus via SQLite FTS5; step 4 Gemini drafts cited answer; step 5 decision — can it answer confidently? YES leads to 6a return cited answer (24/7, free, within budget), NO leads to 6b escalate to human coach via video link; step 7 member receives response. Infrastructure: Cloud Run, Firestore, Secret Manager, Pub/Sub, Cloud Functions, Docker, OpenTofu, DVC plus GCS." class="af-diagram__img" width="780" height="980" loading="lazy"/>
-                <figcaption class="af-diagram__caption"><strong>Figure 1.</strong> AI Ki Questions Fielded request flow &mdash; from member question through corpus search, Gemini-drafted answer, and the decision to return a cited answer or escalate to a live human coach. <a href="assets/aichat-flow.png" class="af-diagram__download" download>Download PNG &darr;</a></figcaption>
+                <img src="assets/aichat-flow.svg" data-af-diagram="aichat-flow" data-i18n-attr="alt:svg.aichat_flow.alt" alt="Ask Richard Creativity Questions request flow: step 1 member asks a question; step 2a authenticate (email, password, Google OAuth, Turnstile) and 2b rate limit and queue; step 3 search teaching corpus via SQLite FTS5; step 4 Gemini drafts cited answer; step 5 decision — can it answer confidently? YES leads to 6a return cited answer (24/7, free, within budget), NO leads to 6b escalate to human coach via video link; step 7 member receives response. Infrastructure: Cloud Run, Firestore, Secret Manager, Pub/Sub, Cloud Functions, Docker, OpenTofu, DVC plus GCS." class="af-diagram__img" width="780" height="980" loading="lazy"/>
+                <figcaption class="af-diagram__caption"><strong>Figure 1.</strong> Ask Richard Creativity Questions request flow &mdash; from member question through corpus search, Gemini-drafted answer, and the decision to return a cited answer or escalate to a live human coach. <a href="assets/aichat-flow.png" class="af-diagram__download" download>Download PNG &darr;</a></figcaption>
               </figure>
             </div>
           </article>
@@ -293,21 +303,6 @@
 
         </div><!-- /.af-projects-split__projects -->
 
-        <!-- RIGHT COLUMN: invitation card (request a live demo) — sticky -->
-        <div class="af-projects-split__chat" id="see-it-live">
-          <aside class="af-svc af-svc--invite">
-            <div class="af-svc__tag-row">
-              <span class="af-svc__tag af-svc__tag--flagship">See it live</span>
-              <span class="af-svc__tag af-svc__tag--built">Free</span>
-            </div>
-            <h2 class="af-svc__title">Want to see it in action?</h2>
-            <p class="af-svc__lead">If you want to see it live, request an invitation when you <a href="contact.html">contact us</a> &mdash; we&rsquo;re happy to show you how easy it is to stand one up.</p>
-            <p class="af-svc__bestfor">The AI Ki Questions Fielded runs in production at <a href="https://quantumaikido.com">quantumaikido.com</a>. We can walk you through a live demo, then design and build a corpus-specific chat grounded in your own knowledge base &mdash; runbooks, policies, product docs, or any body of text your team or customers keep asking about.</p>
-            <a href="contact.html" class="af-btn af-btn--light af-svc__cta">Request an invitation</a>
-            <p class="af-svc__fineprint">No account needed to look around this page &mdash; the project cards on the left describe what each system does and how the same pattern fits your needs.</p>
-          </aside>
-        </div><!-- /.af-projects-split__chat -->
-
       </div><!-- /.af-projects-split -->
     </div>
   </section>
@@ -319,7 +314,7 @@
       <p class="af-lead af-lead--wide">All six systems were designed and built by AikiField and run in production today &mdash; AI-grounded coaching, global studio outreach, multi-cloud cost control, resilience engineering, media intelligence, and AI governance research. The engineering patterns behind them are directly available to your engagement.</p>
       <div class="af-diagram">
         <figure class="af-diagram__figure">
-          <img src="assets/projects-overview.svg" data-af-diagram="projects-overview" data-i18n-attr="alt:svg.projects_overview.alt" alt="Overview diagram: AikiField sponsors two projects — AI Ki Questions Fielded (inputs: member question and teaching corpus; core: Gemini API, SQLite FTS5, Cloud Run, Firestore, rate limiter, auth; outputs: cited answer and human coach escalation) and World Studio Finder (inputs: Google Maps, Places API, Hunter.io; core: Playwright scraper, email verifier, SQLite SCD Type 2, Google Sheets sync, geo-filter, Compute Engine; outputs: YAMM email campaigns and web form submission)." class="af-diagram__img" width="1120" height="760" loading="lazy"/>
+          <img src="assets/projects-overview.svg" data-af-diagram="projects-overview" data-i18n-attr="alt:svg.projects_overview.alt" alt="Overview diagram: AikiField sponsors two projects — Ask Richard Creativity Questions (inputs: member question and teaching corpus; core: Gemini API, SQLite FTS5, Cloud Run, Firestore, rate limiter, auth; outputs: cited answer and human coach escalation) and World Studio Finder (inputs: Google Maps, Places API, Hunter.io; core: Playwright scraper, email verifier, SQLite SCD Type 2, Google Sheets sync, geo-filter, Compute Engine; outputs: YAMM email campaigns and web form submission)." class="af-diagram__img" width="1120" height="760" loading="lazy"/>
           <figcaption class="af-diagram__caption"><strong>Figure 3.</strong> Overview of the two systems AikiField built, showing inputs, core components, and outputs for each. <a href="assets/projects-overview.png" class="af-diagram__download" download>Download PNG &darr;</a></figcaption>
         </figure>
       </div>
@@ -435,5 +430,32 @@
 
 <script src="/js/locale-utils.js?v=20260818i18n"></script>
 <script src="/js/language-selector.js?v=20260818i18n"></script>
+<script>
+  // Toggle the "See it live" invitation dropdown from the page-header pill.
+  // The pill is a <button> that shows/hides the invitation panel below it.
+  (function () {
+    var toggle = document.getElementById('see-it-live-toggle');
+    var panel = document.getElementById('see-it-live-panel');
+    if (!toggle || !panel) return;
+    function openPanel() {
+      panel.hidden = false;
+      toggle.setAttribute('aria-expanded', 'true');
+      toggle.classList.add('af-page-header__chat-cta--open');
+    }
+    function closePanel() {
+      panel.hidden = true;
+      toggle.setAttribute('aria-expanded', 'false');
+      toggle.classList.remove('af-page-header__chat-cta--open');
+    }
+    toggle.addEventListener('click', function () {
+      if (panel.hidden) { openPanel(); } else { closePanel(); }
+    });
+    // Auto-open if navigated with #see-it-live (e.g. from another page link)
+    if (window.location.hash === '#see-it-live') { openPanel(); }
+    window.addEventListener('hashchange', function () {
+      if (window.location.hash === '#see-it-live') { openPanel(); }
+    });
+  })();
+</script>
 </body>
 </html>

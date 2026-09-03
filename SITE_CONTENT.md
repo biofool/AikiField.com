@@ -160,7 +160,7 @@ Where a leader places attention determines the security posture of the whole org
 **Mini links:**
 - Self-Assessment — Measure your security maturity and leadership presence — Two assessments in one — honest self-inquiry across five security categories and seven presence dimensions. (→ assessment.html)
 - Engagement Process — Six phases to a program that fits — A collaborative design cycle tailored to your stage, risks, and customers. (→ process.html)
-- Demonstration Technologies — Technology we built, ready to fit your needs — AI Ki Questions Fielded, a cited coaching backend for the Quantum Aikido corpus; World Studio Finder, a global studio discovery pipeline; and MultiCloud-MultiPass, a multi-cloud cost kill switch. All built by AikiField; the same engineering is available to your organization. (→ projects.php)
+- Demonstration Technologies — Technology we built, ready to fit your needs — Ask Richard Creativity Questions, a cited coaching backend for the Quantum Aikido corpus; World Studio Finder, a global studio discovery pipeline; and MultiCloud-MultiPass, a multi-cloud cost kill switch. All built by AikiField; the same engineering is available to your organization. (→ projects.php)
 
 ### CTA
 
@@ -622,11 +622,11 @@ The composure and curiosity to adapt to emerging threats and AI risk.
 - Title: Technology we built — ready to fit your needs.
 - Lead: AikiField designs, builds, and operates the systems below — production AI and data pipelines running today, not demos or slide-ware. The same engineering capability, cost discipline, and leadership judgment that built them is available to your organization, tailored to fit your security program and your stage.
 
-### Project 1: AI Ki Questions Fielded
+### Project 1: Ask Richard Creativity Questions
 
 **Tag:** AI Coaching
 **Built-by tag:** Built by AikiField
-**Title:** AI Ki Questions Fielded
+**Title:** Ask Richard Creativity Questions
 **Lead:** Corpus-specific AI Chat. Designed to provide hallucination-free Q&A against a specific knowledge base. Free your team to handle the hard questions; give your customers a better interface to the documentation — because, who wants to read docs?
 **Live at:** quantumaikido.com — a public chat plus a members area (invitation-only, with email or Google login).
 **How it works:** It searches the teaching archive for relevant passages, drafts an answer with citations, keeps costs under control, and hands off to a human coach by video when it can't help or the member asks.
@@ -730,26 +730,30 @@ Both systems are built to sense and adapt — cost monitoring and data quality c
 **Body:** We built the systems above end-to-end — architecture, code, cost controls, and operation. The same engineering can be tailored to fit your security program, your stack, and your budget. Let's talk about what you need built.
 **Button:** Book a Discovery Call
 
-### Invitation card (right column on projects.php)
+### Invitation dropdown (page header on projects.php)
 
-The projects page no longer hosts a coaching login or an inline AI Chat.
-Instead the right column shows an invitation card pointing visitors to the
-contact form to request a live demo. (The coaching login was extracted to a
-blind `/login.php` page that gates only the `/beta/` assessment pages — see
+The projects page no longer hosts a coaching login or an inline AI Chat, and
+no longer has a right-column invitation card. Instead, the page-header pill
+("Free / See it live — request an invitation below") is a toggle button that
+drops down an invitation panel directly below it. The project cards use the
+full page width. (The coaching login was extracted to a blind `/login.php`
+page that gates only the `/beta/` assessment pages — see
 `docs/coach-auth-prd.md`.)
 
-**Tags:** See it live | Free
+The pill is collapsed by default; clicking it drops down the invitation panel
+(a white card with the copy below). The arrow rotates 180° when open.
+Navigating to `#see-it-live` auto-opens the panel via a small inline script.
+
+**Pill badge:** Free
+**Pill text:** See it live — request an invitation below
+**Pill arrow:** ↓ (rotates to ↑ when open)
+
+**Dropdown panel tags:** See it live | Free
 **Heading:** Want to see it in action?
 **Lead:** If you want to see it live, request an invitation when you contact us — we're happy to show you how easy it is to stand one up.
-**Body:** The AI Ki Questions Fielded runs in production at quantumaikido.com. We can walk you through a live demo, then design and build a corpus-specific chat grounded in your own knowledge base — runbooks, policies, product docs, or any body of text your team or customers keep asking about.
+**Body:** The Ask Richard Creativity Questions runs in production at quantumaikido.com. We can walk you through a live demo, then design and build a corpus-specific chat grounded in your own knowledge base — runbooks, policies, product docs, or any body of text your team or customers keep asking about.
 **Button:** Request an invitation (links to contact.html)
-**Fine print:** No account needed to look around this page — the project cards on the left describe what each system does and how the same pattern fits your needs.
-
-### Page-header CTA (projects.php)
-
-**Badge:** Free
-**Text:** See it live — request an invitation below
-**Arrow:** ↓ (anchors to #see-it-live, the invitation card)
+**Fine print:** No account needed to look around this page — the project cards below describe what each system does and how the same pattern fits your needs.
 
 ---
 
