@@ -68,7 +68,7 @@ access all beta pages for 7 days. The login page is blind (not in the nav,
 
 ## UI layout (login.php — blind, beta-gating only)
 
-The canonical quantumaikido.com sign-in, create-account, and password-reset surfaces use an approximately 30% smaller desktop visual footprint while preserving 44px interaction targets and 16px input text; its six confirmation-code boxes also remain in one horizontal row at every supported viewport width. These presentation adjustments are currently canonical-frontend-only; AikiField remains an intentionally separate themed port until the same CSS treatment is explicitly approved and visually validated here.
+The canonical quantumaikido.com sign-in, create-account, and password-reset surfaces use an approximately 30% smaller desktop visual footprint while preserving 44px interaction targets and 16px input text; its six confirmation-code boxes also remain in one horizontal row at every supported viewport width. Its registration resend timer starts at 10 seconds, doubles after each successful send in the current page session, and caps at 10 minutes. These presentation and timer adjustments are currently canonical-frontend-only; AikiField remains an intentionally separate themed port until the same treatment is explicitly approved and validated here.
 
 The login page uses a **two-column layout** (`.coach-login-layout`):
 - **Left column** (`.coach-login-forms`): sign-in form, registration form,
