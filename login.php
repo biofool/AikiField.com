@@ -292,7 +292,9 @@ $coachLoginUrl = $_SERVER['SCRIPT_NAME'] ?? '/login.php';
 
   <section class="af-section af-section--lg">
     <div class="af-container">
-      <div class="af-intro" style="max-width:520px;margin:0 auto;">
+      <!-- No width cap here: .coach-login-layout is a two-column grid, so it
+           fills .af-container and lines up with the header and footer. -->
+      <div class="af-intro">
 
       <!-- Two-column layout: left = sign in/register, right = caveats.
            On mobile, caveats appear first as a collapsible <details> section. -->
