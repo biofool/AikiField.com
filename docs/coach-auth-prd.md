@@ -764,5 +764,9 @@ maintain a three-branch workflow: `dev` → `staging` → `main`:
 - Bring the inline chat back to `aikifield.com` (would require restoring
   `coach-chat.js` and a chat host page; currently out of scope — the
   invitation card routes demo requests through the contact form instead).
+  If pursued, the chat UI must use the **"Email a Coach" button + email
+  composition modal** pattern and honor the `coachEmailSuggestion` banner —
+  NOT the removed "Request human coach" video handoff. See [Coach contact
+  flow (email coach, no video)](#coach-contact-flow-email-coach-no-video).
 - AikiField profile page (`/profile.php`) if profile management is wanted
   here (currently profile management is only on `quantumaikido.com`).
