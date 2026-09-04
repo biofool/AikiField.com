@@ -67,6 +67,7 @@ if (session_status() === PHP_SESSION_NONE) {
 $qaEmail         = $_SESSION['qa_email'] ?? null;
 $qaSessionToken  = $_SESSION['qa_session_token'] ?? null;
 $betaAuthed      = !empty($qaEmail) && !empty($qaSessionToken);
+$betaGateError   = '';
 
 // --- Periodic re-validation against the backend ---
 // login.php only calls /v1/auth/check-session once, at sign-in, then this
@@ -80,11 +81,15 @@ $betaAuthed      = !empty($qaEmail) && !empty($qaSessionToken);
 const BETA_REVALIDATE_INTERVAL_SECONDS = 6 * 3600; // re-check at most every 6h
 // While the backend is unreachable, retrying on *every* request would turn a
 // backend outage into a 10s-per-request (CURLOPT_TIMEOUT) storm across all of
-// /beta/ on shared hosting with a small worker pool. Fail open (don't log
-// anyone out) but back off: only retry the check once per this interval,
-// tracked separately from qa_session_checked_at so a failed attempt doesn't
-// look like — or block — a later successful one.
+// /beta/ on shared hosting with a small worker pool. Back off: only retry the
+// check once per this interval, tracked separately from qa_session_checked_at
+// so a failed attempt doesn't look like — or block — a later successful one.
+// On a failed check, fail closed (redirect to login) unless the session was
+// validated within BETA_CACHED_VALIDITY_SECONDS — a short cached-validity
+// window that keeps a recently-verified session working through a transient
+// backend hiccup without letting a revoked session retain access indefinitely.
 const BETA_REVALIDATE_RETRY_BACKOFF_SECONDS = 60;
+const BETA_CACHED_VALIDITY_SECONDS = 300; // 5 minutes — fail-open grace window
 
 if ($betaAuthed) {
     $lastChecked = (int) ($_SESSION['qa_session_checked_at'] ?? 0);
@@ -95,6 +100,7 @@ if ($betaAuthed) {
         $stillValid = qa_revalidate_beta_session($qaEmail, $qaSessionToken);
         if ($stillValid === true) {
             $_SESSION['qa_session_checked_at'] = time();
+            $_SESSION['beta_last_validated'] = time();
             unset($_SESSION['qa_session_check_failed_at']);
         } elseif ($stillValid === false) {
             // Backend explicitly said the session is no longer valid
@@ -105,11 +111,22 @@ if ($betaAuthed) {
             $betaAuthed = false;
         } else {
             // $stillValid === null means the backend call itself failed
-            // (network/timeout/non-200) - fail open rather than lock every
-            // /beta/ visitor out on a transient backend hiccup, but record the
-            // failure so we back off instead of retrying on every request
-            // while the outage lasts.
+            // (network/timeout/non-200). Fail closed (redirect to login)
+            // unless the session was validated within
+            // BETA_CACHED_VALIDITY_SECONDS — a short cached-validity window
+            // that keeps a recently-verified session working through a
+            // transient backend hiccup without letting a revoked session
+            // retain access indefinitely during an extended outage. Record
+            // the failure either way so we back off instead of retrying on
+            // every request while the outage lasts.
             $_SESSION['qa_session_check_failed_at'] = time();
+            $lastValidated = (int) ($_SESSION['beta_last_validated'] ?? 0);
+            if ($lastValidated === 0 || (time() - $lastValidated) >= BETA_CACHED_VALIDITY_SECONDS) {
+                $_SESSION = [];
+                session_destroy();
+                $betaAuthed = false;
+                $betaGateError = 'session_expired';
+            }
         }
     }
 }
@@ -120,6 +137,10 @@ if (!$betaAuthed) {
     $requested = $_SERVER['REQUEST_URI'] ?? '/beta/';
     // REQUEST_URI includes the query string; keep it so deep links survive.
     $next = urlencode($requested);
-    header('Location: /login.php?next=' . $next);
+    $loginUrl = '/login.php?next=' . $next;
+    if ($betaGateError !== '') {
+        $loginUrl .= '&error=' . urlencode($betaGateError);
+    }
+    header('Location: ' . $loginUrl);
     exit;
 }

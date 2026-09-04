@@ -51,11 +51,39 @@
     error_log('coach-config.load: no config file found; falling back to built-in defaults');
 })();
 
+/**
+ * Whether this deployment is running in a non-production (dev/local) mode.
+ * Critical secrets may be optional in dev mode (warning + fallback) but must
+ * fail hard in production. Dev mode is true when the COACH_DEV_MODE constant
+ * is defined and truthy, or when SERVER_NAME is localhost/127.0.0.1.
+ */
+if (!function_exists('af_is_dev_mode')) {
+    function af_is_dev_mode(): bool
+    {
+        if (defined('COACH_DEV_MODE')) {
+            return (bool) COACH_DEV_MODE;
+        }
+        $serverName = $_SERVER['SERVER_NAME'] ?? '';
+        return $serverName === 'localhost' || $serverName === '127.0.0.1';
+    }
+}
+
 // --- Defaults for anything the config file did not define ------------------
 // Never fail silently: a missing backend URL is logged, not guessed quietly.
+// In production (non-dev) mode a missing backend URL is fatal — defaulting to
+// localhost:8001 would silently route auth traffic to a non-existent backend.
+// Keep the localhost fallback only for dev mode.
 if (!defined('COACH_BACKEND_URL')) {
-    error_log('coach-config.load: COACH_BACKEND_URL undefined — defaulting to http://localhost:8001');
-    define('COACH_BACKEND_URL', 'http://localhost:8001');
+    if (af_is_dev_mode()) {
+        error_log('coach-config.load: COACH_BACKEND_URL undefined — defaulting to http://localhost:8001 (dev mode)');
+        define('COACH_BACKEND_URL', 'http://localhost:8001');
+    } else {
+        error_log('coach-config.load: COACH_BACKEND_URL undefined — refusing to run in production without a backend URL');
+        http_response_code(503);
+        header('Content-Type: text/plain; charset=utf-8');
+        echo "Service unavailable: COACH_BACKEND_URL is not configured.\n";
+        exit;
+    }
 }
 if (!defined('COACH_STAGING_URL')) {
     define('COACH_STAGING_URL', '');
@@ -74,6 +102,9 @@ if (!defined('TURNSTILE_SITE_KEY')) {
 }
 if (!defined('TURNSTILE_SECRET_KEY')) {
     define('TURNSTILE_SECRET_KEY', '');
+}
+if (TURNSTILE_SECRET_KEY === '' && PHP_SAPI !== 'cli') {
+    error_log('coach-config.load: TURNSTILE_SECRET_KEY is empty — contact form CAPTCHA verification is DISABLED (fail-open). Set it in coach-config.local.php to match the Turnstile site key pair.');
 }
 // Where to send the user after a successful login. The coaching login now
 // lives on the blind /login.php page that gates /beta/. login.php reads a

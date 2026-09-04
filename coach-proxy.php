@@ -34,7 +34,15 @@ if (!defined('COACH_PROXY_SECRET')) {
     define('COACH_PROXY_SECRET', '');
 }
 if (COACH_PROXY_SECRET === '' && PHP_SAPI !== 'cli') {
-    error_log('WARNING: COACH_PROXY_SECRET is empty — proxy verification is disabled. Set it in coach-config.local.php to match PROXY_SECRET in GCP Secret Manager.');
+    if (af_is_dev_mode()) {
+        error_log('WARNING: COACH_PROXY_SECRET is empty — proxy verification is disabled. Set it in coach-config.local.php to match PROXY_SECRET in GCP Secret Manager.');
+    } else {
+        error_log('coach-proxy.php: COACH_PROXY_SECRET is empty in production — refusing to proxy with verification disabled');
+        http_response_code(503);
+        header('Content-Type: application/json');
+        echo json_encode(['detail' => 'Coach proxy not configured: COACH_PROXY_SECRET is missing.']);
+        exit;
+    }
 }
 
 // OAuth redirect URI — must point back to this proxy. Social login is

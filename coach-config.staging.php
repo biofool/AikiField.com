@@ -24,6 +24,12 @@
  * docs/STAGING.md.
  */
 
+// Staging is a non-production environment: it has no real backend (the
+// placeholder URL below never resolves) and no proxy secret. Mark it as dev
+// mode so coach-proxy.php / coach-config.load.php keep their warning + fallback
+// behaviour instead of 503-ing on the intentionally-empty secrets.
+define('COACH_DEV_MODE', true);
+
 define('COACH_BACKEND_URL', 'https://stub-backend.aikifield-staging.invalid');
 
 // No proxy secret on staging — there is no real backend to authenticate to,
