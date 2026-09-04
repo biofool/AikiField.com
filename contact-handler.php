@@ -171,6 +171,7 @@ if ($honeypot !== '') {
 function contact_verify_turnstile(string $token, string $remoteIp): bool
 {
     if (!defined('TURNSTILE_SECRET_KEY') || TURNSTILE_SECRET_KEY === '') {
+        error_log('contact-handler.php: TURNSTILE_SECRET_KEY is empty — skipping Turnstile verification (fail-open). Captcha is not configured for this deployment.');
         return true; // CAPTCHA not configured for this deployment - fail open
     }
     if ($token === '') {
