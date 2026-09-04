@@ -577,8 +577,7 @@ Completed optimizations deployed to production:
 A dedicated staging entry point is available at
 `https://aikifield.peec.biz/staging/login.php` so operators can test
 login/registration changes in staging before promoting to production.
-This mirrors the quantumaikido.com `/staging/` pattern — see
-[§Staging folder in the QA PRD](https://github.com/biofool/quantumaikido.com/blob/main/docs/coach-dashboard-prd.md#staging-folder-stagingmembersphp).
+This originally mirrored the quantumaikido.com `/staging/` pattern. That QA-local staging surface is now retired: `quantumaikido.com/staging` permanently redirects to `https://quantumaikido.peec.biz/`, while AikiField’s independent staging wrappers remain in service.
 
 Every file in `/staging/` is a thin wrapper: it defines `COACH_FORCE_STAGING`
 and `require`s its parent. There is no staging-specific markup, JS or CSS
