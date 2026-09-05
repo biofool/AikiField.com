@@ -3,7 +3,7 @@
  * AikiField coaching auth — production config template.
  *
  * This file is committed with NON-SECRET defaults. The coaching backend URL
- * below is the public Ask Richard Creativity Questions Cloud Run service (the same one
+ * below is the public Quantum Aikido Wisdom Cloud Run service (the same one
  * quantumaikido.com proxies to). It is not a secret — direct access to
  * non-auth endpoints is rejected by the backend's X-Proxy-Secret check.
  *
@@ -18,7 +18,7 @@
  *   - this repo                         (docs/coach-auth-prd.md)
  */
 
-// Public Ask Richard Creativity Questions backend (Cloud Run).
+// Public Quantum Aikido Wisdom backend (Cloud Run).
 define('COACH_BACKEND_URL', 'https://quantum-aikido-coach-6bfpsd3kkq-uc.a.run.app');
 
 // Shared proxy secret — MUST match PROXY_SECRET in the backend's GCP Secret
