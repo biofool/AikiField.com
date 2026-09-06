@@ -586,6 +586,90 @@
         }
     });
 
+    // --- Passkey (WebAuthn) login — issue #650 ---
+    // Shown only when the browser supports WebAuthn. On click: fetch auth
+    // options → navigator.credentials.get() → verify → establishServerSession.
+    const passkeyBtn = document.getElementById("coach-passkey-btn");
+    if (passkeyBtn && window.PublicKeyCredential) {
+        passkeyBtn.hidden = false;
+        passkeyBtn.addEventListener("click", async () => {
+            passkeyBtn.disabled = true;
+            showStatus(loginStatus, "Use your passkey to sign in…", "loading");
+            try {
+                const identifier = emailInput.value.trim();
+                const beginResp = await fetchWithTimeout(API + "/v1/auth/passkey/login/begin", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ identifier: identifier || "" }),
+                });
+                const beginData = await beginResp.json();
+                if (!beginData.ok) {
+                    showStatus(loginStatus, beginData.error || "Passkey sign-in could not start.", "error");
+                    return;
+                }
+                const opts = beginData.options;
+                const publicKey = {
+                    challenge: Uint8Array.from(atob(opts.challenge), c => c.charCodeAt(0)),
+                    rpId: opts.rpId,
+                    timeout: opts.timeout,
+                    userVerification: opts.userVerification || "preferred",
+                };
+                if (opts.allowCredentials && opts.allowCredentials.length) {
+                    publicKey.allowCredentials = opts.allowCredentials.map(c => ({
+                        type: c.type,
+                        id: Uint8Array.from(atob(c.id), ch => ch.charCodeAt(0)),
+                    }));
+                }
+                const assertion = await navigator.credentials.get({ publicKey });
+                const assertionJson = JSON.stringify({
+                    id: assertion.id,
+                    rawId: assertion.id,
+                    type: assertion.type,
+                    response: {
+                        authenticatorData: assertion.response.authenticatorData
+                            ? btoa(String.fromCharCode(...new Uint8Array(assertion.response.authenticatorData)))
+                            : "",
+                        clientDataJSON: assertion.response.clientDataJSON
+                            ? btoa(String.fromCharCode(...new Uint8Array(assertion.response.clientDataJSON)))
+                            : "",
+                        signature: assertion.response.signature
+                            ? btoa(String.fromCharCode(...new Uint8Array(assertion.response.signature)))
+                            : "",
+                        userHandle: assertion.response.userHandle
+                            ? btoa(String.fromCharCode(...new Uint8Array(assertion.response.userHandle)))
+                            : null,
+                    },
+                    clientExtensionResults: assertion.getClientExtensionResults ? assertion.getClientExtensionResults() : {},
+                });
+                const finishResp = await fetchWithTimeout(API + "/v1/auth/passkey/login/finish", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        credential: assertionJson,
+                        challengeKey: beginData.challengeKey,
+                        captchaToken: getCaptchaToken(),
+                    }),
+                });
+                const finishData = await finishResp.json();
+                if (finishData.ok && finishData.sessionToken) {
+                    showStatus(loginStatus, "Signed in! Redirecting...", "success");
+                    establishServerSession(finishData.email, finishData.sessionToken);
+                } else {
+                    showStatus(loginStatus, finishData.error || "Passkey sign-in failed.", "error");
+                    resetCaptchaToken("login");
+                }
+            } catch (error) {
+                if (error && error.name === "NotAllowedError") {
+                    showStatus(loginStatus, "Passkey sign-in was cancelled.", "info");
+                } else {
+                    showStatus(loginStatus, "Network error: " + (error && error.message ? error.message : "unknown"), "error");
+                }
+            } finally {
+                passkeyBtn.disabled = false;
+            }
+        });
+    }
+
     // --- Login-time activation: resend code ---
     if (loginResendCodeBtn) {
         loginResendCodeBtn.addEventListener("click", async () => {
