@@ -1,169 +1,166 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 760" font-family="'Public Sans', system-ui, sans-serif" role="img" aria-labelledby="ov-title ov-desc">
   <title id="ov-title">AikiField Sponsored Projects — Overview</title>
-  <desc id="ov-desc">Two sponsored projects branching from AikiField: AI Ki Questions Fielded (AI coaching) and World Studio Finder (global studio discovery and outreach).</desc>
+  <desc id="ov-desc">Six sponsored projects built and operated by AikiField — Quantum Aikido Wisdom (AI coaching), World Studio Finder (outreach pipeline), MultiCloud-MultiPass (cloud cost control), ChaosEngine (resilience engineering), ClipQuotes (media intelligence) and Voice Synthesis Benchmarking (AI governance) — each with its principal technologies, all standing on a shared substrate: Python in all six systems, Docker, OpenTofu/Terraform and SQLite in three each, and FastAPI, Cloud Run, Firestore, Flask and Cloud Storage in two each.</desc>
 
   <defs>
     <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
       <path d="M0,0 L10,5 L0,10 z" fill="#0E4E44"/>
     </marker>
-    <marker id="arrow-mint" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-      <path d="M0,0 L10,5 L0,10 z" fill="#5FD3B2"/>
-    </marker>
   </defs>
 
-  <!-- background -->
-  <rect width="1120" height="760" fill="#F6F2EA"/>
+  <rect x="0" y="0" width="1120" height="760" fill="#F6F2EA"/>
 
-  <!-- sponsor node -->
-  <rect x="360" y="28" width="400" height="64" rx="14" fill="#0E4E44"/>
-  <text x="560" y="56" text-anchor="middle" fill="#fff" font-family="'Source Serif 4', Georgia, serif" font-size="20" font-weight="600">AikiField</text>
-  <text x="560" y="78" text-anchor="middle" fill="#8FE6C9" font-size="12" letter-spacing="0.06em">SPONSOR · PHRONESIS IN PRACTICE</text>
+  <!-- ── Header ─────────────────────────────────────────────── -->
+  <text x="20" y="34" font-size="19" font-weight="700" fill="#16201C">Six systems, one engineering substrate</text>
+  <text x="20" y="56" font-size="13" fill="#5A655F">Every system below was designed, built, cost-controlled and is operated by AikiField.</text>
+  <line x1="20" y1="72" x2="1100" y2="72" stroke="#E0D9CB" stroke-width="1"/>
 
-  <!-- branch lines -->
-  <path d="M560,92 C560,130 280,130 280,168" stroke="#0E4E44" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
-  <path d="M560,92 C560,130 840,130 840,168" stroke="#0E4E44" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+  <!-- ── Row 1 ──────────────────────────────────────────────── -->
+  <!-- Card 1 -->
+  <rect x="20" y="90" width="336" height="196" rx="4" fill="#FFFFFF" stroke="#E0D9CB" stroke-width="1.2"/>
+  <rect x="20" y="90" width="336" height="3" fill="#0E4E44"/>
+  <text x="40" y="119" font-size="10" font-weight="700" letter-spacing="1.4" fill="#5A655F">AI COACHING</text>
+  <text x="40" y="145" font-size="16" font-weight="700" fill="#16201C">Quantum Aikido Wisdom</text>
+  <text x="40" y="171" font-size="12.5" fill="#2C3833">Cited answers from a fixed corpus,</text>
+  <text x="40" y="189" font-size="12.5" fill="#2C3833">escalating to a human when unsure.</text>
+  <rect x="40" y="205" width="118" height="22" rx="3" fill="#EFEADF" stroke="#E0D9CB"/>
+  <text x="99" y="220" font-size="11" text-anchor="middle" fill="#2C3833">Gemini API</text>
+  <rect x="164" y="205" width="104" height="22" rx="3" fill="#EFEADF" stroke="#E0D9CB"/>
+  <text x="216" y="220" font-size="11" text-anchor="middle" fill="#2C3833">Cloud Run</text>
+  <rect x="274" y="205" width="62" height="22" rx="3" fill="#EFEADF" stroke="#E0D9CB"/>
+  <text x="305" y="220" font-size="11" text-anchor="middle" fill="#2C3833">Firestore</text>
+  <rect x="40" y="233" width="110" height="22" rx="3" fill="#EFEADF" stroke="#E0D9CB"/>
+  <text x="95" y="248" font-size="11" text-anchor="middle" fill="#2C3833">SQLite FTS5</text>
+  <rect x="156" y="233" width="112" height="22" rx="3" fill="#EFEADF" stroke="#E0D9CB"/>
+  <text x="212" y="248" font-size="11" text-anchor="middle" fill="#2C3833">Cloudflare</text>
+  <text x="40" y="273" font-size="10.5" font-weight="600" fill="#0B6E58">Live · quantumaikido.com</text>
 
-  <!-- ============ PROJECT 1: AI CHAT ============ -->
-  <g id="proj-ai">
-    <rect x="40" y="170" width="480" height="560" rx="18" fill="#ffffff" stroke="#E0D9CB" stroke-width="1.5"/>
-    <rect x="40" y="170" width="480" height="56" rx="18" fill="#0E4E44"/>
-    <rect x="40" y="200" width="480" height="26" fill="#0E4E44"/>
-    <text x="280" y="198" text-anchor="middle" fill="#fff" font-family="'Source Serif 4', Georgia, serif" font-size="19" font-weight="600">AI Ki Questions Fielded</text>
-    <text x="280" y="216" text-anchor="middle" fill="#8FE6C9" font-size="11" letter-spacing="0.08em">AI COACHING · quantumaikido.com</text>
+  <!-- Card 2 -->
+  <rect x="392" y="90" width="336" height="196" rx="4" fill="#FFFFFF" stroke="#E0D9CB" stroke-width="1.2"/>
+  <rect x="392" y="90" width="336" height="3" fill="#0E4E44"/>
+  <text x="412" y="119" font-size="10" font-weight="700" letter-spacing="1.4" fill="#5A655F">OUTREACH PIPELINE</text>
+  <text x="412" y="145" font-size="16" font-weight="700" fill="#16201C">World Studio Finder</text>
+  <text x="412" y="171" font-size="12.5" fill="#2C3833">Geo-aware discovery with verified</text>
+  <text x="412" y="189" font-size="12.5" fill="#2C3833">contact enrichment, resumable.</text>
+  <rect x="412" y="205" width="94" height="22" rx="3" fill="#EFEADF" stroke="#E0D9CB"/>
+  <text x="459" y="220" font-size="11" text-anchor="middle" fill="#2C3833">Playwright</text>
+  <rect x="512" y="205" width="110" height="22" rx="3" fill="#EFEADF" stroke="#E0D9CB"/>
+  <text x="567" y="220" font-size="11" text-anchor="middle" fill="#2C3833">Places API</text>
+  <rect x="628" y="205" width="80" height="22" rx="3" fill="#EFEADF" stroke="#E0D9CB"/>
+  <text x="668" y="220" font-size="11" text-anchor="middle" fill="#2C3833">Hunter.io</text>
+  <rect x="412" y="233" width="118" height="22" rx="3" fill="#EFEADF" stroke="#E0D9CB"/>
+  <text x="471" y="248" font-size="11" text-anchor="middle" fill="#2C3833">Sheets API</text>
+  <rect x="536" y="233" width="130" height="22" rx="3" fill="#EFEADF" stroke="#E0D9CB"/>
+  <text x="601" y="248" font-size="11" text-anchor="middle" fill="#2C3833">SQLite SCD 2</text>
 
-    <!-- INPUTS -->
-    <text x="64" y="252" fill="#5A655F" font-size="11" letter-spacing="0.1em">INPUTS</text>
-    <g font-size="13" fill="#2C3833">
-      <rect x="64" y="262" width="200" height="34" rx="8" fill="#F6F2EA" stroke="#E0D9CB"/>
-      <text x="164" y="284" text-anchor="middle">Member question</text>
-      <rect x="276" y="262" width="220" height="34" rx="8" fill="#F6F2EA" stroke="#E0D9CB"/>
-      <text x="386" y="284" text-anchor="middle">Teaching corpus (R. Moon)</text>
-    </g>
+  <!-- Card 3 -->
+  <rect x="764" y="90" width="336" height="196" rx="4" fill="#FFFFFF" stroke="#E0D9CB" stroke-width="1.2"/>
+  <rect x="764" y="90" width="336" height="3" fill="#0E4E44"/>
+  <text x="784" y="119" font-size="10" font-weight="700" letter-spacing="1.4" fill="#5A655F">CLOUD COST CONTROL</text>
+  <text x="784" y="145" font-size="16" font-weight="700" fill="#16201C">MultiCloud-MultiPass</text>
+  <text x="784" y="171" font-size="12.5" fill="#2C3833">Intent/actual reporting with a</text>
+  <text x="784" y="189" font-size="12.5" fill="#2C3833">kill switch that stops runaway jobs.</text>
+  <rect x="784" y="205" width="80" height="22" rx="3" fill="#EFEADF" stroke="#E0D9CB"/>
+  <text x="824" y="220" font-size="11" text-anchor="middle" fill="#2C3833">FastAPI</text>
+  <rect x="870" y="205" width="90" height="22" rx="3" fill="#EFEADF" stroke="#E0D9CB"/>
+  <text x="915" y="220" font-size="11" text-anchor="middle" fill="#2C3833">BigQuery</text>
+  <rect x="966" y="205" width="98" height="22" rx="3" fill="#EFEADF" stroke="#E0D9CB"/>
+  <text x="1015" y="220" font-size="11" text-anchor="middle" fill="#2C3833">OpenStack</text>
+  <rect x="784" y="233" width="102" height="22" rx="3" fill="#EFEADF" stroke="#E0D9CB"/>
+  <text x="835" y="248" font-size="11" text-anchor="middle" fill="#2C3833">Cloudflare</text>
+  <rect x="892" y="233" width="130" height="22" rx="3" fill="#EFEADF" stroke="#E0D9CB"/>
+  <text x="957" y="248" font-size="11" text-anchor="middle" fill="#2C3833">Cloud Scheduler</text>
+  <text x="784" y="273" font-size="10.5" font-weight="600" fill="#0B6E58">Open source · AGPL-3.0</text>
 
-    <!-- arrow down -->
-    <path d="M280,296 L280,318" stroke="#0E4E44" stroke-width="2" marker-end="url(#arrow)"/>
+  <!-- ── Row 2 ──────────────────────────────────────────────── -->
+  <!-- Card 4 -->
+  <rect x="20" y="302" width="336" height="196" rx="4" fill="#FFFFFF" stroke="#E0D9CB" stroke-width="1.2"/>
+  <rect x="20" y="302" width="336" height="3" fill="#0E4E44"/>
+  <text x="40" y="331" font-size="10" font-weight="700" letter-spacing="1.4" fill="#5A655F">RESILIENCE ENGINEERING</text>
+  <text x="40" y="357" font-size="16" font-weight="700" fill="#16201C">ChaosEngine</text>
+  <text x="40" y="383" font-size="12.5" fill="#2C3833">Guardrailed failure injection to</text>
+  <text x="40" y="401" font-size="12.5" fill="#2C3833">prove systems fail safely.</text>
+  <rect x="40" y="417" width="52" height="22" rx="3" fill="#EFEADF" stroke="#E0D9CB"/>
+  <text x="66" y="432" font-size="11" text-anchor="middle" fill="#2C3833">Go</text>
+  <rect x="98" y="417" width="100" height="22" rx="3" fill="#EFEADF" stroke="#E0D9CB"/>
+  <text x="148" y="432" font-size="11" text-anchor="middle" fill="#2C3833">AWS SDK</text>
+  <rect x="204" y="417" width="76" height="22" rx="3" fill="#EFEADF" stroke="#E0D9CB"/>
+  <text x="242" y="432" font-size="11" text-anchor="middle" fill="#2C3833">Docker</text>
+  <rect x="40" y="445" width="152" height="22" rx="3" fill="#EFEADF" stroke="#E0D9CB"/>
+  <text x="116" y="460" font-size="11" text-anchor="middle" fill="#2C3833">CI/CD approval gates</text>
 
-    <!-- COMPONENTS -->
-    <text x="64" y="334" fill="#5A655F" font-size="11" letter-spacing="0.1em">CORE SYSTEM</text>
-    <g font-size="12.5" fill="#16201C">
-      <rect x="64" y="344" width="220" height="40" rx="8" fill="#ffffff" stroke="#5FD3B2" stroke-width="1.5"/>
-      <text x="174" y="362" text-anchor="middle" font-weight="600">Gemini API</text>
-      <text x="174" y="377" text-anchor="middle" font-size="11" fill="#5A655F">drafts cited answer</text>
+  <!-- Card 5 -->
+  <rect x="392" y="302" width="336" height="196" rx="4" fill="#FFFFFF" stroke="#E0D9CB" stroke-width="1.2"/>
+  <rect x="392" y="302" width="336" height="3" fill="#0E4E44"/>
+  <text x="412" y="331" font-size="10" font-weight="700" letter-spacing="1.4" fill="#5A655F">MEDIA INTELLIGENCE</text>
+  <text x="412" y="357" font-size="16" font-weight="700" fill="#16201C">ClipQuotes</text>
+  <text x="412" y="383" font-size="12.5" fill="#2C3833">Finds one spoken moment in hours</text>
+  <text x="412" y="401" font-size="12.5" fill="#2C3833">of footage; exports it timestamped.</text>
+  <rect x="412" y="417" width="80" height="22" rx="3" fill="#EFEADF" stroke="#E0D9CB"/>
+  <text x="452" y="432" font-size="11" text-anchor="middle" fill="#2C3833">Whisper</text>
+  <rect x="498" y="417" width="110" height="22" rx="3" fill="#EFEADF" stroke="#E0D9CB"/>
+  <text x="553" y="432" font-size="11" text-anchor="middle" fill="#2C3833">pyannote</text>
+  <rect x="614" y="417" width="80" height="22" rx="3" fill="#EFEADF" stroke="#E0D9CB"/>
+  <text x="654" y="432" font-size="11" text-anchor="middle" fill="#2C3833">OpenCV</text>
+  <rect x="412" y="445" width="80" height="22" rx="3" fill="#EFEADF" stroke="#E0D9CB"/>
+  <text x="452" y="460" font-size="11" text-anchor="middle" fill="#2C3833">FFmpeg</text>
 
-      <rect x="296" y="344" width="200" height="40" rx="8" fill="#ffffff" stroke="#5FD3B2" stroke-width="1.5"/>
-      <text x="396" y="362" text-anchor="middle" font-weight="600">SQLite FTS5</text>
-      <text x="396" y="377" text-anchor="middle" font-size="11" fill="#5A655F">corpus search</text>
+  <!-- Card 6 -->
+  <rect x="764" y="302" width="336" height="196" rx="4" fill="#FFFFFF" stroke="#E0D9CB" stroke-width="1.2"/>
+  <rect x="764" y="302" width="336" height="3" fill="#0E4E44"/>
+  <text x="784" y="331" font-size="10" font-weight="700" letter-spacing="1.4" fill="#5A655F">AI GOVERNANCE</text>
+  <text x="784" y="357" font-size="16" font-weight="700" fill="#16201C">Voice Synthesis Benchmarking</text>
+  <text x="784" y="383" font-size="12.5" fill="#2C3833">Consent-first evaluation of voice</text>
+  <text x="784" y="401" font-size="12.5" fill="#2C3833">models and their failure modes.</text>
+  <rect x="784" y="417" width="80" height="22" rx="3" fill="#EFEADF" stroke="#E0D9CB"/>
+  <text x="824" y="432" font-size="11" text-anchor="middle" fill="#2C3833">PyTorch</text>
+  <rect x="870" y="417" width="98" height="22" rx="3" fill="#EFEADF" stroke="#E0D9CB"/>
+  <text x="919" y="432" font-size="11" text-anchor="middle" fill="#2C3833">torchaudio</text>
+  <rect x="974" y="417" width="106" height="22" rx="3" fill="#EFEADF" stroke="#E0D9CB"/>
+  <text x="1027" y="432" font-size="11" text-anchor="middle" fill="#2C3833">Hugging Face</text>
+  <rect x="784" y="445" width="118" height="22" rx="3" fill="#EFEADF" stroke="#E0D9CB"/>
+  <text x="843" y="460" font-size="11" text-anchor="middle" fill="#2C3833">GPU inference</text>
 
-      <rect x="64" y="394" width="200" height="40" rx="8" fill="#ffffff" stroke="#5FD3B2" stroke-width="1.5"/>
-      <text x="164" y="412" text-anchor="middle" font-weight="600">Cloud Run</text>
-      <text x="164" y="427" text-anchor="middle" font-size="11" fill="#5A655F">FastAPI · Python</text>
-
-      <rect x="276" y="394" width="220" height="40" rx="8" fill="#ffffff" stroke="#5FD3B2" stroke-width="1.5"/>
-      <text x="386" y="412" text-anchor="middle" font-weight="600">Firestore</text>
-      <text x="386" y="427" text-anchor="middle" font-size="11" fill="#5A655F">sessions · accounts</text>
-
-      <rect x="64" y="444" width="200" height="40" rx="8" fill="#ffffff" stroke="#5FD3B2" stroke-width="1.5"/>
-      <text x="164" y="462" text-anchor="middle" font-weight="600">Rate limiter</text>
-      <text x="164" y="477" text-anchor="middle" font-size="11" fill="#5A655F">queue · cost control</text>
-
-      <rect x="276" y="444" width="220" height="40" rx="8" fill="#ffffff" stroke="#5FD3B2" stroke-width="1.5"/>
-      <text x="386" y="462" text-anchor="middle" font-weight="600">Auth</text>
-      <text x="386" y="477" text-anchor="middle" font-size="11" fill="#5A655F">email · Google OAuth</text>
-    </g>
-
-    <!-- arrow down -->
-    <path d="M280,484 L280,506" stroke="#0E4E44" stroke-width="2" marker-end="url(#arrow)"/>
-
-    <!-- OUTPUTS -->
-    <text x="64" y="522" fill="#5A655F" font-size="11" letter-spacing="0.1em">OUTPUTS</text>
-    <g font-size="13" fill="#2C3833">
-      <rect x="64" y="532" width="200" height="40" rx="8" fill="#E6F5EF" stroke="#5FD3B2" stroke-width="1.5"/>
-      <text x="164" y="550" text-anchor="middle" font-weight="600">Cited answer</text>
-      <text x="164" y="565" text-anchor="middle" font-size="11" fill="#5A655F">24/7 · free</text>
-
-      <rect x="276" y="532" width="220" height="40" rx="8" fill="#E6F5EF" stroke="#5FD3B2" stroke-width="1.5"/>
-      <text x="386" y="550" text-anchor="middle" font-weight="600">Human coach escalation</text>
-      <text x="386" y="565" text-anchor="middle" font-size="11" fill="#5A655F">video link handoff</text>
-    </g>
-
-    <!-- principle footer -->
-    <line x1="64" y1="600" x2="496" y2="600" stroke="#E0D9CB"/>
-    <text x="280" y="624" text-anchor="middle" fill="#0E4E44" font-family="'Source Serif 4', Georgia, serif" font-size="14" font-style="italic">Inspired presence</text>
-    <text x="280" y="648" text-anchor="middle" fill="#5A655F" font-size="12">Calm, grounded response under uncertainty —</text>
-    <text x="280" y="666" text-anchor="middle" fill="#5A655F" font-size="12">senses when a question exceeds its scope.</text>
-    <text x="280" y="704" text-anchor="middle" fill="#9A6B14" font-size="11" letter-spacing="0.06em">BUDGET-BOUNDED · GCP · PORTABLE</text>
+  <!-- ── Converging arrows to the substrate ─────────────────── -->
+  <g stroke="#0E4E44" stroke-width="1.2" opacity="0.55" fill="none" marker-end="url(#arrow)">
+    <line x1="188" y1="498" x2="188" y2="546"/>
+    <line x1="560" y1="498" x2="560" y2="546"/>
+    <line x1="932" y1="498" x2="932" y2="546"/>
   </g>
+  <text x="560" y="527" font-size="11" font-weight="600" letter-spacing="1" text-anchor="middle" fill="#5A655F">all six build on</text>
 
-  <!-- ============ PROJECT 2: STUDIO FINDER ============ -->
-  <g id="proj-studio">
-    <rect x="600" y="170" width="480" height="560" rx="18" fill="#ffffff" stroke="#E0D9CB" stroke-width="1.5"/>
-    <rect x="600" y="170" width="480" height="56" rx="18" fill="#0A3A33"/>
-    <rect x="600" y="200" width="480" height="26" fill="#0A3A33"/>
-    <text x="840" y="198" text-anchor="middle" fill="#fff" font-family="'Source Serif 4', Georgia, serif" font-size="19" font-weight="600">World Studio Finder</text>
-    <text x="840" y="216" text-anchor="middle" fill="#8FE6C9" font-size="11" letter-spacing="0.08em">OUTREACH PIPELINE · GLOBAL DISCOVERY</text>
+  <!-- ── Shared substrate ───────────────────────────────────── -->
+  <rect x="20" y="554" width="1080" height="176" rx="4" fill="#FFFFFF" stroke="#0E4E44" stroke-width="1.2" opacity="0.98"/>
+  <text x="40" y="580" font-size="10" font-weight="700" letter-spacing="1.4" fill="#5A655F">SHARED SUBSTRATE</text>
 
-    <!-- INPUTS -->
-    <text x="624" y="252" fill="#5A655F" font-size="11" letter-spacing="0.1em">INPUTS</text>
-    <g font-size="13" fill="#2C3833">
-      <rect x="624" y="262" width="140" height="34" rx="8" fill="#F6F2EA" stroke="#E0D9CB"/>
-      <text x="694" y="284" text-anchor="middle">Google Maps</text>
-      <rect x="774" y="262" width="140" height="34" rx="8" fill="#F6F2EA" stroke="#E0D9CB"/>
-      <text x="844" y="284" text-anchor="middle">Places API</text>
-      <rect x="924" y="262" width="140" height="34" rx="8" fill="#F6F2EA" stroke="#E0D9CB"/>
-      <text x="994" y="284" text-anchor="middle">Hunter.io</text>
-    </g>
+  <!-- Tier 1 -->
+  <rect x="40" y="592" width="1040" height="34" rx="3" fill="#DCF0E8" stroke="#0B6E58" stroke-width="1.4"/>
+  <text x="58" y="614" font-size="14" font-weight="700" fill="#16201C">Python</text>
+  <text x="122" y="614" font-size="11.5" fill="#5A655F">one language across every system</text>
+  <text x="1062" y="614" font-size="12" font-weight="700" text-anchor="end" fill="#16201C">6 / 6</text>
 
-    <!-- arrow down -->
-    <path d="M840,296 L840,318" stroke="#0E4E44" stroke-width="2" marker-end="url(#arrow)"/>
+  <!-- Tier 2 -->
+  <rect x="40" y="634" width="336" height="30" rx="3" fill="#F6F2EA" stroke="#E0D9CB"/>
+  <text x="58" y="654" font-size="12" font-weight="600" fill="#16201C">Docker</text>
+  <text x="358" y="654" font-size="11" text-anchor="end" fill="#5A655F">3 / 6</text>
+  <rect x="392" y="634" width="336" height="30" rx="3" fill="#F6F2EA" stroke="#E0D9CB"/>
+  <text x="410" y="654" font-size="12" font-weight="600" fill="#16201C">OpenTofu / Terraform</text>
+  <text x="710" y="654" font-size="11" text-anchor="end" fill="#5A655F">3 / 6</text>
+  <rect x="744" y="634" width="336" height="30" rx="3" fill="#F6F2EA" stroke="#E0D9CB"/>
+  <text x="762" y="654" font-size="12" font-weight="600" fill="#16201C">SQLite</text>
+  <text x="1062" y="654" font-size="11" text-anchor="end" fill="#5A655F">3 / 6</text>
 
-    <!-- COMPONENTS -->
-    <text x="624" y="334" fill="#5A655F" font-size="11" letter-spacing="0.1em">CORE PIPELINE</text>
-    <g font-size="12.5" fill="#16201C">
-      <rect x="624" y="344" width="220" height="40" rx="8" fill="#ffffff" stroke="#5FD3B2" stroke-width="1.5"/>
-      <text x="734" y="362" text-anchor="middle" font-weight="600">Playwright scraper</text>
-      <text x="734" y="377" text-anchor="middle" font-size="11" fill="#5A655F">2×2 grid · anti-detect</text>
+  <!-- Tier 3 -->
+  <rect x="40" y="672" width="200" height="28" rx="3" fill="#F6F2EA" stroke="#E0D9CB"/>
+  <text x="140" y="691" font-size="11" text-anchor="middle" fill="#2C3833">FastAPI · 2</text>
+  <rect x="248" y="672" width="200" height="28" rx="3" fill="#F6F2EA" stroke="#E0D9CB"/>
+  <text x="348" y="691" font-size="11" text-anchor="middle" fill="#2C3833">Cloud Run · 2</text>
+  <rect x="456" y="672" width="200" height="28" rx="3" fill="#F6F2EA" stroke="#E0D9CB"/>
+  <text x="556" y="691" font-size="11" text-anchor="middle" fill="#2C3833">Firestore · 2</text>
+  <rect x="664" y="672" width="200" height="28" rx="3" fill="#F6F2EA" stroke="#E0D9CB"/>
+  <text x="764" y="691" font-size="11" text-anchor="middle" fill="#2C3833">Flask · 2</text>
+  <rect x="872" y="672" width="208" height="28" rx="3" fill="#F6F2EA" stroke="#E0D9CB"/>
+  <text x="976" y="691" font-size="11" text-anchor="middle" fill="#2C3833">Cloud Storage · 2</text>
 
-      <rect x="856" y="344" width="208" height="40" rx="8" fill="#ffffff" stroke="#5FD3B2" stroke-width="1.5"/>
-      <text x="960" y="362" text-anchor="middle" font-weight="600">Email verifier</text>
-      <text x="960" y="377" text-anchor="middle" font-size="11" fill="#5A655F">NeverBounce · junk filter</text>
-
-      <rect x="624" y="394" width="220" height="40" rx="8" fill="#ffffff" stroke="#5FD3B2" stroke-width="1.5"/>
-      <text x="734" y="412" text-anchor="middle" font-weight="600">SQLite (SCD Type 2)</text>
-      <text x="734" y="427" text-anchor="middle" font-size="11" fill="#5A655F">data quality · checkpoints</text>
-
-      <rect x="856" y="394" width="208" height="40" rx="8" fill="#ffffff" stroke="#5FD3B2" stroke-width="1.5"/>
-      <text x="960" y="412" text-anchor="middle" font-weight="600">Google Sheets sync</text>
-      <text x="960" y="427" text-anchor="middle" font-size="11" fill="#5A655F">authoritative record</text>
-
-      <rect x="624" y="444" width="220" height="40" rx="8" fill="#ffffff" stroke="#5FD3B2" stroke-width="1.5"/>
-      <text x="734" y="462" text-anchor="middle" font-weight="600">Geo-filter</text>
-      <text x="734" y="477" text-anchor="middle" font-size="11" fill="#5A655F">country · state · continent</text>
-
-      <rect x="856" y="444" width="208" height="40" rx="8" fill="#ffffff" stroke="#5FD3B2" stroke-width="1.5"/>
-      <text x="960" y="462" text-anchor="middle" font-weight="600">Compute Engine</text>
-      <text x="960" y="477" text-anchor="middle" font-size="11" fill="#5A655F">systemd · GCS</text>
-    </g>
-
-    <!-- arrow down -->
-    <path d="M840,484 L840,506" stroke="#0E4E44" stroke-width="2" marker-end="url(#arrow)"/>
-
-    <!-- OUTPUTS -->
-    <text x="624" y="522" fill="#5A655F" font-size="11" letter-spacing="0.1em">OUTPUTS</text>
-    <g font-size="13" fill="#2C3833">
-      <rect x="624" y="532" width="220" height="40" rx="8" fill="#E6F5EF" stroke="#5FD3B2" stroke-width="1.5"/>
-      <text x="734" y="550" text-anchor="middle" font-weight="600">YAMM email campaigns</text>
-      <text x="734" y="565" text-anchor="middle" font-size="11" fill="#5A655F">mail merge</text>
-
-      <rect x="856" y="532" width="208" height="40" rx="8" fill="#E6F5EF" stroke="#5FD3B2" stroke-width="1.5"/>
-      <text x="960" y="550" text-anchor="middle" font-weight="600">Web form submission</text>
-      <text x="960" y="565" text-anchor="middle" font-size="11" fill="#5A655F">no-email studios</text>
-    </g>
-
-    <!-- principle footer -->
-    <line x1="624" y1="600" x2="1056" y2="600" stroke="#E0D9CB"/>
-    <text x="840" y="624" text-anchor="middle" fill="#0E4E44" font-family="'Source Serif 4', Georgia, serif" font-size="14" font-style="italic">Relational entanglement</text>
-    <text x="840" y="648" text-anchor="middle" fill="#5A655F" font-size="12">Building connection across the global</text>
-    <text x="840" y="666" text-anchor="middle" fill="#5A655F" font-size="12">movement-arts community at scale.</text>
-    <text x="840" y="704" text-anchor="middle" fill="#9A6B14" font-size="11" letter-spacing="0.06em">CRASH-SAFE · RESUMABLE · OPENTOFU</text>
-  </g>
+  <text x="40" y="720" font-size="11" fill="#5A655F">Plus 24 domain specialists used by a single system each — chosen per problem rather than carried everywhere.</text>
 </svg>
