@@ -590,8 +590,31 @@
     // Shown only when the browser supports WebAuthn. On click: fetch auth
     // options → navigator.credentials.get() → verify → establishServerSession.
     const passkeyBtn = document.getElementById("coach-passkey-btn");
+
+    // Gated on the backend feature flag as well as browser support
+    // (AIRichardMoon issue #657). Browser support alone is not enough: the
+    // passkey endpoints ship dark, and a button that 404s is worse than no
+    // button. GET /v1/feature-flags is public precisely so this decision can
+    // be made before a session exists. Fail closed — any error leaves the
+    // button hidden. The flag is per-environment, so staging can run passkey
+    // sign-in while production does not.
+    async function passkeyEnabled() {
+        try {
+            const resp = await fetchWithTimeout(API + "/v1/feature-flags", { method: "GET" });
+            if (!resp.ok) {
+                console.warn("feature_flags_unavailable status=" + resp.status + " — passkey stays hidden");
+                return false;
+            }
+            const data = await resp.json();
+            return !!(data && data.flags && data.flags.passkey_login);
+        } catch (err) {
+            console.warn("feature_flags_fetch_failed — passkey stays hidden", err);
+            return false;
+        }
+    }
+
     if (passkeyBtn && window.PublicKeyCredential) {
-        passkeyBtn.hidden = false;
+        passkeyEnabled().then((on) => { if (on) passkeyBtn.hidden = false; });
         passkeyBtn.addEventListener("click", async () => {
             passkeyBtn.disabled = true;
             showStatus(loginStatus, "Use your passkey to sign in…", "loading");

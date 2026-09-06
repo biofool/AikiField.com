@@ -189,6 +189,20 @@ update or deploy:
 - **Invite a Friend** (AIRichardMoon issue #656): `POST /v1/invite-friend` is
   reached only from the backend's `members.html`; AikiField has no members page.
 
+**Feature flags (AIRichardMoon issue #657).** New backend features now ship
+behind a per-environment flag toggled from the backend dashboard. This repo is
+**in scope** for one of them: `coach-login.js` calls the public
+`GET /v1/feature-flags` through the proxy and reveals the passkey button only
+when `passkey_login` is true. The call fails closed — a non-OK response, a
+timeout or a parse error leaves the button hidden — so a backend outage cannot
+surface a control whose endpoints are unreachable. `/v1/feature-flags` is
+exempt from `X-Proxy-Secret` because the login page must decide before a
+session exists; it returns only `{key: bool}`.
+
+Because flags are keyed by `DEPLOYMENT_ENV`, AikiField's staging and production
+gates are independent: passkey sign-in can be live on staging here while
+production keeps it hidden, with no redeploy either way.
+
 Recorded so the N/A is explicit rather than silent. Anything touching login,
 registration, the session model, or the proxy remains in scope.
 
