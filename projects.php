@@ -119,13 +119,77 @@
   <!-- ============================================================ -->
   <section class="af-section">
     <div class="af-container">
+      <h2 class="af-h2" id="projects-heading">Projects completed</h2>
+      <p class="af-lead af-lead--wide">Six systems designed and built by AikiField, running in production today. Select a project from the table to view its details &mdash; one at a time.</p>
+
+      <!-- ============================================================ -->
+      <!-- PROJECT SELECTOR TABLE — click a row to show that project    -->
+      <!-- ============================================================ -->
+      <div class="af-proj-table-wrap">
+        <table class="af-proj-table" id="project-table" aria-describedby="projects-heading">
+          <thead>
+            <tr>
+              <th scope="col" class="af-proj-table__num">#</th>
+              <th scope="col">Project</th>
+              <th scope="col">Category</th>
+              <th scope="col" class="af-proj-table__tech">Tech stack</th>
+              <th scope="col" class="af-proj-table__view"><span class="af-sr-only">View</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="af-proj-table__row" data-project="1" tabindex="0" role="button" aria-selected="true" aria-controls="project-1">
+              <td class="af-proj-table__num">1</td>
+              <td class="af-proj-table__name">Quantum Aikido Wisdom</td>
+              <td>AI Coaching</td>
+              <td class="af-proj-table__tech">Python &middot; FastAPI &middot; Gemini &middot; Cloud Run &middot; Firestore</td>
+              <td class="af-proj-table__view" aria-hidden="true">&rarr;</td>
+            </tr>
+            <tr class="af-proj-table__row" data-project="2" tabindex="0" role="button" aria-selected="false" aria-controls="project-2">
+              <td class="af-proj-table__num">2</td>
+              <td class="af-proj-table__name">World Studio Finder</td>
+              <td>Outreach Pipeline</td>
+              <td class="af-proj-table__tech">Python &middot; Playwright &middot; Flask &middot; Places API &middot; Hunter.io</td>
+              <td class="af-proj-table__view" aria-hidden="true">&rarr;</td>
+            </tr>
+            <tr class="af-proj-table__row" data-project="3" tabindex="0" role="button" aria-selected="false" aria-controls="project-3">
+              <td class="af-proj-table__num">3</td>
+              <td class="af-proj-table__name">MultiCloud-MultiPass</td>
+              <td>Cloud Management</td>
+              <td class="af-proj-table__tech">Python &middot; FastAPI &middot; Cloud Run &middot; Firestore &middot; BigQuery</td>
+              <td class="af-proj-table__view" aria-hidden="true">&rarr;</td>
+            </tr>
+            <tr class="af-proj-table__row" data-project="4" tabindex="0" role="button" aria-selected="false" aria-controls="project-4">
+              <td class="af-proj-table__num">4</td>
+              <td class="af-proj-table__name">ChaosEngine</td>
+              <td>Resilience Engineering</td>
+              <td class="af-proj-table__tech">Go &middot; Python/Bash &middot; AWS SDK &middot; Docker</td>
+              <td class="af-proj-table__view" aria-hidden="true">&rarr;</td>
+            </tr>
+            <tr class="af-proj-table__row" data-project="5" tabindex="0" role="button" aria-selected="false" aria-controls="project-5">
+              <td class="af-proj-table__num">5</td>
+              <td class="af-proj-table__name">ClipQuotes</td>
+              <td>Media Intelligence</td>
+              <td class="af-proj-table__tech">Python &middot; Whisper &middot; pyannote &middot; OpenCV &middot; FFmpeg</td>
+              <td class="af-proj-table__view" aria-hidden="true">&rarr;</td>
+            </tr>
+            <tr class="af-proj-table__row" data-project="6" tabindex="0" role="button" aria-selected="false" aria-controls="project-6">
+              <td class="af-proj-table__num">6</td>
+              <td class="af-proj-table__name">Voice Synthesis Benchmarking</td>
+              <td>AI Research & Governance</td>
+              <td class="af-proj-table__tech">Python &middot; PyTorch &middot; torchaudio &middot; Hugging Face</td>
+              <td class="af-proj-table__view" aria-hidden="true">&rarr;</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
       <div class="af-projects-split af-projects-split--full">
 
         <!-- LEFT COLUMN: sponsored projects -->
         <div class="af-projects-split__projects">
 
           <!-- PROJECT 1: AIKIFIELD AI CHAT -->
-          <article class="af-svc af-svc--flagship">
+          <article class="af-svc af-svc--flagship" id="project-1" data-project="1">
             <div class="af-svc__tag-row">
               <span class="af-svc__tag af-svc__tag--flagship">AI Coaching</span>
               <span class="af-svc__tag af-svc__tag--built">Built by AikiField</span>
@@ -160,7 +224,7 @@
           </article>
 
           <!-- PROJECT 2: STUDIO DISCOVERY -->
-          <article class="af-svc">
+          <article class="af-svc" id="project-2" data-project="2" hidden>
             <div class="af-svc__tag-row">
               <span class="af-svc__tag">Outreach Pipeline</span>
               <span class="af-svc__tag af-svc__tag--built">Built by AikiField</span>
@@ -193,7 +257,7 @@
           </article>
 
           <!-- PROJECT 3: MULTICLOUD-MULTIPASS -->
-          <article class="af-svc">
+          <article class="af-svc" id="project-3" data-project="3" hidden>
             <div class="af-svc__tag-row">
               <span class="af-svc__tag">Cloud Management</span>
               <span class="af-svc__tag af-svc__tag--built">Built by AikiField</span>
@@ -221,7 +285,7 @@
           </article>
 
           <!-- PROJECT 4: CHAOSENGINE -->
-          <article class="af-svc">
+          <article class="af-svc" id="project-4" data-project="4" hidden>
             <div class="af-svc__tag-row">
               <span class="af-svc__tag">Resilience Engineering</span>
               <span class="af-svc__tag af-svc__tag--built">Built by AikiField</span>
@@ -248,7 +312,7 @@
           </article>
 
           <!-- PROJECT 5: CLIPQUOTES -->
-          <article class="af-svc">
+          <article class="af-svc" id="project-5" data-project="5" hidden>
             <div class="af-svc__tag-row">
               <span class="af-svc__tag">Media Intelligence</span>
               <span class="af-svc__tag af-svc__tag--built">Built by AikiField</span>
@@ -275,7 +339,7 @@
           </article>
 
           <!-- PROJECT 6: VOICE SYNTHESIS BENCHMARKING -->
-          <article class="af-svc">
+          <article class="af-svc" id="project-6" data-project="6" hidden>
             <div class="af-svc__tag-row">
               <span class="af-svc__tag">AI Research &amp; Governance</span>
               <span class="af-svc__tag af-svc__tag--built">Built by AikiField</span>
@@ -455,6 +519,72 @@
     window.addEventListener('hashchange', function () {
       if (window.location.hash === '#see-it-live') { openPanel(); }
     });
+  })();
+
+  // Project selector table — click a row to show that project's detail.
+  // Only one project detail card is visible at a time; the rest are hidden.
+  (function () {
+    var rows = document.querySelectorAll('.af-proj-table__row');
+    var panels = document.querySelectorAll('.af-projects-split__projects > article');
+    if (!rows.length || !panels.length) return;
+
+    function selectProject(num) {
+      // Update row states
+      rows.forEach(function (row) {
+        var isMatch = row.getAttribute('data-project') === String(num);
+        row.setAttribute('aria-selected', isMatch ? 'true' : 'false');
+      });
+      // Show only the matching panel
+      panels.forEach(function (panel) {
+        panel.hidden = panel.getAttribute('data-project') !== String(num);
+      });
+      // Update URL hash without jumping
+      if (history.replaceState) {
+        history.replaceState(null, '', '#project-' + num);
+      }
+    }
+
+    rows.forEach(function (row) {
+      var num = row.getAttribute('data-project');
+      row.addEventListener('click', function () { selectProject(num); });
+      row.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          selectProject(num);
+        }
+      });
+    });
+
+    // Arrow-key navigation between rows (up/down)
+    var table = document.getElementById('project-table');
+    if (table) {
+      table.addEventListener('keydown', function (e) {
+        var focused = document.activeElement;
+        if (!focused || !focused.classList.contains('af-proj-table__row')) return;
+        var rowList = Array.prototype.slice.call(rows);
+        var idx = rowList.indexOf(focused);
+        if (idx === -1) return;
+        if (e.key === 'ArrowDown' && idx < rowList.length - 1) {
+          e.preventDefault();
+          rowList[idx + 1].focus();
+        } else if (e.key === 'ArrowUp' && idx > 0) {
+          e.preventDefault();
+          rowList[idx - 1].focus();
+        } else if (e.key === 'Home') {
+          e.preventDefault();
+          rowList[0].focus();
+        } else if (e.key === 'End') {
+          e.preventDefault();
+          rowList[rowList.length - 1].focus();
+        }
+      });
+    }
+
+    // Restore selection from URL hash on load (e.g. #project-3)
+    var hashMatch = window.location.hash.match(/^#project-([1-6])$/);
+    if (hashMatch) {
+      selectProject(hashMatch[1]);
+    }
   })();
 </script>
 </body>
