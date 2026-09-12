@@ -634,7 +634,7 @@ The composure and curiosity to adapt to emerging threats and AI risk.
 **What it does:**
 - **Answers grounded in the set of corpus documents** — with citations back to origin.
 - **Escalates to a live human coach** — via video link when a question needs it.
-- **Runs on a fixed budget** — so coaching stays free, with no surprise bills.
+- **Runs on a fixed budget** — throttle usage, so there's no surprise bills.
 - **Runs a fair queue** — so no single user crowds out the rest.
 - **Works on any cloud** — without rewriting the code.
 - **Self-service accounts** — register, log in, reset your password, or delete your account (invitation-only).
