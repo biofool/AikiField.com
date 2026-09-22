@@ -180,6 +180,10 @@ update or deploy:
 - **The `monitor` flag**: not returned by `/v1/auth/check-session`, the only
   profile-bearing call this repo makes; monitoring accounts call Cloud Run
   directly.
+- **Conversation resume (issue #730)**: owner-only
+  `GET /v1/sessions/{session_id}/messages`, the recent-session lookup, and the
+  `qa_chat_session_id` auto-resume behavior are N/A. AikiField has no chat
+  surface or `coach-chat.js`; its session exists only to gate `/beta/` pages.
 
 Recorded so the N/A is explicit rather than silent. Anything touching login,
 registration, the session model, or the proxy remains in scope.
