@@ -184,6 +184,9 @@ update or deploy:
   `GET /v1/sessions/{session_id}/messages`, the recent-session lookup, and the
   `qa_chat_session_id` auto-resume behavior are N/A. AikiField has no chat
   surface or `coach-chat.js`; its session exists only to gate `/beta/` pages.
+- **Conversation labels (issue #731)**: N/A for the same reason. The backend
+  generates a `label` from the first chat message for `quantumaikido.com` to
+  display in its session picker; AikiField has no chat UI and no session list.
 
 Recorded so the N/A is explicit rather than silent. Anything touching login,
 registration, the session model, or the proxy remains in scope.
