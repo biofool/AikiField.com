@@ -222,6 +222,12 @@ aikifield.com/coach-api/*  ──▶  coach-proxy.php  ──▶  AIRichardMoon 
                                                   /v1/email-coach (POST — send message to human coach)
 ```
 
+**Admin-only endpoints (issue #729):** `/v1/admin/users/{email}/reset-password`
+is an admin-dashboard-only endpoint used by the AIRichardMoon operations
+dashboard to send a user a token-based password-reset email. It is gated by
+admin session and is not consumed by AikiField's blind `login.php` / `/beta/`
+surface, so no frontend change is required here.
+
 `projects.php` is no longer in this diagram — it is a static marketing page
 with no auth surface. The invitation card on `projects.php` links to
 `contact.html`, not to `login.php`.
