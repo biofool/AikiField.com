@@ -1,0 +1,11 @@
+# /games/exercises/:slug — path-based exercise deep links.
+# /games/exercises/wrist-grab-grounding serves index.html; the JS router
+# reads the slug from location.pathname. Real files/dirs (images/, data/,
+# index.html) are untouched.
+# Inherit keeps the root .htaccess rules (HTTPS redirect etc.) in force —
+# without it a per-dir RewriteEngine On would replace them.
+RewriteEngine On
+RewriteOptions Inherit
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^([a-z0-9-]+)/?$ index.html [L,QSA]

@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MOON — 20 Exclusive Practices — AikiField Games</title>
+<meta name="description" content="20 exclusive movement practices by Richard Moon 6th Dan, unavailable anywhere else. Free: DBSO, Wrist Grab Grounding, Ten to the Tenth.">
+<style>
+*{box-sizing:border-box;margin:0;padding:0} body{font-family:-apple-system,Inter,Helvetica,sans-serif;background:#FAF6EF;color:#1A1A1A;line-height:1.65}
+header{padding:20px 28px;border-bottom:1px solid #E8E0D0;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:#FAF6EF;z-index:10}
+h1{font-size:26px;letter-spacing:-0.02em;line-height:1.1} h1 span{display:block;font-weight:400;font-size:12px;opacity:0.6;margin-top:4px}
+.wrap{display:grid;grid-template-columns:300px 1fr 280px;min-height:100vh}
+.sidebar,.right{padding:20px;border-right:1px solid #E8E0D0;overflow-y:auto;max-height:calc(100vh - 70px);position:sticky;top:70px}
+.right{border-right:none;border-left:1px solid #E8E0D0}
+.center{padding:28px;max-width:820px}
+.studio{padding:10px 12px;margin:6px 0;border:1px solid #E8E0D0;background:#fff;cursor:pointer;font-size:12px}
+.studio.active{background:#1A1A1A;color:#fff}
+.chip{display:inline-block;padding:6px 10px;border:1px solid #1A1A1A;font-size:11px;cursor:pointer;background:#fff;margin:4px}
+.chip.active{background:#1A1A1A;color:#fff} .chip.locked{opacity:0.35}
+.player{background:#fff;border:1.5px solid #1A1A1A;padding:26px;margin-top:18px}
+.meta{font-style:italic;opacity:0.6;font-size:12px;margin:6px 0 14px}
+.body{white-space:pre-wrap;font-size:14.5px;line-height:1.75}
+.poem{text-align:center;padding:32px;font-style:italic;white-space:pre-wrap;line-height:2;background:#F5F0E6;margin:22px 0;border:1px solid #E8E0D0}
+.timer{margin:18px 0;padding:18px;background:#FAF6EF;border:1px dashed #1A1A1A;text-align:center}
+.circle{width:110px;height:110px;border-radius:50%;border:3px solid #1A1A1A;margin:10px auto;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:800}
+.btn{padding:11px 18px;background:#1A1A1A;color:#fff;border:none;cursor:pointer;width:100%;margin-top:12px;font-weight:700}
+.toggle{display:flex;gap:6px;margin:10px 0} .toggle button{flex:1;padding:7px;border:1px solid #1A1A1A;background:#fff;cursor:pointer;font-size:12px} .toggle button.active{background:#1A1A1A;color:#fff}
+.ground{height:8px;background:#E8E0D0;margin:10px 0} .ground-fill{height:100%;background:#1A1A1A;transition:width .5s}
+img.hero{width:100%;max-width:300px;display:block;margin:10px auto;border:1px solid #E8E0D0}
+.deploy{font-size:11px;background:#fff;border:1px solid #E8E0D0;padding:14px}
+@media(max-width:1050px){.wrap{grid-template-columns:1fr} .sidebar,.right{position:relative;max-height:none}}
+</style></head><body>
+<header><h1>MOON <span>Quantum Aikido — Book of Exercises & Practices — 20 Exclusive Practices by Richard Moon 6th Dan · Unavailable Anywhere Else · Student of Robert Nadeau since '71</span></h1><a href="/games/" style="padding:7px 14px;border:1px solid #1A1A1A;background:#fff;color:#1A1A1A;text-decoration:none;font-size:12px">All games</a></header>
+<div class="wrap">
+<div class="sidebar">
+<h3 style="font-size:11px;letter-spacing:0.12em">60 STUDIOS · PERSONALIZATION</h3>
+<input id="search" placeholder="Search studios..." style="width:100%;padding:8px;border:1px solid #1A1A1A;margin:10px 0">
+<div id="studioList"></div>
+<img class="hero" src="images/image_20260919_144743.webp">
+<img class="hero" src="images/image_20260919_144742.webp">
+<img class="hero" src="images/image_20260919_144741.webp">
+<p style="font-size:10px;opacity:0.5;margin-top:6px">Simple image copy: ≤7 words, black on washi, sub "By Richard Moon 6th Dan"</p>
+</div>
+<div class="center">
+<div id="banner" style="display:none;padding:12px;background:#1A1A1A;color:#fff;font-size:12px;margin-bottom:14px"></div>
+<div style="font-size:11px;letter-spacing:0.1em">PART NAVIGATION — AUTO-LOADED FROM MARKDOWN</div>
+<div id="partTabs"></div>
+<div style="font-size:11px;letter-spacing:0.1em;margin-top:14px">EXERCISES — 15 FROM YOUR PDF</div>
+<div id="exList"></div>
+<div class="player" id="player"></div>
+</div>
+<div class="right">
+<h3 style="font-size:11px;letter-spacing:0.1em">FREEMIUM MODEL</h3>
+<div style="border:1px solid #1A1A1A;padding:10px;margin:8px 0;background:#fff"><strong>FREE</strong> — DBSO, Wrist Grab, Ten to the Tenth<br><span style="font-size:10px">3 practices always free + log + reminder</span></div>
+<div style="border:2px solid #1A1A1A;padding:10px;margin:8px 0;background:#1A1A1A;color:#fff"><strong>CREATOR $12/mo $96/yr</strong><br><span style="font-size:10px">All 15+5 exclusive, 21-day Challenge, offline audio, progress</span></div>
+<div style="border:1px solid #1A1A1A;padding:10px;margin:8px 0"><strong>DOJO $49/mo</strong><br><span style="font-size:10px">White-label for 60 studios, 30% rev share, analytics, student invites via 180 CTAs</span></div>
+<div id="progress"></div>
+<div class="deploy">
+<b>AikiField deep links</b><br>
+Query: /games/exercises/?studio_id=city-aikido&amp;exercise=wrist-grab-grounding<br>
+Path: /games/exercises/wrist-grab-grounding?studio_id=city-aikido<br>
+studio_id personalizes the banner; exercise auto-opens the practice.
+</div>
+</div>
+</div>
+<script>
+const exercises = [{"id": 1, "title": "DropBackSinkOpen (DBSO)", "meta": "Solo \u00b7 30 sec, repeated through the day", "body": "Whenever you notice tension, a fixed idea, or a reactive moment: drop back, sink, open. If you re-tighten, release again \u2014 in ever-finer increments, anywhere, any time.\n\nThis is the foundation everything else rests on. 'Calm the spirit. Return to the source.' Once in the morning is not enough \u2014 KeepDoingIt.", "complexity": 4, "type": "exercise", "part": "Part IV \u2014 dialogue & relationship"}, {"id": 2, "title": "listen to the impulse to breathe", "meta": "Solo \u00b7 2\u20134 min \u00b7 after DBSO \u00b7 the reverse movement of the five-stage breath", "body": "after dropping back, sinking, and opening, don't take the breath \u2014 wait for it. feel the impulse to breathe arise on its own, and let it breathe you.\n\nrather than running the breath, feel life activating it \u2014 the universal pulse breathing you. this is the reverse of Breathing the Whole System, met here as an early taste right after DropBackSinkOpen.", "complexity": 1, "type": "exercise", "part": "Part I \u2014 centering & grounding"}, {"id": 3, "title": "Feel / Locate / Align / Unify (Kamae)", "meta": "Solo \u00b7 3\u20135 min \u00b7 Create A Beautiful World in 3 Aikido Lessons", "body": "Feel and locate the central core of your being. Feel the 'glow of life' that is you. Apply DBSO in ever-finer alignment.\n\nNotice that each small shift in the location of attention creates a different experiential world.", "complexity": 1, "type": "exercise", "part": "Part I \u2014 centering & grounding"}, {"id": 4, "title": "Tense & Release Body Scan (Align, Allow, Appreciate)", "meta": "Solo \u00b7 5\u201315 min \u00b7 CABW 3 Aikido Lessons", "body": "Gently tense the whole body, then relax and feel. Re-tense the muscles progressively closer to the spine, head to hips, releasing each time.\n\nAs you relax, feel into the central core of being \u2014 align with gravity, allow the tension to release, appreciate the flow. How long? As long as you're enjoying it.", "complexity": 1, "type": "exercise", "part": "Part I \u2014 centering & grounding"}, {"id": 5, "title": "Center of the Central Core Relaxation", "meta": "Solo \u00b7 10\u201320 min \u00b7 CABW 3 Aikido Lessons", "body": "Move sequentially through the body's regions \u2014 mind, brain, forehead, eyes, jaw, throat, shoulders, abdomen, hips, legs, feet \u2014 sinking open into the 'gravity shadow' at each.\n\nNo fixed pace. A natural candidate for a longer recorded guided track and a fitting close to Part I.", "complexity": 1, "type": "exercise", "part": "Part I \u2014 centering & grounding"}, {"id": 6, "title": "Wrist Grab Grounding", "meta": "Partner \u00b7 5 min \u00b7 Adventures in Aiki-land (R. Moon, 2010)", "body": "A partner grabs your extended wrist and gently pushes, then pulls. Resisting the push lets them pull you easily, resisting the pull lets them push you; relaxing and 'feeling where you are' produces an effortless presence that is harder to move.\n\nAt first 50/50 - resist less, ground more. After a while the resistance becomes hard to see from outside but you feel it inside. Eventually 50% \u2192 60% ground.\n\nDBSO KeepDoingIt. Real or invisible partner.", "complexity": 1, "type": "exercise", "part": "Part I \u2014 centering & grounding"}, {"id": 7, "title": "Lesson II \u2014 Breathe Universal Harmony (Aiki Kokyu)", "meta": "Solo \u00b7 3\u20135 min \u00b7 Create A Beautiful World in 3 Aikido Lessons", "body": "Breathe in harmony so each cell 'enjoys life's glow.' The lesson that opens the whole-system view of breath \u2014 the second of the three Aikido Lessons, pairing with Lesson I.", "complexity": 2, "type": "exercise", "part": "Part II \u2014 breath & energy"}, {"id": 8, "title": "Breathing the Whole System (Five-Stage Breath)", "meta": "Solo \u00b7 5\u201310 min \u00b7 CABW 3 Aikido Lessons", "body": "Feel into each phase in turn:\n\nexternal breathing, air moving in and out of the lungs;\n\ntransfer, oxygen into the bloodstream;\n\ntransport, the blood carrying it to every cell;\n\nabsorption, each cell taking it in;\n\nlife, each cell burning oxygen into the glow of aliveness.\n\nThen reverse the imagery. Feel life activating the breath \u2014 the universal pulse breathing you. Listen to the impulse to breathe.", "complexity": 2, "type": "exercise", "part": "Part II \u2014 breath & energy"}, {"id": 9, "title": "The O2 Continuum", "meta": "Solo \u00b7 3\u20135 min \u00b7 CABW 3 Aikido Lessons", "body": "Feel where you are on the O2 continuum \u2014 from O2 debt, through perfect saturation, to reserve. Locate it consciously; sense which cells feel in balance and which don't.\n\nThen breathe exactly the way you want for two or three breaths, and feel your location shift. It usually takes fewer than three; it never takes seven. First your own oxygen mask on first\u2014 then you have the reserves\n\n-- create a beautiful world.", "complexity": 2, "type": "exercise", "part": "Part II \u2014 breath & energy"}, {"id": 10, "title": "Ocean Breathing", "meta": "Solo \u00b7 2\u20134 min \u00b7 Experiential Breathing Explorations", "body": "Remember, or imagine, the first deep breath of ocean air \u2014 every cell lights up, the glow of life increases, and a natural desire for another breath follows. Breathe at the ocean even when you can't be there; hold the feeling.", "complexity": 2, "type": "exercise", "part": "Part II \u2014 breath & energy"}, {"id": 11, "title": "Infant Breathing", "meta": "Solo \u00b7 3\u20135 min \u00b7 Experiential Breathing Explorations", "body": "Imagine breathing as an infant \u2014 oxygen equalized after birth, simply lying there breathing and enjoying the glow of life, no thought, no thing. A return to the purity of being before socialization.", "complexity": 2, "type": "exercise", "part": "Part II \u2014 breath & energy"}, {"id": 12, "title": "Ten to the Tenth \u2014 State Shifting Scale", "meta": "Solo (can be coached) \u00b7 10\u201330 min to learn, seconds once trained \u00b7 Ten to the Tenth", "body": "Rate your current state 1\u201310. Notice why, by felt sense. 'Square away'your posture, breath, and attention until the number plateaus higher, then 'call up' the next number and embody it, on up to 10.\n\n*Down the Scale (Contrast Step)*\n\n*Solo \u00b7 1\u20132 min \u00b7 Ten to the Tenth*\n\nAfter climbing to  4, briefly imagine and feel dropping a number back to 3 then go to 6 then drop back to 4 \u2014 6 to 5 to 4 \u2014 noticing the self-talk and physical contraction that come with it.\n\n*Getting to 10*\n\n7 should be feeling very capable.  10 will be your best operating place, entering flow state.\n\n8 Remember a day when everything went fine, even the hard stuff\n\n9 Remember one of those really great days that come back to you, good times with family, a great day at work\n\n10 Think back to the best day you can remember.  Really soak in it move, breathe.  Think again when did you enter flow state and were able to be there for longer than made sense.  You were laughing joyously as the unsolvable situation just melted away\n\n*Quantum Shift*\n\nRlabel 10 as a new '1' and climb again through octaves. Once trained, the whole move compresses to a near-instant cue. The most fully documented exercise in the source.", "complexity": 3, "type": "exercise", "part": "Part III \u2014 attention & feeling"}, {"id": 13, "title": "Enjoy / Joy / Appreciate", "meta": "Solo \u00b7 3\u20135 min \u00b7 CABW 3 Aikido Lessons", "body": "Intentionally enjoy yourself \u2014 'enjoy yourSELF enjoying joy.' Bring attention to something you love, and treat the enjoyment as guidance: 'feeling better' signals a useful direction. Close with DBSO.\n\nCompletes the Feel (I) / Breathe (II) / Enjoy (III) arc. It names Ki, but the practice itself is attention and appreciation \u2014 confirmed for Part III.", "complexity": 3, "type": "exercise", "part": "Part III \u2014 attention & feeling"}, {"id": 14, "title": "Shoulder Slap \u2014 Sensing Finer Dimensions", "meta": "Partner \u00b7 5\u201315 min \u00b7 Aikido class teaching (R. Moon), cleaned \u00b7 closes Part III", "body": "A re-attacking slap on the shoulder in place of a shomen strike. Stance is flexible \u2014 natural stance (shizentai), a left- or right-foot lead all work; natural stance paired with the finger-snap is the simplest way in, and hanmi is fine in a dojo. Partners stand one step apart and agree on force: relaxed enough to sting a little, reality not fear, never to hurt.\n\n*Attacker***.** Don't telegraph. Go from nothing to the hit as fast as you can \u2014 a real attack carries a burst of ki, and a slow or sloppy approach gives a different, weaker feel. Vary the timing; never count \u201cone, two, three, slap.\u201d\n\n*Receiver***.** Start one step away. For the first few reps, snap your fingers the instant you sense the attack is about to come, then check \u2014 early, late, close? Come to center and face the attacker so you feel their attention. Give the most honest feedback you canProgress from one step to two.", "complexity": 3, "type": "exercise", "part": "Part III \u2014 attention & feeling"}, {"id": 15, "title": "Application Visualization", "meta": "Solo \u00b7 5\u201310 min \u00b7 Ten to the Tenth (full PDF)", "body": "Visualize how you'd normally handle an upcoming situation. Run Ten to the Tenth, climb several octaves, and re-visualize the situation from the new state. Repeat until a satisfying strategy emerges, then push past it for a quantum shift.\n\nThe applied form of the Part III scale \u2014 a fit for negotiation prep (the Cyprus framing) and youth decision-making.", "complexity": 4, "type": "exercise", "part": "Part IV \u2014 dialogue & relationship"}];
+const interludes = [{"title": "INTERLUDE \u2014 OPENING", "text": "This second has passed\nas has this one\nThe moment is so fleeting\nyet\nthe now is eternal\n\nRichard Moon"}, {"title": "INTERLUDE \u2014 AFTER PART I", "text": "Feel\ninto the center\nof your central core\neven by drops\nin ever finer adjustments\n\nRichard Moon"}, {"title": "INTERLUDE \u2014 AFTER PART II", "text": "Listen to the impulse to breathe\nfollow the guidance\nbreathe exactly\nlike you want to\n\nRichard Moon"}, {"title": "INTERLUDE \u2014 AFTER PART III", "text": "I don't really study Aikido as a Martial art,\nan art in the realm of Mars, the god of war.\nI study Aikido as a Venusial art,\nan art in the realm of Venus, the goddess of love.\n\nRichard Moon"}, {"title": "INTERLUDE \u2014 CLOSING", "text": "joy is the greatest treasure\ndon't get mad\ndon't even get even\ncreate a beautiful world\n\nRichard Moon\n\n\u201cLove gives birth to harmony, harmony brings forth joy, and joy is the greatest treasure.\u201d \u2014 Morihei Ueshiba, O-Sensei."}];
+const studios = [
+{name:"City Aikido", region:"SF Bay", cat:"Aikido dojo", about:"Home dojo of Robert Nadeau Shihan, Richard Moon's teacher since 1971. Friends of City Aikido and O-Sensei's teachings."},
+{name:"Aikido San Francisco", region:"SF Bay", cat:"Aikido dojo", about:"Opened 1986 in SOMA, positive supportive environment."},
+{name:"Aikido of Berkeley", region:"East Bay", cat:"Aikido dojo", about:"1514 University Ave, progressive dojo, Free Aiki Dojo, peace practices."},
+{name:"Aikido Institute", region:"East Bay", cat:"Aikido dojo", about:"California non-profit Emeryville, Takemusu Aikido Association."},
+{name:"Alameda Aikikai", region:"East Bay", cat:"Aikido dojo", about:"Non-profit 501c3 established 1991 Alameda, family-friendly."},
+{name:"Aikido Of Montclair Village", region:"East Bay", cat:"Aikido dojo", about:"Essential teachings of Morihei Ueshiba as taught by Saito Shihan."},
+{name:"The Omni Movement", region:"East Bay", cat:"Dance", about:"Growing social dance as healthy accessible expression, Brazilian Zouk."},
+{name:"In the Groove Studios", region:"East Bay", cat:"Dance", about:"Sanctuary to become person you aspire to be."},
+{name:"Atomic Allure", region:"East Bay", cat:"Pole/Aerial", about:"Beauty stems from within, body-positive pole and aerial."},
+{name:"Shawl-Anderson Dance Center", region:"East Bay", cat:"Dance school", about:"Premier non-profit dance education Berkeley since 1958."},
+{name:"Movement For Everyone", region:"SF Bay", cat:"Pilates", about:"Body neutral movement studio using Pilates and GYROTONIC."},
+{name:"The City Waves 5Rhythms SF", region:"SF Bay", cat:"Movement", about:"Gabrielle Roth's 5Rhythms dynamic dance & movement meditation."},
+{name:"Wellington Dance Academy", region:"Wellington NZ", cat:"Dance school", about:"Community dance school 182 Thorndon Quay."},
+{name:"WIDance Inclusive", region:"Wellington NZ", cat:"Dance", about:"Inclusive dance Saturday classes open to all abilities."},
+{name:"The Pilates Studio Wellington", region:"Wellington NZ", cat:"Pilates", about:"Fully equipped pilates studio 107 Customhouse Quay."},
+{name:"NowYoga / Yogallery", region:"Wellington NZ", cat:"Yoga", about:"Yoga studio blending yoga and art."},
+{name:"Empire Aerial Arts", region:"Wellington NZ", cat:"Aerial", about:"Open timetable without term-based courses."},
+{name:"Body Electric Pole", region:"Wellington NZ", cat:"Pole", about:"Beautiful art of pole dancing."},
+{name:"Aikido Shinryukan Burnside", region:"Christchurch NZ", cat:"Aikido", about:"South Island's largest Aikido club."},
+{name:"Movement Studio Rolleston", region:"Canterbury NZ", cat:"Pilates", about:"Movement is Medicine, remedial massage reformer pilates."}
+];
+let currentId = 6;
+let groundPercent=50, timeLeft=300, isPlaying=false, timer=null;
+const FREE_IDS=[1,6,12];
+// KeepDoingIt progress persists in localStorage.
+let completed=new Set(JSON.parse(localStorage.getItem('moon_completed')||'[1]'));
+let sessionLog=JSON.parse(localStorage.getItem('moon_session_log')||'[]');
+function persistProgress(){
+ try{ localStorage.setItem('moon_completed', JSON.stringify(Array.from(completed)));
+      localStorage.setItem('moon_session_log', JSON.stringify(sessionLog)); }catch(e){ console.error('KeepDoingIt persist failed', e); }
+}
+function studioSlug(n){ return n.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,''); }
+function showLockedModal(ex){
+ const overlay=document.createElement('div');
+ overlay.id='lockModal';
+ overlay.style.cssText='position:fixed;inset:0;background:rgba(26,26,26,0.55);display:flex;align-items:center;justify-content:center;z-index:50;padding:20px';
+ overlay.innerHTML=`<div style="background:#FAF6EF;border:2px solid #1A1A1A;padding:32px;max-width:420px;text-align:center">
+   <div style="font-size:11px;letter-spacing:0.12em;margin-bottom:10px">LOCKED PRACTICE</div>
+   <h2 style="font-size:20px;margin-bottom:10px">${ex.title}</h2>
+   <p style="font-size:14px;font-style:italic">20 exclusive practices unavailable anywhere else — By Richard Moon 6th Dan</p>
+   <p style="font-size:12px;opacity:0.7;margin:14px 0">Free practices: DBSO, Wrist Grab Grounding, Ten to the Tenth. Unlock all 15+5 with Creator membership.</p>
+   <button class="btn" id="lockClose">Back to free practices</button>
+ </div>`;
+ document.body.appendChild(overlay);
+ const close=()=>{ overlay.remove(); };
+ overlay.onclick=(e)=>{ if(e.target===overlay) close(); };
+ document.getElementById('lockClose').onclick=close;
+}
+function renderStudios(f=""){
+ const list=document.getElementById('studioList');
+ list.innerHTML=studios.filter(s=>s.name.toLowerCase().includes(f.toLowerCase())).map(s=>`<div class="studio" data-n="${s.name}"><strong>${s.name}</strong><br><span style="font-size:10px;opacity:0.7">${s.region} · ${s.cat}</span></div>`).join('');
+ list.querySelectorAll('.studio').forEach(el=>{
+   el.onclick=()=>{
+     document.querySelectorAll('.studio').forEach(x=>x.classList.remove('active')); el.classList.add('active');
+     const st=studios.find(x=>x.name===el.dataset.n);
+     showStudioBanner(st);
+   }
+ });
+}
+function showStudioBanner(st){
+ const b=document.getElementById('banner'); b.style.display='block';
+ b.innerHTML=`Practicing for <strong>${st.name}</strong> students — ${st.about} — 20 exclusive practices by Richard Moon unavailable anywhere else improve physical performance + creativity.`;
+}
+function selectStudioBySlug(slug){
+ const st=studios.find(x=>studioSlug(x.name)===slug.toLowerCase());
+ if(st) showStudioBanner(st);
+}
+function renderPartTabs(){
+ const tabs=document.getElementById('partTabs');
+ const parts=[["all","All 15"], ["Part I","Part I · centering (6)"], ["Part II","Part II · breath (5)"], ["Part III","Part III · attention (3)"], ["Part IV","Part IV · dialogue (1)"]];
+ tabs.innerHTML=parts.map(p=>`<span class="chip ${p[0]==='all'?'active':''}" data-part="${p[0]}">${p[1]}</span>`).join('');
+ tabs.querySelectorAll('.chip').forEach(el=>{
+   el.onclick=()=>{ tabs.querySelectorAll('.chip').forEach(x=>x.classList.remove('active')); el.classList.add('active'); renderExList(el.dataset.part); }
+ });
+}
+function renderExList(part="all"){
+ const list=document.getElementById('exList');
+ let filtered=exercises;
+ if(part!=="all") filtered=exercises.filter(e=>e.part.includes(part));
+ list.innerHTML=filtered.map(e=>`<span class="chip ex-chip ${e.id===currentId?'active':''} ${FREE_IDS.includes(e.id)?'':'locked'}" data-id="${e.id}">${e.id}. ${e.title} ${FREE_IDS.includes(e.id)?'• FREE':'🔒'}</span>`).join('');
+ list.querySelectorAll('.ex-chip').forEach(el=>{
+   el.onclick=()=>{
+     const ex=exercises.find(e=>e.id===parseInt(el.dataset.id));
+     if(!FREE_IDS.includes(ex.id)){ showLockedModal(ex); return; }
+     currentId=parseInt(el.dataset.id); renderPlayer(); renderExList(part);
+   }
+ });
+}
+function renderPlayer(){
+ const ex=exercises.find(e=>e.id===currentId);
+ if(!FREE_IDS.includes(ex.id)){ showLockedModal(ex); return; }
+ const isWrist=ex.title.includes('Wrist Grab');
+ const interMap={'Part I — centering & grounding':interludes[1],'Part II — breath & energy':interludes[2],'Part III — attention & feeling':interludes[3],'Part IV — dialogue & relationship':interludes[4]};
+ const inter=interMap[ex.part]||null;
+ document.getElementById('player').innerHTML=`
+   <div style="display:flex;justify-content:space-between"><div><h2 style="font-size:22px">${ex.title}</h2><div class="meta">${ex.meta} · ${ex.part}</div></div><span style="font-size:10px;border:1px solid #000;padding:3px 7px">Complexity ${ex.complexity}</span></div>
+   ${isWrist?`<div class="toggle"><button id="realB">Real Partner</button><button id="invB" class="active">Invisible Partner — "we say invisible"</button></div>`:''}
+   <div class="body">${ex.body.replace(/\n/g,'<br>')}</div>
+   <div class="timer"><div id="phase">Phase: 50/50 — Resist less, ground more</div><div class="circle" id="circ">${Math.floor(timeLeft/60)}:${String(timeLeft%60).padStart(2,'0')}</div><div id="prompt" style="font-size:11px">${isWrist?'Push... feel where you are':'Breathe...'}</div>${isWrist?`<div class="ground"><div class="ground-fill" id="gfill" style="width:${groundPercent}%"></div></div><div style="font-size:10px">${groundPercent}% ground — goal 60% — DBSO</div>`:''}
+   <div style="display:flex;gap:6px;margin-top:10px"><button class="btn" id="playB" style="flex:1">${isPlaying?'Pause':'Play Guided'}</button><button class="btn" id="resetB" style="flex:0.3;background:#fff;color:#000;border:1px solid #000">Reset</button></div></div>
+   <button class="btn" id="keepB">KeepDoingIt — Log Session</button>
+   <div id="pdots" style="margin-top:10px;font-size:10px"></div>
+   ${inter?`<div class="poem"><b>${inter.title}</b>
+
+${inter.text}</div>`:''}
+ `;
+ document.getElementById('playB').onclick=togglePlay;
+ document.getElementById('resetB').onclick=reset;
+ document.getElementById('keepB').onclick=()=>{completed.add(currentId); sessionLog.push({id:currentId,at:new Date().toISOString()}); persistProgress(); renderProgress(); alert('Logged! KeepDoingIt');};
+ if(isWrist){
+   document.getElementById('realB').onclick=(e)=>{e.target.parentElement.querySelectorAll('button').forEach(b=>b.classList.remove('active')); e.target.classList.add('active')};
+   document.getElementById('invB').onclick=(e)=>{e.target.parentElement.querySelectorAll('button').forEach(b=>b.classList.remove('active')); e.target.classList.add('active')};
+ }
+ renderProgress();
+}
+function renderProgress(){
+ const el=document.getElementById('progress'); if(!el) return;
+ const dots=exercises.map(e=>completed.has(e.id)?'●':'○').join(' ');
+ el.innerHTML=`<div style="font-size:10px">Progress: ${completed.size}/${exercises.length}<br>${dots}</div>`;
+ const pd=document.getElementById('pdots'); if(pd) pd.innerHTML=`Completed IDs: ${Array.from(completed).join(', ')}`;
+}
+function togglePlay(){
+ isPlaying=!isPlaying;
+ document.getElementById('playB').textContent=isPlaying?'Pause':'Play Guided';
+ if(isPlaying){
+   timer=setInterval(()=>{
+     timeLeft--; const c=document.getElementById('circ'); if(c) c.textContent=`${Math.floor(timeLeft/60)}:${String(timeLeft%60).padStart(2,'0')}`;
+     if(timeLeft%15===0){
+       const prompt=document.getElementById('prompt'), phase=document.getElementById('phase'), fill=document.getElementById('gfill');
+       if(timeLeft>180){ if(prompt) prompt.textContent=timeLeft%30===0?'Push — resisting lets them pull you easily — relax & feel where you are':'Pull — resisting lets them push — relax & feel where you are'; if(phase) phase.textContent='50/50 — Resist less, ground more'; groundPercent=50; }
+       else if(timeLeft>60){ if(prompt) prompt.textContent='Resistance hard to see from outside but you feel it inside'; if(phase) phase.textContent='Inside feel'; groundPercent=55; }
+       else{ if(prompt) prompt.textContent='DBSO — 60% ground — KeepDoingIt'; if(phase) phase.textContent='60% ground'; groundPercent=60; }
+       if(fill) fill.style.width=groundPercent+'%';
+     }
+     if(timeLeft<=0){ clearInterval(timer); isPlaying=false; timeLeft=300; alert(interludes[1].text); renderPlayer(); }
+   },1000);
+ } else { clearInterval(timer); }
+}
+function reset(){ clearInterval(timer); isPlaying=false; timeLeft=300; groundPercent=50; renderPlayer(); }
+document.getElementById('search').oninput=(e)=>renderStudios(e.target.value);
+renderStudios(); renderPartTabs(); renderExList(); renderPlayer(); renderProgress();
+</script>
+
+<script>
+// Aikifield slug router extension
+(function(){
+  const slugMap = {
+    'wrist-grab-grounding': 6,
+    'dropsinkopen': 1, 'dropbacksinkopen': 1, 'dbso': 1,
+    'listen-to-the-impulse-to-breathe': 2,
+    'feel-locate-align-unify': 3, 'kamae': 3,
+    'tense-release-body-scan': 4,
+    'center-of-the-central-core': 5,
+    'breathe-universal-harmony': 7,
+    'breathing-the-whole-system': 8, 'five-stage-breath': 8,
+    'o2-continuum': 9,
+    'ocean-breathing': 10,
+    'infant-breathing': 11,
+    'ten-to-the-tenth': 12,
+    'enjoy-joy-appreciate': 13,
+    'shoulder-slap': 14,
+    'application-visualization': 15
+  };
+  const params = new URLSearchParams(location.search);
+  const studioParam = params.get('studio_id');
+  if(studioParam) { try { selectStudioBySlug(studioParam); } catch(e){ console.error('studio banner', e); } }
+  const exSlug = (params.get('exercise')||'').toLowerCase();
+  if(slugMap[exSlug]) {
+    try { currentId = slugMap[exSlug]; if(typeof renderPlayer==='function') renderPlayer(); } catch(e){ console.error('exercise slug route', e); }
+  }
+  // Support path-based /games/exercises/:slug
+  const pathParts = location.pathname.split('/').filter(Boolean);
+  // /games/exercises/wrist-grab-grounding -> last part is slug
+  if(pathParts.length>=3 && pathParts[0]==='games' && pathParts[1]==='exercises') {
+    const last = pathParts[pathParts.length-1].toLowerCase();
+    if(slugMap[last]) {
+      try { currentId = slugMap[last]; if(typeof renderPlayer==='function') renderPlayer(); } catch(e){ console.error('exercise path route', e); }
+    }
+  }
+})();
+</script>
+
+</body></html>

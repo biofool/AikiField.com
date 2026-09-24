@@ -1,0 +1,4 @@
+# Games-scoped 404 — future /games/:other-game/ routes land on a friendly
+# placeholder instead of the server default. Does not affect the rest of
+# the site (scoped to this directory).
+ErrorDocument 404 /games/404.html

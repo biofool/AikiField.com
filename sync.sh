@@ -185,8 +185,15 @@ EXCLUDES=(
     --exclude='.gitattributes'
     --exclude='*.dvc'
     --exclude='scripts/'
+    # marketing/ holds source material (e.g. the 180-post FB batch) — not
+    # part of the public site.
+    --exclude='marketing/'
     --exclude='data/audit/'
     --exclude='data/ratelimit/'
+    # data/private/ is .htaccess-denied runtime storage (for-review comments).
+    # The dir + .htaccess deploy; the JSON contents stay server-side and must
+    # not be removed by --delete.
+    --exclude='data/private/*.json'
     --exclude='.DS_Store'
     --exclude='Thumbs.db'
     --exclude='*.tmp'
