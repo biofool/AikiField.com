@@ -299,6 +299,7 @@ See `backend/PRD.md` in AIRichardMoon for full endpoint details.
 | `beta/data.php` | Session-gated JSON delivery for the beta assessment pages (`beta/js/assessment.js` fetches `data.php?f=<name>` instead of `data/<name>.json` directly); `beta/data/.htaccess` denies direct access to the raw JSON so the gate can't be bypassed by fetching the file straight | new |
 | `includes/for-review-serve.php` | Gate + file server for `/for-review/*` — the games review area moved here from `quantumaikido.com/for-review/games*`. `.htaccess` rewrites every `/for-review/*` request to this dispatcher, which runs `beta-gate.load.php` (same session, same `?next=` login redirect — existing Quantum Aikido accounts work) then serves the file: `.html` is `include`d so embedded PHP (the CSRF block in `games.html`) still executes; other extensions are `readfile`d with an explicit Content-Type and an extension whitelist. Unlike `/beta/` (entry-page gating only), this gates *every* asset under the path. | new |
 | `for-review/games.html`, `for-review/games/`, `for-review/games-comments.php`, `for-review/subscribe.html` | The Lucky Wave (V1 legacy + V2) and Verbal Aikido games, the games hub, the feedback-comments endpoint (stores to `data/private/games-comments.json`, `.htaccess`-denied and excluded from `sync.sh --delete`), and the subscribe stub | moved from quantumaikido.com |
+| `games/exercises/auth-state.php` | JSON `{"authed": bool}` status endpoint for the public `/games/exercises/` app — defines `AF_GATE_NO_REDIRECT` and requires `beta-gate.load.php`, so it reuses the identical session check + 6h revalidation cadence without the login redirect. The app unlocks all practices for signed-in members; anonymous keeps the 3-practice freemium. Emits `no-store` via the PHP session. | new |
 
 ### Removed in this revision
 
@@ -346,6 +347,14 @@ See `backend/PRD.md` in AIRichardMoon for full endpoint details.
 - PHP session cookie on `aikifield.com` (HttpOnly, Secure on HTTPS,
   SameSite=Lax, 7-day lifetime). Session keys: `qa_email`,
   `qa_session_token`, `qa_target_env`, `qa_is_admin`, `qa_premium` — identical to QA.
+  The same session also unlocks all practices in the public
+  `/games/exercises/` app: it fetches `games/exercises/auth-state.php`
+  (same-origin, `no-store`), which returns `{"authed":bool}` via
+  `beta-gate.load.php` in `AF_GATE_NO_REDIRECT` mode — identical session
+  semantics and revalidation cadence, no redirect. Signed-in members see
+  all 15 exercises; anonymous visitors keep the freemium split (IDs 1, 6,
+  12 free) with a lock modal that links to
+  `/login.php?next=/games/exercises/`.
   The `qa_premium` key reflects the backend `premium` flag (Phase 20). **Premium
   gating has been removed for coach handoffs / email-coach** — these features are
   available to ALL users, not just premium. The old "Video with a Coach is

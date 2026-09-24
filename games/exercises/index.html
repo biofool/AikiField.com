@@ -40,6 +40,7 @@ img.hero{width:100%;max-width:300px;display:block;margin:10px auto;border:1px so
 </div>
 <div class="center">
 <div id="banner" style="display:none;padding:12px;background:#1A1A1A;color:#fff;font-size:12px;margin-bottom:14px"></div>
+<div id="authBadge" style="display:none;padding:8px 12px;background:#F5F0E6;border:1px solid #E8E0D0;font-size:12px;margin-bottom:10px"></div>
 <div style="font-size:11px;letter-spacing:0.1em">PART NAVIGATION — AUTO-LOADED FROM MARKDOWN</div>
 <div id="partTabs"></div>
 <div style="font-size:11px;letter-spacing:0.1em;margin-top:14px">EXERCISES — 15 FROM YOUR PDF</div>
@@ -88,6 +89,8 @@ const studios = [
 let currentId = 6;
 let groundPercent=50, timeLeft=300, isPlaying=false, timer=null;
 const FREE_IDS=[1,6,12];
+let freeIds=new Set(FREE_IDS);
+let currentPart='all';
 // KeepDoingIt progress persists in localStorage.
 let completed=new Set(JSON.parse(localStorage.getItem('moon_completed')||'[1]'));
 let sessionLog=JSON.parse(localStorage.getItem('moon_session_log')||'[]');
@@ -105,6 +108,7 @@ function showLockedModal(ex){
    <h2 style="font-size:20px;margin-bottom:10px">${ex.title}</h2>
    <p style="font-size:14px;font-style:italic">20 exclusive practices unavailable anywhere else — By Richard Moon 6th Dan</p>
    <p style="font-size:12px;opacity:0.7;margin:14px 0">Free practices: DBSO, Wrist Grab Grounding, Ten to the Tenth. Unlock all 15+5 with Creator membership.</p>
+   <p style="font-size:12px;margin:10px 0"><a href="/login.php?next=/games/exercises/" style="color:#1A1A1A;font-weight:700">Signed-in members get all practices free — sign in →</a></p>
    <button class="btn" id="lockClose">Back to free practices</button>
  </div>`;
  document.body.appendChild(overlay);
@@ -136,25 +140,25 @@ function renderPartTabs(){
  const parts=[["all","All 15"], ["Part I","Part I · centering (6)"], ["Part II","Part II · breath (5)"], ["Part III","Part III · attention (3)"], ["Part IV","Part IV · dialogue (1)"]];
  tabs.innerHTML=parts.map(p=>`<span class="chip ${p[0]==='all'?'active':''}" data-part="${p[0]}">${p[1]}</span>`).join('');
  tabs.querySelectorAll('.chip').forEach(el=>{
-   el.onclick=()=>{ tabs.querySelectorAll('.chip').forEach(x=>x.classList.remove('active')); el.classList.add('active'); renderExList(el.dataset.part); }
+   el.onclick=()=>{ tabs.querySelectorAll('.chip').forEach(x=>x.classList.remove('active')); el.classList.add('active'); currentPart=el.dataset.part; renderExList(currentPart); }
  });
 }
 function renderExList(part="all"){
  const list=document.getElementById('exList');
  let filtered=exercises;
  if(part!=="all") filtered=exercises.filter(e=>e.part.includes(part));
- list.innerHTML=filtered.map(e=>`<span class="chip ex-chip ${e.id===currentId?'active':''} ${FREE_IDS.includes(e.id)?'':'locked'}" data-id="${e.id}">${e.id}. ${e.title} ${FREE_IDS.includes(e.id)?'• FREE':'🔒'}</span>`).join('');
+ list.innerHTML=filtered.map(e=>`<span class="chip ex-chip ${e.id===currentId?'active':''} ${freeIds.has(e.id)?'':'locked'}" data-id="${e.id}">${e.id}. ${e.title} ${freeIds.has(e.id)?'• FREE':'🔒'}</span>`).join('');
  list.querySelectorAll('.ex-chip').forEach(el=>{
    el.onclick=()=>{
      const ex=exercises.find(e=>e.id===parseInt(el.dataset.id));
-     if(!FREE_IDS.includes(ex.id)){ showLockedModal(ex); return; }
+     if(!freeIds.has(ex.id)){ showLockedModal(ex); return; }
      currentId=parseInt(el.dataset.id); renderPlayer(); renderExList(part);
    }
  });
 }
 function renderPlayer(){
  const ex=exercises.find(e=>e.id===currentId);
- if(!FREE_IDS.includes(ex.id)){ showLockedModal(ex); return; }
+ if(!freeIds.has(ex.id)){ showLockedModal(ex); return; }
  const isWrist=ex.title.includes('Wrist Grab');
  const interMap={'Part I — centering & grounding':interludes[1],'Part II — breath & energy':interludes[2],'Part III — attention & feeling':interludes[3],'Part IV — dialogue & relationship':interludes[4]};
  const inter=interMap[ex.part]||null;
@@ -205,6 +209,19 @@ function togglePlay(){
 function reset(){ clearInterval(timer); isPlaying=false; timeLeft=300; groundPercent=50; renderPlayer(); }
 document.getElementById('search').oninput=(e)=>renderStudios(e.target.value);
 renderStudios(); renderPartTabs(); renderExList(); renderPlayer(); renderProgress();
+// Signed-in members get every practice free — check the shared site session.
+fetch('auth-state.php',{credentials:'same-origin'})
+ .then(r=>r.ok?r.json():Promise.reject(new Error('auth-state HTTP '+r.status)))
+ .then(d=>{
+   if(!d.authed) return;
+   freeIds=new Set(exercises.map(e=>e.id));
+   document.getElementById('lockModal')?.remove();
+   const b=document.getElementById('authBadge');
+   b.style.display='block';
+   b.innerHTML='Signed in — <strong>all 20 practices unlocked</strong>.';
+   renderExList(currentPart); renderPlayer();
+ })
+ .catch(e=>console.error('auth-state check failed',e));
 </script>
 
 <script>

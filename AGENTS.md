@@ -175,7 +175,10 @@ redirect), `coach-proxy.php`, `coach-login.js` (loaded by `login.php`),
 (gitignored — holds `COACH_PROXY_SECRET` / `TURNSTILE_SITE_KEY`), `.htaccess`
 (`/coach-api/*` → proxy; `projects.html` → `projects.php` 301;
 `/beta/*.html` → `/beta/*.php` 301s), `includes/beta-gate.load.php`
-(redirects unauthed `/beta/` requests to `/login.php?next=…`). Full design:
+(redirects unauthed `/beta/` requests to `/login.php?next=…`; also usable in
+`AF_GATE_NO_REDIRECT` mode for status endpoints),
+`games/exercises/auth-state.php` (`{"authed":bool}` — unlocks all practices
+for signed-in members in the public exercises app). Full design:
 `docs/coach-auth-prd.md`.
 
 **Sister repos:**

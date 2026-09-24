@@ -131,7 +131,10 @@ if ($betaAuthed) {
     }
 }
 
-if (!$betaAuthed) {
+// AF_GATE_NO_REDIRECT: defined by callers that want the session state
+// ($betaAuthed) without the unauthenticated redirect — e.g. JSON status
+// endpoints like games/exercises/auth-state.php.
+if (!$betaAuthed && !defined('AF_GATE_NO_REDIRECT')) {
     // Send the visitor to the blind login page with the originally-requested
     // path so login.php can redirect them back after a successful sign-in.
     $requested = $_SERVER['REQUEST_URI'] ?? '/beta/';
