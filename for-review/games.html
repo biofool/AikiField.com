@@ -179,6 +179,9 @@ $csrf_token = $_SESSION['csrf_token'];
     .btn-va { background: linear-gradient(135deg, #2f7d6f, #1f5c52); color: #fff; }
     .stripe-va { background: linear-gradient(90deg, #2f7d6f, #57b8a3); }
     .tag-va { background: rgba(47,125,111,0.1); color: #57b8a3; border: 1px solid rgba(47,125,111,0.3); }
+    .btn-moon { background: linear-gradient(135deg, #e8dcc4, #c9b98f); color: #1A1A1A; }
+    .stripe-moon { background: linear-gradient(90deg, #c9b98f, #e8dcc4); }
+    .tag-moon { background: rgba(201,185,143,0.15); color: #d8caa0; border: 1px solid rgba(201,185,143,0.35); }
 
     /* ── game modal ── */
     .modal-overlay {
@@ -541,6 +544,22 @@ $csrf_token = $_SESSION['csrf_token'];
         </ul>
         <button class="play-btn btn-va" onclick="openGame('games/verbal-aikido/', 'Verbal Aikido — Story Mode')">
             ▶ Play Verbal Aikido
+        </button>
+    </div>
+
+    <div class="version-card">
+        <div class="card-stripe stripe-moon"></div>
+        <span class="card-tag tag-moon">Live · Lead Magnet</span>
+        <h2>Moon — 20 Exclusive Practices</h2>
+        <p>15 auto-loaded exercises by Richard Moon 6th Dan, unavailable anywhere else. Free: DBSO, Wrist Grab Grounding (real or invisible partner), Ten to the Tenth — the rest unlock with Creator. Studio-personalized deep links.</p>
+        <ul class="feature-list">
+            <li>15 exercises</li>
+            <li>3 free practices</li>
+            <li>KeepDoingIt log</li>
+            <li>Studio deep links</li>
+        </ul>
+        <button class="play-btn btn-moon" onclick="openGame('/games/exercises/', 'Moon — 20 Exclusive Practices')">
+            ▶ Play 20 Exclusive Practices
         </button>
     </div>
 
