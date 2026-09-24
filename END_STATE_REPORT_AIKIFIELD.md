@@ -46,9 +46,11 @@ Verification date: local — Apache 2.4 (real `.htaccess` processing) + PHP 8 bu
 - [x] **PASS** No secrets in package; `marketing/` excluded from `sync.sh` deploy; `*.md` already excluded
 - [x] **PASS** `/games/` is public (not behind `/for-review/` or `/beta/` gate) — confirmed by design; dispatcher only intercepts `/for-review/*`
 
-## Status: ALL CHECKS PASS — package is deploy-ready
+## Status: LAUNCHED — all checks pass on production
 
-"LAUNCHED" not declared — production upload is the operator's step (see upload instructions below).
+**Production: live at https://aikifield.com/games/** (`./sync.sh deploy` → `public_html/aikifield/` on peec.biz). All 28 browser checks re-run against live production — 28/28 PASS. `.htaccess` routing confirmed on the real server (slug routes 200, `/games/dojo-tycoon/` 404 placeholder). `/for-review/` gate confirmed (unauthed → 302 → `/login.php?next=…`).
+
+**Staging: https://aikifield.peec.biz/games/** (commits `1db7849` + `dfc964f` on `staging`) — 28/28 PASS.
 
 ## Package layout (`aikifield_games_deploy_ready.zip`)
 
