@@ -156,8 +156,8 @@ select the target explicitly: `./sync.sh --staging deploy`,
 
 The coaching login authenticates against the Quantum Aikido coaching
 backend (`AIRichardMoon`, FastAPI on Cloud Run) via `coach-proxy.php`. The
-auth surface is a **blind `/login.php`** page that exists solely to gate
-the pre-release `/beta/` assessment pages. It is NOT linked from the public
+auth surface is a **blind `/login.php`** page that gates
+the pre-release `/beta/` assessment pages and the `/for-review/` games area. It is NOT linked from the public
 nav. `projects.php` no longer hosts any login or chat — it shows an
 invitation card pointing visitors to `contact.html` to request a live demo.
 The inline AI Chat (`coach-chat.js`) was removed; the live chat lives on

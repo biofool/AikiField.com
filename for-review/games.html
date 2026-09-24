@@ -1,0 +1,742 @@
+<?php
+
+// Session gate — same coaching login that protects /beta/. Existing Quantum
+// Aikido accounts work here; the login backend is shared. The /for-review/*
+// dispatcher (includes/for-review-serve.php) already ran this gate; the
+// require_once below also protects this file if it is ever reached directly.
+require_once dirname(__DIR__) . '/includes/beta-gate.load.php';
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+if (empty($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
+$csrf_token = $_SESSION['csrf_token'];
+
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="/favicon.svg" type="image/x-icon">
+    <title>Lucky Wave Games | For Review</title>
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="stylesheet" href="https://quantumaikido.com/styles.css">
+    <style>
+        .container { max-width: 1100px; margin: 0 auto; padding: 0 2rem; }
+
+        .beta-notice {
+            background: rgba(139, 92, 246, 0.1);
+            padding: 0.55rem 0;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+        .beta-notice-inner {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .beta-badge {
+            background: var(--accent);
+            color: #fff;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 0.15rem 0.45rem;
+            border-radius: 3px;
+            letter-spacing: 0.06em;
+            flex-shrink: 0;
+        }
+        .beta-notice-inner a { color: var(--accent-light); margin-left: auto; white-space: nowrap; }
+
+        main { padding: 3rem 0; }
+        .page-header {
+            margin-bottom: 1.5rem;
+        }
+        .page-header h1 { color: var(--text-primary); font-size: 2rem; line-height: 1.2; margin-bottom: 0.75rem; }
+        .page-header .tagline {
+            color: var(--text-muted);
+            font-style: italic;
+            font-size: 1.05rem;
+            margin-top: 0.5rem;
+            margin-bottom: 0;
+        }
+        .notice-box {
+            background-color: var(--secondary-bg);
+            border-left: 3px solid var(--accent);
+            padding: 1rem 1.5rem;
+            border-radius: 0 8px 8px 0;
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            margin-top: 1.5rem;
+        }
+        .notice-box p { margin: 0; }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { transition-duration: 0.01ms !important; }
+        }
+        @media (max-width: 768px) {
+            .container { padding: 0 1.25rem; }
+        }
+
+        
+    /* ── version cards ── */
+    .versions-grid {
+        display: grid;
+        gap: 1.25rem;
+        margin-bottom: 3rem;
+    }
+    @media (min-width: 640px) {
+        .versions-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    .version-card {
+        background: var(--secondary-bg);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.85rem;
+        position: relative;
+        overflow: hidden;
+        transition: border-color 0.2s;
+    }
+    .version-card:hover { border-color: rgba(139,92,246,0.4); }
+
+    .card-stripe {
+        position: absolute;
+        top: 0; left: 0; right: 0;
+        height: 3px;
+    }
+    .stripe-v1 { background: linear-gradient(90deg, #00C9B8, #8b5cf6); }
+    .stripe-v2 { background: linear-gradient(90deg, #F4C842, #F47C42); }
+
+    .card-tag {
+        display: inline-flex;
+        align-items: center;
+        font-size: 0.7rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        padding: 0.2rem 0.65rem;
+        border-radius: 20px;
+        width: fit-content;
+    }
+    .tag-v1 { background: rgba(0,201,184,0.1); color: #00C9B8; border: 1px solid rgba(0,201,184,0.25); }
+    .tag-v2 { background: rgba(244,200,66,0.1); color: #F4C842; border: 1px solid rgba(244,200,66,0.3); }
+
+    .version-card h2 {
+        font-size: 1.05rem;
+        font-weight: 500;
+        color: var(--text-primary);
+        margin: 0;
+    }
+    .version-card p {
+        font-size: 0.88rem;
+        color: var(--text-muted);
+        flex: 1;
+        margin: 0;
+        line-height: 1.6;
+    }
+
+    .feature-list {
+        list-style: none;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.4rem;
+    }
+    .feature-list li {
+        font-size: 0.72rem;
+        padding: 0.15rem 0.55rem;
+        border-radius: 20px;
+        background: rgba(255,255,255,0.04);
+        border: 1px solid var(--border);
+        color: var(--text-muted);
+    }
+
+    .play-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 0.65rem 1.25rem;
+        border-radius: 8px;
+        font-size: 0.88rem;
+        font-weight: 600;
+        cursor: pointer;
+        border: none;
+        width: 100%;
+        transition: opacity 0.15s, transform 0.1s;
+        text-align: center;
+    }
+    .play-btn:hover { opacity: 0.88; transform: scale(0.98); }
+    .btn-v1 { background: linear-gradient(135deg, #00C9B8, #009E90); color: #021210; }
+    .btn-v2 { background: linear-gradient(135deg, #F4C842, #D4A832); color: #1A1200; }
+    .btn-va { background: linear-gradient(135deg, #2f7d6f, #1f5c52); color: #fff; }
+    .stripe-va { background: linear-gradient(90deg, #2f7d6f, #57b8a3); }
+    .tag-va { background: rgba(47,125,111,0.1); color: #57b8a3; border: 1px solid rgba(47,125,111,0.3); }
+
+    /* ── game modal ── */
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.9);
+        z-index: 200;
+    }
+    .modal-overlay.active { display: flex; flex-direction: column; }
+
+    .modal-bar {
+        background: #0a1020;
+        border-bottom: 1px solid var(--border);
+        padding: 0.6rem 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-shrink: 0;
+    }
+    .modal-bar span { font-size: 0.82rem; color: var(--text-muted); }
+    .modal-close {
+        background: rgba(255,255,255,0.07);
+        border: 1px solid var(--border);
+        color: var(--text-primary);
+        font-size: 1rem;
+        width: 30px; height: 30px;
+        border-radius: 6px;
+        cursor: pointer;
+        display: flex; align-items: center; justify-content: center;
+        transition: background 0.15s;
+    }
+    .modal-close:hover { background: rgba(255,255,255,0.14); }
+    .modal-frame { flex: 1; width: 100%; border: none; background: #070C1A; }
+
+    /* ── comments ── */
+    .comments-heading {
+        margin-bottom: 1.5rem;
+    }
+    .comments-heading h2 {
+        font-size: 1.3rem;
+        font-weight: 400;
+        color: var(--text-primary);
+        margin-bottom: 0.35rem;
+    }
+    .comments-heading p {
+        font-size: 0.88rem;
+        color: var(--text-muted);
+        margin: 0;
+    }
+
+    .comment-form-box {
+        background: var(--secondary-bg);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    .form-row { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem; }
+    .form-group { display: flex; flex-direction: column; gap: 0.35rem; flex: 1; min-width: 160px; }
+    .form-group label { font-size: 0.75rem; font-weight: 600; color: var(--text-muted); letter-spacing: 0.05em; text-transform: uppercase; }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        background: var(--primary-bg);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        color: var(--text-primary);
+        font-size: 0.9rem;
+        padding: 0.6rem 0.8rem;
+        font-family: inherit;
+        resize: vertical;
+        transition: border-color 0.15s;
+        outline: none;
+    }
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus { border-color: var(--accent-light); }
+    .form-group textarea { min-height: 90px; }
+    .form-group select option { background: var(--primary-bg); }
+
+    .submit-btn {
+        background: var(--accent);
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        padding: 0.7rem 1.5rem;
+        font-size: 0.9rem;
+        font-weight: 600;
+        cursor: pointer;
+        width: 100%;
+        transition: opacity 0.15s;
+    }
+    .submit-btn:hover { opacity: 0.88; }
+
+    .submit-status {
+        margin-top: 0.75rem;
+        font-size: 0.82rem;
+        padding: 0.6rem 0.85rem;
+        border-radius: 6px;
+        display: none;
+    }
+    .submit-status.ok  { background: rgba(0,201,184,0.1); color: #00C9B8; border: 1px solid rgba(0,201,184,0.25); display: block; }
+    .submit-status.err { background: rgba(239,68,68,0.1); color: #F87171; border: 1px solid rgba(239,68,68,0.3); display: block; }
+
+    .comments-list { display: flex; flex-direction: column; gap: 1rem; }
+    .comment-item {
+        background: var(--secondary-bg);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 1.1rem 1.25rem;
+    }
+    .comment-meta {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-bottom: 0.6rem;
+    }
+    .comment-name { font-weight: 600; font-size: 0.9rem; color: var(--text-primary); }
+    .comment-ver {
+        font-size: 0.68rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        padding: 0.15rem 0.55rem;
+        border-radius: 20px;
+        background: rgba(139,92,246,0.1);
+        color: var(--accent-light);
+        border: 1px solid rgba(139,92,246,0.25);
+    }
+    .comment-date { font-size: 0.75rem; color: var(--text-muted); margin-left: auto; }
+    .comment-text { font-size: 0.88rem; color: var(--text-secondary); line-height: 1.65; }
+    .no-comments { text-align: center; padding: 2.5rem 1rem; color: var(--text-muted); font-size: 0.9rem; font-style: italic; }
+    </style>
+</head>
+<body>
+                            <a href="#main-content" class="skip-link" data-i18n="nav.skip_to_main">Skip to main content</a>
+
+    <header role="banner">
+        <div class="site-nav-inner">
+            <div class="header-content">
+                <button class="nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="qa-nav-links" data-i18n-attr="aria-label:nav.toggle_menu">
+                    <span class="nav-toggle-icon" aria-hidden="true">&#9776;</span>
+                </button>
+                <nav data-i18n-attr="aria-label:nav.main_navigation">
+                    <ul class="nav-links" id="qa-nav-links">
+                        <li><a href="https://quantumaikido.com/" class="nav-item-link"><svg class="nav-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9.5 12 3l9 6.5"/><path d="M5 9v11h14V9"/><path d="M9 20v-6h6v6"/></svg><span data-i18n="nav.home">Home</span></a></li>
+                        <li><a href="https://quantumaikido.com/richard-moon" class="nav-item-link"><img src="https://quantumaikido.com/assets/RichardMoonPortrait.jpg?v=1787639615" alt="" class="nav-icon nav-icon-photo" width="28" height="28" aria-hidden="true"><span data-i18n="nav.about_author_more">About Author</span></a></li>
+                        <li class="dropdown">
+                            <a href="https://quantumaikido.com/resources" class="dropdown-trigger nav-item-link" id="nav-resources-trigger" aria-haspopup="true" aria-expanded="false" aria-controls="nav-resources-menu" data-i18n-attr="aria-label:nav.resources_menu">
+                                <svg class="nav-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h6l2 2h8v12H4z"/></svg>                                <span data-i18n="nav.resources">Resources</span>
+                                <span class="dropdown-caret" aria-hidden="true">&#9662;</span>
+                            </a>
+                            <ul class="dropdown-menu" id="nav-resources-menu">
+                                <li><a href="https://quantumaikido.com/blog/" class="nav-item-link"><svg class="nav-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg><span data-i18n="nav.insights">Insights</span></a></li>
+                                <li><a href="https://quantumaikido.com/books/" class="nav-item-link"><svg class="nav-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg><span data-i18n="nav.books">Books</span></a></li>
+                                <li><a href="https://quantumaikido.com/glossary" class="nav-item-link"><svg class="nav-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><path d="M9 7h8M9 11h5"/></svg><span data-i18n="nav.glossary">Glossary</span></a></li>
+                                <li><a href="https://quantumaikido.com/media-kit" class="nav-item-link"><svg class="nav-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg><span data-i18n="nav.press_materials">Press Materials</span></a></li>
+                            </ul>
+                        </li>
+                        <li><a href="https://quantumaikido.com/contact" class="nav-item-link"><svg class="nav-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg><span data-i18n="nav.contact">Contact</span></a></li>
+                        <li><a href="/login.php" class="nav-item-link"><svg class="nav-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span data-i18n="nav.member_login">Welcome Back</span></a></li>
+                    </ul>
+                </nav>
+                <!-- Language selector: re-enabled with full page translations (issue #120).
+                     i18n infrastructure + string files for 12 locales are now in place. -->
+                <div id="qa-language-selector" class="qa-lang-selector" data-i18n-attr="aria-label:nav.language_selection">
+                    <span class="qa-lang-label" aria-hidden="true">&#127760;</span>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- i18n infrastructure (issues #75, #76, #77, #120): locale utils + language selector.
+         locale-utils.js provides locale-aware formatting + translation loading.
+         language-selector.js renders the dropdown and switches locales. -->
+    <script src="/js/locale-utils.js"></script>
+    <script src="/js/language-selector.js"></script>
+    <script>
+    // Mobile nav collapse + Resources pull-down submenu.
+    (function () {
+        var toggle = document.getElementById('nav-toggle');
+        var links = document.getElementById('qa-nav-links');
+        if (!toggle || !links) return;
+
+        function isDesktop() {
+            return window.matchMedia('(min-width: 768px)').matches;
+        }
+
+        function closeAllDropdowns() {
+            var openMenus = links.querySelectorAll('.dropdown.open');
+            for (var i = 0; i < openMenus.length; i++) {
+                openMenus[i].classList.remove('open');
+                var btn = openMenus[i].querySelector('.dropdown-trigger');
+                if (btn) btn.setAttribute('aria-expanded', 'false');
+            }
+        }
+
+        function setExpanded(open) {
+            links.classList.toggle('open', open);
+            toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+            if (!open) closeAllDropdowns();
+        }
+
+        toggle.addEventListener('click', function (e) {
+            e.stopPropagation();
+            setExpanded(!links.classList.contains('open'));
+        });
+
+        links.addEventListener('click', function (e) {
+            var trigger = e.target.closest && e.target.closest('.dropdown-trigger');
+            if (trigger && links.contains(trigger)) {
+                var dropdown = trigger.closest('.dropdown');
+                var isOpen = dropdown.classList.contains('open');
+                // Mobile: first tap opens the pull-down. Desktop: hover shows
+                // it; clicking a link trigger goes to Resources.
+                if (!isDesktop() && !isOpen) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    closeAllDropdowns();
+                    dropdown.classList.add('open');
+                    trigger.setAttribute('aria-expanded', 'true');
+                    return;
+                }
+                if (trigger.tagName === 'BUTTON') {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    closeAllDropdowns();
+                    dropdown.classList.toggle('open', !isOpen);
+                    trigger.setAttribute('aria-expanded', !isOpen ? 'true' : 'false');
+                    return;
+                }
+            }
+            // Close the hamburger after following a real nav link (mobile UX).
+            if (!isDesktop() && e.target.closest && e.target.closest('a')) {
+                setExpanded(false);
+            }
+        });
+
+        // Close the pull-down when keyboard focus leaves it.
+        links.addEventListener('focusout', function (e) {
+            var dropdown = e.target.closest && e.target.closest('.dropdown');
+            if (!dropdown) return;
+            requestAnimationFrame(function () {
+                if (!dropdown.contains(document.activeElement)) {
+                    dropdown.classList.remove('open');
+                    var btn = dropdown.querySelector('.dropdown-trigger');
+                    if (btn) btn.setAttribute('aria-expanded', 'false');
+                }
+            });
+        });
+
+        // Escape closes the submenu first, then the hamburger (WCAG 2.1.2).
+        document.addEventListener('keydown', function (e) {
+            if (e.key !== 'Escape') return;
+            var openDropdown = links.querySelector('.dropdown.open');
+            if (openDropdown) {
+                closeAllDropdowns();
+                var btn = openDropdown.querySelector('.dropdown-trigger');
+                if (btn) btn.focus();
+                return;
+            }
+            if (links.classList.contains('open')) {
+                setExpanded(false);
+                toggle.focus();
+            }
+        });
+
+        document.addEventListener('click', function (e) {
+            if (!links.contains(e.target) && !toggle.contains(e.target)) {
+                closeAllDropdowns();
+                setExpanded(false);
+            }
+        });
+
+        window.addEventListener('resize', function () {
+            if (isDesktop()) setExpanded(false);
+        });
+    })();
+    </script>
+
+
+
+
+
+
+
+    <div class="beta-notice" role="status">
+        <div class="beta-notice-inner">
+            <span class="beta-badge">BETA</span>
+            This page is under review — content and design may change before release.
+            <a href="https://quantumaikido.com/">← Live site</a>
+        </div>
+    </div>
+
+    <main>
+        <div class="container">
+
+<div class="page-header">
+    <h1>Lucky Wave Games</h1>
+    <p class="tagline">All versions available to play individually &amp; leave feedback</p>
+</div>
+
+<!-- ── GAME MODAL ────────────────────────────────────── -->
+<div class="modal-overlay" id="gameModal">
+    <div class="modal-bar">
+        <span id="modalTitle">Loading…</span>
+        <button class="modal-close" onclick="closeModal()" title="Close (Esc)">✕</button>
+    </div>
+    <iframe class="modal-frame" id="gameFrame" src="" allow="autoplay"></iframe>
+</div>
+
+<!-- ── VERSION CARDS ─────────────────────────────────── -->
+<p style="font-size:0.78rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-muted);margin-bottom:1rem;">Game versions</p>
+
+<div class="versions-grid">
+
+    <div class="version-card">
+        <div class="card-stripe stripe-v1"></div>
+        <span class="card-tag tag-v1">Version 1 · Original</span>
+        <h2>Ride the Lucky Wave</h2>
+        <p>The original four-phase protocol — Activate, Access, Declare, Launch. Score each phase and build lucky-wave momentum over time.</p>
+        <ul class="feature-list">
+            <li>4 phases</li>
+            <li>Phase scoring</li>
+            <li>Session summary</li>
+            <li>3-minute timer</li>
+        </ul>
+        <button class="play-btn btn-v1" onclick="openGame('games/lucky-wave/RideTheLuckyWaveV1-legacy.html', 'Lucky Wave — Version 1')">
+            ▶ Play Version 1
+        </button>
+    </div>
+
+    <div class="version-card">
+        <div class="card-stripe stripe-v2"></div>
+        <span class="card-tag tag-v2">Version 2 · R.Moon Edition</span>
+        <h2>Ride the Lucky Wave V2</h2>
+        <p>Everything in V1 plus a language-mode toggle between Standard and R.MoonE phrasing, AI-powered session review, and colorblind-safe scoring icons.</p>
+        <ul class="feature-list">
+            <li>Language toggle</li>
+            <li>AI review</li>
+            <li>Colorblind-safe</li>
+            <li>Richer scoring</li>
+        </ul>
+        <button class="play-btn btn-v2" onclick="openGame('games/lucky-wave/RideTheLuckyWaveV2.html', 'Lucky Wave — Version 2 (R.Moon Edition)')">
+            ▶ Play Version 2
+        </button>
+    </div>
+
+    <div class="version-card">
+        <div class="card-stripe stripe-va"></div>
+        <span class="card-tag tag-va">Prototype · PWA</span>
+        <h2>Verbal Aikido — Story Mode</h2>
+        <p>Branching-dialogue practice game from the VA App 2023 spec. Handle a verbal attack, keep the anger meter low, and unlock Discovery lessons. Level 1 (Rookie), Chapters 1 &amp; 2.</p>
+        <ul class="feature-list">
+            <li>2 chapters</li>
+            <li>Anger meter</li>
+            <li>Discovery unlocks</li>
+            <li>Offline PWA</li>
+        </ul>
+        <button class="play-btn btn-va" onclick="openGame('games/verbal-aikido/', 'Verbal Aikido — Story Mode')">
+            ▶ Play Verbal Aikido
+        </button>
+    </div>
+
+</div>
+
+<!-- ── COMMENTS ──────────────────────────────────────── -->
+<div class="comments-heading">
+    <h2>How can we improve this game?</h2>
+    <p>Your ideas, observations, and reactions help shape future versions. All feedback welcome.</p>
+</div>
+
+<div class="comment-form-box">
+    <div class="form-row">
+        <div class="form-group">
+            <label for="cf-name">Name (optional)</label>
+            <input type="text" id="cf-name" placeholder="e.g. Sarah K." maxlength="80" />
+        </div>
+        <div class="form-group">
+            <label for="cf-version">Which version?</label>
+            <select id="cf-version">
+                <option value="both">Both / General</option>
+                <option value="v1">Version 1 — Original</option>
+                <option value="v2">Version 2 — R.Moon Edition</option>
+            </select>
+        </div>
+    </div>
+    <div class="form-group" style="margin-bottom:1rem;">
+        <label for="cf-comment">Your feedback</label>
+        <textarea id="cf-comment" placeholder="What would make this game more effective, more fun, or more useful for Aikido training?"></textarea>
+    </div>
+    <button class="submit-btn" onclick="submitComment()">Submit Feedback</button>
+    <div class="submit-status" id="submitStatus"></div>
+</div>
+
+<div class="comments-list" id="commentsList">
+    <div class="no-comments">No feedback yet: be the first to share your thoughts!</div>
+</div>
+
+<div class="notice-box" style="margin-top:2rem;">
+    <p>This page is part of the for-review staging area. Comments are saved server-side and visible to the team only.</p>
+</div>
+
+<script>
+    const CSRF_TOKEN = <?= json_encode($csrf_token) ?>;
+
+    // ── MODAL ──────────────────────────────────────────────────
+    function openGame(src, title) {
+        document.getElementById('gameFrame').src = src;
+        document.getElementById('modalTitle').textContent = title;
+        document.getElementById('gameModal').classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+    function closeModal() {
+        document.getElementById('gameModal').classList.remove('active');
+        document.getElementById('gameFrame').src = '';
+        document.body.style.overflow = '';
+    }
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+    // ── COMMENTS ───────────────────────────────────────────────
+    async function loadComments() {
+        try {
+            const res = await fetch('games-comments?action=list');
+            if (!res.ok) return;
+            const comments = await res.json();
+            renderComments(comments);
+        } catch (_) {}
+    }
+
+    const versionLabel = { v1: 'Version 1', v2: 'Version 2', both: 'Both / General' };
+
+    function renderComments(comments) {
+        const list = document.getElementById('commentsList');
+        if (!comments || comments.length === 0) {
+            list.innerHTML = '<div class="no-comments">No feedback yet — be the first to share your thoughts!</div>';
+            return;
+        }
+        list.innerHTML = comments.slice().reverse().map(c => `
+            <div class="comment-item">
+                <div class="comment-meta">
+                    <span class="comment-name">${esc(c.name || 'Anonymous')}</span>
+                    <span class="comment-ver">${esc(versionLabel[c.version] || c.version)}</span>
+                    <span class="comment-date">${esc(c.date || '')}</span>
+                </div>
+                <div class="comment-text">${esc(c.comment)}</div>
+            </div>
+        `).join('');
+    }
+
+    async function submitComment() {
+        const name    = document.getElementById('cf-name').value.trim();
+        const version = document.getElementById('cf-version').value;
+        const comment = document.getElementById('cf-comment').value.trim();
+        const status  = document.getElementById('submitStatus');
+
+        if (!comment) {
+            status.textContent = 'Please write something before submitting.';
+            status.className = 'submit-status err';
+            return;
+        }
+
+        try {
+            const res = await fetch('games-comments?action=add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-Token': CSRF_TOKEN,
+                },
+                body: JSON.stringify({ name, version, comment })
+            });
+            const data = await res.json();
+            if (data.ok) {
+                status.textContent = 'Thank you! Your feedback was saved.';
+                status.className = 'submit-status ok';
+                document.getElementById('cf-name').value = '';
+                document.getElementById('cf-comment').value = '';
+                document.getElementById('cf-version').value = 'both';
+                loadComments();
+            } else {
+                throw new Error(data.error || 'Server error');
+            }
+        } catch (e) {
+            status.textContent = 'Could not save: ' + e.message;
+            status.className = 'submit-status err';
+        }
+    }
+
+    function esc(str) {
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;');
+    }
+
+    loadComments();
+</script>
+
+        </div><!-- /.container -->
+    </main>
+                            <footer role="contentinfo">
+        <div class="site-footer-inner">
+            <div class="footer-grid">
+                <div class="footer-section">
+                    <h2 class="footer-heading">Quantum Aikido</h2>
+                    <p class="footer-copyright-line" data-i18n="footer.copyright" data-i18n-params='{"year":"2026"}'>&copy; 2026 Richard Moon<br>Published by Park Street Press</p>
+                    <div class="footer-legal">
+                        <a href="https://quantumaikido.com/privacy" data-i18n="footer.privacy">Privacy</a>
+                        <span class="footer-legal-separator"></span>
+                        <a href="https://quantumaikido.com/terms" data-i18n="footer.terms">Terms</a>
+                        <span class="footer-legal-separator"></span>
+                        <a href="https://quantumaikido.com/media-kit" data-i18n="footer.media_kit">Media Kit</a>
+                    </div>
+                </div>
+
+                <div class="footer-section">
+                    <h2 class="footer-heading" data-i18n="footer.connect">Connect</h2>
+                    <a href="mailto:kenneth@quantumaikido.com" data-i18n="footer.email">Email</a>
+                    <a href="https://www.youtube.com/@moonsensei" target="_blank" rel="noopener noreferrer" data-i18n="footer.youtube" class="footer-social-link">
+                        <svg class="footer-social-icon" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                        <span>YouTube</span>
+                    </a>
+                    <a href="https://www.instagram.com/quantumaikido/" target="_blank" rel="noopener noreferrer" data-i18n="footer.instagram" class="footer-social-link">
+                        <svg class="footer-social-icon" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
+                        <span>Instagram</span>
+                    </a>
+                </div>
+
+                <div class="footer-section">
+                    <h2 class="footer-heading" data-i18n="footer.member">Member</h2>
+                    <a href="/login.php" data-i18n="footer.welcome_back">Welcome Back</a>
+                    <a href="/login.php" data-i18n="footer.join_community">Join the Quantum Aikido Community</a>
+                    <div google-add-preferred-source-btn data-theme="light" style="margin-top: 1rem;"></div>
+                </div>
+            </div>
+        </div>
+        <p class="footer-last-updated">Last updated: <time datetime="2026-09-04">2026-09-04</time></p>
+    </footer>
+
+        <!-- Floating AI Chat button — appears on all pages except auth-gated pages -->
+    <a href="https://quantumaikido.com/members" class="qa-chat-fab" aria-describedby="qa-chat-fab-info" data-i18n-attr="aria-label:site.unified_field_inquiry">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+        </svg>
+        <span class="qa-chat-fab__label" data-i18n="site.unified_field_inquiry">Inquiry into the unified field</span>
+        <div class="qa-chat-fab-panel" id="qa-chat-fab-info">
+            <strong class="qa-chat-fab-panel__title" data-i18n="site.unified_field_inquiry">Inquiry into the unified field</strong>
+            <p class="qa-chat-fab-panel__subtitle">AI-supported guidance for embodied practice, awareness, and constructive interaction.</p>
+            <p class="qa-chat-fab-panel__text">Explore personalised guidance for posture, breathing, mental focus, and everyday interactions. Ask about your practice, apply Aikido principles at work, or request support from a human coach.</p>
+            <ul class="qa-chat-fab-panel__features">
+                <li>Responses informed by Richard Moon&rsquo;s authorised teaching materials &mdash; not direct quotations</li>
+                <li>Request a handoff to a human coach when you need more</li>
+                <li>Free to use &mdash; sign up to start chatting</li>
+            </ul>
+        </div>
+    </a>
+        <script async src="https://news.google.com/swg/js/v1/publisher.js"></script>
+</body>
+</html>

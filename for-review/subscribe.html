@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Subscribe - Game Updates</title>
+  <style>
+    body {
+      background: #070C1A;
+      color: #E8EAF0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+    .container {
+      max-width: 480px;
+      padding: 40px 20px;
+      width: 100%;
+      text-align: center;
+    }
+    h1 {
+      font-family: "Georgia", serif;
+      color: #F4C842;
+      font-weight: 300;
+      font-size: 32px;
+      margin-bottom: 16px;
+    }
+    p {
+      color: #A8B4C8;
+      line-height: 1.6;
+      font-size: 16px;
+      margin-bottom: 30px;
+    }
+    .form-group {
+      margin-bottom: 20px;
+      text-align: left;
+    }
+    label {
+      display: block;
+      color: #8A96AA;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 8px;
+    }
+    input[type="email"], input[type="text"] {
+      width: 100%;
+      padding: 14px 16px;
+      border-radius: 12px;
+      border: 1px solid #1E2A3D;
+      background: #0E1525;
+      color: #E8EAF0;
+      font-size: 16px;
+      box-sizing: border-box;
+      outline: none;
+    }
+    input[type="email"]:focus, input[type="text"]:focus {
+      border-color: #00C9B8;
+    }
+    button {
+      width: 100%;
+      padding: 16px 0;
+      border-radius: 12px;
+      border: none;
+      background: linear-gradient(135deg, #00C9B8, #B89EE8);
+      color: #070C1A;
+      font-weight: bold;
+      font-size: 16px;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      transition: opacity 0.3s;
+    }
+    button:hover {
+      opacity: 0.9;
+    }
+    .back-link {
+      display: inline-block;
+      color: #8A96AA;
+      text-decoration: none;
+      margin-top: 30px;
+      font-size: 14px;
+    }
+    .back-link:hover {
+      color: #A8B4C8;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div style="margin-bottom: 20px;"><svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg></div>
+    <h1>Stay in the Loop</h1>
+    <p>
+      Subscribe to get notified about new features, AI coaching updates, and new versions of the <strong>Ride the Lucky Wave</strong> game.
+    </p>
+
+    <form onsubmit="event.preventDefault(); alert('Thanks for subscribing!'); window.location.href='games/lucky-wave/about.html';">
+      <div class="form-group">
+        <label for="name">First Name</label>
+        <input type="text" id="name" placeholder="Enter your name" required>
+      </div>
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <input type="email" id="email" placeholder="Enter your email" required>
+      </div>
+      <button type="submit">Subscribe Now</button>
+    </form>
+
+    <a href="games/lucky-wave/about.html" class="back-link">← Back to Game Info</a>
+  </div>
+</body>
+</html>

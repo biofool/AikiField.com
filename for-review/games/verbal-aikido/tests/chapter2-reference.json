@@ -1,0 +1,139 @@
+{
+  "id": "ch2",
+  "title": "My first Dojo",
+  "intro": "You’ve drummed up the courage to go the VA dojo, where practitioners of all ages and styles welcome you warmly. After various warm-up activities including a salutation, a centering and a “Verbal Stretching” you feel ready to go on the “Verbal Mat” and test your reflexes. The attack for today is “You’re so selfish”. (see Discovery mode to see how to prepare for a workout on the verbal mat).",
+  "startNode": "attack1",
+  "nodes": {
+    "attack1": {
+      "type": "attack",
+      "speaker": "Partner",
+      "text": "You’re so selfish!",
+      "meter": 2,
+      "choices": [
+        {"text": "No I’m not, you’re the selfish one!", "type": "C", "meterDelta": 1, "nextNode": "counterAttack", "outcome": "continue"},
+        {"text": "Really? Wow, I’m sorry, I didn’t mean to be.", "type": "S", "meterDelta": 0, "nextNode": "submissiveAttack", "outcome": "continue"},
+        {"text": "What do you mean?", "type": "A", "meterDelta": -1, "nextNode": "X1", "outcome": "continue"}
+      ]
+    },
+    "counterAttack": {
+      "type": "attack",
+      "speaker": "Partner",
+      "text": "Shut up! I don’t see the point in talking to you!",
+      "meter": 3,
+      "choices": [
+        {"text": "I think I see what you mean. Let me listen to what you have to say", "type": "A", "meterDelta": -2, "nextNode": "X1", "outcome": "continue"},
+        {"text": "You’re the one who needs to shut up!", "type": "C", "meterDelta": 1, "nextNode": "retry", "outcome": "retry"},
+        {"text": "That’s because you’re always saying mean things to me!", "type": "J", "meterDelta": 1, "nextNode": "retry", "outcome": "retry"}
+      ]
+    },
+    "submissiveAttack": {
+      "type": "attack",
+      "speaker": "Partner",
+      "text": "Yeah well that’s not good enough, I’m sick of you always doing this!",
+      "meter": 2,
+      "choices": [
+        {"text": "Well, nothing ever seems good enough for you, why do I even bother to try?!", "type": "V", "meterDelta": 1, "nextNode": "victimAttack", "outcome": "continue"},
+        {"text": "When did you first start to feel that way?", "type": "A", "meterDelta": -1, "nextNode": "X2", "outcome": "continue"},
+        {"text": "I’m sorry, I’m sorry! Please don’t be mad with me.", "type": "S", "meterDelta": 1, "nextNode": "disgustAttack", "outcome": "continue"}
+      ]
+    },
+    "victimAttack": {
+      "type": "attack",
+      "speaker": "Partner",
+      "text": "Oh here we go again, it’s always about you!",
+      "meter": 3,
+      "choices": [
+        {"text": "That’s because you never let me do what I want to do!", "type": "J", "meterDelta": 1, "nextNode": "retry", "outcome": "retry"},
+        {"text": "OK so everything is always my fault… I’m the only one to blame now!", "type": "V", "meterDelta": 1, "nextNode": "retry", "outcome": "retry"},
+        {"text": "You know what? Yes. Let’s go in a different direction. When did you first start to feel that way?", "type": "A", "meterDelta": -2, "nextNode": "X2", "outcome": "continue"}
+      ]
+    },
+    "disgustAttack": {
+      "type": "attack",
+      "speaker": "Partner",
+      "text": "I can’t even look at you right now you disgust me so much!",
+      "meter": 3,
+      "choices": [
+        {"text": "OK, I’ll do anything. Just tell me what you want me to do!", "type": "S", "meterDelta": 1, "nextNode": "retry", "outcome": "retry"},
+        {"text": "You know what? I’d find it hard to look at myself too right now. How about you tell me more about where this is all coming from?", "type": "A", "meterDelta": -2, "nextNode": "X2", "outcome": "continue"},
+        {"text": "Oh come on, ‘disgust’ seems a little harsh. Don’t you think you’re exaggerating?", "type": "N", "meterDelta": null, "nextNode": "retry", "outcome": "retry"}
+      ]
+    },
+    "X1": {
+      "type": "attack",
+      "speaker": "Partner",
+      "text": "I mean… you only seem to think about what you want to do!",
+      "meter": 1,
+      "choices": [
+        {"text": "And, what would you prefer?", "type": "A", "meterDelta": -1, "nextNode": "Y2", "outcome": "partial"},
+        {"text": "Hold on, it’s not all I ever think about, there’s many times I think about you!", "type": "J", "meterDelta": 1, "nextNode": "lyingAttack", "outcome": "continue", "pdfAlternativeNextNode": "longTimeAttack"},
+        {"text": "Well it seems to me like you’re over-reacting. I’m sure there’s a logical explanation for this.", "type": "N", "meterDelta": 2, "nextNode": "selfCenteredAttack", "outcome": "continue"}
+      ]
+    },
+    "lyingAttack": {
+      "type": "attack",
+      "speaker": "Partner",
+      "text": "So now I’m lying, is that what you’re saying?",
+      "meter": 2,
+      "choices": [
+        {"text": "Why is everything I do and everything I say just wrong?", "type": "V", "meterDelta": 1, "nextNode": "retry", "outcome": "retry"},
+        {"text": "No, I never said you were lying. I just trying to get you to see that I’m not completely selfish.", "type": "J", "meterDelta": 1, "nextNode": "retry", "outcome": "retry"},
+        {"text": "OK look, how about we get back to what you want to talk about. How long have you been feeling like this?", "type": "A", "meterDelta": -1, "nextNode": "X2", "outcome": "continue"}
+      ]
+    },
+    "selfCenteredAttack": {
+      "type": "attack",
+      "speaker": "Partner",
+      "text": "Are you serious? Not only are you selfish, but you are completely self-centered too!",
+      "meter": 3,
+      "choices": [
+        {"text": "Look… I’m serious about us sorting this out. How about we take 5 and talk about this more.", "type": "A", "meterDelta": null, "nextNode": "X2", "outcome": "continue"},
+        {"text": "Again with the insults! I’m trying to do my best here!", "type": "J", "meterDelta": null, "nextNode": "retry", "outcome": "retry"},
+        {"text": "Well that’s ironic… don’t you think you’re projecting a bit?", "type": "C", "meterDelta": null, "nextNode": "retry", "outcome": "retry"}
+      ]
+    },
+    "X2": {
+      "type": "attack",
+      "speaker": "Partner",
+      "text": "Well it’s been like this for quite some time now, and to be honest it gets on my nerves!",
+      "meter": 1,
+      "choices": [
+        {"text": "Well there’s no point getting angry about it, just chill out!", "type": "N", "meterDelta": 1, "nextNode": "retry", "outcome": "retry"},
+        {"text": "OK, well what would you prefer to happen?", "type": "A", "meterDelta": -1, "nextNode": "Y1", "outcome": "success"},
+        {"text": "Well, you really get on my nerves every time you’re in a mood like this!", "type": "C", "meterDelta": 2, "nextNode": "retry", "outcome": "retry"}
+      ]
+    },
+    "longTimeAttack": {
+      "type": "attack",
+      "speaker": "Partner",
+      "text": "Well, it definitely seems like a long time since you’ve thought about anyone else but yourself!",
+      "meter": 2,
+      "choices": [
+        {"text": "Oh you can talk! Do you ever get the impression you’re being a little hypocritical?", "type": "C", "meterDelta": 2, "nextNode": "retry", "outcome": "retry"},
+        {"text": "So now you want me to drop everything and do exactly what you demand?", "type": "V", "meterDelta": 1, "nextNode": "retry", "outcome": "retry"},
+        {"text": "I think I can see why it might seem like that. So, what would you like to see happening instead?", "type": "A", "meterDelta": -2, "nextNode": "Y1", "outcome": "success"}
+      ]
+    },
+    "Y1": {
+      "type": "outcome",
+      "speaker": "Partner",
+      "text": "Emmm…",
+      "meter": 0,
+      "outcome": "success",
+      "message": "Congratulations, you created an energy shift in the exchange. That’s the first step to brining this exchange towards a conversation rather than a dispute!"
+    },
+    "Y2": {
+      "type": "outcome",
+      "speaker": "Partner",
+      "text": "Hmm. OK… let’s pick this up later.",
+      "meter": 0,
+      "outcome": "partial",
+      "message": "Not bad… you did manage to create an energy shift but it was tough and you only postponed the conversation. Worth doing again (repeat)."
+    },
+    "retry": {
+      "type": "outcome",
+      "text": "Try again / recommend lessons",
+      "outcome": "retry"
+    }
+  }
+}

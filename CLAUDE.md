@@ -50,7 +50,7 @@ site. Validate changes by visual review and accessibility checks.
 - **Scripts:** `js/` + `coach-login.js` (login/register/reset/confirm,
   loaded only by `login.php`).
 - **Coaching auth (PHP, beta-gating only):** `login.php` (blind standalone
-  login page — gates `/beta/` only, not linked from nav; PHP session POST
+  login page — gates `/beta/` and `/for-review/` (games), not linked from nav; PHP session POST
   handlers + `?next=` redirect), `coach-proxy.php`
   (`/coach-api/*` → AIRichardMoon backend), `coach-login.js`,
   `includes/coach-config.load.php`, `coach-config.php` (non-secret
@@ -81,7 +81,7 @@ site. Validate changes by visual review and accessibility checks.
 - **`sync.sh` is production-sensitive.** Always run `dryrun` before `deploy`.
 - **Coaching auth = shared flow (triple-PRD rule).** The blind `login.php`
   authenticates against the AIRichardMoon backend (same as
-  quantumaikido.com) and gates the `/beta/` pages. `projects.php` is public
+  quantumaikido.com) and gates the `/beta/` + `/for-review/` pages. `projects.php` is public
   and shows an invitation card. Changes to login/registration/auth/session/
   invitation flow MUST update all three PRDs (`docs/coach-auth-prd.md` here,
   `docs/coach-dashboard-prd.md` in QA, `backend/PRD.md` in AIRichardMoon) and

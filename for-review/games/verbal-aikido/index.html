@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Verbal Aikido Story Mode prototype — Level 1 (Rookie), Chapters 1 & 2, plus Discovery lesson mode.">
+  <!-- Blind/beta surface: not in public nav or sitemap. Keep noindex until launch. -->
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#2f7d6f">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Verbal Aikido">
+  <meta name="msapplication-TileColor" content="#2f7d6f">
+  <meta name="msapplication-TileImage" content="icons/icon-192.png">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/svg+xml" href="icons/icon-192.svg">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="stylesheet" href="game.css">
+  <script>
+    // Capture the install prompt early so the game UI can trigger it later.
+    window.vaDeferredInstallPrompt = null;
+    window.addEventListener('beforeinstallprompt', function (event) {
+      event.preventDefault();
+      window.vaDeferredInstallPrompt = event;
+      // Notify the game UI that an install prompt is available.
+      if (typeof window.vaOnInstallPromptAvailable === 'function') {
+        window.vaOnInstallPromptAvailable(event);
+      }
+    });
+    window.addEventListener('appinstalled', function () {
+      window.vaDeferredInstallPrompt = null;
+      if (typeof window.vaOnAppInstalled === 'function') {
+        window.vaOnAppInstalled();
+      }
+    });
+  </script>
+  <title>Verbal Aikido — Story & Discovery Modes</title>
+</head>
+<body>
+  <main id="va-game" aria-label="Verbal Aikido story mode game">
+    <header class="game-header">
+      <div class="header-row">
+        <h1 class="game-title">Verbal Aikido — Story Mode</h1>
+        <div class="pwa-controls" id="pwa-controls" aria-label="App controls">
+          <span id="connection-status" class="connection-status online" aria-live="polite" title="Online">
+            <span class="connection-dot" aria-hidden="true"></span>
+            <span class="connection-text">Online</span>
+          </span>
+          <button id="install-btn" class="pwa-btn install-btn hidden" type="button" aria-label="Install Verbal Aikido app">
+            Install app
+          </button>
+          <button id="pwa-mode-toggle" class="pwa-btn mode-toggle" role="switch" aria-checked="false" aria-label="Toggle app install mode" type="button">
+            <span class="mode-label" aria-hidden="true">Browser</span>
+            <span class="mode-switch" aria-hidden="true"></span>
+            <span class="mode-label" aria-hidden="true">App</span>
+          </button>
+        </div>
+      </div>
+      <div id="install-panel" class="install-panel hidden" aria-live="polite">
+        <p id="install-message" class="install-message">Install this game to your home screen for offline play.</p>
+        <button id="install-confirm-btn" class="choice-btn primary" type="button">Install Verbal Aikido</button>
+        <div id="ios-instructions" class="ios-instructions hidden">
+          <p><strong>iPhone / iPad:</strong> tap the share icon <span aria-hidden="true">⎙</span>, then choose <strong>Add to Home Screen</strong>.</p>
+        </div>
+      </div>
+      <nav id="mode-tabs" class="mode-tabs" aria-label="Game modes"></nav>
+      <div class="meter-wrap">
+        <p id="meter-label" class="meter-label">
+          <span>Anger meter</span>
+        </p>
+        <div id="meter" class="meter" role="meter" aria-label="Anger meter" aria-valuemin="0" aria-valuemax="3" aria-valuenow="0" aria-labelledby="meter-label meter-value">
+          <span id="meter-value" class="sr-only">Anger meter: 0 of 3. Calm.</span>
+        </div>
+      </div>
+    </header>
+
+    <section id="scene" class="scene-card" aria-live="polite" aria-atomic="true">
+      <h2 id="chapter-title" class="chapter-title"></h2>
+      <p id="speaker" class="speaker"></p>
+      <div id="dialogue" class="dialogue"></div>
+
+      <div id="feedback" class="feedback hidden" aria-live="assertive">
+        <p id="feedback-text" class="feedback-text"></p>
+      </div>
+
+      <div id="choices" class="choices" role="list" aria-label="Reply choices"></div>
+      <div id="controls" class="controls"></div>
+    </section>
+
+    <div id="load-error" class="hidden"></div>
+
+    <div id="sr-log" class="sr-only" aria-live="polite"></div>
+  </main>
+
+  <script src="game.js"></script>
+</body>
+</html>

@@ -234,7 +234,7 @@ $coachLoginUrl = $_SERVER['SCRIPT_NAME'] ?? '/login.php';
   <meta name="theme-color" content="#0f2942">
   <meta name="robots" content="noindex,nofollow">
   <title>Sign in — AikiField</title>
-  <meta name="description" content="Sign in to access AikiField beta assessment pages.">
+  <meta name="description" content="Sign in to access AikiField beta assessment pages and the games review area.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preload" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Public+Sans:wght@400;600;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
@@ -314,7 +314,7 @@ $coachLoginUrl = $_SERVER['SCRIPT_NAME'] ?? '/login.php';
 
       <!-- Login step -->
       <div id="coach-login" class="coach-card" role="tabpanel" aria-labelledby="coach-tab-login">
-        <p class="coach-intro">Sign in or register to access the beta assessment pages.</p>
+        <p class="coach-intro">Sign in or register to access the beta assessment and games review pages.</p>
 
         <!-- Social login buttons (shown if OAuth is configured) -->
         <div id="coach-social" class="coach-social" hidden>
@@ -388,7 +388,7 @@ $coachLoginUrl = $_SERVER['SCRIPT_NAME'] ?? '/login.php';
 
       <!-- Registration form -->
       <div id="coach-register" class="coach-card" role="tabpanel" aria-labelledby="coach-tab-register" hidden>
-        <p class="coach-intro">Sign up with your email and password to access the beta pages.</p>
+        <p class="coach-intro">Sign up with your email and password to access the beta and games review pages.</p>
 
         <form id="coach-register-form" class="coach-form" novalidate>
           <!-- Two-column layout: left = required, right = optional. -->
@@ -508,10 +508,11 @@ $coachLoginUrl = $_SERVER['SCRIPT_NAME'] ?? '/login.php';
         <!-- Compressed intro panel -->
         <div class="coach-intro-panel coach-intro-panel--highlight">
           <h2>Beta Access <span class="coach-free-badge">Members</span></h2>
-          <p class="coach-intro-subtitle">Sign in to access the AikiField beta assessment pages.</p>
+          <p class="coach-intro-subtitle">Sign in to access the AikiField beta assessment pages and games review area.</p>
           <p class="coach-intro-text">
             This sign-in gates the pre-release assessment tools under
-            <code>/beta/</code>. The same account works on
+            <code>/beta/</code> and the games review area under
+            <code>/for-review/</code>. The same account works on
             <a href="https://quantumaikido.com">quantumaikido.com</a> if you
             are an AI Ki Questions Fielded member.
           </p>
