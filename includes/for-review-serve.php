@@ -19,7 +19,7 @@
 require_once __DIR__ . '/beta-gate.load.php'; // redirects to /login.php when unauthed
 
 $uriPath = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?? '/';
-if (strpos($uriPath, '/for-review') !== 0) {
+if ($uriPath !== '/for-review' && strpos($uriPath, '/for-review/') !== 0) {
     http_response_code(404);
     exit;
 }

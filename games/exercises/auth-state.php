@@ -9,6 +9,15 @@
  * Returns: {"authed": true|false}
  */
 
+// No session cookie => anonymous => authed=false. Reporting that needs no
+// session at all, so don't session_start() one — keeps the exercises page
+// cookie-free for anonymous traffic.
+if (session_status() === PHP_SESSION_NONE && empty($_COOKIE[session_name()])) {
+    header('Content-Type: application/json');
+    echo json_encode(['authed' => false]);
+    exit;
+}
+
 define('AF_GATE_NO_REDIRECT', true);
 require dirname(__DIR__, 2) . '/includes/beta-gate.load.php';
 
