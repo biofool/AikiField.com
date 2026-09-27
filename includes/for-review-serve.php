@@ -66,6 +66,7 @@ $types = [
     'webp' => 'image/webp',
     'ico'  => 'image/x-icon',
     'md'   => 'text/plain; charset=utf-8',
+    'pdf'  => 'application/pdf',
     'txt'  => 'text/plain; charset=utf-8',
 ];
 $ext = strtolower(pathinfo($path, PATHINFO_EXTENSION));

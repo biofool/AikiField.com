@@ -200,6 +200,11 @@ EXCLUDES=(
     --exclude='sync.sh'
     --exclude='_*preview*.html'
     --exclude='SITE_CONTENT.md'
+    # The *.md ban below keeps README/SITE_CONTENT/etc. out of the webroot,
+    # but for-review/documents/ocr/*.md IS web content (the gated document
+    # library, issue #60). rsync takes the first matching pattern, so this
+    # include must sit before the *.md exclude.
+    --include='for-review/documents/ocr/*.md'
     --exclude='*.md'
     --exclude='*.py'
     --exclude='*.sh'

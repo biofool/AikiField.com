@@ -1,0 +1,229 @@
+<?php
+
+// Session gate — same coaching login that protects /beta/ and /for-review/.
+// The /for-review/* dispatcher (includes/for-review-serve.php) already ran
+// this gate; the require_once below also protects this file if it is ever
+// reached directly (e.g. a misconfigured dev server).
+require_once dirname(__DIR__, 2) . '/includes/beta-gate.load.php';
+
+// Build the document index by scanning pdf/ and ocr/ — pairing is by
+// matching basename (Foo.pdf <-> Foo.md). Files without a counterpart are
+// flagged in the table rather than hidden.
+$pdfs = [];
+foreach (glob(__DIR__ . '/pdf/*.pdf') ?: [] as $f) {
+    $pdfs[pathinfo($f, PATHINFO_FILENAME)] = basename($f);
+}
+$ocrs = [];
+foreach (glob(__DIR__ . '/ocr/*.md') ?: [] as $f) {
+    $ocrs[pathinfo($f, PATHINFO_FILENAME)] = basename($f);
+}
+$names = array_values(array_unique(array_merge(array_keys($pdfs), array_keys($ocrs))));
+natcasesort($names);
+$names = array_values($names);
+
+function doc_title($basename) {
+    $t = str_replace(['-', '_', '.'], ' ', $basename);
+    return trim(preg_replace('/\s+/', ' ', $t));
+}
+function doc_size($path) {
+    $bytes = @filesize($path);
+    if ($bytes === false) return '';
+    if ($bytes >= 1048576) return number_format($bytes / 1048576, 1) . ' MB';
+    if ($bytes >= 1024)    return number_format($bytes / 1024, 0) . ' KB';
+    return $bytes . ' B';
+}
+
+$paired   = 0;
+$pdfOnly  = 0;
+$ocrOnly  = 0;
+foreach ($names as $n) {
+    $hasPdf = isset($pdfs[$n]);
+    $hasOcr = isset($ocrs[$n]);
+    if ($hasPdf && $hasOcr) $paired++;
+    elseif ($hasPdf)        $pdfOnly++;
+    else                    $ocrOnly++;
+}
+
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="/favicon.svg" type="image/x-icon">
+    <title>Document Library | For Review</title>
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="stylesheet" href="https://quantumaikido.com/styles.css">
+    <style>
+        .container { max-width: 1100px; margin: 0 auto; padding: 0 2rem; }
+
+        .beta-notice {
+            background: rgba(139, 92, 246, 0.1);
+            padding: 0.55rem 0;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+        .beta-notice-inner {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .beta-badge {
+            background: var(--accent);
+            color: #fff;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 0.15rem 0.45rem;
+            border-radius: 3px;
+            letter-spacing: 0.06em;
+            flex-shrink: 0;
+        }
+        .beta-notice-inner a { color: var(--accent-light); margin-left: auto; white-space: nowrap; }
+
+        main { padding: 3rem 0; }
+        .page-header { margin-bottom: 1.5rem; }
+        .page-header h1 { color: var(--text-primary); font-size: 2rem; line-height: 1.2; margin-bottom: 0.75rem; }
+        .page-header .tagline {
+            color: var(--text-muted);
+            font-style: italic;
+            font-size: 1.05rem;
+            margin-top: 0.5rem;
+            margin-bottom: 0;
+        }
+        .notice-box {
+            background-color: var(--secondary-bg);
+            border-left: 3px solid var(--accent);
+            padding: 1rem 1.5rem;
+            border-radius: 0 8px 8px 0;
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            margin-top: 1.5rem;
+        }
+        .notice-box p { margin: 0; }
+
+        .docs-table-wrap { overflow-x: auto; margin-top: 1.5rem; }
+        .docs-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+        .docs-table th {
+            text-align: left;
+            font-size: 0.72rem;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            padding: 0.6rem 0.9rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .docs-table td {
+            padding: 0.65rem 0.9rem;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-secondary);
+            vertical-align: middle;
+        }
+        .docs-table tr:hover td { background: rgba(255,255,255,0.02); }
+        .doc-title { color: var(--text-primary); }
+        .doc-link {
+            color: var(--accent-light);
+            text-decoration: none;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        .doc-link:hover { text-decoration: underline; }
+        .doc-size { color: var(--text-muted); font-size: 0.78rem; font-weight: 400; margin-left: 0.35rem; }
+        .doc-missing { color: var(--text-muted); }
+        .doc-flag {
+            display: inline-flex;
+            align-items: center;
+            font-size: 0.68rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            padding: 0.15rem 0.55rem;
+            border-radius: 20px;
+            background: rgba(244,200,66,0.1);
+            color: #F4C842;
+            border: 1px solid rgba(244,200,66,0.3);
+            white-space: nowrap;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { transition-duration: 0.01ms !important; }
+        }
+        @media (max-width: 768px) {
+            .container { padding: 0 1.25rem; }
+        }
+    </style>
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <div class="beta-notice" role="status">
+        <div class="beta-notice-inner">
+            <span class="beta-badge">BETA</span>
+            This page is under review — content and design may change before release.
+            <a href="/for-review/">← Games hub</a>
+        </div>
+    </div>
+
+    <main id="main-content">
+        <div class="container">
+
+            <div class="page-header">
+                <h1>Document Library</h1>
+                <p class="tagline">Legacy document corpus — PDFs paired with OCR-extracted text</p>
+            </div>
+
+            <div class="notice-box">
+                <p>
+                    <?php echo count($names); ?> documents —
+                    <?php echo $paired; ?> with both PDF and OCR text<?php
+                    if ($ocrOnly > 0) echo ', ' . $ocrOnly . ' OCR text only (no PDF)';
+                    if ($pdfOnly > 0) echo ', ' . $pdfOnly . ' PDF only (no OCR)';
+                    ?>.
+                    OCR text is machine-extracted and may contain recognition errors.
+                </p>
+            </div>
+
+            <div class="docs-table-wrap">
+                <table class="docs-table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Document</th>
+                            <th scope="col">PDF</th>
+                            <th scope="col">OCR text</th>
+                            <th scope="col">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+<?php foreach ($names as $n):
+    $hasPdf = isset($pdfs[$n]);
+    $hasOcr = isset($ocrs[$n]);
+    $pdfUrl = $hasPdf ? 'pdf/' . rawurlencode($pdfs[$n]) : null;
+    $ocrUrl = $hasOcr ? 'ocr/' . rawurlencode($ocrs[$n]) : null;
+?>
+                        <tr>
+                            <td class="doc-title"><?php echo htmlspecialchars(doc_title($n)); ?></td>
+                            <td><?php if ($pdfUrl): ?>
+                                <a class="doc-link" href="<?php echo $pdfUrl; ?>">PDF<span class="doc-size"><?php echo doc_size(__DIR__ . '/pdf/' . $pdfs[$n]); ?></span></a>
+                            <?php else: ?><span class="doc-missing">—</span><?php endif; ?></td>
+                            <td><?php if ($ocrUrl): ?>
+                                <a class="doc-link" href="<?php echo $ocrUrl; ?>">OCR text<span class="doc-size"><?php echo doc_size(__DIR__ . '/ocr/' . $ocrs[$n]); ?></span></a>
+                            <?php else: ?><span class="doc-missing">—</span><?php endif; ?></td>
+                            <td><?php if (!$hasPdf): ?><span class="doc-flag">No PDF</span>
+                            <?php elseif (!$hasOcr): ?><span class="doc-flag">No OCR</span><?php endif; ?></td>
+                        </tr>
+<?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </main>
+</body>
+</html>
