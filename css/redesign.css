@@ -494,6 +494,12 @@ a.af-card:hover .af-card__arrow { text-decoration: underline; }
    project's detail card below, one at a time. */
 .af-proj-table-wrap {
   margin: 0 0 32px;
+  /* position:relative so absolutely-positioned descendants (e.g. .af-sr-only
+     inside the table header) are clipped by this scroller instead of escaping
+     to the page's containing block and widening the document (issue found in
+     the overflow audit: a 1px sr-only span at x=503 created a 184px horizontal
+     scrollbar on 320px viewports). */
+  position: relative;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
 }

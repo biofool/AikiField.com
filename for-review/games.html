@@ -368,7 +368,9 @@ $csrf_token = $_SESSION['csrf_token'];
         if (!toggle || !links) return;
 
         function isDesktop() {
-            return window.matchMedia('(min-width: 768px)').matches;
+            // Must match the nav breakpoint in the shared stylesheet
+            // (quantumaikido.com/styles.css: min-width 769px desktop nav).
+            return window.matchMedia('(min-width: 769px)').matches;
         }
 
         function closeAllDropdowns() {
