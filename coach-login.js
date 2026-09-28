@@ -56,6 +56,19 @@
         _initParams.get("redirect"),
         window.COACH_LOGIN_REDIRECT || "/members.php",
     );
+    // Invitation-code links: /login.php?invite=CODE, or nested inside the
+    // post-login target (beta-gate sends ?next= which PHP folds into
+    // COACH_LOGIN_REDIRECT).
+    const INVITE = (function () {
+        const direct = _initParams.get("invite") || _initParams.get("code");
+        if (direct) return direct;
+        try {
+            const nested = new URL(REDIRECT, window.location.origin).searchParams;
+            return nested.get("invite") || nested.get("code") || "";
+        } catch (_) {
+            return "";
+        }
+    })();
     let currentEmail = "";
     let pendingValidationEmail = "";
 
@@ -1046,7 +1059,10 @@
         return;
     }
     handleQueryError();
-    if (_oauthParams.get("register") === "1") {
+    if (INVITE && regCodeInput) {
+        regCodeInput.value = INVITE;
+    }
+    if (_oauthParams.get("register") === "1" || INVITE) {
         const tabReg = document.getElementById("coach-tab-register");
         if (tabReg) tabReg.click();
     }

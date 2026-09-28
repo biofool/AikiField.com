@@ -287,7 +287,7 @@ See `backend/PRD.md` in AIRichardMoon for full endpoint details.
 | `login.php` | **Blind** standalone login page (gates `/beta/` only). PHP session POST handlers (`backend-login`, `logout`), `?next=` redirect support, already-authed fast path. Not linked from nav. | extracted from the former `projects.php` auth block (issue #51 lineage) |
 | `projects.php` | Demonstration Technologies marketing page — **fully public**, no auth. Shows the invitation card (`#see-it-live`) instead of the login/chat. Kept as `.php` for the `projects.html` → `projects.php` 301 and because `/beta/` pages link to it. | was the auth host; auth removed |
 | `coach-proxy.php` | PHP reverse proxy `/coach-api/*` → backend | ported from QA `coach-proxy.php` (trimmed) |
-| `coach-login.js` | Login/register/reset/confirm JS (loaded by `login.php`) | ported from QA `coach-login.js` |
+| `coach-login.js` | Login/register/reset/confirm JS (loaded by `login.php`). Supports `?invite=`/`?code=` URL params — the register tab auto-opens with the registration-code field pre-filled; also read nested inside the resolved post-login target (beta-gate `?next=` → `COACH_LOGIN_REDIRECT`). | ported from QA `coach-login.js`; invite-param support added for parity |
 | `coach-auth.css` | Login styling (loaded by `login.php`) | copied verbatim from QA |
 | `dashboard.php` | **Blind** operations dashboard — pulls HTTP errors (4xx/5xx), firewall/WAF events, and traffic summaries from the Cloudflare GraphQL Analytics API. Not linked from nav. Access via `?key=<DASHBOARD_ADMIN_KEY>`. | new |
 | `includes/cloudflare-logs.class.php` | `CloudflareLogsScanner` class — queries the Cloudflare GraphQL API for zone analytics, returns structured report, renders HTML. Used by `dashboard.php`. | new |
