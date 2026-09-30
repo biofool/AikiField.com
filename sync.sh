@@ -187,6 +187,7 @@ EXCLUDES=(
     --exclude='.gitattributes'
     --exclude='*.dvc'
     --exclude='scripts/'
+    --exclude='ci-results/'
     # marketing/ holds source material (e.g. the 180-post FB batch) — not
     # part of the public site.
     --exclude='marketing/'
