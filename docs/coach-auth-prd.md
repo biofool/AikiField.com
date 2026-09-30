@@ -320,7 +320,9 @@ See `backend/PRD.md` in AIRichardMoon for full endpoint details.
 - `dashboard-env.php` — AikiField has no dashboard. Staging wrappers ARE
   ported (see [Staging folder](#staging-folder-stagingloginphp) below).
 - The environment-toggle UI (`#coach-env-controls`) and the profile link
-  (`/profile.php`) — AikiField has no profile page.
+  (`/profile.php`) — AikiField has no profile page. (On QA, `/profile` runs
+  `coach-auth-check.php` and `coach-profile.js` reads `window.QA_SESSION`
+  instead of `sessionStorage` — issue #328. N/A here: no profile surface.)
 
 ## Session model
 
