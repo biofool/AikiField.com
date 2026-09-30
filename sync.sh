@@ -691,12 +691,14 @@ case "$CMD" in
         _SCRIPT_DIR="$(dirname "$0")"
         _PURGE_FLAG=""
         [[ $PURGE_ALL -eq 1 ]] && _PURGE_FLAG="--purge-all"
+        _SKIP_CI_FLAG=""
+        [[ $SKIP_CI -eq 1 ]] && _SKIP_CI_FLAG="--skip-ci"
 
         for _target in staging prod; do
             echo "========================================"
             echo "  Deploying to ${_target}..."
             echo "========================================"
-            bash "$_SCRIPT_DIR/sync.sh" "$_target" deploy $_PURGE_FLAG
+            bash "$_SCRIPT_DIR/sync.sh" "$_target" deploy $_PURGE_FLAG $_SKIP_CI_FLAG
             if [ $? -ne 0 ]; then
                 echo "ERROR: deploy to ${_target} failed — aborting deploy-all." >&2
                 exit 1
