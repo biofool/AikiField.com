@@ -146,7 +146,7 @@ done
     echo "worktree: $WT (removed after run)"
     echo ""
     for s in "${STEP_STATUS[@]}"; do
-        label="${s%%:*}"; state="${s##*:}"
+        label="${s%:*}"; state="${s##*:}"
         case "$state" in
             PASS) echo "  PASS   $label" ;;
             KNOWN) echo "  KNOWN  $label (known failures only)" ;;
