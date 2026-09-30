@@ -28,3 +28,9 @@ __pycache__/
 
 # Node.js / Playwright (e2e test suite)
 node_modules/
+
+# Local CI run output (scripts/ci-local.sh)
+ci-results/
+tests/e2e/test-results/
+tests/e2e/playwright-report/
+tests/e2e/.stub-*.jsonl

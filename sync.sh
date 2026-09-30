@@ -112,6 +112,8 @@ show_help() {
     echo "  -p PATH            - Override remote path"
     echo "  -y / --yes         - Skip confirmation prompts"
     echo "  --no-pull          - Skip auto-pull of staging branch (deploy local HEAD as-is)"
+    echo "  --skip-ci          - Skip the parallel local-CI run during staging deploys"
+    echo "                       (scripts/ci-local.sh; override steps via CI_LOCAL_ARGS)"
     echo ""
     echo "Environment:"
     echo "  SKIP_PHP_LINT=1 - Skip the pre-deploy PHP syntax check (emergencies only)"
@@ -291,11 +293,53 @@ cloudflare_ip_check() {
     fi
 }
 
+# Local CI during staging deploys: scripts/ci-local.sh runs php-lint, the
+# unit tests, and the Playwright e2e suite against a detached worktree of
+# HEAD, so it can run in parallel with rsync without touching the working
+# tree. The deploy waits on it before exiting — staging content is already
+# up either way; a CI failure fails the sync command (gate at end).
+CI_LOCAL_PID=""
+CI_LOCAL_LOG=""
+start_ci_local() {
+    if [[ "${SKIP_CI:-0}" == "1" ]]; then
+        echo "  Local CI: SKIPPED (--skip-ci)"
+        return 0
+    fi
+    local script="${LOCAL_PATH}scripts/ci-local.sh"
+    if [[ ! -f "$script" ]]; then
+        echo "  Local CI: skipped (scripts/ci-local.sh not found)"
+        return 0
+    fi
+    mkdir -p "${LOCAL_PATH}ci-results"
+    CI_LOCAL_LOG="${LOCAL_PATH}ci-results/sync-$(date +%Y%m%d-%H%M%S).log"
+    # CI_LOCAL_ARGS overrides the default step set (php-lint + unit + e2e).
+    # shellcheck disable=SC2086
+    bash "$script" ${CI_LOCAL_ARGS:-all} >"$CI_LOCAL_LOG" 2>&1 &
+    CI_LOCAL_PID=$!
+    echo "  Local CI running in parallel (pid $CI_LOCAL_PID) — log: $CI_LOCAL_LOG"
+}
+wait_ci_local() {
+    [[ -z "$CI_LOCAL_PID" ]] && return 0
+    echo ""
+    echo "  Waiting for local CI to finish (pid $CI_LOCAL_PID) — log: $CI_LOCAL_LOG"
+    local rc=0
+    wait "$CI_LOCAL_PID" 2>/dev/null || rc=$?
+    CI_LOCAL_PID=""
+    if [[ $rc -ne 0 ]]; then
+        echo "  ✗ Local CI FAILED (exit $rc) — see $CI_LOCAL_LOG" >&2
+        tail -20 "$CI_LOCAL_LOG" >&2
+        return 1
+    fi
+    echo "  ✓ Local CI passed ($CI_LOCAL_LOG)"
+    return 0
+}
+
 # Pre-parse arguments
 CMD=""
 SCOPE=""
 YES=0
 NO_PULL=0
+SKIP_CI=${SKIP_CI:-0}
 REMOTE_PATH_FLAG=""
 REMOTE_HOST_ARG=""
 _next_p=0
@@ -314,6 +358,7 @@ for arg in "$@"; do
         --prod)    [ -z "$REMOTE_HOST_ARG" ] && REMOTE_HOST_ARG="prod" ;;
         --purge-all) PURGE_ALL=1 ;;
         --no-pull)   NO_PULL=1 ;;
+        --skip-ci)   SKIP_CI=1 ;;
         -y|--yes) YES=1 ;;
         upload|download|dryrun|deploy|deploy-all|sftp|ftp|logs|report|help)
             [ -z "$CMD" ] && CMD="$arg"
@@ -673,6 +718,9 @@ case "$CMD" in
         if [[ "$REMOTE_NAME" == "staging" ]]; then
             require_git_branch "staging"
             echo ""
+            # Branch is settled — HEAD is what rsync ships. Kick off local CI
+            # in parallel; wait_ci_local (end of this case) gates the result.
+            start_ci_local
         fi
         php_lint
         echo ""
@@ -735,6 +783,9 @@ case "$CMD" in
         else
             echo "Deploy complete."
         fi
+        # Gate at end: staging deploys wait on the parallel local-CI run.
+        # No-op for prod deploys (no CI was started).
+        wait_ci_local || exit 1
         ;;
 
     sftp|ftp)
