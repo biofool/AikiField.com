@@ -630,6 +630,7 @@
         passkeyEnabled().then((on) => { if (on) passkeyBtn.hidden = false; });
         passkeyBtn.addEventListener("click", async () => {
             passkeyBtn.disabled = true;
+            passkeyBtn.setAttribute("aria-busy", "true");
             showStatus(loginStatus, "Use your passkey to sign in…", "loading");
             try {
                 const identifier = emailInput.value.trim();
@@ -698,10 +699,11 @@
                 if (error && error.name === "NotAllowedError") {
                     showStatus(loginStatus, "Passkey sign-in was cancelled.", "info");
                 } else {
-                    showStatus(loginStatus, "Network error: " + (error && error.message ? error.message : "unknown"), "error");
+                    showStatus(loginStatus, friendlyErrorMessage(error), "error");
                 }
             } finally {
                 passkeyBtn.disabled = false;
+                passkeyBtn.removeAttribute("aria-busy");
             }
         });
     }
