@@ -137,42 +137,42 @@
             </tr>
           </thead>
           <tbody>
-            <tr class="af-proj-table__row" data-project="1" tabindex="0" role="button" aria-selected="true" aria-controls="project-1">
+            <tr class="af-proj-table__row" data-project="1" tabindex="0" role="button" aria-pressed="true" aria-controls="project-1">
               <td class="af-proj-table__num">1</td>
               <td class="af-proj-table__name">Quantum Aikido Wisdom</td>
               <td>AI Coaching</td>
               <td class="af-proj-table__tech">Python &middot; FastAPI &middot; Gemini &middot; Cloud Run &middot; Firestore</td>
               <td class="af-proj-table__view" aria-hidden="true">&rarr;</td>
             </tr>
-            <tr class="af-proj-table__row" data-project="2" tabindex="0" role="button" aria-selected="false" aria-controls="project-2">
+            <tr class="af-proj-table__row" data-project="2" tabindex="0" role="button" aria-pressed="false" aria-controls="project-2">
               <td class="af-proj-table__num">2</td>
               <td class="af-proj-table__name">World Studio Finder</td>
               <td>Outreach Pipeline</td>
               <td class="af-proj-table__tech">Python &middot; Playwright &middot; Flask &middot; Places API &middot; Hunter.io</td>
               <td class="af-proj-table__view" aria-hidden="true">&rarr;</td>
             </tr>
-            <tr class="af-proj-table__row" data-project="3" tabindex="0" role="button" aria-selected="false" aria-controls="project-3">
+            <tr class="af-proj-table__row" data-project="3" tabindex="0" role="button" aria-pressed="false" aria-controls="project-3">
               <td class="af-proj-table__num">3</td>
               <td class="af-proj-table__name">MultiCloud-MultiPass</td>
               <td>Cloud Management</td>
               <td class="af-proj-table__tech">Python &middot; FastAPI &middot; Cloud Run &middot; Firestore &middot; BigQuery</td>
               <td class="af-proj-table__view" aria-hidden="true">&rarr;</td>
             </tr>
-            <tr class="af-proj-table__row" data-project="4" tabindex="0" role="button" aria-selected="false" aria-controls="project-4">
+            <tr class="af-proj-table__row" data-project="4" tabindex="0" role="button" aria-pressed="false" aria-controls="project-4">
               <td class="af-proj-table__num">4</td>
               <td class="af-proj-table__name">ChaosEngine</td>
               <td>Resilience Engineering</td>
               <td class="af-proj-table__tech">Go &middot; Python/Bash &middot; AWS SDK &middot; Docker</td>
               <td class="af-proj-table__view" aria-hidden="true">&rarr;</td>
             </tr>
-            <tr class="af-proj-table__row" data-project="5" tabindex="0" role="button" aria-selected="false" aria-controls="project-5">
+            <tr class="af-proj-table__row" data-project="5" tabindex="0" role="button" aria-pressed="false" aria-controls="project-5">
               <td class="af-proj-table__num">5</td>
               <td class="af-proj-table__name">ClipQuotes</td>
               <td>Media Intelligence</td>
               <td class="af-proj-table__tech">Python &middot; Whisper &middot; pyannote &middot; OpenCV &middot; FFmpeg</td>
               <td class="af-proj-table__view" aria-hidden="true">&rarr;</td>
             </tr>
-            <tr class="af-proj-table__row" data-project="6" tabindex="0" role="button" aria-selected="false" aria-controls="project-6">
+            <tr class="af-proj-table__row" data-project="6" tabindex="0" role="button" aria-pressed="false" aria-controls="project-6">
               <td class="af-proj-table__num">6</td>
               <td class="af-proj-table__name">Voice Synthesis Benchmarking</td>
               <td>AI Research & Governance</td>
@@ -532,7 +532,7 @@
       // Update row states
       rows.forEach(function (row) {
         var isMatch = row.getAttribute('data-project') === String(num);
-        row.setAttribute('aria-selected', isMatch ? 'true' : 'false');
+        row.setAttribute('aria-pressed', isMatch ? 'true' : 'false');
       });
       // Show only the matching panel
       panels.forEach(function (panel) {

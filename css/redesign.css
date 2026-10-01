@@ -541,11 +541,11 @@ a.af-card:hover .af-card__arrow { text-decoration: underline; }
   outline: 2px solid var(--af-primary);
   outline-offset: -2px;
 }
-.af-proj-table__row[aria-selected="true"] {
+.af-proj-table__row[aria-pressed="true"] {
   background: var(--af-primary);
 }
-.af-proj-table__row[aria-selected="true"] td { color: #fff; }
-.af-proj-table__row[aria-selected="true"] .af-proj-table__view { color: var(--af-mint); }
+.af-proj-table__row[aria-pressed="true"] td { color: #fff; }
+.af-proj-table__row[aria-pressed="true"] .af-proj-table__view { color: var(--af-mint); }
 .af-proj-table__num {
   width: 44px;
   text-align: center;
@@ -553,11 +553,11 @@ a.af-card:hover .af-card__arrow { text-decoration: underline; }
   color: var(--af-gold);
   font-variant-numeric: tabular-nums;
 }
-.af-proj-table__row[aria-selected="true"] .af-proj-table__num { color: var(--af-mint); }
+.af-proj-table__row[aria-pressed="true"] .af-proj-table__num { color: var(--af-mint); }
 .af-proj-table__name { font-weight: 600; color: var(--af-ink); white-space: nowrap; }
-.af-proj-table__row[aria-selected="true"] .af-proj-table__name { color: #fff; }
+.af-proj-table__row[aria-pressed="true"] .af-proj-table__name { color: #fff; }
 .af-proj-table__tech { font-size: 15px; color: var(--af-muted); }
-.af-proj-table__row[aria-selected="true"] .af-proj-table__tech { color: var(--af-dark-card-text); }
+.af-proj-table__row[aria-pressed="true"] .af-proj-table__tech { color: var(--af-dark-card-text); }
 .af-proj-table__view {
   width: 40px;
   text-align: center;
