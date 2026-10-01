@@ -70,23 +70,42 @@ access all beta pages for 7 days. The login page is blind (not in the nav,
 
 ## UI layout (login.php — blind, beta-gating only)
 
-The canonical quantumaikido.com sign-in, create-account, and password-reset surfaces use an approximately 30% smaller desktop visual footprint while preserving 44px interaction targets and 16px input text; its six confirmation-code boxes also remain in one horizontal row at every supported viewport width. Its registration resend timer starts at 10 seconds, doubles after each successful send in the current page session, and caps at 10 minutes. These presentation and timer adjustments are currently canonical-frontend-only; AikiField remains an intentionally separate themed port until the same treatment is explicitly approved and validated here.
+**Parity with the canonical frontend (ported under issue #57, 2026-10):**
+AikiField's sign-in, create-account, and password-reset surfaces now use the
+canonical quantumaikido.com presentation — an approximately 30% smaller
+desktop visual footprint (scoped `.coach-login-forms` rules in
+`coach-auth.css`) preserving 44px interaction targets and 16px input text;
+the six confirmation-code boxes stay in one horizontal row at every
+supported viewport width (`.coach-otp-digits` is a 6-column grid), and the
+registration OTP field sits in the `.coach-reg-bottom-row` beside the
+invitation code, hidden until a validation code is actually sent. The
+registration resend timer starts at 10 seconds, doubles after each
+successful send in the current page session, and caps at 10 minutes;
+login-time activation resend keeps its flat 60-second cooldown.
+`coach-login.js` also matches the canonical file on: `friendlyErrorMessage`
+(SyntaxError → generic retry message), a 35s default fetch timeout,
+`role=alert`/`role=status` on status lines, arrow-key tab navigation with
+roving tabindex, the explicit `getCaptchaToken(which)` context, the
+`site_reviewer_required` error code, and the registration
+preferred-language select populated from `data/i18n-config.json` via
+`AFLocale.loadConfig()` (js/locale-utils.js is loaded on this page).
 
 The login page uses a **two-column layout** (`.coach-login-layout`):
 - **Left column** (`.coach-login-forms`): sign-in form, registration form,
-  password reset, email confirmation — all the interactive auth steps.
+  password reset, email confirmation — all the interactive auth steps,
+  under the shared tab bar (`#coach-auth-tab-bar`, one form at a time).
 - **Right column** (`.coach-login-caveats`, a `<details>` element): an intro
   panel ("Beta Access") and a privacy notice. On desktop (≥768px) the
   caveats are always visible and sticky. On mobile (<768px) the caveats
   appear first as a collapsible section with a toggle.
 
-**Not yet ported:** quantumaikido.com changed the *inner* `.coach-login-forms`
-layout so sign-in and registration render side by side (≥900px) instead of
-toggling between them — see `docs/coach-dashboard-prd.md` §4.1.1 "Layout
-(updated)" in that repo. AikiField's `coach-login.js`/`login.php`/
-`coach-auth.css` are a ported copy and have **not** received this change yet;
-they still use the old toggle-based single-form view. Port before relying on
-side-by-side behavior here.
+**Side-by-side note (superseded):** quantumaikido.com briefly rendered
+sign-in and registration side by side inside `.coach-login-forms` (≥900px,
+issue #213 in that repo). That experiment was reverted upstream — the
+canonical frontend is back to the tab-bar one-form-at-a-time model this
+repo already uses, so there is nothing left to port. The
+`docs/coach-dashboard-prd.md` §4.1.1 "Layout (updated)" text in that repo
+still describes the side-by-side experiment and is stale as of 2026-10.
 
 ### Copy (login.php)
 
@@ -818,6 +837,16 @@ maintain a three-branch workflow: `dev` → `staging` → `main`:
   `firewall_events` fields.
 - Dashboard: `dashboard.php?key=<key>&hours=168`: returns 7-day window
   (may show more error groups than the default 24h).
+- Playwright e2e (`bash tests/e2e/run.sh`): full suite against the local
+  stub backend — login flow, proxy forwarding, beta-gate redirects.
+- Visual regression (`bash tests/e2e/run.sh visual`, issue #57):
+  screenshots of `/`, `/login.php`, `/projects.php`, and every gated
+  `/beta/` page at 320/768/1024/1440px compared against committed
+  baselines in `tests/e2e/visual-baselines/chromium/` (5% pixel-diff
+  threshold), plus an axe-core pass per page (critical violations fail).
+  Regenerate baselines after intentional UI changes with
+  `bash tests/e2e/run.sh visual --update-snapshots`. Per-run copies land in
+  `docs/ui-review/<date>-<sha>/` (gitignored).
 
 ## Future considerations
 
