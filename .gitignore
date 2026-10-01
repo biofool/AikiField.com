@@ -29,6 +29,11 @@ __pycache__/
 # Node.js / Playwright (e2e test suite)
 node_modules/
 
+# Visual-regression review artifacts (tests/e2e/specs/visual.spec.js writes
+# dated screenshot folders here; the committed baselines live in
+# tests/e2e/visual-baselines/)
+docs/ui-review/
+
 # Local CI run output (scripts/ci-local.sh)
 ci-results/
 tests/e2e/test-results/
