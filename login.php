@@ -376,6 +376,10 @@ $coachLoginUrl = $_SERVER['SCRIPT_NAME'] ?? '/login.php';
 
         <div id="coach-login-status" class="coach-status" hidden></div>
 
+        <!-- Passkey (WebAuthn) login — issue #650. Hidden by default;
+             coach-login.js unhides it when window.PublicKeyCredential is available. -->
+        <button type="button" id="coach-passkey-btn" class="btn btn-link coach-passkey-link" hidden>Sign in with passkey</button>
+
         <!-- Consent notice (issue #20) -->
         <p class="coach-consent-notice">By signing in, you confirm that you have read the privacy notice and agree to the processing described in the Privacy Policy.</p>
 

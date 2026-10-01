@@ -180,6 +180,28 @@ update or deploy:
 - **The `monitor` flag**: not returned by `/v1/auth/check-session`, the only
   profile-bearing call this repo makes; monitoring accounts call Cloud Run
   directly.
+- **The public demo chat** (AIRichardMoon issue #656): `GET /v1/demo-questions`
+  and `POST /v1/demo-chat`, the `demo.html` / `demo.js` / `demo.css` page, and
+  the demo panel now embedded at the top of the backend's `login.html`.
+  AikiField's `login.php` is a blind login form with no demo surface and calls
+  neither endpoint. The backend's login-page restructure (ticket #648) applies
+  only to the Cloud Run–served `login.html`, not to this repo's `login.php`.
+- **Invite a Friend** (AIRichardMoon issue #656): `POST /v1/invite-friend` is
+  reached only from the backend's `members.html`; AikiField has no members page.
+
+**Feature flags (AIRichardMoon issue #657).** New backend features now ship
+behind a per-environment flag toggled from the backend dashboard. This repo is
+**in scope** for one of them: `coach-login.js` calls the public
+`GET /v1/feature-flags` through the proxy and reveals the passkey button only
+when `passkey_login` is true. The call fails closed — a non-OK response, a
+timeout or a parse error leaves the button hidden — so a backend outage cannot
+surface a control whose endpoints are unreachable. `/v1/feature-flags` is
+exempt from `X-Proxy-Secret` because the login page must decide before a
+session exists; it returns only `{key: bool}`.
+
+Because flags are keyed by `DEPLOYMENT_ENV`, AikiField's staging and production
+gates are independent: passkey sign-in can be live on staging here while
+production keeps it hidden, with no redeploy either way.
 - **Conversation resume (issue #730)**: owner-only
   `GET /v1/sessions/{session_id}/messages`, the recent-session lookup, and the
   `qa_chat_session_id` auto-resume behavior are N/A. AikiField has no chat
@@ -259,8 +281,18 @@ IP-based rate limiting. When a request is rate-limited, the backend returns
 `httpErrorMessage(429)` and ignores any raw backend limit details. The
 concrete thresholds remain in server logs and admin alerts only.
 AikiField's `coach-proxy.php` forwards `CF-Connecting-IP` and
-`X-Forwarded-For` so the backend rate-limits per real visitor IP rather than
+X-Forwarded-For so the backend rate-limits per real visitor IP rather than
 the shared proxy IP.
+
+### Passkey (WebAuthn) login — issue #650
+
+A "Sign in with passkey" button (`#coach-passkey-btn`) appears below the login status region on `login.php`, shown only when `window.PublicKeyCredential` is available (graceful degradation on unsupported browsers). On click:
+1. `coach-login.js` calls `POST /v1/auth/passkey/login/begin` (via `coach-proxy.php`) with the optional identifier (email from the login form) → returns WebAuthn options
+2. `navigator.credentials.get({publicKey: options})` prompts the user for their passkey (Touch ID, Face ID, security key, etc.)
+3. The assertion is sent to `POST /v1/auth/passkey/login/finish` → verified by the backend via `py_webauthn` → session token issued (same shape as password login)
+4. `establishServerSession()` is called with the result, identical to password login — the PHP session cookie is set and the user is redirected
+
+Passkeys complement (not replace) password and OAuth login. A user must first register a passkey via an authenticated session (passkey registration endpoints are session-required on the backend). Cancellation (`NotAllowedError`) shows a friendly "cancelled" message; other errors surface visibly. The passkey endpoints are exempt from `X-Proxy-Secret` via the `/v1/auth/` prefix, so `coach-proxy.php` forwards them without special handling. See `AIRichardMoon/backend/PRD.md` § Authentication endpoints for the full endpoint contract.
 
 ### Registration + login-time activation flow (issue #228, ticket #535)
 
