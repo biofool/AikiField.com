@@ -1023,7 +1023,7 @@
     justify-content: center;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 767px) {
     /* Issue #150: On mobile the chat pane was capped at 400px and sat below
        a full screen of header/intro chrome. Hide the marketing intro panel
        (the chat header already labels the view) and turn the shell into a

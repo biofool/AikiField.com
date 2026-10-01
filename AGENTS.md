@@ -148,7 +148,10 @@ pages link to it; it is a fully public marketing page (no auth).
 alongside the HTML when text changes. `sync.sh` handles deploy/dry-run
 (`./sync.sh dryrun`, `./sync.sh deploy`). Use `--staging` or `--prod` to
 select the target explicitly: `./sync.sh --staging deploy`,
-`./sync.sh --prod dryrun`. Large binary assets (e.g.
+`./sync.sh --prod dryrun`. Staging deploys run `scripts/ci-local.sh`
+(php-lint + unit + Playwright e2e against a detached HEAD worktree) in
+parallel and gate on it before exiting — skip with `--skip-ci`, override
+steps via `CI_LOCAL_ARGS`. Large binary assets (e.g.
 `AikiField.pdf`, redesign zips) are tracked via DVC, not git directly. The
 `input/` directory holds source materials and is gitignored.
 
@@ -156,8 +159,8 @@ select the target explicitly: `./sync.sh --staging deploy`,
 
 The coaching login authenticates against the Quantum Aikido coaching
 backend (`AIRichardMoon`, FastAPI on Cloud Run) via `coach-proxy.php`. The
-auth surface is a **blind `/login.php`** page that exists solely to gate
-the pre-release `/beta/` assessment pages. It is NOT linked from the public
+auth surface is a **blind `/login.php`** page that gates
+the pre-release `/beta/` assessment pages and the `/for-review/` games area. It is NOT linked from the public
 nav. `projects.php` no longer hosts any login or chat — it shows an
 invitation card pointing visitors to `contact.html` to request a live demo.
 The inline AI Chat (`coach-chat.js`) was removed; the live chat lives on
@@ -175,7 +178,10 @@ redirect), `coach-proxy.php`, `coach-login.js` (loaded by `login.php`),
 (gitignored — holds `COACH_PROXY_SECRET` / `TURNSTILE_SITE_KEY`), `.htaccess`
 (`/coach-api/*` → proxy; `projects.html` → `projects.php` 301;
 `/beta/*.html` → `/beta/*.php` 301s), `includes/beta-gate.load.php`
-(redirects unauthed `/beta/` requests to `/login.php?next=…`). Full design:
+(redirects unauthed `/beta/` requests to `/login.php?next=…`; also usable in
+`AF_GATE_NO_REDIRECT` mode for status endpoints),
+`games/exercises/auth-state.php` (`{"authed":bool}` — unlocks all practices
+for signed-in members in the public exercises app). Full design:
 `docs/coach-auth-prd.md`.
 
 **Sister repos:**
@@ -220,6 +226,31 @@ Cloudflare Free plan zone (`71a04598ce4a9580faf7c0ee79f6da6c`, nameservers
 PoPs. TTFB from NZ is ~30ms, down from ~900ms direct to Chicago. The proxy
 chain: browser → Cloudflare edge (NZ) → greengeeks origin (Chicago) →
 coach-proxy.php → Cloud Run backend.
+
+### Responsive layout / UI regression prevention
+
+Lessons from the Quantum Aikido Books & Resources page right-hand TOC rail
+overflow (2026-09) — apply to this static site as well:
+
+1. **Never rely on `overflow-x: hidden` to hide layout bugs.** A global
+   `body { overflow-x: hidden; }` silences clipped content by suppressing
+   horizontal scrollbars. Only use it for intentional animation overflow,
+   and verify with visual review or automated checks that no content is
+   rendered outside the viewport.
+2. **Keep JS and CSS breakpoints in sync.** When a CSS `@media` breakpoint
+   changes, grep for the matching `matchMedia` query in JS and update it.
+3. **Audit fixed/absolute elements after layout changes.** Fixed-position
+   elements do not expand `scrollWidth`, so `documentElement.scrollWidth`
+   checks miss them. During review, use `getBoundingClientRect()` to verify
+   their right/left edges stay inside `window.innerWidth`.
+4. **Test scaled/zoomed desktop resolutions.** A 27" 2560×1440 monitor at
+   125%–150% scaling has an effective viewport of ~1700–2048 px. Preview
+   pages at multiple effective widths (including zoomed views) before
+   deploy.
+5. **Run deploy preview before every deploy.** Use `./sync.sh dryrun` and
+   visually inspect the staged site on a wide monitor / zoomed viewport
+   after any layout change that touches breakpoints, fixed/absolute
+   positioning, or container max-widths.
 
 Zone and local config are converged by `scripts/cloudflare_migrate.py`
 (dry-run by default, `--apply` to change, `--verify-only` for a health

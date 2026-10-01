@@ -50,7 +50,7 @@ site. Validate changes by visual review and accessibility checks.
 - **Scripts:** `js/` + `coach-login.js` (login/register/reset/confirm,
   loaded only by `login.php`).
 - **Coaching auth (PHP, beta-gating only):** `login.php` (blind standalone
-  login page — gates `/beta/` only, not linked from nav; PHP session POST
+  login page — gates `/beta/` and `/for-review/` (games), not linked from nav; PHP session POST
   handlers + `?next=` redirect), `coach-proxy.php`
   (`/coach-api/*` → AIRichardMoon backend), `coach-login.js`,
   `includes/coach-config.load.php`, `coach-config.php` (non-secret
@@ -81,7 +81,7 @@ site. Validate changes by visual review and accessibility checks.
 - **`sync.sh` is production-sensitive.** Always run `dryrun` before `deploy`.
 - **Coaching auth = shared flow (triple-PRD rule).** The blind `login.php`
   authenticates against the AIRichardMoon backend (same as
-  quantumaikido.com) and gates the `/beta/` pages. `projects.php` is public
+  quantumaikido.com) and gates the `/beta/` + `/for-review/` pages. `projects.php` is public
   and shows an invitation card. Changes to login/registration/auth/session/
   invitation flow MUST update all three PRDs (`docs/coach-auth-prd.md` here,
   `docs/coach-dashboard-prd.md` in QA, `backend/PRD.md` in AIRichardMoon) and
@@ -129,3 +129,28 @@ edit one, edit both.
   updated and deployed together for shared-flow changes.
 
 See `AGENTS.md` for the full text of each rule.
+
+### Responsive layout / UI regression prevention
+
+Lessons from the Quantum Aikido Books & Resources page right-hand TOC rail
+overflow (2026-09) — apply to this static site as well:
+
+1. **Never rely on `overflow-x: hidden` to hide layout bugs.** A global
+   `body { overflow-x: hidden; }` silences clipped content by suppressing
+   horizontal scrollbars. Only use it for intentional animation overflow,
+   and verify with visual review or automated checks that no content is
+   rendered outside the viewport.
+2. **Keep JS and CSS breakpoints in sync.** When a CSS `@media` breakpoint
+   changes, grep for the matching `matchMedia` query in JS and update it.
+3. **Audit fixed/absolute elements after layout changes.** Fixed-position
+   elements do not expand `scrollWidth`, so `documentElement.scrollWidth`
+   checks miss them. During review, use `getBoundingClientRect()` to verify
+   their right/left edges stay inside `window.innerWidth`.
+4. **Test scaled/zoomed desktop resolutions.** A 27" 2560×1440 monitor at
+   125%–150% scaling has an effective viewport of ~1700–2048 px. Preview
+   pages at multiple effective widths (including zoomed views) before
+   deploy.
+5. **Run deploy preview before every deploy.** Use `./sync.sh dryrun` and
+   visually inspect the staged site on a wide monitor / zoomed viewport
+   after any layout change that touches breakpoints, fixed/absolute
+   positioning, or container max-widths.

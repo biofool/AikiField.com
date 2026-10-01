@@ -124,6 +124,14 @@ RewriteRule ^(en|es|fr|de|pt|ja|zh|ko|ar|he|fa|hi)/dashboard\.php$ /dashboard.ph
 # URL so existing internal/external links keep working.
 RewriteRule ^projects\.html$ /projects.php [R=301,L]
 
+# /for-review/* — gated games review area (moved from
+# quantumaikido.com/for-review/games*). Every request is routed through
+# includes/for-review-serve.php, which requires the same coaching session
+# as /beta/ (existing QA accounts sign in via /login.php?next=…) and then
+# serves the file. This also gates assets, so review content never reaches
+# the Cloudflare edge cache unauthenticated.
+RewriteRule ^for-review(/.*)?$ includes/for-review-serve.php [L]
+
 # /beta/ assessment pages are session-gated PHP (gated by the blind
 # /login.php coaching login). Redirect the old static URLs so existing
 # links keep working.

@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ride the Lucky Wave</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: #070C1A;
+    }
+
+    #root {
+      min-height: 100dvh;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="root"></div>
+
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@8.0.4/babel.min.js" integrity="sha384-bdF7m0Y1IFKt9Q6xC8X9qkXn0OBriQWKyWwZKYsN05zF6P/g9OakjjL0G2Sd4pB4" crossorigin="anonymous"></script>
+  <script src="language.js"></script>
+
+  <script type="text/babel">
+    const { useState, useEffect, useRef, useCallback } = React;
+
+
+    // ─── LANGUAGE MODE TOGGLE STYLES ─────────────────────────────────
+    // Injected once; Babel doesn't support CSS-in-JS @keyframes natively
+    {
+      const style = document.createElement("style");
+      style.textContent = `
+        .rmoon-toggle-track {
+          width:52px; height:28px; border-radius:14px;
+          background:#1E2A3D; border:1px solid #2A3A52;
+          position:relative; cursor:pointer;
+          transition: background 0.3s, border-color 0.3s;
+          flex-shrink:0;
+        }
+        .rmoon-toggle-track.on {
+          background: linear-gradient(135deg,#B89EE8,#00C9B8);
+          border-color: #B89EE8;
+        }
+        .rmoon-toggle-thumb {
+          width:22px; height:22px; border-radius:50%;
+          background:#E8EAF0; position:absolute; top:2px; left:2px;
+          transition: left 0.3s cubic-bezier(.4,0,.2,1);
+          box-shadow: 0 1px 4px rgba(0,0,0,0.4);
+        }
+        .rmoon-toggle-track.on:not([data-compact="1"]) .rmoon-toggle-thumb { left: 26px; }
+        @keyframes rmoon-new-shimmer {
+          0%, 100% { opacity: 0.85; filter: brightness(1); }
+          50% { opacity: 1; filter: brightness(1.08); }
+        }
+        @keyframes rmoon-new-glow {
+          0%, 100% { box-shadow: 0 0 0 1px rgba(0, 201, 184, 0.2), 0 2px 16px rgba(184, 158, 232, 0.12); }
+          50% { box-shadow: 0 0 0 1px rgba(184, 158, 232, 0.35), 0 2px 20px rgba(0, 201, 184, 0.15); }
+        }
+        .rmoon-lang-top-bar {
+          animation: rmoon-new-glow 5s ease-in-out infinite;
+        }
+        .rmoon-new-badge {
+          animation: rmoon-new-shimmer 3.5s ease-in-out infinite;
+        }
+      `;
+      document.head.appendChild(style);
+    }
+
+    const TOTAL = 180;
+    const fmt = s => `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`;
+    const scoreFor = (v, rmoone) => (rmoone ? SCORES_RMOONE : SCORES).find(s => s.v === v);
+
+    /**
+     * CBT + reinforcement-style spacing:
+     * - Weaker performance → shorter interval (massed practice / behavioral rehearsal).
+     * - Stronger performance → longer spacing (consolidation, variable reward maintenance).
+     * - High spread across phases → extra same-day touch to even the policy (explore weak arms).
+     */
+    function computeRetestSchedule(scores, phases) {
+      const valueList = phases.map(p => scores[p.id] ?? 0);
+      if (!valueList.every(v => v > 0)) {
+        return { seconds: 3600, message: "Come back within an hour for another pass.", rationale: "", avg: 0 };
+      }
+      const avg = valueList.reduce((a, b) => a + b, 0) / phases.length;
+      const spread = Math.max(...valueList) - Math.min(...valueList);
+      let seconds;
+      let message;
+      if (avg < 2.25) {
+        seconds = 40 * 60;
+        message = "Same-day rehearsal while the body-memory is fresh — aim for another wave within about 40 minutes (behavioral activation style).";
+      } else if (avg < 3.0) {
+        seconds = 90 * 60;
+        message = "Spacing homework: a second pass today (~90 minutes) strengthens the new pattern before it fades.";
+      } else if (avg < 3.75) {
+        seconds = 4 * 60 * 60;
+        message = "Solid — let this settle, then repeat in ~4 hours (interleaved practice + reinforcement of what worked).";
+      } else if (avg < 4.5) {
+        seconds = 12 * 60 * 60;
+        message = "Strong run — consolidation benefits from a ~12 hour gap; retest once more today or tonight.";
+      } else {
+        seconds = 24 * 60 * 60;
+        message = "Peak execution — reward prediction is stable; 24-hour spacing deepens retention without over-drilling.";
+      }
+      if (spread >= 3) {
+        seconds = Math.min(seconds, 3 * 60 * 60);
+        message += " Your phases varied — one shorter revisit today evens out the skill (explore-weak-habit).";
+      }
+      const rationale = `Average ${avg.toFixed(1)}/5${spread >= 3 ? ` · spread ${spread}` : ""} · CBT-style spacing + RL-style ${avg < 3.5 ? "more frequent feedback while learning" : "wider spacing as the policy improves"}.`;
+      return { seconds, message, rationale, avg };
+    }
+
+    function formatRetestClock(secondsFromNow) {
+      const t = new Date(Date.now() + secondsFromNow * 1000);
+      return t.toLocaleString(undefined, { weekday: "short", month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
+    }
+
+    function buildRetestICS(secondsFromNow, summaryLine) {
+      const start = new Date(Date.now() + secondsFromNow * 1000);
+      const end = new Date(start.getTime() + 10 * 60 * 1000);
+      const fmtICS = d => d.toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
+      const esc = s => (s || "").replace(/\\/g, "\\\\").replace(/;/g, "\\;").replace(/,/g, "\\,").replace(/\n/g, "\\n");
+      return [
+        "BEGIN:VCALENDAR",
+        "VERSION:2.0",
+        "PRODID:-//LuckyWave//RideTheLuckyWave//EN",
+        "CALSCALE:GREGORIAN",
+        "BEGIN:VEVENT",
+        `DTSTAMP:${fmtICS(new Date())}`,
+        `DTSTART:${fmtICS(start)}`,
+        `DTEND:${fmtICS(end)}`,
+        "SUMMARY:" + esc("Retest — Ride the Lucky Wave"),
+        "DESCRIPTION:" + esc(summaryLine || "Spaced retest from your self-report. Open your Lucky Wave bookmark."),
+        "BEGIN:VALARM",
+        "TRIGGER:PT0S",
+        "ACTION:DISPLAY",
+        "DESCRIPTION:" + esc("Ride the Lucky Wave — spaced retest"),
+        "END:VALARM",
+        "END:VEVENT",
+        "END:VCALENDAR",
+      ].join("\r\n");
+    }
+
+    const T = {
+      primary: "#E8EAF0",
+      secondary: "#A8B4C8",
+      hint: "#8A96AA",
+    };
+
+    function App() {
+      const [screen, setScreen] = useState("splash");
+      const [languageMode, setLanguageMode] = useState("rmoone");
+      const [queue, setQueue] = useState(PHASES);
+      const [idx, setIdx] = useState(0);
+      const [totalLeft, setTotalLeft] = useState(TOTAL);
+      const [stepLeft, setStepLeft] = useState(PHASES[0].seconds);
+      const [scores, setScores] = useState({});
+      const [review, setReview] = useState("");
+      const [loading, setLoading] = useState(false);
+      const [apiKey, setApiKey] = useState("");
+      const [showKeyInput, setShowKeyInput] = useState(false);
+      const [firstCompletionTime, setFirstCompletionTime] = useState(null);
+      const [checkinTimeLeft, setCheckinTimeLeft] = useState(null);
+      const [checkinMessage, setCheckinMessage] = useState("");
+      const [retestPlan, setRetestPlan] = useState(null);
+
+      // Derived data based on language mode
+      const isRMoonE = languageMode === "rmoone";
+      const activePHASES = isRMoonE ? PHASES_RMOONE : PHASES;
+      const activeSCORES = isRMoonE ? SCORES_RMOONE : SCORES;
+
+      // Language-keyed UI strings
+      const L = isRMoonE ? UI_STRINGS.rmoone : UI_STRINGS.standard;
+
+      const allRated = activePHASES.every(p => scores[p.id]);
+
+      // Shared page header with back/forward nav + language toggle
+      const SCREEN_ORDER = ["intro", "exercise", "score", "result"];
+      const screenIdx = SCREEN_ORDER.indexOf(screen);
+      const canGoBack = (screen !== "splash" && screen !== "intro") || showKeyInput;
+      const forwardDisabled = (screen === "score" && !allRated) && !showKeyInput;
+      // Intro places language in the hero; other views keep it in the header (incl. API key overlay).
+      const showLanguageInHeader = (screen !== "splash" && screen !== "intro") || showKeyInput;
+
+      const LanguageModeBar = () => (
+        <div
+          className="rmoon-lang-top-bar"
+          style={{
+            display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 10,
+            padding: "12px 14px 10px",
+            background: "linear-gradient(100deg, rgba(0,201,184,0.14) 0%, rgba(7,12,26,0.4) 35%, rgba(184,158,232,0.12) 70%, rgba(244,200,66,0.06) 100%)",
+            border: "1px solid rgba(0, 201, 184, 0.25)",
+            borderRadius: 14,
+            boxSizing: "border-box",
+            width: "100%",
+            marginBottom: 0,
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "center", gap: 8, minWidth: 0, flex: "1 1 auto" }}>
+            <span style={{ fontSize: 12, letterSpacing: "0.14em", textTransform: "uppercase", color: "#C8D0E0", fontWeight: 800 }}>Language</span>
+            <span
+              className="rmoon-new-badge"
+              title="New: R. Moon (RMoonE) phrasing"
+              style={{
+                fontSize: 9, letterSpacing: "0.12em", fontWeight: 900, textTransform: "uppercase",
+                color: "#F4E8A8", padding: "3px 7px", borderRadius: 4,
+                background: "linear-gradient(135deg, rgba(244,200,66,0.2), rgba(0,201,184,0.12))",
+                border: "1px solid rgba(244, 200, 66, 0.5)",
+                boxShadow: "0 0 0 1px rgba(7, 12, 26, 0.6) inset",
+              }}
+            >New</span>
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, flex: "0 0 auto" }}>
+            <span style={{ fontSize: 11, letterSpacing: "0.1em", textTransform: "uppercase",
+              color: isRMoonE ? "#5A6578" : "#9CA8BC", fontWeight: 800, transition: "color 0.3s" }}>Standard</span>
+            <button type="button" aria-label={isRMoonE ? "Switch to Standard language" : "Switch to R. Moon (RMoonE) language"}
+              onClick={() => setLanguageMode(m => m === "standard" ? "rmoone" : "standard")}
+              style={{ background: "none", border: "none", padding: 0, cursor: "pointer", transform: "scale(1.06)" }}
+            >
+              <div className={`rmoon-toggle-track${isRMoonE ? " on" : ""}`} style={{ position: "relative" }}>
+                <div className="rmoon-toggle-thumb" style={{ left: isRMoonE ? undefined : 2 }} />
+              </div>
+            </button>
+            <span style={{ fontSize: 11, letterSpacing: "0.06em", textTransform: "none",
+              color: isRMoonE ? "#D4B8F0" : "#4A5568", fontWeight: 800, transition: "color 0.3s" }}>Harmony</span>
+          </div>
+        </div>
+      );
+
+      const PageHeader = ({ extraDots }) => (
+        <div style={{
+          position: "sticky", top: 0, zIndex: 10,
+          background: "rgba(7,12,26,0.97)", backdropFilter: "blur(10px)",
+          borderBottom: "1px solid #1A2438",
+        }}>
+          {showLanguageInHeader && (
+            <div style={{ borderBottom: "1px solid rgba(0, 201, 184, 0.12)", padding: "8px 10px" }}>
+              <div style={{ maxWidth: 480, margin: "0 auto" }}>
+                <LanguageModeBar />
+              </div>
+            </div>
+          )}
+
+          <div style={{ display: "flex", alignItems: "center", padding: "7px 10px", gap: 4 }}>
+            {/* Back */}
+            <button type="button" aria-label="Previous screen" onClick={handleBack}
+              disabled={!canGoBack}
+              style={{ background: canGoBack ? "rgba(168, 180, 200, 0.15)" : "none", borderRadius: "50%", border:"none", cursor: canGoBack ? "pointer" : "default",
+                fontSize: 26, color: canGoBack ? "#FFFFFF" : "#1E2A3D", fontWeight: 800,
+                padding:"0", width: 44, height: 44, lineHeight:1, transition:"all 0.2s", flexShrink:0,
+                display: "flex", alignItems: "center", justifyContent: "center" }}
+            >←</button>
+
+            {/* Screen position dots */}
+            <div style={{ display:"flex", gap:5, alignItems:"center", flex:1, justifyContent:"center", minWidth: 0 }}>
+              {SCREEN_ORDER.map((s,i) => (
+                <div key={s} style={{
+                  width: i===screenIdx ? 22 : 6, height: 6, borderRadius: 3,
+                  background: i<screenIdx ? "#F4C842" : i===screenIdx ? (isRMoonE?"#B89EE8":"#00C9B8") : "#1E2A3D",
+                  transition: "all 0.35s",
+                }} />
+              ))}
+              {extraDots}
+            </div>
+
+            {/* Forward */}
+            <button type="button" aria-label="Next screen" onClick={handleForward}
+              disabled={forwardDisabled}
+              style={{ background: !forwardDisabled ? "rgba(168, 180, 200, 0.15)" : "none", borderRadius: "50%", border:"none",
+                cursor: forwardDisabled ? "default" : "pointer",
+                fontSize: 26, fontWeight: 800,
+                color: forwardDisabled ? "#1E2A3D" : "#FFFFFF",
+                padding:"0", width: 44, height: 44, lineHeight:1, transition:"all 0.2s", flexShrink:0,
+                display: "flex", alignItems: "center", justifyContent: "center" }}
+            >→</button>
+          </div>
+        </div>
+      );
+
+      const tTotal = useRef(null);
+      const tCheckin = useRef(null);
+      const tStep = useRef(null);
+      const notifTimerRef = useRef(null);
+      const qRef = useRef(queue);
+      const iRef = useRef(idx);
+      useEffect(() => { qRef.current = queue; }, [queue]);
+      useEffect(() => { iRef.current = idx; }, [idx]);
+
+      const stopAll = useCallback(() => {
+        clearInterval(tTotal.current);
+        clearInterval(tStep.current);
+      }, []);
+
+      useEffect(() => {
+        if (screen !== "exercise") return;
+        tTotal.current = setInterval(() => {
+          setTotalLeft(t => { if (t <= 1) { stopAll(); setScreen("score"); return 0; } return t - 1; });
+        }, 1000);
+        return () => clearInterval(tTotal.current);
+      }, [screen, stopAll]);
+
+      useEffect(() => {
+        if (screen !== "exercise") return;
+        clearInterval(tStep.current);
+        tStep.current = setInterval(() => {
+          setStepLeft(t => {
+            if (t <= 1) {
+              clearInterval(tStep.current);
+              const next = iRef.current + 1;
+              if (next >= qRef.current.length) { stopAll(); setTimeout(() => setScreen("score"), 50); }
+              else { setIdx(next); setStepLeft(qRef.current[next].seconds); }
+              return 0;
+            }
+            return t - 1;
+          });
+        }, 1000);
+        return () => clearInterval(tStep.current);
+      }, [screen, idx, stopAll]);
+
+      // Load next retest from localStorage (absolute time preferred; legacy interval supported)
+      useEffect(() => {
+        const savedFirst = localStorage.getItem('waveLuck_firstCompletion');
+        if (savedFirst) setFirstCompletionTime(parseInt(savedFirst, 10));
+
+        const at = localStorage.getItem('waveLuck_nextRetestAt');
+        let remaining = -1;
+        if (at) {
+          remaining = parseInt(at, 10) - Date.now();
+        } else if (savedFirst) {
+          const savedInterval = parseInt(localStorage.getItem('waveLuck_checkinInterval') || '0', 10);
+          if (savedInterval > 0) {
+            remaining = parseInt(savedFirst, 10) + savedInterval * 1000 - Date.now();
+          }
+        }
+        if (remaining > 0) {
+          setCheckinTimeLeft(Math.ceil(remaining / 1000));
+          setCheckinMessage(localStorage.getItem('waveLuck_checkinMessage') || "");
+        }
+      }, []);
+
+      useEffect(() => {
+        return () => {
+          if (notifTimerRef.current) clearTimeout(notifTimerRef.current);
+        };
+      }, []);
+
+      // Handle check-in timer countdown
+      useEffect(() => {
+        if (checkinTimeLeft === null || checkinTimeLeft <= 0) return;
+
+        tCheckin.current = setInterval(() => {
+          setCheckinTimeLeft(t => {
+            if (t <= 1) {
+              clearInterval(tCheckin.current);
+              return 0;
+            }
+            return t - 1;
+          });
+        }, 1000);
+
+        return () => clearInterval(tCheckin.current);
+      }, [checkinTimeLeft]);
+
+      const begin = useCallback((phases = activePHASES) => {
+        stopAll();
+        setQueue(phases);
+        setIdx(0);
+        setTotalLeft(TOTAL);
+        setStepLeft(phases[0].seconds);
+        setReview("");
+        setScreen("exercise");
+      }, [stopAll]);
+
+      // Back/forward page navigation
+      const handleBack = () => {
+        if (showKeyInput) { setShowKeyInput(false); return; }
+        if (screen === "tutorial") { setScreen("splash"); return; }
+        if (screen === "exercise") { stopAll(); setScores({}); setScreen("intro"); }
+        else if (screen === "score") { stopAll(); setIdx(queue.length - 1); setStepLeft(queue[queue.length - 1].seconds); setScreen("exercise"); }
+        else if (screen === "result") { setScreen("score"); }
+      };
+      const handleForward = () => {
+        if (showKeyInput) { setShowKeyInput(false); return; }
+        if (screen === "splash") { setScreen("intro"); return; }
+        if (screen === "tutorial") { setScreen("intro"); return; }
+        if (screen === "intro") begin();
+        else if (screen === "exercise") handleNext();
+        else if (screen === "score") { if (allRated) submitScores(); }
+        else if (screen === "result") { setScreen("intro"); }
+      };
+
+      const handleNext = () => {
+        stopAll();
+        const next = idx + 1;
+        if (next >= queue.length) setScreen("score");
+        else { setIdx(next); setStepLeft(queue[next].seconds); }
+      };
+
+      const submitScores = async () => {
+        setLoading(true);
+        setScreen("result");
+
+        const plan = computeRetestSchedule(scores, activePHASES);
+        setRetestPlan(plan);
+        const now = Date.now();
+        if (!firstCompletionTime) {
+          setFirstCompletionTime(now);
+          localStorage.setItem('waveLuck_firstCompletion', String(now));
+        }
+        const nextAt = now + plan.seconds * 1000;
+        localStorage.setItem('waveLuck_nextRetestAt', String(nextAt));
+        localStorage.setItem('waveLuck_checkinInterval', String(plan.seconds));
+        localStorage.setItem('waveLuck_checkinMessage', plan.message);
+        setCheckinMessage(plan.message);
+        setCheckinTimeLeft(plan.seconds);
+
+        const lines = activePHASES.map(p => `${p.label}: ${scores[p.id] || 0}/5 (${scoreFor(scores[p.id], isRMoonE)?.label || "unrated"})`).join(", ");
+        const sysPrompt = isRMoonE ? UI_STRINGS.rmoone.sysPrompt : UI_STRINGS.standard.sysPrompt;
+        try {
+          const res = await fetch("https://api.anthropic.com/v1/messages", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "x-api-key": apiKey,
+              "anthropic-version": "2023-06-01",
+              "anthropic-dangerous-direct-browser-access": "true",
+            },
+            body: JSON.stringify({
+              model: "claude-sonnet-4-20250514", max_tokens: 500,
+              system: sysPrompt,
+              messages: [{ role: "user", content: `Compliance: ${lines}` }]
+            })
+          });
+          const d = await res.json();
+          setReview(d.content?.[0]?.text || "");
+        } catch (e) {
+          setReview(isRMoonE ? UI_STRINGS.rmoone.defaultReview : UI_STRINGS.standard.defaultReview);
+        }
+        setLoading(false);
+      };
+
+      const scheduleBrowserReminder = useCallback((seconds) => {
+        if (!("Notification" in window)) {
+          alert("This browser does not support notifications. Use Add to Calendar instead.");
+          return;
+        }
+        Notification.requestPermission().then(perm => {
+          if (perm !== "granted") {
+            alert("Notifications blocked — use Add to Calendar for a reliable iPhone alert.");
+            return;
+          }
+          if (notifTimerRef.current) clearTimeout(notifTimerRef.current);
+          notifTimerRef.current = setTimeout(() => {
+            try {
+              new Notification("Ride the Lucky Wave — retest", {
+                body: "Spaced check-in: open the wave and log your scores again.",
+                tag: "lucky-wave-retest",
+              });
+            } catch (_) { }
+            notifTimerRef.current = null;
+          }, seconds * 1000);
+        });
+      }, []);
+
+      const downloadRetestCalendar = useCallback(() => {
+        if (!retestPlan) return;
+        const summary = [retestPlan.message, retestPlan.rationale].filter(Boolean).join("\n\n");
+        const blob = new Blob([buildRetestICS(retestPlan.seconds, summary)], { type: "text/calendar;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "lucky-wave-retest.ics";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }, [retestPlan]);
+
+      const S = {
+        page: { background: "#070C1A", minHeight: "100dvh", color: T.primary, fontFamily: "system-ui, -apple-system, sans-serif", overflowY: "auto" },
+        inner: { maxWidth: 480, margin: "0 auto", padding: "0 16px 52px" },
+        card: { background: "#0E1525", border: "1px solid #1E2A3D", borderRadius: 18, padding: "18px 16px", marginBottom: 14 },
+        btnPri: {
+          display: "block", width: "100%", padding: "18px 0", borderRadius: 14, border: "none",
+          background: "linear-gradient(135deg,#F4C842,#E89020)", color: "#080C18",
+          fontSize: 15, fontWeight: 800, letterSpacing: "0.08em", cursor: "pointer",
+          textTransform: "uppercase", fontFamily: "inherit",
+        },
+        btnSec: {
+          display: "block", width: "100%", padding: "15px 0", borderRadius: 14,
+          border: "1px solid #2A3A52", background: "transparent",
+          color: T.secondary, fontSize: 13, fontWeight: 600,
+          letterSpacing: "0.06em", cursor: "pointer",
+          textTransform: "uppercase", fontFamily: "inherit", marginTop: 10,
+        },
+        label: { fontSize: 11, letterSpacing: "0.13em", textTransform: "uppercase", color: T.hint },
+      };
+
+      // ── API KEY SCREEN ─────────────────────────────────────────────
+      if (showKeyInput) return (
+        <div style={S.page}>
+          <PageHeader />
+          <div style={{ ...S.inner, paddingTop: 20, width: "100%", maxWidth: 480, margin: "0 auto" }}>
+            <div style={{ textAlign: "center", marginBottom: 28 }}>
+              <div style={{ fontSize: 40, marginBottom: 12, lineHeight: 1 }} dangerouslySetInnerHTML={{__html: '<svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 5.5m0 0l3 3L22 4l-3-3"/></svg>'}} />
+              <h1 style={{ fontFamily: "Georgia, serif", fontSize: 26, fontWeight: 300, color: "#F4C842", marginBottom: 10 }}>
+                Enter your API Key
+              </h1>
+              <p style={{ fontSize: 14, color: T.secondary, lineHeight: 1.7 }}>
+                Required for AI coaching on the results screen.<br />
+                Get one free at <strong style={{ color: T.primary }}>console.anthropic.com</strong>
+              </p>
+            </div>
+            <div style={{ ...S.card }}>
+              <div style={{ ...S.label, color: T.hint, marginBottom: 10 }}>Anthropic API Key</div>
+              <label htmlFor="api-key-input" style={{ ...S.label, display: "block", marginBottom: 10 }}>Anthropic API Key</label>
+              <input
+                id="api-key-input"
+                type="password"
+                placeholder="sk-ant-..."
+                defaultValue=""
+                onChange={e => setApiKey(e.target.value)}
+                style={{
+                  width: "100%", padding: "14px 12px", borderRadius: 10,
+                  background: "#070C1A", border: "1px solid #2A3A52",
+                  color: T.primary, fontSize: 14, fontFamily: "monospace",
+                  outline: "none",
+                }}
+              />
+              <p style={{ fontSize: 12, color: T.hint, marginTop: 10, lineHeight: 1.6 }}>
+                Your key stays in this browser tab only — it is never stored or sent anywhere except directly to Anthropic.
+              </p>
+            </div>
+            <button style={S.btnPri} onClick={() => setShowKeyInput(false)}>
+              Continue →
+            </button>
+            <button style={S.btnSec} onClick={() => setShowKeyInput(false)}>
+              Skip — use without AI coaching
+            </button>
+          </div>
+        </div>
+      );
+
+      // ── SPLASH ─────────────────────────────────────────────────────
+      if (screen === "splash") return (
+        <div style={S.page}>
+          <div style={{ ...S.inner, paddingTop: 60, width: "100%", maxWidth: 480, margin: "0 auto", textAlign: "center", display: "flex", flexDirection: "column", minHeight: "80vh", justifyContent: "center" }}>
+            <div style={{ fontSize: 52, marginBottom: 20, lineHeight: 1 }} dangerouslySetInnerHTML={{__html: '<svg viewBox="0 0 24 24" width="52" height="52" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5c2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/><path d="M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/><path d="M2 18c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/></svg>'}} />
+            <h1 style={{ fontFamily: "Georgia, serif", fontSize: 28, fontWeight: 300, color: "#F4C842", marginBottom: 30, lineHeight: 1.4 }}>
+              Do you feel like an adventure or do you want lots of instructions..
+            </h1>
+            <button style={{ ...S.btnPri, marginBottom: 16 }} onClick={() => setScreen("intro")}>
+              Adventure (Skip to Start)
+            </button>
+            <button style={{ ...S.btnSec }} onClick={() => setScreen("tutorial")}>
+              Lots of Instructions
+            </button>
+          </div>
+        </div>
+      );
+
+      // ── TUTORIAL ───────────────────────────────────────────────────
+      if (screen === "tutorial") return (
+        <div style={S.page}>
+          <PageHeader />
+          <div style={{ ...S.inner, paddingTop: 20, width: "100%", maxWidth: 480, margin: "0 auto" }}>
+            <div style={{ textAlign: "center", marginBottom: 24 }}>
+              <div style={{ fontSize: 40, marginBottom: 12, lineHeight: 1 }} dangerouslySetInnerHTML={{__html: '<svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>'}} />
+              <h1 style={{ fontFamily: "Georgia, serif", fontSize: 26, fontWeight: 300, color: "#F4C842", marginBottom: 10 }}>
+                How It Works
+              </h1>
+              <p style={{ fontSize: 15, color: T.secondary, lineHeight: 1.6 }}>
+                A 3-minute practice to shift your state and tilt the odds in your favor.
+              </p>
+            </div>
+            
+            <div style={{ ...S.card, marginBottom: 16 }}>
+              <h3 style={{ fontSize: 14, color: "#00C9B8", marginBottom: 8, textTransform: "uppercase", letterSpacing: "0.08em" }}>What to Expect</h3>
+              <p style={{ fontSize: 14, color: T.primary, lineHeight: 1.6, marginBottom: 10 }}>
+                You'll be guided through 4 timed phases. This isn't a passive meditation—it requires physical movement, active imagination, and speaking aloud.
+              </p>
+              <p style={{ fontSize: 14, color: T.primary, lineHeight: 1.6 }}>
+                Afterward, you'll rate how fully you embodied each phase. The app uses your self-report to schedule an optimized follow-up reminder.
+              </p>
+            </div>
+
+            <div style={{ ...S.card, marginBottom: 16 }}>
+              <h3 style={{ fontSize: 14, color: "#F4C842", marginBottom: 8, textTransform: "uppercase", letterSpacing: "0.08em" }}>Navigation & Timing</h3>
+              <p style={{ fontSize: 14, color: T.primary, lineHeight: 1.6, marginBottom: 10 }}>
+                Each phase runs on a default timer (e.g., <span style={{ fontFamily: "monospace", background: "#1E2A3D", padding: "2px 6px", borderRadius: 4, fontSize: 12 }}>45s</span>) to keep your practice focused. 
+              </p>
+              <p style={{ fontSize: 14, color: T.primary, lineHeight: 1.6 }}>
+                You don't have to wait for the timer to finish! You can manually progress forward or go back at any time using the navigation arrows at the top of the screen:
+              </p>
+              <div style={{ display: "flex", justifyContent: "center", gap: 16, marginTop: 14 }}>
+                <div style={{ background: "rgba(168, 180, 200, 0.15)", borderRadius: "50%", width: 36, height: 36, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22, color: "#FFFFFF", fontWeight: 800 }}>←</div>
+                <div style={{ background: "rgba(168, 180, 200, 0.15)", borderRadius: "50%", width: 36, height: 36, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22, color: "#FFFFFF", fontWeight: 800 }}>→</div>
+              </div>
+            </div>
+
+            <div style={{ ...S.card, marginBottom: 24 }}>
+              <h3 style={{ fontSize: 14, color: "#B89EE8", marginBottom: 8, textTransform: "uppercase", letterSpacing: "0.08em" }}>The Language Toggle</h3>
+              <p style={{ fontSize: 14, color: T.primary, lineHeight: 1.6, marginBottom: 10 }}>
+                Use the toggle in the top bar to choose your preferred framing:
+              </p>
+              <ul style={{ fontSize: 14, color: T.primary, lineHeight: 1.6, paddingLeft: 20, margin: 0 }}>
+                <li style={{ marginBottom: 6 }}>
+                  <strong style={{ color: "#D4B8F0" }}>Harmony:</strong> Uses native Moonisms and the vocabulary of Quantum Aikido (Ki, Unified-Field, Kami).
+                </li>
+                <li>
+                  <strong style={{ color: "#9CA8BC" }}>Standard:</strong> A plain vanilla, secular framing focused on nervous system activation and psychology.
+                </li>
+              </ul>
+            </div>
+
+            <button style={S.btnPri} onClick={() => setScreen("intro")}>
+              Continue to Start →
+            </button>
+          </div>
+        </div>
+      );
+
+      // ── INTRO ──────────────────────────────────────────────────────
+      if (screen === "intro") return (
+        <div style={S.page}>
+          <PageHeader />
+          <div style={{ ...S.inner, paddingTop: 20 }}>
+            <div style={{ textAlign: "center", marginBottom: 20 }}>
+              <div style={{ fontSize: 52, marginBottom: 14, lineHeight: 1 }} dangerouslySetInnerHTML={{__html: '<svg viewBox="0 0 24 24" width="52" height="52" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5c2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/><path d="M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/><path d="M2 18c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/></svg>'}} />
+              <h1 style={{ fontFamily: "Georgia, serif", fontSize: 36, fontWeight: 300, color: "#F4C842", margin: "0 0 18px", lineHeight: 1.1 }}>
+                {L.title}
+              </h1>
+              <div style={{ width: "100%", margin: "0 auto 24px" }}>
+                <LanguageModeBar />
+              </div>
+              <p style={{
+                color: T.secondary, fontSize: 24, lineHeight: 1.4, fontWeight: 600,
+                letterSpacing: isRMoonE ? "0.04em" : "0.02em",
+                margin: 0,
+                fontFamily: "Georgia, serif",
+                fontStyle: "italic",
+              }}>{L.subtitle}</p>
+            </div>
+
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 22 }}>
+              {activePHASES.map(p => (
+                <div key={p.id} style={{ ...S.card, marginBottom: 0, textAlign: "center", borderColor: p.color + "55", padding: "16px 10px" }}>
+                  <div style={{ fontSize: 26, marginBottom: 6 }}>{p.emoji}</div>
+                  <div style={{ fontWeight: 800, fontSize: 14, color: p.color, marginBottom: 4 }}>{p.label}</div>
+                  <div style={{ fontSize: 12, color: T.secondary }}>{p.seconds}s</div>
+                </div>
+              ))}
+            </div>
+
+            <div style={{ ...S.card, marginBottom: 24 }}>
+              <p style={{ fontFamily: "Georgia, serif", fontSize: 17, lineHeight: 1.8, margin: 0, color: T.secondary, fontStyle: "italic" }}>
+                {L.intro}
+              </p>
+            </div>
+
+            <div style={{ background: "rgba(244,200,66,0.1)", border: "1px solid rgba(244,200,66,0.3)", borderRadius: 12, padding: "14px 16px", marginBottom: 24, display: "flex", alignItems: "center", gap: 12 }}>
+              <div style={{ fontSize: 24, lineHeight: 1 }} dangerouslySetInnerHTML={{__html: '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>'}} />
+              <p style={{ fontSize: 14, color: "#F4E8A8", margin: 0, lineHeight: 1.5, fontWeight: 600 }}>
+                {L.beginHint}
+              </p>
+            </div>
+
+            <button style={S.btnPri} onClick={() => begin()}>{L.begin}</button>
+
+          </div>
+        </div>
+      );
+
+      // ── EXERCISE ───────────────────────────────────────────────────
+      if (screen === "exercise") {
+        const phase = queue[idx];
+        const pct = Math.min(((phase.seconds - stepLeft) / phase.seconds) * 100, 100);
+        const tpct = ((TOTAL - totalLeft) / TOTAL) * 100;
+        const urgent = totalLeft <= 20;
+
+        const phaseDots = (
+          <div style={{ display: "flex", gap: 4, alignItems: "center", marginLeft: 6 }}>
+            {queue.map((p, i) => (
+              <div key={p.id} style={{
+                height: 5, width: i === idx ? 16 : 5, borderRadius: 3,
+                background: i < idx ? "#F4C842" : i === idx ? p.color : "#1E2A3D",
+                transition: "all 0.35s",
+              }} />
+            ))}
+          </div>
+        );
+
+        return (
+          <div style={{ ...S.page, display: "flex", flexDirection: "column" }}>
+            <PageHeader extraDots={phaseDots} />
+
+            <div style={{ height: 3, background: "#1A2438" }}>
+              <div style={{ height: "100%", width: `${tpct}%`, background: `linear-gradient(90deg,${phase.color},#F4C842)`, transition: "width 1s linear" }} />
+            </div>
+
+            <div style={{ display: "flex", justifyContent: "flex-end", padding: "5px 18px 0" }}>
+              <div style={{
+                fontVariantNumeric: "tabular-nums", fontSize: 28, fontWeight: 200, lineHeight: 1,
+                color: urgent ? "#FB923C" : "#F4C842", transition: "color 0.5s",
+              }}>{fmt(totalLeft)}</div>
+            </div>
+
+            <div style={{ ...S.inner, flex: 1, paddingTop: 10, display: "flex", flexDirection: "column" }}>
+              <div style={{ marginBottom: 20 }}>
+                <div style={{ fontSize: 34, marginBottom: 8 }}>{phase.emoji}</div>
+                <div style={{ fontWeight: 800, fontSize: 22, color: phase.color, marginBottom: 6 }}>{phase.label}</div>
+                <div style={{ ...S.label, color: T.secondary }}>{phase.components.join(" · ")}</div>
+              </div>
+
+              <div style={{ flex: 1 }}>
+                {phase.instruction.map((txt, i) => (
+                  <div key={i} style={{ display: "flex", gap: 12, marginBottom: 20 }}>
+                    <div style={{
+                      minWidth: 26, height: 26, borderRadius: "50%",
+                      background: phase.color + "25", border: `2px solid ${phase.color}80`,
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                      fontWeight: 800, fontSize: 12, color: phase.color, flexShrink: 0, marginTop: 2,
+                    }}>{i + 1}</div>
+                    <p style={{ fontSize: 17, lineHeight: 1.8, margin: 0, color: T.primary, fontFamily: "Georgia, serif" }}>{txt}</p>
+                  </div>
+                ))}
+                <div style={{ borderLeft: `2px solid ${phase.color}50`, paddingLeft: 14, marginTop: 4 }}>
+                  <p style={{ fontSize: 15, lineHeight: 1.7, margin: 0, color: T.secondary, fontStyle: "italic", fontFamily: "Georgia, serif" }}>
+                    {phase.cue}
+                  </p>
+                </div>
+              </div>
+
+              <div style={{ marginTop: 28 }}>
+                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
+                  <span style={{ ...S.label, color: T.hint }}>{L.timerLabel}</span>
+                  <span style={{ ...S.label, color: T.secondary, fontWeight: 700 }}>{stepLeft}s</span>
+                </div>
+                <div style={{ background: "#1A2438", borderRadius: 4, height: 5, overflow: "hidden", marginBottom: 18 }}>
+                  <div style={{ height: "100%", width: `${pct}%`, background: `linear-gradient(90deg,${phase.color},#F4C842)`, transition: "width 1s linear", borderRadius: 4 }} />
+                </div>
+                <button style={S.btnPri} onClick={handleNext}>
+                  {idx >= queue.length - 1 ? "Complete → Review" : `Next: ${queue[idx + 1]?.label} →`}
+                </button>
+              </div>
+            </div>
+          </div>
+        );
+      }
+
+      // ── SCORE TABLE ────────────────────────────────────────────────
+      if (screen === "score") {
+        const rated = activePHASES.filter(p => scores[p.id]).length;
+
+        return (
+          <div style={S.page}>
+            <PageHeader />
+            <div style={{ ...S.inner, paddingTop: 22 }}>
+              <div style={{ textAlign: "center", marginBottom: 22 }}>
+                <div style={{ fontSize: 36, marginBottom: 10, lineHeight: 1 }} dangerouslySetInnerHTML={{__html: '<svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5c2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/><path d="M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/><path d="M2 18c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/></svg>'}} />
+                <h1 style={{ fontFamily: "Georgia, serif", fontSize: 32, fontWeight: 300, color: "#F4C842", margin: "0 0 8px" }}>
+                  {L.scoreTitle}
+                </h1>
+                <p style={{ fontSize: 14, color: T.secondary, margin: 0 }}>
+                  {L.scoreSub}
+                </p>
+              </div>
+
+              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 14, padding: "0 4px" }}>
+                {activeSCORES.map(s => (
+                  <div key={s.v} style={{ textAlign: "center", flex: 1 }}>
+                    <div style={{ fontSize: 18, fontWeight: 900, color: s.color, lineHeight: 1 }}>{s.symbol}</div>
+                    <div style={{ fontSize: 11, color: s.color, marginTop: 4, fontWeight: 700 }}>{s.short}</div>
+                  </div>
+                ))}
+              </div>
+
+              <div style={{ borderRadius: 18, overflow: "hidden", border: "1px solid #1E2A3D" }}>
+                {activePHASES.map((phase, ri) => {
+                  const sel = scores[phase.id];
+                  const sObj = scoreFor(sel, isRMoonE);
+                  return (
+                    <div key={phase.id} style={{
+                      borderBottom: ri < activePHASES.length - 1 ? "1px solid #1E2A3D" : "none",
+                      background: sel ? sObj.bg : "#0E1525",
+                      transition: "background 0.2s",
+                    }}>
+                      <div style={{ padding: "14px 16px 10px", display: "flex", alignItems: "center", gap: 10 }}>
+                        <span style={{ fontSize: 22 }}>{phase.emoji}</span>
+                        <div>
+                          <div style={{ fontWeight: 800, fontSize: 16, color: sel ? sObj.color : phase.color, transition: "color 0.2s" }}>
+                            {phase.label}
+                          </div>
+                          <div style={{ fontSize: 12, color: T.secondary, marginTop: 2 }}>
+                            {phase.components.join(" · ")}
+                          </div>
+                        </div>
+                        {sel && (
+                          <div style={{ marginLeft: "auto", textAlign: "right" }}>
+                            <div style={{ fontSize: 26, fontWeight: 900, color: sObj.color, lineHeight: 1 }}>{sObj.symbol}</div>
+                            <div style={{ fontSize: 11, color: sObj.color, marginTop: 2, fontWeight: 700 }}>{sObj.label}</div>
+                          </div>
+                        )}
+                      </div>
+                      <div style={{ display: "grid", gridTemplateColumns: "repeat(5,1fr)", gap: 6, padding: "0 12px 14px" }}>
+                        {activeSCORES.map(s => {
+                          const active = sel === s.v;
+                          return (
+                            <button key={s.v}
+                              onClick={() => setScores(sc => ({ ...sc, [phase.id]: s.v }))}
+                              aria-label={`${phase.label}: ${s.label}`}
+                              aria-pressed={active}
+                              style={{
+                                border: `2px solid ${active ? s.color : "#2A3A52"}`,
+                                borderRadius: 12, background: active ? s.color + "20" : "transparent",
+                                padding: "10px 0", cursor: "pointer",
+                                display: "flex", flexDirection: "column", alignItems: "center", gap: 4,
+                                transition: "all 0.15s",
+                                outline: active ? `2px solid ${s.color}` : "none", outlineOffset: 2,
+                              }}>
+                              <span style={{ fontSize: 20, color: active ? s.color : T.secondary, fontWeight: 900, lineHeight: 1 }}>{s.symbol}</span>
+                              <span style={{ fontSize: 10, color: active ? s.color : T.secondary, fontWeight: active ? 700 : 400 }}>{s.short}</span>
+                              <span style={{ fontSize: 16, fontWeight: 900, color: active ? s.color : T.hint, lineHeight: 1 }}>{s.v}</span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", margin: "16px 4px 20px" }}>
+                <div style={{ display: "flex", gap: 8 }}>
+                  {activePHASES.map(p => {
+                    const s = scoreFor(scores[p.id], isRMoonE);
+                    return (
+                      <div key={p.id} style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                        <div style={{ width: 10, height: 10, borderRadius: "50%", background: s ? s.color : "#2A3A52", transition: "background 0.2s" }} />
+                        <span style={{ fontSize: 10, color: s ? s.color : T.hint, fontWeight: s ? 700 : 400 }}>{p.label}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+                <div style={{ fontSize: 13, color: T.secondary, fontWeight: 600 }}>{rated}/{activePHASES.length}</div>
+              </div>
+
+              <button style={{ ...S.btnPri, opacity: allRated ? 1 : 0.35, cursor: allRated ? "pointer" : "default" }}
+                onClick={allRated ? submitScores : undefined}>
+                {L.coachBtn}
+              </button>
+              {!allRated && (
+                <p style={{ textAlign: "center", fontSize: 13, color: T.secondary, marginTop: 10 }}>
+                  {L.rateAll}
+                </p>
+              )}
+            </div>
+          </div>
+        );
+      }
+
+      // ── RESULT ─────────────────────────────────────────────────────
+      if (screen === "result") {
+        const low = activePHASES.filter(p => (scores[p.id] || 0) < 3);
+        const avg = (activePHASES.reduce((a, p) => a + (scores[p.id] || 0), 0) / activePHASES.length).toFixed(1);
+
+        return (
+          <div style={S.page}>
+            <PageHeader />
+            <div style={{ ...S.inner, paddingTop: 22 }}>
+              <div style={{ textAlign: "center", marginBottom: 20 }}>
+                <h1 style={{ fontFamily: "Georgia, serif", fontSize: 30, fontWeight: 300, color: "#F4C842", margin: "0 0 6px" }}>
+                  {L.resultTitle}
+                </h1>
+                <div style={{ fontSize: 14, color: T.secondary }}>{L.resultSub}: {avg} / 5</div>
+              </div>
+
+              <div style={{ borderRadius: 18, overflow: "hidden", border: "1px solid #1E2A3D", marginBottom: 20 }}>
+                {activePHASES.map((p, i) => {
+                  const v = scores[p.id] || 0;
+                  const sObj = scoreFor(v, isRMoonE);
+                  return (
+                    <div key={p.id} style={{
+                      display: "flex", alignItems: "center", gap: 14, padding: "16px",
+                      borderBottom: i < activePHASES.length - 1 ? "1px solid #1E2A3D" : "none",
+                      background: sObj ? sObj.bg : "#0E1525",
+                    }}>
+                      <div style={{ fontSize: 28 }}>{p.emoji}</div>
+                      <div style={{ flex: 1 }}>
+                        <div style={{ fontWeight: 800, fontSize: 17, color: p.color }}>{p.label}</div>
+                        <div style={{ fontSize: 12, color: T.secondary, marginTop: 3 }}>{p.components.join(" · ")}</div>
+                      </div>
+                      <div style={{ textAlign: "right", flexShrink: 0 }}>
+                        <div style={{ fontSize: 32, color: sObj?.color || T.secondary, fontWeight: 900, lineHeight: 1 }}>{sObj?.symbol || "—"}</div>
+                        <div style={{ fontSize: 20, fontWeight: 900, color: sObj?.color || T.secondary, lineHeight: 1.2 }}>{v}</div>
+                        <div style={{ fontSize: 12, color: sObj?.color || T.secondary, fontWeight: 700, marginTop: 2 }}>{sObj?.label || "—"}</div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              <div style={{ ...S.card, marginBottom: 20 }}>
+                {loading ? (
+                  <div style={{ textAlign: "center", padding: "20px 0" }}>
+                    <div style={{ fontSize: 28, marginBottom: 10, lineHeight: 1 }} dangerouslySetInnerHTML={{__html: '<svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5c2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/><path d="M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/><path d="M2 18c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/></svg>'}} />
+                    <div style={{ fontSize: 14, color: T.secondary }}>{L.loading}</div>
+                  </div>
+                ) : (
+                  <>
+                    <div style={{ ...S.label, color: "#00C9B8", marginBottom: 12 }}>{L.coaching}</div>
+                    <p style={{ fontFamily: "Georgia, serif", fontSize: 17, lineHeight: 1.85, margin: 0, color: T.primary, fontStyle: "italic" }}>
+                      {review}
+                    </p>
+                  </>
+                )}
+              </div>
+
+              {retestPlan && (
+                <div style={{ ...S.card, marginBottom: 20, borderColor: "#2A4060" }}>
+                  <div style={{ ...S.label, color: "#F4C842", marginBottom: 10 }}>Spaced retest (CBT + reinforcement)</div>
+                  <p style={{ fontSize: 15, lineHeight: 1.75, color: T.primary, margin: "0 0 10px" }}>
+                    {retestPlan.message}
+                  </p>
+                  <p style={{ fontSize: 12, lineHeight: 1.65, color: T.hint, margin: 0 }}>
+                    {retestPlan.rationale}
+                  </p>
+                  <p style={{ fontSize: 13, color: "#60A5FA", marginTop: 12, fontWeight: 600 }}>
+                    Suggested retest around: {formatRetestClock(retestPlan.seconds)}
+                  </p>
+                </div>
+              )}
+
+              {retestPlan && (
+                <div style={{ ...S.card, marginBottom: 20, background: "#0A1220", border: "1px solid #2A3A52" }}>
+                  <div style={{ ...S.label, color: "#A78BFA", marginBottom: 10 }}>Remind this iPhone (pick one or both)</div>
+                  <p style={{ fontSize: 12, color: T.secondary, lineHeight: 1.65, marginBottom: 14 }}>
+                    <strong style={{ color: T.primary }}>Calendar</strong> — reliable alert even when Safari is closed (tap file → Add to Calendar).
+                    {" "}
+                    <strong style={{ color: T.primary }}>Browser</strong> — uses a notification at the spaced time; works best if you keep this tab or add the page to your Home Screen (iOS may limit background alerts).
+                  </p>
+                  <button
+                    type="button"
+                    style={{ ...S.btnPri, marginBottom: 10 }}
+                    onClick={downloadRetestCalendar}
+                  >
+                    ① Add to Calendar (.ics)
+                  </button>
+                  <button
+                    type="button"
+                    style={{ ...S.btnSec, marginTop: 0, borderColor: "#5B4FC9", color: "#C4B5FD" }}
+                    onClick={() => scheduleBrowserReminder(retestPlan.seconds)}
+                  >
+                    ② Schedule browser notification
+                  </button>
+                </div>
+              )}
+
+              {/* Countdown to suggested retest */}
+              {checkinTimeLeft !== null && checkinTimeLeft > 0 && (
+                <div style={{ ...S.card, marginBottom: 20, background: "linear-gradient(135deg, #082218 0%, #180E2A 100%)", border: "1px solid #34D399" }}>
+                  <div style={{ textAlign: "center", padding: "16px 0" }}>
+                    <div style={{ ...S.label, color: "#34D399", marginBottom: 8 }}>Countdown to spaced retest</div>
+                    <div style={{ fontSize: 32, fontWeight: 900, color: "#34D399", lineHeight: 1, fontFamily: "monospace" }}>
+                      {fmt(checkinTimeLeft)}
+                    </div>
+                    <div style={{ fontSize: 12, color: "#60A5FA", marginTop: 8, fontWeight: 600 }}>
+                      {checkinMessage}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {!loading && (
+                <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
+                  {low.length > 0 && (
+                    <button style={S.btnPri} onClick={() => begin(low)}>
+                      {L.repeatLow(low.map(p => p.emoji).join(" "))}
+                    </button>
+                  )}
+                  <button style={S.btnSec} onClick={() => begin(activePHASES)}>{L.repeatFull}</button>
+                  <button style={S.btnSec} onClick={() => setScreen("intro")}>{L.done}</button>
+                </div>
+              )}
+            </div>
+          </div>
+        );
+      }
+
+      return null;
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+
+</html>
