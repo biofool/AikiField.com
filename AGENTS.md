@@ -148,7 +148,10 @@ pages link to it; it is a fully public marketing page (no auth).
 alongside the HTML when text changes. `sync.sh` handles deploy/dry-run
 (`./sync.sh dryrun`, `./sync.sh deploy`). Use `--staging` or `--prod` to
 select the target explicitly: `./sync.sh --staging deploy`,
-`./sync.sh --prod dryrun`. Large binary assets (e.g.
+`./sync.sh --prod dryrun`. Staging deploys run `scripts/ci-local.sh`
+(php-lint + unit + Playwright e2e against a detached HEAD worktree) in
+parallel and gate on it before exiting — skip with `--skip-ci`, override
+steps via `CI_LOCAL_ARGS`. Large binary assets (e.g.
 `AikiField.pdf`, redesign zips) are tracked via DVC, not git directly. The
 `input/` directory holds source materials and is gitignored.
 

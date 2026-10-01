@@ -14,6 +14,7 @@
 // cookie-free for anonymous traffic.
 if (session_status() === PHP_SESSION_NONE && empty($_COOKIE[session_name()])) {
     header('Content-Type: application/json');
+    header('Cache-Control: no-store');
     echo json_encode(['authed' => false]);
     exit;
 }
@@ -21,5 +22,7 @@ if (session_status() === PHP_SESSION_NONE && empty($_COOKIE[session_name()])) {
 define('AF_GATE_NO_REDIRECT', true);
 require dirname(__DIR__, 2) . '/includes/beta-gate.load.php';
 
+// beta-gate.load.php session_start()s on this path, so PHP's session cache
+// limiter already emits Cache-Control: no-store, no-cache, must-revalidate.
 header('Content-Type: application/json');
 echo json_encode(['authed' => $betaAuthed]);
