@@ -174,7 +174,14 @@ update or deploy:
 
 - **Durable chat preferences** (`POST /v1/auth/preferences` —
   `preferredTone` / `preferredMode` / `preferredGrounding` /
-  `preferredLanguage`): no chat, no preferences UI.
+  `preferredLanguage` / `preferredSpecificity` / `preferredModality` /
+  `chatPreferencesSet`): no chat, no preferences UI.
+- **Action-selector chat settings (AIRichardMoon issue #784)**: the new
+  `specificity` (`brief`/`standard`/`detailed`) and `modality`
+  (`chat`/`exercises`/`video`/`blended`) fields on `POST /v1/chat`, plus the
+  matching durable profile fields and the `/v1/auth/me`
+  `chatPreferencesSet` flag, are N/A here — AikiField calls neither the
+  chat endpoint nor the preferences endpoint.
 - **`aeoAccess`**: AikiField ignores it (already recorded in
   `AIRichardMoon/backend/PRD.md` under `/v1/auth/check-session`).
 - **The `monitor` flag**: not returned by `/v1/auth/check-session`, the only
