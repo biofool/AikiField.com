@@ -1,18 +1,24 @@
 # AikiField.com — Site Content
 
 > Source of truth for all text content on aikifield.com.
-> Last updated: 2026-08-08
+> Last updated: 2026-10-02
 
 ---
 
 ## Navigation
 
 - Home (`index.html`)
-- Process (`process.html`)
-- Approach (`approach.html`)
-- Services (`services.html`)
+- Services (`services.html`) — submenu:
+  - Process (`process.html`)
+  - Approach (`approach.html`)
 - Case Studies (`case-studies.html`)
 - Demonstration Technologies (`projects.php`)
+- Digital Experience — submenu (no landing page):
+  - Ride the Lucky Wave (`/games/lucky-wave/RideTheLuckyWaveV1-legacy.html`)
+  - Ride the Lucky Wave V2 (`/games/lucky-wave/RideTheLuckyWaveV2.html`)
+  - Verbal Aikido — Story Mode (`/games/verbal-aikido/`)
+  - Moon — 20 Exclusive Practices (`/games/exercises/`)
+  - Enter the Unified Field Chat (`/members` — AI chat, sign-in required)
 - Assessment (`assessment.html`)
 - Get Started (`contact.html`)
 

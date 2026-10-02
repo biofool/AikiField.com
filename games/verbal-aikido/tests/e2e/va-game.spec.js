@@ -1,11 +1,10 @@
-// Verbal Aikido game (aikifield.com/for-review/games/verbal-aikido/) —
+// Verbal Aikido game (aikifield.com/games/verbal-aikido/) —
 // Story/Discovery/Practice/Community/Extras/Profile e2e.
 //
-// The game is gated by the AikiField coaching session (includes/for-review-serve.php
-// + beta-gate.load.php). To run: serve this repo on a PHP server, sign in at
-// /login.php first (or inject a valid session cookie), then run this spec
-// against that base URL. It is no longer part of the quantumaikido.com
-// Playwright suite.
+// The game is public (promoted from the gated /for-review/ area to the
+// Digital Experience menu). To run: serve this repo on a PHP server and run
+// this spec against that base URL. It is no longer part of the
+// quantumaikido.com Playwright suite.
 //
 // Covers the automatable acceptance criteria of tickets #299–#306:
 // branching story + anger meter, Discovery unlock/quiz gating, Practice
@@ -18,7 +17,7 @@
 
 const { test, expect } = require('@playwright/test');
 
-const GAME = '/for-review/games/verbal-aikido/'; // requires an authed session
+const GAME = '/games/verbal-aikido/';
 const STORAGE_KEY = 'va-game-progress';
 const AGE_GATE_KEY = 'va-age-gate';
 

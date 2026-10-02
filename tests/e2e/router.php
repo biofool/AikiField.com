@@ -11,6 +11,8 @@
  *   .htaccess  /projects.html            → /projects.php  (301)
  *   .htaccess  /beta/assessment.html     → /beta/assessment.php  (301)
  *   .htaccess  /beta/assessment-*.html   → /beta/assessment-*.php  (301)
+ *   .htaccess  /for-review/games/(lucky-wave|verbal-aikido)/* → /games/…  (301)
+ *   .htaccess  /members                  → members.php
  *
  * Everything else returns false, which lets the built-in server serve the
  * file (or execute the .php page) with the correct SCRIPT_NAME — login.php
@@ -46,6 +48,13 @@ $redirects = [
     '#^/beta/assessment-crossview\.html$#'    => '/beta/assessment-crossview.php',
 ];
 
+// Digital Experience games promoted from the gated review area.
+if (preg_match('#^/for-review/games/(lucky-wave|verbal-aikido)(/.*)?$#', $path, $m)) {
+    http_response_code(301);
+    header('Location: /games/' . $m[1] . ($m[2] ?? ''));
+    exit;
+}
+
 foreach ($redirects as $pattern => $target) {
     if (preg_match($pattern, $path)) {
         http_response_code(301);
@@ -69,6 +78,15 @@ if (preg_match('#^/coach-api(/|$)#', $path)) {
     $_SERVER['SCRIPT_NAME'] = '/coach-proxy.php';
     chdir(dirname($file));
     require $file;
+    exit;
+}
+
+// ── /members → members.php (AI chat, session-gated) ─────────────────────────
+
+if (preg_match('#^/members/?$#', $path)) {
+    $_SERVER['SCRIPT_NAME'] = '/members.php';
+    chdir($root);
+    require $root . '/members.php';
     exit;
 }
 

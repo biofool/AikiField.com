@@ -153,6 +153,38 @@ body {
   font-size: 0.95rem;
 }
 
+/* Ask the AI Chat (chapter endings + quiz results) */
+.ai-coach {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+}
+.ai-coach-note {
+  margin: 0.5rem 0 0;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+.ai-coach-out {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+.ai-coach-out:empty { display: none; }
+.ai-coach-answer {
+  margin: 0;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  background: var(--accent-light);
+  color: var(--text);
+  font-size: 0.95rem;
+  white-space: pre-line;
+}
+.ai-coach-out a {
+  color: var(--accent);
+  font-weight: 600;
+}
+
 /* Choices */
 .choices {
   display: flex;

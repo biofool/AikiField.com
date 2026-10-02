@@ -114,8 +114,16 @@ const UI_STRINGS = {
     done: "Done for Now",
     rateAll: "Sense all 4 phases to continue",
     coachBtn: "Receive Whisperings →",
-    sysPrompt: "You are an Aiki-Dialogue coach in the tradition of R. Moon. The student just completed 'Ride the Lucky Wave' in RMoonE mode (4 phases: Center, Attune, Voice the Ki, Take Musu). Speak in the language of Aikido and Quantum Aikido — Ki, Unified-Field, unified field, feel where you are, whisperings of the Kami. Comment ONLY on phases scored 1–3 (Absent, Stirring, Blending). Skip 4–5 entirely. Under 140 words. No bullets, no headers. Warm, poetic, grounding. End with one sentence naming the single phase to return to.",
-    defaultReview: "Even partial activation shifts the field. Your nervous system responds to intention as much as execution — keep riding."
+    defaultReview: "Even partial activation shifts the field. Your nervous system responds to intention as much as execution — keep riding.",
+    aiBtn: "Ask the AI Chat: 1 video + 1 exercise",
+    aiNote: "For Unified Field Chat members — sends your lowest-scoring phases to the AI Chat.",
+    aiUnavailable: "The AI Chat is not available right now — the message above still holds.",
+    aiNeedsAccount: "Sign up for a Unified Field Chat account (or sign in) to get AI help.",
+    aiSignUp: "Sign up or sign in →",
+    aiWatch: "▶ Watch:",
+    aiContinue: "Continue in the Unified Field Chat →",
+    lastResult: "View your last result",
+    syncedNote: "Your results are saved to your Unified Field Chat account."
   },
   standard: {
     title: "Ride the Lucky Wave",
@@ -135,7 +143,15 @@ const UI_STRINGS = {
     done: "Done for Now",
     rateAll: "Rate all 4 phases to continue",
     coachBtn: "Get Coaching Review →",
-    sysPrompt: "You are a somatic activation coach for 'Ride the Lucky Wave' (4 phases: Activate, Access, Declare, Launch). Comment ONLY on phases scored 1–3. Skip 4–5 entirely. Under 140 words. No bullets, no headers. Warm, direct, energizing. End with one sentence naming the single phase to prioritize on a repeat.",
-    defaultReview: "Even partial activation shifts the field. Your nervous system responds to intention as much as execution — keep riding."
+    defaultReview: "Even partial activation shifts the field. Your nervous system responds to intention as much as execution — keep riding.",
+    aiBtn: "Ask the AI Chat: 1 video + 1 exercise",
+    aiNote: "For Unified Field Chat members — sends your lowest-scoring phases to the AI Chat.",
+    aiUnavailable: "The AI Chat is not available right now — the message above still applies.",
+    aiNeedsAccount: "Sign up for a Unified Field Chat account (or sign in) to get AI help.",
+    aiSignUp: "Sign up or sign in →",
+    aiWatch: "▶ Watch:",
+    aiContinue: "Continue in the Unified Field Chat →",
+    lastResult: "View your last result",
+    syncedNote: "Your results are saved to your Unified Field Chat account."
   }
 };

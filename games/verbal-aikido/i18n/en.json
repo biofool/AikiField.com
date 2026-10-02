@@ -243,5 +243,15 @@
     "title": "You appear to be offline",
     "text": "The story content could not be loaded and is not available in the cache. Please reconnect to the internet and try again.",
     "retry": "Retry"
+  },
+  "ai": {
+    "button": "Ask the AI Chat: 1 video + 1 exercise",
+    "note": "For Unified Field Chat members — sends your reactive responses or quiz score to the AI Chat.",
+    "loading": "Asking the AI Chat…",
+    "needsAccount": "Sign up for a Unified Field Chat account (or sign in) to get AI help.",
+    "signUp": "Sign up or sign in →",
+    "watch": "▶ Watch:",
+    "continue": "Continue in the Unified Field Chat →",
+    "unavailable": "The AI Chat is not available right now — please try again later."
   }
 }

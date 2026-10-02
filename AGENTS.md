@@ -163,13 +163,17 @@ auth surface is a **blind `/login.php`** page that gates
 the pre-release `/beta/` assessment pages and the `/for-review/` games area. It is NOT linked from the public
 nav. `projects.php` no longer hosts any login or chat — it shows an
 invitation card pointing visitors to `contact.html` to request a live demo.
-The inline AI Chat (`coach-chat.js`) was removed; the live chat lives on
-`quantumaikido.com/members.php`.
+The inline AI Chat was removed from `projects.php`. Since 2026-10-02 the
+QA members chat is replicated at `/members` (`members.php` + `coach-chat.js`
++ `css/coach-chat.css`), gated by `beta-gate.load.php` and linked from the
+public nav's **Digital Experience** menu as "Enter the Unified Field Chat";
+`quantumaikido.com/members` stays live too. Keep `coach-chat.js` in sync with
+the QA copy (AikiField-only edits are listed in its header).
 
 AikiField.com remains a **third frontend surface** for the shared coaching
 auth flow (same backend user store, same session contract), alongside
 `quantumaikido.com` and `AIRichardMoon/frontend` — but the surface is
-now minimal (beta gating only), not a public chat.
+now beta gating plus the gated `/members` chat replica.
 
 Files: `login.php` (blind login + PHP session POST handlers + `?next=`
 redirect), `coach-proxy.php`, `coach-login.js` (loaded by `login.php`),

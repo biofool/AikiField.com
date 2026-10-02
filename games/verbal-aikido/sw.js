@@ -3,7 +3,7 @@
  * Cache-first for app shell and content; network-fallback-to-cache for media.
  */
 
-const CACHE_VERSION = 'v7';
+const CACHE_VERSION = 'v8'; // v8: Ask the AI Chat button (game.js, i18n)
 const SHELL_CACHE = `va-game-shell-${CACHE_VERSION}`;
 const MEDIA_CACHE = `va-game-media-${CACHE_VERSION}`;
 

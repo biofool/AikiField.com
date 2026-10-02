@@ -146,7 +146,10 @@ $nextRaw = $_GET['next'] ?? '';
 $loginRedirect = af_safe_redirect($nextRaw, '/beta/');
 
 // --- If already authed, skip the form and go to ?next= ---
-if ($qaAlreadyAuthed && empty($_GET['error']) && empty($_GET['reset']) && empty($_GET['confirm']) && empty($_GET['validate'])) {
+// GET only: POSTs (logout from the /members chat's Sign Out, backend-login)
+// must reach their handlers below. Without the method check a signed-in
+// logout POST was redirected here and never signed the player out.
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && $qaAlreadyAuthed && empty($_GET['error']) && empty($_GET['reset']) && empty($_GET['confirm']) && empty($_GET['validate'])) {
     header('Location: ' . $loginRedirect);
     exit;
 }
@@ -239,7 +242,7 @@ $coachLoginUrl = $_SERVER['SCRIPT_NAME'] ?? '/login.php';
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preload" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Public+Sans:wght@400;600;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <noscript><link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Public+Sans:wght@400;600;700&display=swap" rel="stylesheet"></noscript>
-  <link rel="stylesheet" href="css/redesign.css">
+  <link rel="stylesheet" href="css/redesign.css?v=20261002">
   <link rel="stylesheet" href="coach-auth.css">
   <?php if (defined('TURNSTILE_SITE_KEY') && TURNSTILE_SITE_KEY): ?>
   <script>
@@ -277,11 +280,26 @@ $coachLoginUrl = $_SERVER['SCRIPT_NAME'] ?? '/login.php';
     <label for="af-nav-check" class="af-nav__toggle" aria-label="Menu">&#9776;</label>
     <nav aria-label="Primary" class="af-nav">
       <a href="index.html" class="af-nav__link">Home</a>
-      <a href="process.html" class="af-nav__link">Process</a>
-      <a href="approach.html" class="af-nav__link">Approach</a>
-      <a href="services.html" class="af-nav__link">Services</a>
+      <div class="af-nav__group">
+        <a href="services.html" class="af-nav__link">Services</a>
+        <button type="button" class="af-nav__sub-toggle" aria-expanded="false" aria-controls="af-nav-sub-services" aria-label="Services pages"><span aria-hidden="true">&#9662;</span></button>
+        <ul class="af-nav__submenu" id="af-nav-sub-services">
+          <li><a href="process.html" class="af-nav__sublink">Process</a></li>
+          <li><a href="approach.html" class="af-nav__sublink">Approach</a></li>
+        </ul>
+      </div>
       <a href="case-studies.html" class="af-nav__link">Case Studies</a>
       <a href="projects.php" class="af-nav__link">Projects</a>
+      <div class="af-nav__group">
+        <button type="button" class="af-nav__link af-nav__menu-btn" aria-expanded="false" aria-controls="af-nav-sub-dx">Digital Experience</button>
+        <ul class="af-nav__submenu af-nav__submenu--end" id="af-nav-sub-dx">
+          <li><a href="/games/lucky-wave/RideTheLuckyWaveV1-legacy.html" class="af-nav__sublink">Ride the Lucky Wave</a></li>
+          <li><a href="/games/lucky-wave/RideTheLuckyWaveV2.html" class="af-nav__sublink">Ride the Lucky Wave V2</a></li>
+          <li><a href="/games/verbal-aikido/" class="af-nav__sublink">Verbal Aikido — Story Mode</a></li>
+          <li><a href="/games/exercises/" class="af-nav__sublink">Moon — 20 Exclusive Practices</a></li>
+          <li class="af-nav__subsep"><a href="/members" class="af-nav__sublink af-nav__sublink--feature">Enter the Unified Field Chat</a></li>
+        </ul>
+      </div>
       <a href="assessment.html" class="af-nav__link">Assessment</a>
       <a href="contact.html" class="af-nav__cta">Get Started</a>
     </nav>
@@ -606,5 +624,6 @@ window.COACH_LOGOUT_URL = <?= json_encode($coachLoginUrl) ?>;
 <script src="js/locale-utils.js" defer></script>
 <script src="coach-login.js" defer></script>
 
+<script src="/js/nav-menu.js?v=20261002" defer></script>
 </body>
 </html>

@@ -458,6 +458,10 @@
     renderChoices(node);
     renderControls(node);
 
+    if ((node.type === 'success' || node.type === 'partial') && state.currentChapterId) {
+      renderAiCoach({ kind: 'story', chapter: state.currentChapterId, reactive: reactiveCounts() });
+    }
+
     announce(`${node.speaker || ''}: ${node.text || ''}`);
   }
 
@@ -700,6 +704,7 @@
     banner.textContent = passed ? t('discovery.bannerPass') : t('discovery.bannerFail');
     els.dialogue.appendChild(banner);
     announce(t('discovery.announceResult', { banner: banner.textContent, score: quiz.score, total }));
+    renderAiCoach({ kind: 'quiz', lesson: lesson.id, score: quiz.score, total });
 
     if (passed && !state.completedLessons.includes(lesson.id)) {
       state.completedLessons.push(lesson.id);
@@ -719,6 +724,93 @@
     els.choices.appendChild(listBtn);
 
     addBackToChaptersButton();
+  }
+
+  /* ---------- Ask the AI Chat (members only) ---------- */
+
+  // "Ask the AI Chat" button on chapter endings and quiz results. Sends only
+  // ids + integers to /games/ai-coach.php, which turns the lowest results into
+  // one AI Chat message asking for 1 video and 1 exercise. AI help needs a
+  // Unified Field Chat account: signed-out players get a sign-up link back to
+  // the game. Shared with Ride the Lucky Wave V1/V2.
+  function reactiveCounts() {
+    const counts = {};
+    (state.history || []).forEach((h) => {
+      if (h && h.type && h.type !== 'A') counts[h.type] = (counts[h.type] || 0) + 1;
+    });
+    return counts;
+  }
+
+  function renderAiCoach(payload) {
+    const wrap = document.createElement('div');
+    wrap.className = 'ai-coach';
+
+    const btn = document.createElement('button');
+    btn.className = 'choice-btn ai-coach-btn';
+    btn.type = 'button';
+    btn.textContent = t('ai.button');
+    const note = document.createElement('p');
+    note.className = 'ai-coach-note';
+    note.textContent = t('ai.note');
+    const out = document.createElement('div');
+    out.className = 'ai-coach-out';
+    out.setAttribute('aria-live', 'polite');
+
+    btn.addEventListener('click', async () => {
+      btn.disabled = true;
+      out.textContent = t('ai.loading');
+      try {
+        const res = await fetch('/games/ai-coach.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'same-origin',
+          body: JSON.stringify({ game: 'verbal-aikido', returnTo: '/games/verbal-aikido/', ...payload }),
+        });
+        const d = await res.json().catch(() => ({}));
+        out.textContent = '';
+        if (res.ok && d.ok && d.response) {
+          btn.remove();
+          note.remove();
+          const answer = document.createElement('p');
+          answer.className = 'ai-coach-answer';
+          answer.textContent = d.response;
+          out.appendChild(answer);
+          if (d.video && d.video.url) {
+            const v = document.createElement('a');
+            v.href = d.video.url;
+            v.target = '_blank';
+            v.rel = 'noopener noreferrer';
+            v.textContent = `${t('ai.watch')} ${d.video.title}`;
+            out.appendChild(v);
+          }
+          const more = document.createElement('a');
+          more.href = d.chatUrl || '/members';
+          more.textContent = t('ai.continue');
+          out.appendChild(more);
+          announce(d.response);
+        } else if (res.status === 401 && d.needsAccount) {
+          btn.remove();
+          const msg = document.createElement('p');
+          msg.textContent = `${d.error || ''} ${t('ai.needsAccount')}`.trim();
+          const link = document.createElement('a');
+          link.href = d.loginUrl || '/login.php?next=%2Fgames%2Fverbal-aikido%2F';
+          link.textContent = t('ai.signUp');
+          out.append(msg, link);
+          announce(msg.textContent);
+        } else {
+          console.warn('Verbal Aikido: AI Chat unavailable', res.status, d.error);
+          btn.disabled = false;
+          out.textContent = d.error || t('ai.unavailable');
+        }
+      } catch (err) {
+        console.warn('Verbal Aikido: AI Chat request failed', err);
+        btn.disabled = false;
+        out.textContent = t('ai.unavailable');
+      }
+    });
+
+    wrap.append(btn, note, out);
+    els.dialogue.appendChild(wrap);
   }
 
   /* ---------- Mode tabs ---------- */

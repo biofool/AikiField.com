@@ -1,0 +1,74 @@
+{
+  "_comment": "Server-side vocabulary for /games/ai-coach.php — the 'Ask the AI Chat' button in the Digital Experience games. Browsers send only ids and integers; the endpoint turns them into the chat message using the labels here, so it cannot be used to send free text to the AI Chat. Keep in sync with: Lucky Wave PHASES / PHASES_RMOONE + SCORES / SCORES_RMOONE (games/lucky-wave/language.js and RideTheLuckyWaveV1-legacy.html), Verbal Aikido responseTypes / chapters / discovery.lessons (games/verbal-aikido/content.json).",
+  "ask": "Please recommend exactly 1 video and 1 exercise from Richard Moon's teachings to help me {goal}. Keep it brief: name the video and the exercise, and give one sentence on why each helps.",
+  "goals": {
+    "improve": "improve these",
+    "deepen": "deepen this"
+  },
+  "games": {
+    "lucky-wave": {
+      "title": "Ride the Lucky Wave",
+      "returnPaths": [
+        "/games/lucky-wave/RideTheLuckyWaveV1-legacy.html",
+        "/games/lucky-wave/RideTheLuckyWaveV2.html"
+      ],
+      "modes": {
+        "rmoone": {
+          "label": "R. Moon mode",
+          "phases": {
+            "activate": "Center",
+            "access": "Attune",
+            "declare": "Voice the Ki",
+            "launch": "Take Musu"
+          },
+          "scoreLabels": {
+            "1": "Absent",
+            "2": "Stirring",
+            "3": "Blending",
+            "4": "Flowing",
+            "5": "Unified-Field"
+          }
+        },
+        "standard": {
+          "label": "Standard mode",
+          "phases": {
+            "activate": "Activate",
+            "access": "Access",
+            "declare": "Declare",
+            "launch": "Launch"
+          },
+          "scoreLabels": {
+            "1": "Skipped",
+            "2": "Barely",
+            "3": "Partial",
+            "4": "Solid",
+            "5": "Full"
+          }
+        }
+      }
+    },
+    "verbal-aikido": {
+      "title": "Verbal Aikido",
+      "returnPaths": [
+        "/games/verbal-aikido/"
+      ],
+      "responseTypes": {
+        "J": "Justify",
+        "C": "Counter-attack",
+        "A": "Aikido",
+        "F": "Flight / avoidance",
+        "S": "Submissive",
+        "V": "Victim play",
+        "N": "Negating emotion"
+      },
+      "chapters": {
+        "ch1": "Chapter 1: A different way to respond",
+        "ch2": "Chapter 2: My first Dojo"
+      },
+      "lessons": {
+        "disc_reactive_responses": "Spotting the Four Reactive Responses",
+        "disc_verbal_mat": "The Verbal Mat: De-escalating \"You're so selfish\""
+      }
+    }
+  }
+}

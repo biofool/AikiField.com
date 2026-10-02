@@ -124,6 +124,16 @@ RewriteRule ^(en|es|fr|de|pt|ja|zh|ko|ar|he|fa|hi)/dashboard\.php$ /dashboard.ph
 # URL so existing internal/external links keep working.
 RewriteRule ^projects\.html$ /projects.php [R=301,L]
 
+# /members — AI Chat ("Enter the Unified Field Chat", Digital Experience
+# menu). Extensionless URL mirrors quantumaikido.com/members. members.php is
+# session-gated (beta-gate.load.php) and redirects to /login.php when unauthed.
+RewriteRule ^members/?$ members.php [L]
+
+# Digital Experience games were promoted out of the gated review area to the
+# public /games/ tree. Permanently redirect the old gated URLs. These MUST stay
+# above the /for-review/ catch-all below, or that rule swallows them first.
+RewriteRule ^for-review/games/(lucky-wave|verbal-aikido)(/.*)?$ /games/$1$2 [R=301,L]
+
 # /ask/* — Ask AikiField AEO knowledge layer (issue #65). Public, indexable
 # sourced Q&A pages; ask/index.php renders them dynamically from data/ask/.
 RewriteRule ^ask(/.*)?$ /ask/index.php [L]

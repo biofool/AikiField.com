@@ -99,11 +99,14 @@ DESIRED_SETTINGS = {
 
 CACHE_RULES = [
     {
-        "description": "Bypass cache for PHP, coach API and beta (session state)",
+        "description": "Bypass cache for PHP, coach API, beta and members chat (session state)",
         "expression": (
             '(http.request.uri.path wildcard "*.php") or '
             '(starts_with(http.request.uri.path, "/coach-api/")) or '
-            '(starts_with(http.request.uri.path, "/beta/"))'
+            '(starts_with(http.request.uri.path, "/beta/")) or '
+            # /members is extensionless (rewritten to members.php) and embeds
+            # the session token, so it needs its own explicit bypass.
+            '(starts_with(http.request.uri.path, "/members"))'
         ),
         "action": "set_cache_settings",
         "action_parameters": {"cache": False},
