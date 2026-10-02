@@ -316,6 +316,84 @@ def step_settings(token, apply):
 
 # ── Step: cache rules ───────────────────────────────────────────────────────
 
+# Fields kept when copying a live rule into the merged list. Read-only API
+# fields (version, last_updated, position) are dropped so PUT accepts it.
+_RULE_KEEP_KEYS = ("id", "ref", "description", "expression", "action",
+                   "action_parameters", "enabled", "logging", "ratelimit")
+
+
+def _cache_rule_role(rule):
+    """Classify a set_cache_settings rule by function so that rules edited by
+    hand in the dashboard (different description, ends_with vs wildcard
+    wording) still match the intended CACHE_RULES entries."""
+    ap = rule.get("action_parameters") or {}
+    if ap.get("cache") is False:
+        return "bypass"
+    expr = rule.get("expression", "")
+    if ".html" in expr or 'eq "/"' in expr:
+        return "html"
+    if ".css" in expr or (ap.get("edge_ttl") or {}).get("default") == 31536000:
+        return "assets"
+    return "other"
+
+
+def _rule_differs(intended, existing):
+    if " ".join(intended["expression"].split()) != \
+            " ".join((existing.get("expression") or "").split()):
+        return True
+    if intended.get("description") != existing.get("description"):
+        return True
+    if intended.get("action") != existing.get("action"):
+        return True
+    return json.dumps(intended.get("action_parameters") or {}, sort_keys=True) \
+        != json.dumps(existing.get("action_parameters") or {}, sort_keys=True)
+
+
+def _merged_cache_rules(existing):
+    """Fold CACHE_RULES into the live rule list: matched rules are updated in
+    place (same id, keeps enabled), rules the script does not own are kept
+    untouched, missing intended rules are inserted at their CACHE_RULES
+    position. Returns (merged, matched) where matched maps CACHE_RULES index
+    to the live rule it corresponds to."""
+    matched = {}
+    used = set()
+    for i, ir in enumerate(CACHE_RULES):
+        hit = next((r for r in existing
+                    if r.get("id") not in used
+                    and r.get("description") == ir["description"]), None)
+        if hit is None:
+            role = _cache_rule_role(ir)
+            hit = next((r for r in existing
+                        if r.get("id") not in used and role != "other"
+                        and _cache_rule_role(r) == role), None)
+        if hit is not None:
+            matched[i] = hit
+            if hit.get("id"):
+                used.add(hit["id"])
+    merged = []
+    emitted = set()
+    for r in existing:
+        hit_i = next((i for i, v in matched.items() if v is r), None)
+        if hit_i is None:
+            merged.append({k: r[k] for k in _RULE_KEEP_KEYS if k in r})
+            continue
+        for j in range(hit_i):
+            if j not in matched and j not in emitted:
+                merged.append(dict(CACHE_RULES[j]))
+                emitted.add(j)
+        body = dict(CACHE_RULES[hit_i])
+        if r.get("id"):
+            body["id"] = r["id"]
+        if "enabled" in r:
+            body["enabled"] = r["enabled"]
+        merged.append(body)
+        emitted.add(hit_i)
+    for j, ir in enumerate(CACHE_RULES):
+        if j not in emitted:
+            merged.append(dict(ir))
+    return merged, matched
+
+
 def step_cache_rules(token, apply):
     phase = "http_request_cache_settings"
     ok, payload = cf(f"/zones/{ZONE_ID}/rulesets/phases/{phase}/entrypoint",
@@ -328,29 +406,48 @@ def step_cache_rules(token, apply):
         log("warn", "cache: cannot read ruleset", err(payload))
         return False
 
-    # Never clobber a working ruleset. Rules configured by hand may differ in
-    # wording while being functionally correct, and the entrypoint API replaces
-    # the whole list - so only seed rules when there are none, and otherwise
-    # report what is there for a human to compare.
-    if existing:
-        for r in existing:
-            log("ok", "cache: existing rule", r.get("description", "(unnamed)"))
-        covered = any("coach-api" in json.dumps(r) for r in existing)
-        if not covered:
-            log("info", "cache: /coach-api/* has no explicit bypass rule",
-                "it currently returns DYNAMIC anyway; add a bypass rule by hand "
-                "if you want it guaranteed rather than incidental")
-        return True
+    if not existing:
+        if not apply:
+            log("apply", "cache: rules (would seed)",
+                f"no rules present -> {[r['description'] for r in CACHE_RULES]}")
+            return True
+        ok, resp = cf(f"/zones/{ZONE_ID}/rulesets/phases/{phase}/entrypoint",
+                      "PUT", {"rules": CACHE_RULES}, token)
+        log("apply" if ok else "error", "cache: rules",
+            f"{len(CACHE_RULES)} rules seeded" if ok else err(resp))
+        return ok
 
+    # Reconcile rather than only reporting: one PUT on the entrypoint updates
+    # the whole ruleset atomically. Hand-added rules are carried through
+    # unchanged, so this never clobbers dashboard work.
+    merged, matched = _merged_cache_rules(existing)
+    dirty = False
+    for i, ir in enumerate(CACHE_RULES):
+        hit = matched.get(i)
+        if hit is None:
+            dirty = True
+            log("apply", "cache: rule missing", ir["description"])
+        elif _rule_differs(ir, hit):
+            dirty = True
+            log("apply", "cache: rule out of sync",
+                f"{hit.get('description', '(unnamed)')} -> {ir['description']}")
+        else:
+            log("ok", "cache: rule in sync", ir["description"])
+    matched_ids = {v.get("id") for v in matched.values()}
+    for r in existing:
+        if r.get("id") not in matched_ids:
+            log("info", "cache: unmanaged rule kept",
+                r.get("description", "(unnamed)"))
+    if not dirty:
+        return True
     if not apply:
-        log("apply", "cache: rules (would seed)",
-            f"no rules present -> {[r['description'] for r in CACHE_RULES]}")
+        log("apply", "cache: ruleset (would update)",
+            f"{len(merged)} rules after merge")
         return True
-
     ok, resp = cf(f"/zones/{ZONE_ID}/rulesets/phases/{phase}/entrypoint",
-                  "PUT", {"rules": CACHE_RULES}, token)
+                  "PUT", {"rules": merged}, token)
     log("apply" if ok else "error", "cache: rules",
-        f"{len(CACHE_RULES)} rules seeded" if ok else err(resp))
+        "ruleset reconciled" if ok else err(resp))
     return ok
 
 
