@@ -172,7 +172,10 @@ button.af-focus:focus-visible,
   padding: 0;
 }
 .af-nav__link {
-  padding: 10px 13px;
+  /* 10px sides (was 13px): with the Services toggle and Digital Experience
+     menu the nav is ~30px wider, and on the beta/login pages (no tagline row)
+     13px pushed it onto a second header row at 1440px. */
+  padding: 10px 10px;
   text-decoration: none;
   white-space: nowrap;
   font-weight: 600;
@@ -213,10 +216,10 @@ button.af-focus:focus-visible,
   align-items: center;
 }
 .af-nav__sub-toggle {
-  min-width: 32px;
+  min-width: 28px;          /* ≥24px target (WCAG 2.5.8); 44px tall */
   min-height: 44px;
-  margin-left: -6px;
-  padding: 0 8px;
+  margin-left: -8px;
+  padding: 0 6px;
   background: transparent;
   border: 0;
   border-radius: 8px;

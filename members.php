@@ -33,7 +33,7 @@ $qaIsAdmin   = $_SESSION['qa_is_admin'] ?? false;
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preload" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Public+Sans:wght@400;600;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <noscript><link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Public+Sans:wght@400;600;700&display=swap" rel="stylesheet"></noscript>
-  <link rel="stylesheet" href="/css/redesign.css?v=20261002">
+  <link rel="stylesheet" href="/css/redesign.css?v=20261003">
   <link rel="stylesheet" href="/css/coach-chat.css?v=20261002">
 </head>
 <body>
