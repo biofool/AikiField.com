@@ -12,11 +12,13 @@
 // axe-core pass on each page.
 //
 // To regenerate baselines after an intentional UI change:
-//   bash tests/e2e/run.sh visual --update-snapshots
+//   bash tests/e2e/run.sh visual --update-snapshots all
 //   git add tests/e2e/visual-baselines/ && git commit
+// ("all" is required — the bare flag only rewrites snapshots that FAIL the
+// comparison, so within-tolerance drift like issue #68's stale nav is kept.)
 //
 // Or a single page:
-//   bash tests/e2e/run.sh visual --update-snapshots -g "login"
+//   bash tests/e2e/run.sh visual --update-snapshots all -g "login"
 
 const { test, expect } = require('@playwright/test');
 const { AxeBuilder } = require('@axe-core/playwright');
