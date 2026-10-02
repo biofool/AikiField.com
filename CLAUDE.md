@@ -1,4 +1,4 @@
-<!-- AI coding config version: 2026-07-25 — sourced from biofool/starter template.
+<!-- AI coding config version: 2026-10-03 — sourced from biofool/starter template.
      Shared settings across all biofool projects; see ~/.codeium/windsurf/memories/shared_template_config.md -->
 
 # CLAUDE.md
@@ -144,6 +144,11 @@ edit one, edit both.
   system (e.g. frontend + backend with a shared auth flow), document the
   sister repo in `AGENTS.md` and require both PRDs + both repos to be
   updated and deployed together for shared-flow changes.
+
+- **Reply in Simplified Technical English (STE).** Write chat replies in
+  STE: short sentences, active voice, one instruction per sentence,
+  consistent terminology, no unexplained jargon. Applies to chat output
+  only — code, commit messages, and docs keep their normal style.
 
 See `AGENTS.md` for the full text of each rule.
 

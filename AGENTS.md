@@ -1,4 +1,4 @@
-<!-- AI coding config version: 2026-07-25 — sourced from biofool/starter template.
+<!-- AI coding config version: 2026-10-03 — sourced from biofool/starter template.
      Shared settings across all biofool projects; see ~/.codeium/windsurf/memories/shared_template_config.md -->
 
 # AGENTS.md — Global Rules for AI Agents
@@ -78,6 +78,13 @@ the status to the UI, dashboard, or log file.
 Write commands on a single line — backslash continuations break copy-paste.
 Long `gcloud`/`terraform`/`gsutil`/`kubectl` commands stay on one line
 regardless of length.
+
+## Chat reply style — Simplified Technical English
+
+Write all chat replies in **Simplified Technical English (STE)**: short
+sentences, active voice, one instruction per sentence, approved and
+consistent terminology, no unexplained jargon. Applies to chat output only
+— code, commit messages, and documentation keep their normal style.
 
 ## One-off fix scripts (workflow convention)
 
