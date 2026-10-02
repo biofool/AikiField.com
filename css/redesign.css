@@ -785,7 +785,7 @@ a.af-card:hover .af-card__arrow { text-decoration: underline; }
 
 /* ---------- Page header (interior pages) ---------- */
 .af-page-header { padding: 72px 0 40px; }
-.af-page-header__lead { margin-top: 20px; }
+.af-page-header__lead { margin-top: 20px; font-family: var(--af-serif); font-weight: 400; }
 .af-page-header--tight { padding-bottom: 48px; }
 
 /* Green hero variant — matches carousel background */
