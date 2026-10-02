@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://quantumaikido.com/data/ask-richard-moon/schema/answer.schema.json",
+  "title": "Discussing The Unified Field answer record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "question",
+    "canonical_slug",
+    "short_answer",
+    "answer_markdown",
+    "claims",
+    "related_questions",
+    "review_status",
+    "last_reviewed",
+    "kind"
+  ],
+  "properties": {
+    "kind": {
+      "type": "string",
+      "enum": ["question", "book", "video", "concept"]
+    },
+    "question": { "type": "string", "minLength": 1 },
+    "canonical_slug": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+    "short_answer": { "type": "string", "minLength": 20 },
+    "answer_markdown": { "type": "string", "minLength": 40 },
+    "claims": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["claim", "source_id"],
+        "properties": {
+          "claim": { "type": "string" },
+          "source_id": { "type": "string" },
+          "quote": { "type": "string" }
+        }
+      }
+    },
+    "related_questions": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "review_status": {
+      "type": "string",
+      "enum": ["draft", "needs_editorial_review", "reviewed", "published", "deprecated"]
+    },
+    "last_reviewed": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$" },
+    "lineage_note": { "type": "string" },
+    "isbn": { "type": "string" },
+    "youtube_id": { "type": "string" }
+  }
+}

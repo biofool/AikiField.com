@@ -1,0 +1,31 @@
+{
+  "kind": "question",
+  "attribution": "aikifield",
+  "question": "What is a fractional CISO, and when does a company need one?",
+  "canonical_slug": "what-is-a-fractional-ciso",
+  "short_answer": "A fractional CISO is part-time executive security leadership — needed when customers, insurers, or your own team ask security questions nobody has the capacity to own.",
+  "answer_markdown": "AikiField describes the trigger points plainly: a major customer sends a security questionnaire your engineers lack time for, a sales opportunity waits on answers your team can't confidently provide, or cyber-insurance requirements expose gaps nobody can organize. **A fractional CISO gives you experienced CISO-level leadership without the cost and delay of a full-time hire.**\n\nThe service targets Series A and B SaaS, AI, product, and industrial IoT companies, with Wellington and remote engagements.",
+  "claims": [
+    {
+      "claim": "A fractional CISO provides CISO-level leadership without the cost and delay of a full-time hire.",
+      "source_id": "af-page-fractional-ciso",
+      "quote": "AikiField gives you experienced CISO-level leadership without the cost and delay of a full-time hire."
+    },
+    {
+      "claim": "Typical triggers are customer security questionnaires, stalled sales opportunities, and cyber-insurance gaps.",
+      "source_id": "af-page-fractional-ciso",
+      "quote": "Perhaps a major customer has sent a security questionnaire that your engineers do not have time to complete."
+    },
+    {
+      "claim": "The service targets Series A and B SaaS, AI, product, and industrial IoT companies.",
+      "source_id": "af-page-fractional-ciso",
+      "quote": "Series A and B SaaS, AI, product, and industrial IoT companies"
+    }
+  ],
+  "related_questions": [
+    "what-is-aikifield",
+    "what-does-the-security-program-buildout-cover"
+  ],
+  "review_status": "published",
+  "last_reviewed": "2026-10-02"
+}

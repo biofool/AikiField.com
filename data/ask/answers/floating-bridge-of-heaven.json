@@ -1,0 +1,20 @@
+{
+  "kind": "video",
+  "question": "Floating bridge of heaven (needs public YouTube ID)",
+  "canonical_slug": "floating-bridge-of-heaven",
+  "short_answer": "Placeholder for a verified public video using O Sensei's floating-bridge language. Not published until a youtube_url already listed on quantumaikido.com is attached.",
+  "answer_markdown": "Reserved. Do not emit HTML until a public YouTube URL is attached to the source record.",
+  "claims": [
+    {
+      "claim": "Book copy mentions the floating bridge of heaven as a chapter theme.",
+      "source_id": "page-book",
+      "quote": "The floating bridge of heaven where convention meets creativity"
+    }
+  ],
+  "related_questions": [
+    "what-is-quantum-aikido"
+  ],
+  "review_status": "needs_editorial_review",
+  "last_reviewed": "2026-08-18",
+  "attribution": "richard-moon"
+}

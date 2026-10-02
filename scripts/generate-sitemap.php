@@ -90,16 +90,28 @@ foreach ($nonLocalizablePages as $page => $meta) {
     $xml .= "  </url>\n";
 }
 
+// Ask AikiField knowledge layer (issue #65): published records only — the
+// validator guarantees unpublished/draft records never reach the sitemap.
+require_once $root . '/includes/ask-lib.php';
+$askPaths = ask_all_published_paths();
+foreach ($askPaths as $p) {
+    $url = $baseUrl . rtrim(ask_url($p), '/');
+    $xml .= "  <url>\n";
+    $xml .= "    <loc>" . htmlspecialchars($url, ENT_XML1) . "</loc>\n";
+    $xml .= "    <changefreq>monthly</changefreq>\n";
+    $xml .= "    <priority>0.7</priority>\n";
+    $xml .= "  </url>\n";
+}
+
 $xml .= '</urlset>' . "\n";
 
 // Output
 $writeMode = in_array('--write', $argv, true);
+$count = count($localizablePages) * count($supportedLocales) + count($nonLocalizablePages) + count($askPaths);
 if ($writeMode) {
     file_put_contents($sitemapPath, $xml);
-    $count = count($localizablePages) * count($supportedLocales) + count($nonLocalizablePages);
     echo "Wrote $sitemapPath ($count URLs)\n";
 } else {
     echo $xml;
-    $count = count($localizablePages) * count($supportedLocales) + count($nonLocalizablePages);
     fwrite(STDERR, "Dry-run: $count URLs. Use --write to overwrite sitemap.xml.\n");
 }

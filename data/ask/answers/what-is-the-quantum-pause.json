@@ -1,0 +1,32 @@
+{
+  "kind": "question",
+  "question": "What is the Quantum Pause?",
+  "canonical_slug": "what-is-the-quantum-pause",
+  "short_answer": "The Quantum Pause is the trained interval between stimulus and response — the space where habitual reaction can give way to a chosen, more intelligent action.",
+  "answer_markdown": "The public core-concepts copy defines the Quantum Pause as the interval between stimulus and response — the space Viktor Frankl named as the location of human freedom. Richard Moon's Aikido training is presented as making that interval physical and repeatable: receive incoming energy without flinching, then perceive and redirect before acting.\n\nThe dedicated essay on this site says that without the pause you collapse into the same pattern every time, and with it you participate in which possibility becomes real. This is framed as practice, not metaphor: notice the surge, pause, breathe, then choose.\n\nThis page follows that already-public explanation. It does not invent a private-corpus definition.",
+  "claims": [
+    {
+      "claim": "The Quantum Pause is the interval between stimulus and response.",
+      "source_id": "page-about",
+      "quote": "The Quantum Pause is the interval between stimulus and response"
+    },
+    {
+      "claim": "The essay identifies that gap as the Quantum Pause.",
+      "source_id": "blog-quantum-pause",
+      "quote": "That gap is the Quantum Pause."
+    },
+    {
+      "claim": "With the pause, a different response becomes available.",
+      "source_id": "blog-quantum-pause",
+      "quote": "With the pause, you choose which reality to create."
+    }
+  ],
+  "related_questions": [
+    "what-is-wigo",
+    "how-are-awareness-and-response-related",
+    "what-is-quantum-aikido"
+  ],
+  "review_status": "published",
+  "last_reviewed": "2026-08-18",
+  "attribution": "richard-moon"
+}

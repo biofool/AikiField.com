@@ -124,6 +124,10 @@ RewriteRule ^(en|es|fr|de|pt|ja|zh|ko|ar|he|fa|hi)/dashboard\.php$ /dashboard.ph
 # URL so existing internal/external links keep working.
 RewriteRule ^projects\.html$ /projects.php [R=301,L]
 
+# /ask/* — Ask AikiField AEO knowledge layer (issue #65). Public, indexable
+# sourced Q&A pages; ask/index.php renders them dynamically from data/ask/.
+RewriteRule ^ask(/.*)?$ /ask/index.php [L]
+
 # /for-review/* — gated games review area (moved from
 # quantumaikido.com/for-review/games*). Every request is routed through
 # includes/for-review-serve.php, which requires the same coaching session

@@ -1120,3 +1120,7 @@ normal light styling; only `<main class="bta-main">` is dark.
   text variants used on the warm panel, since teal and amber fail contrast there
 
 Verified contrast ratios are documented at the top of `beta/css/assessment.css`.
+
+## Ask AikiField — AEO knowledge layer (`/ask/`)
+
+Issue #65 — port of the quantumaikido.com "Discussing The Unified Field" AEO system. Public, indexable sourced Q&A pages rendered dynamically by `ask/index.php` (`.htaccess` routes `/ask/*`). Records live in `data/ask/{sources,answers}/*.json`; only `review_status: "published"` emits public HTML. Two corpora: `attribution: "aikifield"` (this site's public copy) and `attribution: "richard-moon"` (ported QA records, cited to quantumaikido.com). Editorial review index at `/AEO/` (sign-in + admin/aeoAccess). Validate with `php scripts/validate_ask.php`; test with `php tests/test_ask.php`; regenerate sitemap with `php scripts/generate-sitemap.php --write`. `llms.txt` describes the layer for AI crawlers.

@@ -1,0 +1,21 @@
+{
+  "kind": "book",
+  "question": "What is The Business of Listening?",
+  "canonical_slug": "the-business-of-listening",
+  "short_answer": "A public PDF of conversations with CEOs who used Richard Moon's Listening work.",
+  "answer_markdown": "The books index lists *The Business of Listening* as conversations with CEOs who have used the Listening work. It is a public PDF on /books/; this page does not excerpt the file body.",
+  "claims": [
+    {
+      "claim": "The books index describes the PDF as CEO conversations about the Listening work.",
+      "source_id": "page-books-index",
+      "quote": "The Business of Listening — Conversations with CEOs who have used the Listening work"
+    }
+  ],
+  "related_questions": [
+    "the-power-of-extraordinary-listening",
+    "how-can-quantum-aikido-apply-to-leadership"
+  ],
+  "review_status": "published",
+  "last_reviewed": "2026-08-18",
+  "attribution": "richard-moon"
+}

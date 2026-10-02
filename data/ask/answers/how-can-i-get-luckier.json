@@ -1,0 +1,32 @@
+{
+  "kind": "question",
+  "question": "How can I get luckier?",
+  "canonical_slug": "how-can-i-get-luckier",
+  "short_answer": "In the teaching, luck is aliveness — a vitality you tune into by lining up your attention with it, relaxing open, and letting tension sink back into the earth. The more refined the connection gets, the more volume luck has in your life.",
+  "answer_markdown": "lucky is an aliveness. a vitality that activates the functions of the body. in a crude analogy its a bit like a radio. until you plug it in and it has some juice its inactive. then its a matter of tuning in the station. the station is the quality of spirit you live in. the attitude and the energy you carry. and then you turn up the volume so it can be heard. how do you do that. you line up your attention with the vitality. the more you do the more refined the connection gets. you relax and open. the tension sinks back into the earth and you get more grounded. and with that the aliveness grows. that is the volume it has in your life. so how lucky do you want to be.\n\njoy is the greatest treasure. don't get mad. don't even get even. create a beautiful world",
+  "claims": [
+    {
+      "claim": "The teaching treats joy as life's greatest treasure, born of love through harmony.",
+      "source_id": "pdf-cabw",
+      "quote": "harmony brings forth joy and joy is the greatest treasure"
+    },
+    {
+      "claim": "The warrior's path is framed as taking full responsibility for living in accord with the universe itself.",
+      "source_id": "pdf-cabw",
+      "quote": "accord with the universe itself"
+    },
+    {
+      "claim": "The art centers on vitality/aliveness — budo as the vitality that sustains all life.",
+      "source_id": "pdf-cabw",
+      "quote": "the vitality that sustains all life"
+    }
+  ],
+  "related_questions": [
+    "how-does-aikido-transform-conflict",
+    "floating-bridge-of-heaven"
+  ],
+  "review_status": "needs_editorial_review",
+  "last_reviewed": "2026-10-01",
+  "lineage_note": "Synced from the coaching backend's priority-0 canonical answers (AIRichardMoon #791; data/priority_answers.json). The canonical wording — luck as aliveness, the radio/tuning/volume analogy — is operator-supplied verbatim coaching-corpus text. The public CABW PDF supports the joy/aliveness/vitality vocabulary but does not contain the luck equation itself; review before publishing. Also answers: 'what is luck', 'how do I become luckier', 'how can I be luckier'.",
+  "attribution": "richard-moon"
+}
