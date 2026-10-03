@@ -268,92 +268,36 @@
     flex-direction: row-reverse;
 }
 
-/* Multi-step registration wizard (ticket #510) */
-.coach-reg-progress {
+/* Bottom row of the registration form: invitation code + email validation
+   code sit side by side, smaller and more compact than the main columns. */
+.coach-reg-bottom-row {
     display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0;
-    margin-bottom: 0.25rem;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 0.5rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--coach-border);
 }
-.coach-reg-step-dot {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 2rem;
-    height: 2rem;
-    border-radius: 50%;
-    background: var(--coach-border, #e5e7eb);
-    color: var(--text-secondary, #6b7280);
-    font-size: 0.85rem;
-    font-weight: 600;
-    flex-shrink: 0;
-    transition: background 0.2s, color 0.2s;
-}
-.coach-reg-step-dot.active {
-    background: var(--accent, #8b5cf6);
-    color: #fff;
-}
-.coach-reg-step-dot.done {
-    background: var(--accent, #8b5cf6);
-    color: #fff;
-    opacity: 0.6;
-}
-.coach-reg-step-bar {
-    flex: 1 1 2rem;
-    height: 2px;
-    background: var(--coach-border, #e5e7eb);
-    max-width: 3rem;
-}
-.coach-reg-step-labels {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 1.25rem;
-    max-width: 20rem;
-    margin-left: auto;
-    margin-right: auto;
-}
-.coach-reg-step-label {
-    font-size: 0.75rem;
-    color: var(--text-secondary, #6b7280);
-    text-align: center;
-    flex: 1;
-    transition: color 0.2s;
-}
-.coach-reg-step-label.active {
-    color: var(--accent, #8b5cf6);
-    font-weight: 600;
-}
-.coach-reg-step {
+.coach-reg-bottom-field {
+    flex: 1 1 220px;
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    gap: 0.4rem;
 }
-.coach-reg-step[hidden] {
-    display: none;
-}
-.coach-reg-step-nav {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 1rem;
-    margin-top: 0.5rem;
-}
-.coach-reg-validation-summary {
-    padding: 0.75rem 1rem;
-    border-radius: 0.5rem;
+/* Compact email validation code: smaller label and tighter spacing. */
+.coach-reg-email-validation--compact {
     font-size: 0.85rem;
-    margin-bottom: 0.5rem;
 }
-.coach-reg-validation-summary.verified {
-    background: rgba(34, 197, 94, 0.1);
-    border: 1px solid rgba(34, 197, 94, 0.3);
-    color: #16a34a;
+.coach-reg-email-validation--compact .coach-label {
+    font-size: 0.8rem;
 }
-.coach-reg-validation-summary.pending {
-    background: rgba(234, 179, 8, 0.1);
-    border: 1px solid rgba(234, 179, 8, 0.3);
-    color: #ca8a04;
+.coach-reg-email-validation--compact .coach-reg-send-code-btn {
+    font-size: 0.75rem;
+    padding: 0.15rem 0;
+    margin-top: -0.2rem;
+}
+.coach-reg-email-validation--compact .coach-otp-wrapper {
+    margin: 0.25rem 0;
 }
 
 .coach-label {
@@ -411,13 +355,19 @@
     border-radius: calc(var(--coach-radius) - 1px) calc(var(--coach-radius) - 1px) 0 0;
 }
 
-/* coach-login.js toggles these with el.hidden, and each sets `display`, which
-   silently beats the browser's [hidden] rule — that is why the "or" divider
-   showed with social login disabled. .coach-forgot-captcha has the same defect
-   but is deliberately left out: Turnstile renders implicitly on load and a
-   widget that starts in a display:none container can fail to run. */
+/* coach-login.js toggles all of these with el.hidden, and every one of them
+   sets `display` above — which silently beats the browser's [hidden] rule, so
+   they stayed on screen while "hidden": the "or" divider with social login
+   disabled, the registration OTP boxes before a code is sent, and the tab bar
+   during the reset/confirm overlays.
+   .coach-forgot-captcha has the same defect but is deliberately left out —
+   Turnstile renders implicitly on load and a widget that starts in a
+   display:none container can fail to run, which cannot be tested without a
+   site key. */
 .coach-social[hidden],
-.coach-divider[hidden] {
+.coach-divider[hidden],
+.coach-otp-wrapper[hidden],
+.coach-auth-tab-bar[hidden] {
     display: none;
 }
 .coach-auth-tab {
@@ -435,10 +385,15 @@
 .coach-auth-tab:hover {
     color: var(--text-primary);
 }
-.coach-auth-tab.active {
+.coach-auth-tab.active,
+.coach-auth-tab[aria-selected="true"] {
     background: var(--secondary-bg);
     color: var(--accent);
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+.coach-auth-tab:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: -2px;
 }
 
 /* Password input with show/hide toggle */
@@ -450,7 +405,7 @@
 }
 .coach-password-input {
     width: 100%;
-    padding-right: 2.75rem !important;
+    padding-right: 3rem;
 }
 .coach-password-toggle {
     position: absolute;
@@ -474,22 +429,34 @@
     width: 1.2rem;
     height: 1.2rem;
 }
+/* The svg rule above sets no display, so [hidden] hides the icon natively —
+   keep this as a guard so a future display rule cannot re-show it. */
+.coach-eye-icon[hidden] {
+    display: none;
+}
 
-/* Segmented 6-digit OTP code input */
+/* ── Segmented OTP component ──
+   Grid, not flex: the six boxes must stay in one horizontal row at every
+   supported viewport width (they shrink, they never wrap). */
 .coach-otp-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
     margin: 0.5rem 0 0.25rem 0;
 }
 .coach-otp-digits {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
     gap: 0.5rem;
-    justify-content: space-between;
     max-width: 320px;
 }
 .coach-otp-digit {
-    width: 2.75rem;
-    height: 3rem;
+    width: 100%;
+    min-width: 0;
+    max-width: 48px;
+    height: 48px;
     text-align: center;
-    font-size: 1.4rem;
+    font-size: 1.3rem;
     font-weight: 700;
     font-family: monospace;
     border: 1.5px solid var(--coach-border);
@@ -502,6 +469,18 @@
     outline: none;
     border-color: var(--accent);
     box-shadow: 0 0 0 3px rgba(14, 78, 68, 0.15);
+}
+
+/* Smaller OTP digits for compact placements (e.g. the bottom row of the
+   registration form, next to the invitation code). */
+.coach-otp-digits--sm {
+    gap: 0.3rem;
+}
+.coach-otp-digits--sm .coach-otp-digit {
+    max-width: none;
+    height: 44px;
+    font-size: 1rem;
+    border-radius: 0.35rem;
 }
 
 .coach-input {
@@ -1400,6 +1379,114 @@
 
 .coach-login-forms {
     min-width: 0;
+    width: 100%;
+    max-width: 574px;
+    margin-inline: auto;
+}
+
+/* Compact desktop footprint (issue #57, QA parity): roughly 30% smaller than
+   the unscoped card rules while keeping 44px interaction targets and 16px
+   input text. */
+.coach-login-forms .coach-card {
+    padding: 1.4rem;
+    margin-bottom: 1rem;
+}
+
+.coach-login-forms .coach-card h2 {
+    font-size: 1.25rem;
+    margin-bottom: 0.35rem;
+}
+
+.coach-login-forms .coach-intro {
+    font-size: 0.8rem;
+    margin-bottom: 1rem;
+}
+
+.coach-login-forms .coach-form,
+.coach-login-forms .coach-reg-col {
+    gap: 0.525rem;
+}
+
+.coach-login-forms .coach-reg-columns {
+    gap: 1rem;
+}
+
+.coach-login-forms .coach-reg-bottom-row {
+    gap: 0.7rem;
+    margin-top: 0.35rem;
+    padding-top: 0.525rem;
+}
+
+.coach-login-forms .coach-label,
+.coach-login-forms .coach-reg-col-heading,
+.coach-login-forms .coach-reg-hint,
+.coach-login-forms .coach-consent-notice,
+.coach-login-forms .coach-toggle-row,
+.coach-login-forms .btn-link {
+    font-size: 0.8rem;
+}
+
+.coach-login-forms .coach-input {
+    min-height: 44px;
+    padding: 0.45rem 0.7rem;
+    font-size: 1rem;
+}
+
+.coach-login-forms .btn-primary,
+.coach-login-forms .coach-social-btn,
+.coach-login-forms .coach-auth-tab,
+.coach-login-forms .coach-password-toggle {
+    min-height: 44px;
+}
+
+.coach-login-forms .btn-primary,
+.coach-login-forms .coach-social-btn {
+    padding: 0.45rem 0.7rem;
+    font-size: 0.875rem;
+}
+
+.coach-login-forms .coach-auth-tab-bar--header {
+    padding: 0.28rem;
+}
+
+.coach-login-forms .coach-auth-tab {
+    padding: 0.35rem 0.7rem;
+    font-size: 0.85rem;
+}
+
+.coach-login-forms .coach-password-toggle {
+    width: 44px;
+    padding: 0;
+    right: 0.15rem;
+}
+
+.coach-login-forms .coach-password-wrap .coach-input {
+    padding-right: 3rem;
+}
+
+.coach-login-forms .coach-status {
+    padding: 0.525rem 0.7rem;
+    margin-top: 0.525rem;
+    font-size: 0.8rem;
+}
+
+.coach-login-forms .coach-toggle-row {
+    gap: 0.28rem;
+    margin-top: 0.875rem;
+}
+
+.coach-login-forms .coach-login-captcha,
+.coach-login-forms .coach-forgot-captcha,
+.coach-login-forms .coach-login-validation {
+    margin-top: 0.525rem;
+}
+
+@media (min-width: 900px) {
+    /* The tab bar is wide enough to switch forms at this width, so the
+       "switch form" links at the bottom of each card are redundant. */
+    .coach-login-forms .coach-toggle-row {
+        display: none;
+    }
 }
 
 .coach-login-caveats {

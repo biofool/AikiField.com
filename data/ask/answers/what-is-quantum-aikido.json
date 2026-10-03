@@ -1,0 +1,33 @@
+{
+  "kind": "question",
+  "question": "What is Quantum Aikido?",
+  "canonical_slug": "what-is-quantum-aikido",
+  "short_answer": "Quantum Aikido is Richard Moon's teaching that conflict is energy to be transformed, not a contest to win or lose, bridging Aikido practice with a quantum view of attention and possibility.",
+  "answer_markdown": "Quantum Aikido is the name Richard Moon gives to a body of practice that treats conflict as energy waiting to be transformed rather than a fight to win. Public pages on this site describe the work as a bridge between Aikido — trained as presence, blending, and harmony — and the observer-like fact that the quality of attention shapes what becomes possible.\n\nOn the mat, the art is entering and blending with incoming force instead of colliding with it. Off the mat, the same move is available in conversation, leadership, and diplomacy: stay centered, feel what is actually moving, and redirect rather than resist.\n\nThe 2026 book *Quantum Aikido: The Power of Harmony* (Inner Traditions / Park Street Press) is the public flagship statement of that teaching. This knowledge page paraphrases copy already published on quantumaikido.com; it is not Richard Moon speaking live, and it is not a dump of the private coaching corpus.",
+  "claims": [
+    {
+      "claim": "Quantum Aikido treats conflict as energy to transform rather than a contest to win.",
+      "source_id": "page-book",
+      "quote": "What if conflict isn't something to win or lose, but energy waiting to be transformed?"
+    },
+    {
+      "claim": "The public book frames the work as a bridge between ancient wisdom and modern physics.",
+      "source_id": "page-book",
+      "quote": "Quantum Aikido bridges ancient wisdom with modern physics"
+    },
+    {
+      "claim": "On the biography page, Moon states conflict is energy waiting to be transformed.",
+      "source_id": "page-richard-moon",
+      "quote": "It's energy waiting to be transformed."
+    }
+  ],
+  "related_questions": [
+    "who-is-richard-moon",
+    "what-is-the-quantum-pause",
+    "what-is-wigo",
+    "what-does-richard-moon-teach-about-harmony"
+  ],
+  "review_status": "published",
+  "last_reviewed": "2026-08-18",
+  "attribution": "richard-moon"
+}

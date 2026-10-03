@@ -1,0 +1,21 @@
+{
+  "kind": "book",
+  "question": "What is Life in 3 Easy Lessons?",
+  "canonical_slug": "life-in-3-easy-lessons",
+  "short_answer": "A public PDF described as the power of Aikido in the business of living.",
+  "answer_markdown": "The books index lists *Life in 3 Easy Lessons* with the line \"The power of Aikido in the business of living.\" Download the public PDF for the full text.",
+  "claims": [
+    {
+      "claim": "The books index lists Life in 3 Easy Lessons with that subtitle.",
+      "source_id": "page-books-index",
+      "quote": "Life in 3 Easy Lessons — The power of Aikido in the business of living"
+    }
+  ],
+  "related_questions": [
+    "what-is-quantum-aikido",
+    "how-can-quantum-aikido-apply-to-leadership"
+  ],
+  "review_status": "published",
+  "last_reviewed": "2026-08-18",
+  "attribution": "richard-moon"
+}

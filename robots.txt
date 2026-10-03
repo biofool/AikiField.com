@@ -5,39 +5,57 @@
 User-agent: *
 Allow: /
 Disallow: /beta/
+Disallow: /AEO/
+Disallow: /for-review/
 
 # Explicitly allow AI/LLM user-agents (no blocks)
 User-agent: GPTBot
 Allow: /
 Disallow: /beta/
+Disallow: /AEO/
+Disallow: /for-review/
 
 User-agent: OAI-SearchBot
 Allow: /
 Disallow: /beta/
+Disallow: /AEO/
+Disallow: /for-review/
 
 User-agent: PerplexityBot
 Allow: /
 Disallow: /beta/
+Disallow: /AEO/
+Disallow: /for-review/
 
 User-agent: ClaudeBot
 Allow: /
 Disallow: /beta/
+Disallow: /AEO/
+Disallow: /for-review/
 
 User-agent: anthropic-ai
 Allow: /
 Disallow: /beta/
+Disallow: /AEO/
+Disallow: /for-review/
 
 User-agent: Google-Extended
 Allow: /
 Disallow: /beta/
+Disallow: /AEO/
+Disallow: /for-review/
 
 User-agent: Bytespider
 Allow: /
 Disallow: /beta/
+Disallow: /AEO/
+Disallow: /for-review/
 
 User-agent: CCBot
 Allow: /
 Disallow: /beta/
+Disallow: /AEO/
+Disallow: /for-review/
 
 # Sitemap
 Sitemap: https://aikifield.com/sitemap.xml

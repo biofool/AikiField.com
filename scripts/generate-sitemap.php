@@ -90,16 +90,51 @@ foreach ($nonLocalizablePages as $page => $meta) {
     $xml .= "  </url>\n";
 }
 
+// Ask AikiField knowledge layer (issue #65): published records only — the
+// validator guarantees unpublished/draft records never reach the sitemap.
+require_once $root . '/includes/ask-lib.php';
+$askPaths = ask_all_published_paths();
+foreach ($askPaths as $p) {
+    $url = $baseUrl . rtrim(ask_url($p), '/');
+    $xml .= "  <url>\n";
+    $xml .= "    <loc>" . htmlspecialchars($url, ENT_XML1) . "</loc>\n";
+    $xml .= "    <changefreq>monthly</changefreq>\n";
+    $xml .= "    <priority>0.7</priority>\n";
+    $xml .= "  </url>\n";
+}
+
+// Blog (moved from quantumaikido.com/blog/ — QA issue #365): static HTML
+// served extensionless via blog/.htaccess, so the canonical URL is /blog/<slug>.
+$blogSlugs = array();
+foreach (glob($root . '/blog/*.html') ?: array() as $f) {
+    $slug = basename($f, '.html');
+    if ($slug !== 'index') {
+        $blogSlugs[] = $slug;
+    }
+}
+sort($blogSlugs);
+$xml .= "  <url>\n";
+$xml .= "    <loc>" . htmlspecialchars($baseUrl . '/blog/', ENT_XML1) . "</loc>\n";
+$xml .= "    <changefreq>weekly</changefreq>\n";
+$xml .= "    <priority>0.7</priority>\n";
+$xml .= "  </url>\n";
+foreach ($blogSlugs as $slug) {
+    $xml .= "  <url>\n";
+    $xml .= "    <loc>" . htmlspecialchars($baseUrl . '/blog/' . $slug, ENT_XML1) . "</loc>\n";
+    $xml .= "    <changefreq>monthly</changefreq>\n";
+    $xml .= "    <priority>0.6</priority>\n";
+    $xml .= "  </url>\n";
+}
+
 $xml .= '</urlset>' . "\n";
 
 // Output
 $writeMode = in_array('--write', $argv, true);
+$count = count($localizablePages) * count($supportedLocales) + count($nonLocalizablePages) + count($askPaths) + count($blogSlugs) + 1;
 if ($writeMode) {
     file_put_contents($sitemapPath, $xml);
-    $count = count($localizablePages) * count($supportedLocales) + count($nonLocalizablePages);
     echo "Wrote $sitemapPath ($count URLs)\n";
 } else {
     echo $xml;
-    $count = count($localizablePages) * count($supportedLocales) + count($nonLocalizablePages);
     fwrite(STDERR, "Dry-run: $count URLs. Use --write to overwrite sitemap.xml.\n");
 }

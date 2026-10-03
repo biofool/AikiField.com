@@ -1,0 +1,31 @@
+{
+  "kind": "question",
+  "attribution": "aikifield",
+  "question": "What does AikiField's security program buildout cover?",
+  "canonical_slug": "what-does-the-security-program-buildout-cover",
+  "short_answer": "A right-sized security program — the 80/20 of controls for your real risks, plus AI governance, questionnaire/deal enablement, and decision coaching for founders and CTOs.",
+  "answer_markdown": "The buildout covers a company's real risks without an enterprise-sized budget — the 80/20 security program. Alongside it: **AI governance frameworks** for model security and data handling, **customer-trust advisory** (questionnaires, deal enablement, compliance readiness), and **security decision coaching** for founders and CTOs.\n\nEvery engagement is designed to move a metric the business actually cares about.",
+  "claims": [
+    {
+      "claim": "The program buildout covers real risks without an enterprise-sized budget.",
+      "source_id": "af-page-services",
+      "quote": "Cover your real risks without an enterprise-sized budget"
+    },
+    {
+      "claim": "Included: AI governance framework, customer-trust advisory, and decision coaching for founders and CTOs.",
+      "source_id": "af-page-services",
+      "quote": "a governance framework covering model security, data handling, and AI risk"
+    },
+    {
+      "claim": "Engagements are designed to move a business metric.",
+      "source_id": "af-page-services",
+      "quote": "move a metric your business actually cares about"
+    }
+  ],
+  "related_questions": [
+    "what-is-a-fractional-ciso",
+    "how-does-aikifield-cut-vulnerability-remediation-time"
+  ],
+  "review_status": "published",
+  "last_reviewed": "2026-10-02"
+}

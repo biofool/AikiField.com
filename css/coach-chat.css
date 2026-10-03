@@ -1,0 +1,1971 @@
+/* AI Chat styles for /members (members.php) — "Enter the Unified Field Chat".
+   Replicated from quantumaikido.com/coach-auth.css (chat sections only; the
+   QA members page stays live there too). Loaded only by members.php, so the
+   login page and its committed visual baselines are unaffected.
+
+   The QA rules read two token sets that AikiField's css/redesign.css does not
+   define: the legacy names (--accent, --secondary-bg, ...) and the epic #321
+   contract (--color-label, --space-3, --tap-min, ...). Both are bridged onto
+   AikiField's --af-* tokens below. AikiField is light-only (no dark scheme),
+   so there is no dark-mode block. Keep the sections below in sync with
+   quantumaikido.com/coach-auth.css when the QA chat changes. */
+:root {
+    /* Legacy names (same mapping as coach-auth.css) */
+    --primary-bg: var(--af-bg, #F6F2EA);
+    --secondary-bg: var(--af-white, #fff);
+    --border: var(--af-border, #E0D9CB);
+    --accent: var(--af-primary, #0E4E44);
+    --accent-light: var(--af-primary, #0E4E44);
+    --coach-accent: var(--af-primary, #0E4E44);
+    --text-primary: var(--af-ink, #16201C);
+    --text-secondary: var(--af-text, #2C3833);
+    --text-muted: var(--af-muted, #5A655F);
+    --warn: var(--af-gold, #9A6B14);
+    --coach-surface: var(--secondary-bg);
+    --coach-border: var(--border);
+    --coach-radius: 0.75rem;
+
+    /* Epic #321 token contract */
+    --color-bg: var(--af-bg, #F6F2EA);
+    --color-bg-elevated: var(--af-white, #fff);
+    --color-bg-grouped: var(--af-hover-bg, #EBE4D6);
+    --color-fill: rgba(14, 78, 68, 0.14);
+    --color-fill-secondary: rgba(14, 78, 68, 0.07);
+    --color-label: var(--af-ink, #16201C);
+    --color-label-secondary: var(--af-text, #2C3833);
+    --color-label-tertiary: var(--af-muted, #5A655F);
+    --color-separator: var(--af-border, #E0D9CB);
+    --color-tint: var(--af-primary, #0E4E44);
+    --color-tint-pressed: var(--af-primary-dk, #0A3A33);
+    --color-on-tint: #ffffff;
+    --color-link: var(--af-primary, #0E4E44);
+    --color-destructive: #B3261E;
+    --color-warning: var(--af-gold, #9A6B14);
+    --focus-ring: var(--af-primary, #0E4E44);
+    --shadow-color: rgba(22, 32, 28, 0.16);
+    --font-sans: var(--af-sans, system-ui, sans-serif);
+    --text-title3: 1.25rem;
+    --text-headline: 1.0625rem;
+    --text-body: 1.0625rem;
+    --text-callout: 1rem;
+    --text-subhead: 0.9375rem;
+    --text-footnote: 0.8125rem;
+    --text-caption: 0.75rem;
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-pill: 999px;
+    --tap-min: 44px;
+    --space-1: 0.25rem;
+    --space-2: 0.5rem;
+    --space-3: 0.75rem;
+    --space-4: 1rem;
+    --space-5: 1.5rem;
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+    --duration-fast: 150ms;
+    --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+.coach-shell {
+    max-width: var(--layout-max, 820px);
+    margin: 2rem auto;
+    padding: 0 var(--layout-gutter, 1rem);
+}
+
+/* ===== quantumaikido.com/coach-auth.css — chat components ===== */
+/* ── Chat: Unified Top Action Toolbar ── */
+.coach-chat-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-bottom: 0.85rem;
+    margin-bottom: 0.85rem;
+    border-bottom: 1px solid var(--coach-border, #334155);
+    flex-wrap: wrap;
+}
+
+.coach-menu-item {
+    display: flex;
+    align-items: center;
+    padding: 0.45rem 0.6rem;
+    font-size: 0.82rem;
+    color: var(--text-secondary, #cbd5e1);
+    border-radius: 0.35rem;
+    text-decoration: none;
+    background: transparent;
+    border: none;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 0.12s ease, color 0.12s ease;
+}
+
+.coach-menu-item:hover,
+.coach-menu-item:focus-visible {
+    background: var(--primary-bg, #0f172a);
+    color: var(--text-primary, #f1f5f9);
+    outline: none;
+}
+
+/* Compact Dismissible Intro Panel */
+.coach-intro-panel {
+    position: relative;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.coach-intro-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.coach-intro-dismiss {
+    background: transparent;
+    border: none;
+    color: var(--text-muted, #94a3b8);
+    cursor: pointer;
+    padding: 0.25rem;
+    border-radius: 0.35rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.15s ease;
+}
+
+.coach-intro-dismiss:hover {
+    color: var(--text-primary, #f1f5f9);
+}
+
+.coach-intro-panel.is-dismissed {
+    display: none;
+}
+
+/* Handoff clarify form (AI-initiated handoff) — member-initiated prompt
+   removed (issue #286); these styles remain for the clarify flow. */
+
+.coach-messages {
+    max-height: 400px;
+    overflow-y: auto;
+    border: 1px solid var(--coach-border);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    background: var(--primary-bg);
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    /* position: relative so the scroll-to-bottom button can float inside */
+    position: relative;
+}
+
+/* Scroll-to-bottom button: floats at the bottom-right of the messages area,
+   shown only when the user has scrolled up. Standard mobile chat pattern. */
+.coach-scroll-bottom-btn {
+    position: absolute;
+    right: 0.75rem;
+    bottom: 0.75rem;
+    z-index: 10;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: none;
+    background: var(--secondary-bg, #1e293b);
+    color: var(--text-secondary, #cbd5e1);
+    font-size: 1.1rem;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+    transition: opacity 0.2s, background 0.15s;
+}
+.coach-scroll-bottom-btn:hover,
+.coach-scroll-bottom-btn:focus-visible {
+    background: var(--accent, #4f7cff);
+    color: #fff;
+}
+
+.coach-scroll-bottom-btn:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+.coach-scroll-bottom-btn[hidden] {
+    display: none;
+}
+
+.coach-msg {
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    max-width: 85%;
+    overflow-wrap: break-word;
+    word-break: break-word;
+}
+
+.coach-msg-user {
+    background: var(--color-tint-pressed);
+    color: white;
+    align-self: flex-end;
+}
+
+.coach-msg-ai {
+    background: var(--secondary-bg);
+    border: 1px solid var(--coach-border);
+    align-self: flex-start;
+}
+
+/* Emphasis in welcome messages (rendered from **text** → <em>) */
+.coach-msg-ai em {
+    font-style: italic;
+    font-weight: 600;
+}
+
+/* "Harmonizing..." indicator shown while the backend processes a message */
+.coach-harmonizing {
+    color: var(--text-muted, #888);
+    font-style: italic;
+    font-size: 0.85rem;
+    opacity: 0.8;
+}
+
+.coach-harmonizing-dots::after {
+    content: "";
+    animation: coach-harmonizing-dots 1.4s steps(4, end) infinite;
+}
+
+@keyframes coach-harmonizing-dots {
+    0%   { content: ""; }
+    25%  { content: "."; }
+    50%  { content: ".."; }
+    75%  { content: "..."; }
+    100% { content: ""; }
+}
+
+.coach-msg-ai .coach-sources {
+    margin-top: 0.5rem;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.coach-msg-ai .coach-sources a {
+    color: var(--accent-light);
+}
+
+/* Handoff room URL (Jitsi) — issue #17 */
+.coach-msg-ai .coach-handoff-notice {
+    margin-top: 0.75rem;
+    padding: 0.75rem;
+    border: 1px solid var(--color-warning);
+    border-radius: 0.5rem;
+    background: rgba(210, 154, 34, 0.1);
+}
+
+.coach-msg-ai .coach-handoff-notice a {
+    display: block;
+    font-weight: 600;
+    color: var(--accent-light);
+    text-decoration: none;
+    margin-bottom: 0.25rem;
+}
+
+.coach-msg-ai .coach-handoff-notice a:hover,
+.coach-msg-ai .coach-handoff-notice a:focus-visible {
+    text-decoration: underline;
+}
+
+.coach-msg-ai .coach-handoff-expiry {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.coach-msg-ai .coach-handoff-notified {
+    font-weight: 600;
+    color: var(--text-primary, #f1f5f9);
+    margin-bottom: 0.5rem;
+}
+
+/* Handoff clarifying message form */
+.coach-msg-ai .coach-handoff-clarify {
+    margin-top: 0.75rem;
+    padding: 0.75rem;
+    border: 1px solid var(--border, #334155);
+    border-radius: 0.5rem;
+    background: var(--secondary-bg, #1e293b);
+}
+
+.coach-msg-ai .coach-handoff-clarify-prompt {
+    font-weight: 500;
+    color: var(--text-primary, #f1f5f9);
+    margin-bottom: 0.5rem;
+}
+
+.coach-msg-ai .coach-handoff-clarify-input {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid var(--border, #334155);
+    border-radius: 0.375rem;
+    background: var(--primary-bg, #0f172a);
+    color: var(--text-primary, #f1f5f9);
+    font-family: inherit;
+    font-size: 0.9rem;
+    resize: vertical;
+    margin-bottom: 0.5rem;
+}
+
+.coach-msg-ai .coach-handoff-clarify-input:focus {
+    outline: 2px solid var(--accent-light, #a78bfa);
+    outline-offset: 1px;
+}
+
+.coach-msg-ai .coach-handoff-clarify-btns {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.coach-msg-ai .coach-handoff-clarify-send {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+}
+
+.coach-msg-ai .coach-handoff-clarify-skip {
+    background: none;
+    border: none;
+    color: var(--text-muted, #94a3b8);
+    font-size: 0.85rem;
+    cursor: pointer;
+    text-decoration: underline;
+    padding: 0;
+}
+
+.coach-msg-ai .coach-handoff-clarify-skip:hover,
+.coach-msg-ai .coach-handoff-clarify-skip:focus-visible {
+    color: var(--text-secondary, #cbd5e1);
+}
+
+.coach-msg-ai .coach-handoff-clarify-skip:disabled,
+.coach-msg-ai .coach-handoff-clarify-send:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* YouTube video embed (ticket #008 Phase 2, Option A) */
+.coach-msg-ai .coach-video-embed {
+    margin-top: 0.75rem;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    max-width: 560px;
+}
+
+.coach-msg-ai .coach-video-embed iframe {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    height: auto;
+    border: 0;
+    border-radius: 0.5rem;
+}
+
+/* "Jump to this moment" deep-link below embed (ticket #011 Phase 3) */
+.coach-msg-ai .coach-video-jump-link {
+    display: inline-block;
+    margin-top: 0.4rem;
+    font-size: 0.85rem;
+    color: var(--accent, #8b5cf6);
+    text-decoration: none;
+}
+.coach-msg-ai .coach-video-jump-link:hover,
+.coach-msg-ai .coach-video-jump-link:focus-visible {
+    text-decoration: underline;
+}
+
+/* "Play video" link for non-YouTube video URLs (issue #017) */
+.coach-msg-ai .coach-video-link {
+    margin-top: 0.75rem;
+}
+.coach-msg-ai .coach-video-play-link {
+    display: inline-block;
+    font-size: 0.9rem;
+    color: var(--accent, #8b5cf6);
+    text-decoration: none;
+}
+.coach-msg-ai .coach-video-play-link:hover,
+.coach-msg-ai .coach-video-play-link:focus-visible {
+    text-decoration: underline;
+}
+
+/* Rich link cards (issue #217) — OpenGraph metadata rendered as visual cards
+   instead of raw, overflow-prone URLs. Falls back to a truncated clickable
+   link when metadata is unavailable. */
+.coach-msg-ai .coach-link-card {
+    display: flex;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    border: 1px solid var(--coach-border, #334155);
+    border-radius: 0.5rem;
+    margin-top: 0.5rem;
+    max-width: 400px;
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 0.15s ease;
+}
+.coach-msg-ai .coach-link-card:hover,
+.coach-msg-ai .coach-link-card:focus-visible {
+    border-color: var(--accent, #8b5cf6);
+    outline: none;
+}
+.coach-msg-ai .coach-link-card-thumb {
+    width: 80px;
+    height: 80px;
+    min-width: 80px;
+    border-radius: 0.25rem;
+    object-fit: cover;
+    background: var(--secondary-bg, #1e293b);
+}
+.coach-msg-ai .coach-link-card-body {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+.coach-msg-ai .coach-link-card-title {
+    font-weight: 600;
+    font-size: 0.85rem;
+    line-height: 1.3;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+.coach-msg-ai .coach-link-card-desc {
+    font-size: 0.75rem;
+    color: var(--text-muted, #94a3b8);
+    line-height: 1.3;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+.coach-msg-ai .coach-link-card-site {
+    font-size: 0.7rem;
+    color: var(--text-muted, #94a3b8);
+    margin-top: auto;
+}
+/* Fallback: truncated clickable link when no OG metadata */
+.coach-msg-ai .coach-link-fallback {
+    display: inline-block;
+    margin-top: 0.25rem;
+    font-size: 0.85rem;
+    color: var(--accent, #8b5cf6);
+    text-decoration: none;
+    word-break: break-all;
+}
+.coach-msg-ai .coach-link-fallback:hover,
+.coach-msg-ai .coach-link-fallback:focus-visible {
+    text-decoration: underline;
+}
+/* Loading skeleton while fetching metadata */
+.coach-msg-ai .coach-link-card-skeleton {
+    display: flex;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    border: 1px solid var(--coach-border, #334155);
+    border-radius: 0.5rem;
+    margin-top: 0.5rem;
+    max-width: 400px;
+    min-height: 96px;
+    background: var(--secondary-bg, #1e293b);
+    opacity: 0.6;
+}
+.coach-msg-ai .coach-link-card-skeleton::after {
+    content: "Fetching link preview\u2026";
+    font-size: 0.75rem;
+    color: var(--text-muted, #94a3b8);
+    align-self: center;
+}
+
+/* Feedback controls (thumbs up/down) */
+.coach-feedback-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 0.5rem;
+    padding-top: 0.4rem;
+}
+.coach-fb-chip {
+    background: none;
+    border: 1px solid rgba(255,255,255,0.15);
+    color: rgba(255,255,255,0.5);
+    padding: 0.25rem 0.5rem;
+    border-radius: 1rem;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: inherit;
+    line-height: 1;
+}
+.coach-fb-chip:hover,
+.coach-fb-chip:focus-visible { border-color: rgba(255,255,255,0.4); }
+
+.coach-fb-chip:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+.coach-fb-chip.coach-fb-selected {
+    background: var(--color-fill);
+    border-color: var(--color-link);
+    color: var(--color-link);
+}
+.coach-fb-detail {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 0.4rem;
+    width: 100%;
+    align-items: center;
+}
+.coach-fb-detail-prompt {
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.6);
+    font-style: italic;
+    width: 100%;
+}
+.coach-fb-chip--comment {
+    opacity: 0.6;
+}
+.coach-fb-chip--comment:hover,
+.coach-fb-chip--comment:focus-visible { opacity: 1; }
+.coach-fb-detail-input {
+    flex: 1;
+    min-width: 12rem;
+    padding: 0.3rem 0.6rem;
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 0.3rem;
+    font-size: 0.85rem;
+    font-family: inherit;
+    color: #fff;
+    background: rgba(0,0,0,0.3);
+}
+.coach-fb-detail-input:focus { border-color: var(--accent); }
+.coach-fb-detail-submit {
+    padding: 0.3rem 0.8rem;
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 0.3rem;
+    font-size: 0.85rem;
+    cursor: pointer;
+    font-family: inherit;
+    background: rgba(0,0,0,0.3);
+    color: #fff;
+}
+.coach-fb-detail-submit:hover,
+.coach-fb-detail-submit:focus-visible { border-color: var(--accent); }
+
+.coach-fb-detail-submit:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+
+.coach-queue-banner {
+    background: rgba(245, 127, 23, 0.15);
+    color: #ffb74d;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    font-size: 0.85rem;
+    margin-bottom: 0.75rem;
+    text-align: center;
+    animation: coach-pulse 2s ease-in-out infinite;
+}
+
+@keyframes coach-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+/* Send button — compact icon button, not a large text button.
+   Override .btn's large padding and the mobile .btn { width: 100% } rule. */
+#coach-send-btn {
+    padding: 0.5rem 0.75rem;
+    font-size: 1rem;
+    line-height: 1;
+    white-space: nowrap;
+    flex-shrink: 0;
+    align-self: stretch;
+    width: auto;
+    min-width: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@media (max-width: 768px) {
+    /* Issue #150: On mobile the chat pane was capped at 400px and sat below
+       a full screen of header/intro chrome. Hide the marketing intro panel
+       (the chat header already labels the view) and turn the shell into a
+       flex column that fills the viewport below the sticky nav. The chat
+       card becomes a flex column whose messages area grows to fill the
+       remaining space instead of being a 400px scroll box.
+       Issue #151: 100dvh (dynamic viewport height) shrinks when the
+       on-screen keyboard opens on iOS/Android, so the composer stays
+       visible above the keyboard. A visualViewport listener in
+       coach-chat.js provides an additional fallback for older browsers.
+       Safe-area insets: env(safe-area-inset-*) adds padding for notched
+       / home-indicator phones (iPhone X+) so the composer and send button
+       aren't obscured. Requires viewport-fit=cover in the meta viewport. */
+    .coach-intro-panel {
+        display: none;
+    }
+    /* Scope mobile chat layout to pages that actually have #coach-chat
+       (members.html). Without :has(#coach-chat), the flex/min-height/
+       reduced-padding overrides would also apply to the login page,
+       making the form wider than the header/footer. */
+    .coach-shell:has(#coach-chat) {
+        display: flex;
+        flex-direction: column;
+        /* 100dvh shrinks with the keyboard on modern browsers (#151).
+           --vvh is set on :root by the visualViewport listener in
+           coach-chat.js as a fallback for older browsers without dvh
+           support. --nav-h is set by coach-chat.js measuring the actual
+           sticky header; falls back to 70px. */
+        min-height: calc(var(--vvh, 100dvh) - var(--nav-h, 70px));
+        margin: 0.5rem auto;
+        padding: 0 0.5rem;
+        padding-bottom: env(safe-area-inset-bottom);
+    }
+    #coach-chat.coach-card {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        min-height: 0;
+        /* Issue #251: was 1rem all round — the chat window should use close
+           to the full device width on mobile. Keep vertical padding (room
+           for the header/footer rows) but trim the sides. */
+        padding: 1rem 0.5rem;
+        padding-bottom: calc(1rem + env(safe-area-inset-bottom));
+        margin-bottom: 0;
+    }
+    .coach-messages {
+        max-height: none;
+        flex: 1;
+        min-height: 0;
+    }
+
+    /* Issue #153: Keep chat header buttons inline on mobile — don't let
+       them go full-width or stack into three separate rows. A more
+       specific selector overrides any broad .btn { width: 100% } rule. */
+    .coach-chat-header .btn {
+        width: auto;
+        flex-shrink: 0;
+    }
+
+    #coach-send-btn {
+        width: auto;
+    }
+
+    /* Issue #154: keep the send button ≥44px on touch devices
+       (SC 2.5.5 AAA / Apple HIG). The composer input and the More-menu
+       items are styled by the scoped #coach-chat / .coach-shell--chat
+       rules below (#323), which already set --tap-min heights. */
+    #coach-send-btn {
+        min-width: 44px;
+        min-height: 44px;
+    }
+}
+
+/* Issue #251: landscape mobile has very little vertical room (phone on its
+   side). Compact the header/footer chrome further so it doesn't crowd out
+   the message list — the overflow menus above already do most of this
+   work by moving secondary controls out of the flow; this trims what's
+   left visible. */
+@media (max-height: 500px) and (orientation: landscape) {
+    .coach-chat-header {
+        gap: 0.5rem;
+        margin-bottom: 0.5rem;
+    }
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* ─── Toolbar confirmation messages — overlay rule (#267) ───────────────
+   Any confirmation/status message triggered by a toolbar control MUST use
+   position: absolute (overlay) positioning, never inline flow. Inline
+   messages with width: 100% + flex-wrap: wrap displace sibling buttons
+   when shown/hidden, causing layout shift. The old .coach-voice-warning
+   was removed for this reason — the New Features popover below is the
+   correct pattern: position: absolute, z-index: 1000.
+   ──────────────────────────────────────────────────────────────────── */
+
+/* ─── New Features popover (#557) ────────────────────────────────────── */
+
+.coach-features-wrap {
+    position: relative;
+    margin-left: auto; /* push to far end of toolbar (LTR) */
+}
+
+[dir="rtl"] .coach-features-wrap {
+    margin-left: 0;
+    margin-right: auto;
+}
+
+.coach-features-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.coach-features-popover {
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    right: 0;
+    width: 560px;
+    max-width: calc(100vw - 2rem);
+    background: var(--color-bg-elevated);
+    border: 1px solid var(--border, rgba(255,255,255,0.15));
+    border-radius: 12px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 193, 7, 0.1);
+    z-index: 1000;
+    animation: coach-features-fade-in 0.2s ease-out;
+}
+
+[dir="rtl"] .coach-features-popover {
+    right: auto;
+    left: 0;
+}
+
+@keyframes coach-features-fade-in {
+    from { opacity: 0; transform: translateY(-8px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.coach-features-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.25rem 0.75rem;
+    border-bottom: 1px solid var(--border, rgba(255,255,255,0.1));
+}
+
+.coach-features-header h3 {
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--color-label);
+}
+
+.coach-features-close {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 1.25rem;
+    cursor: pointer;
+    padding: 0.15rem 0.35rem;
+    border-radius: 4px;
+    line-height: 1;
+    transition: color 0.2s, background 0.2s;
+}
+
+.coach-features-close:hover,
+.coach-features-close:focus {
+    color: var(--color-label);
+    background: rgba(255,255,255,0.08);
+    outline: none;
+}
+
+.coach-features-intro {
+    margin: 0;
+    padding: 0.75rem 1.25rem 0.5rem;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.coach-features-columns {
+    display: flex;
+    gap: 0;
+}
+
+.coach-features-column {
+    flex: 1 1 50%;
+    min-width: 0;
+    border-right: 1px solid var(--border, rgba(255,255,255,0.1));
+}
+
+.coach-features-column:last-child {
+    border-right: none;
+}
+
+.coach-features-column-title {
+    margin: 0;
+    padding: 0.5rem 1.25rem 0.25rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--text-muted);
+}
+
+.coach-features-list {
+    list-style: none;
+    margin: 0;
+    padding: 0.25rem 0 0.75rem;
+    max-height: 320px;
+    overflow-y: auto;
+}
+
+.coach-features-enable-list {
+    list-style: none;
+    margin: 0;
+    padding: 0.25rem 0 0.75rem;
+    max-height: 320px;
+    overflow-y: auto;
+}
+
+/* Toggle switch for "Enable on Staging" flags */
+.coach-feature-enable-switch {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+    cursor: pointer;
+}
+
+.coach-feature-enable-input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.coach-feature-enable-slider {
+    display: block;
+    width: 36px;
+    height: 20px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 20px;
+    position: relative;
+    transition: background 0.2s ease;
+}
+
+.coach-feature-enable-slider::before {
+    content: "";
+    position: absolute;
+    left: 2px;
+    top: 2px;
+    width: 16px;
+    height: 16px;
+    background: #fff;
+    border-radius: 50%;
+    transition: transform 0.2s ease;
+}
+
+.coach-feature-enable-input:checked + .coach-feature-enable-slider {
+    background: var(--accent, #8b5cf6);
+}
+
+.coach-feature-enable-input:checked + .coach-feature-enable-slider::before {
+    transform: translateX(16px);
+}
+
+.coach-feature-enable-input:focus-visible + .coach-feature-enable-slider {
+    outline: 2px solid var(--accent, #4fc3f7);
+    outline-offset: 2px;
+}
+
+.coach-feature-enable-input:disabled + .coach-feature-enable-slider {
+    background: rgba(255,255,255,0.08);
+    cursor: not-allowed;
+}
+
+.coach-feature-enable-input:disabled + .coach-feature-enable-slider::before {
+    background: rgba(255,255,255,0.4);
+}
+
+.coach-feature-enable-item--readonly {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+.coach-feature-enable-item--readonly .coach-feature-enable-switch {
+    cursor: not-allowed;
+}
+
+.coach-feature-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.6rem 1.25rem;
+    transition: background 0.15s;
+}
+
+.coach-feature-item:hover {
+    background: rgba(255,255,255,0.03);
+}
+
+.coach-feature-thumb {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    margin: 0;
+    border: none;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--text-muted, #94a3b8);
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: color 0.2s ease, background 0.2s ease, transform 0.1s ease;
+}
+
+.coach-feature-thumb:hover,
+.coach-feature-thumb:focus-visible {
+    color: var(--color-label);
+    background: rgba(255,255,255,0.08);
+    outline: none;
+}
+
+.coach-feature-thumb:focus-visible {
+    outline: 2px solid var(--accent, #4fc3f7);
+    outline-offset: 2px;
+}
+
+.coach-feature-thumb:active {
+    transform: scale(0.95);
+}
+
+.coach-feature-thumb--active,
+.coach-feature-thumb[aria-pressed="true"] {
+    color: var(--accent, #8b5cf6);
+}
+
+.coach-thumb-icon {
+    width: 24px;
+    height: 24px;
+    pointer-events: none;
+}
+
+.coach-feature-thumb--active .coach-thumb-icon,
+.coach-feature-thumb[aria-pressed="true"] .coach-thumb-icon {
+    fill: currentColor;
+}
+
+.coach-feature-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+}
+
+.coach-feature-name {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--color-label);
+}
+
+.coach-feature-desc {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    line-height: 1.35;
+}
+
+.coach-features-status {
+    padding: 0.6rem 1.25rem 1rem;
+    font-size: 0.8rem;
+    color: #ffc107;
+    border-top: 1px solid var(--border, rgba(255,255,255,0.1));
+}
+
+.coach-features-status-error {
+    color: #f44336;
+}
+
+/* Mobile: popover anchors to the right edge of the toolbar and stacks columns */
+@media (max-width: 768px) {
+    .coach-features-popover {
+        right: 0.5rem;
+        width: calc(100vw - 1rem);
+    }
+    [dir="rtl"] .coach-features-popover {
+        left: 0.5rem;
+        right: auto;
+    }
+    .coach-features-columns {
+        flex-direction: column;
+    }
+    .coach-features-column {
+        border-right: none;
+        border-bottom: 1px solid var(--border, rgba(255,255,255,0.1));
+    }
+    .coach-features-column:last-child {
+        border-bottom: none;
+    }
+}
+
+/* ── Environment toggle + banner ──────────────────────────────────────────── */
+.coach-env-toggle {
+    display: inline-flex;
+    border: 1px solid var(--coach-border);
+    border-radius: 2rem;
+    padding: 2px;
+    cursor: pointer;
+    background: var(--coach-surface);
+    transition: background 0.2s;
+}
+
+.coach-env-pill {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 1.5rem;
+    color: var(--text-muted, #888);
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+html[data-locale="ja"] .coach-env-pill,
+html[data-locale="zh"] .coach-env-pill,
+html[data-locale="ko"] .coach-env-pill,
+html[data-locale="ar"] .coach-env-pill,
+html[data-locale="he"] .coach-env-pill,
+html[data-locale="fa"] .coach-env-pill,
+html[data-locale="hi"] .coach-env-pill {
+    font-size: 1rem;
+    padding: 0.45rem 1.05rem;
+    line-height: 1.4;
+    white-space: normal;
+    letter-spacing: 0;
+}
+
+.coach-env-toggle[data-env="production"] .coach-env-prod {
+    background: var(--accent, #4f7cff);
+    color: #fff;
+}
+
+.coach-env-toggle[data-env="staging"] .coach-env-stg {
+    background: #e65100;
+    color: #fff;
+}
+
+.coach-env-banner {
+    background: rgba(230, 81, 0, 0.1);
+    border: 1px solid rgba(230, 81, 0, 0.3);
+    border-radius: 0.5rem;
+    padding: 0.6rem 1rem;
+    margin-bottom: 0.75rem;
+    font-size: 0.85rem;
+    color: #e65100;
+    line-height: 1.4;
+}
+
+.coach-env-banner a {
+    color: inherit;
+    text-decoration: underline;
+    font-weight: 600;
+}
+
+/* ============================================================================
+   Chat page (/members) — Apple HIG layout, issues #323 / #324 (epic #321)
+   ----------------------------------------------------------------------------
+   Everything below is scoped to .coach-shell--chat (members.html) so the login
+   and profile pages that share this file do not change. It supersedes the older
+   chat rules earlier in this file (toolbar, cards-in-cards, 400px message box);
+   those are only reachable through classes the page no longer uses, or are
+   overridden here, and can be pruned in a follow-up cleanup.
+   Colours, type, radii and spacing use the epic #321 token contract.
+   ============================================================================ */
+
+/* ── Shell: the chat fills the viewport below the sticky site header ─────── */
+main:has(> .coach-shell--chat) {
+    padding: 0; /* styles.css gives <main> vertical padding; the chat runs edge to edge */
+}
+/* The chat shell is exactly viewport-minus-header tall, so the site footer
+   would sit below the fold and make the whole page scroll (#331). Hide it on
+   this page only — the markup stays for check-site-chrome.php, and the
+   Privacy/Terms links move into the More menu. */
+body:has(.coach-shell--chat) footer[role="contentinfo"] {
+    display: none;
+}
+main .coach-shell.coach-shell--chat:has(#coach-chat) {
+    display: flex;
+    flex-direction: column;
+    max-width: 860px;
+    /* --nav-h is measured from the real header by coach-chat.js; --vvh follows
+       the visual viewport when the soft keyboard is open (#151). */
+    height: calc(var(--vvh, 100dvh) - var(--nav-h, 5.75rem));
+    min-height: 0;
+    margin: 0 auto;
+    padding: 0 var(--space-4);
+    padding-bottom: 0;
+    font-family: var(--font-sans);
+}
+.coach-shell--chat [hidden] {
+    display: none !important;
+}
+.coach-shell--chat #coach-chat.coach-card {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    color: var(--color-label);
+}
+.coach-shell--chat :focus-visible {
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 2px;
+}
+
+/* ── Bar: one row — conversation picker, New chat, More ──────────────────── */
+.coach-shell--chat .coach-bar {
+    flex: none;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-height: 56px;
+    padding: var(--space-1) 0;
+    border-bottom: 1px solid var(--color-separator);
+}
+.coach-shell--chat .coach-bar-lead {
+    position: relative;
+    flex: 0 1 320px;
+    min-width: 0;
+}
+.coach-shell--chat .coach-bar-lead::after {
+    content: "";
+    position: absolute;
+    inset-inline-end: 16px;
+    top: calc(50% - 6px);
+    width: 7px;
+    height: 7px;
+    border-right: 2px solid var(--color-label-secondary);
+    border-bottom: 2px solid var(--color-label-secondary);
+    transform: rotate(45deg);
+    pointer-events: none;
+}
+.coach-shell--chat .coach-session-select {
+    display: block;
+    width: 100%;
+    min-height: var(--tap-min);
+    padding: 0 40px 0 var(--space-4);
+    border: 0;
+    border-radius: var(--radius-pill);
+    background: var(--color-fill);
+    color: var(--color-label);
+    font: inherit;
+    font-size: var(--text-callout);
+    font-weight: 600;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    cursor: pointer;
+    -webkit-appearance: none;
+    appearance: none;
+}
+.coach-shell--chat .coach-session-select:hover {
+    background: var(--color-fill-secondary);
+}
+[dir="rtl"] .coach-shell--chat .coach-session-select {
+    padding: 0 var(--space-4) 0 40px;
+}
+.coach-shell--chat .coach-bar-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    margin-inline-start: auto;
+}
+.coach-shell--chat .coach-icon-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--tap-min);
+    height: var(--tap-min);
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--color-link);
+    cursor: pointer;
+    transition: background var(--duration-fast) var(--ease-standard);
+}
+.coach-shell--chat .coach-icon-btn:hover,
+.coach-shell--chat .coach-icon-btn[aria-expanded="true"] {
+    background: var(--color-fill);
+}
+.coach-shell--chat .coach-icon-btn:active {
+    background: var(--color-fill-secondary);
+}
+
+/* ── More menu ───────────────────────────────────────────────────────────── */
+.coach-shell--chat .coach-more-wrap {
+    position: relative;
+}
+.coach-shell--chat .coach-more-menu {
+    position: absolute;
+    inset-inline-end: 0;
+    top: calc(100% + var(--space-2));
+    z-index: 60;
+    width: 300px;
+    max-width: calc(100vw - 2 * var(--space-4));
+    max-height: calc(var(--vvh, 100dvh) - var(--nav-h, 5.75rem) - 88px);
+    overflow-y: auto;
+    padding: var(--space-2);
+    background: var(--color-bg-elevated);
+    color: var(--color-label);
+    border: 1px solid var(--color-separator);
+    border-radius: var(--radius-md);
+    box-shadow: 0 12px 32px var(--shadow-color);
+}
+.coach-shell--chat .coach-menu-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    width: 100%;
+    min-height: var(--tap-min);
+    padding: 0 var(--space-3);
+    border: 0;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--color-label);
+    font: inherit;
+    font-size: var(--text-callout);
+    text-align: start;
+    text-decoration: none;
+    cursor: pointer;
+}
+.coach-shell--chat .coach-menu-item:hover,
+.coach-shell--chat .coach-menu-item:focus-visible {
+    background: var(--color-fill);
+    color: var(--color-label);
+}
+.coach-shell--chat .coach-menu-item:focus-visible,
+.coach-shell--chat .coach-menu-select:focus-visible,
+.coach-shell--chat .coach-env-toggle:focus-visible {
+    outline-offset: -2px;
+}
+.coach-shell--chat .coach-menu-icon {
+    flex: none;
+    color: var(--color-label-secondary);
+}
+.coach-shell--chat .coach-menu-item--destructive,
+.coach-shell--chat .coach-menu-item--destructive .coach-menu-icon {
+    color: var(--color-destructive);
+}
+.coach-shell--chat .coach-menu-field {
+    padding: var(--space-1) var(--space-3) var(--space-2);
+}
+.coach-shell--chat .coach-menu-label {
+    display: block;
+    margin-bottom: var(--space-1);
+    color: var(--color-label-secondary);
+    font-size: var(--text-footnote);
+}
+.coach-shell--chat .coach-menu-select {
+    display: block;
+    width: 100%;
+    min-height: var(--tap-min);
+    padding: 0 var(--space-3);
+    border: 0;
+    border-radius: var(--radius-sm);
+    background: var(--color-fill);
+    color: var(--color-label);
+    font: inherit;
+    font-size: var(--text-callout);
+    cursor: pointer;
+}
+.coach-shell--chat .coach-menu-sep {
+    height: 1px;
+    margin: var(--space-2) var(--space-1);
+    background: var(--color-separator);
+}
+.coach-shell--chat .coach-menu-account {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-2) var(--space-3);
+}
+.coach-shell--chat .coach-menu-avatar {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--color-tint-pressed); /* >=4.5:1 with --color-on-tint in both schemes */
+    color: var(--color-on-tint);
+    font-weight: 700;
+}
+.coach-shell--chat .coach-menu-account-text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+.coach-shell--chat .coach-menu-name {
+    color: var(--color-label);
+    font-size: var(--text-callout);
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.coach-shell--chat .coach-menu-email {
+    color: var(--color-label-secondary);
+    font-size: var(--text-footnote);
+    overflow-wrap: anywhere;
+}
+/* Prod / Staging switch inside the menu: a menuitem row with a segmented control */
+.coach-shell--chat .coach-env-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    width: 100%;
+    min-height: var(--tap-min);
+    padding: 0 var(--space-3);
+    border: 0;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--color-label);
+    font: inherit;
+    font-size: var(--text-callout);
+    cursor: pointer;
+}
+.coach-shell--chat .coach-env-toggle:hover,
+.coach-shell--chat .coach-env-toggle:focus-visible {
+    background: var(--color-fill);
+}
+.coach-shell--chat .coach-env-pills {
+    display: inline-flex;
+    padding: 2px;
+    border-radius: var(--radius-pill);
+    background: var(--color-fill);
+}
+.coach-shell--chat .coach-env-pill {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px var(--space-3);
+    border-radius: var(--radius-pill);
+    color: var(--color-label-secondary);
+    font-size: var(--text-subhead);
+    font-weight: 600;
+}
+.coach-shell--chat .coach-env-toggle[data-env="production"] .coach-env-prod {
+    background: var(--color-tint-pressed); /* >=4.5:1 with --color-on-tint in both schemes */
+    color: var(--color-on-tint);
+}
+.coach-shell--chat .coach-env-toggle[data-env="staging"] .coach-env-stg {
+    background: var(--color-warning);
+    color: var(--color-bg);
+}
+
+/* ── New Features popover: a sheet fixed under the header ────────────────── */
+.coach-shell--chat .coach-features-wrap {
+    position: static;
+    height: 0;
+    margin: 0;
+}
+.coach-shell--chat .coach-features-popover {
+    position: fixed;
+    inset-inline: var(--space-3);
+    top: calc(var(--nav-h, 5.75rem) + var(--space-3));
+    width: auto;
+    max-width: 560px;
+    max-height: calc(var(--vvh, 100dvh) - var(--nav-h, 5.75rem) - 2 * var(--space-3));
+    margin-inline: auto;
+    overflow-y: auto;
+    background: var(--color-bg-elevated);
+    color: var(--color-label);
+    border: 1px solid var(--color-separator);
+    border-radius: var(--radius-md);
+    box-shadow: 0 16px 48px var(--shadow-color);
+    z-index: 1000;
+}
+.coach-shell--chat .coach-features-header {
+    border-bottom-color: var(--color-separator);
+    padding: var(--space-2) var(--space-2) var(--space-2) var(--space-4);
+}
+.coach-shell--chat .coach-features-header h3 {
+    color: var(--color-label);
+    font-size: var(--text-headline);
+    font-weight: 600;
+}
+.coach-shell--chat .coach-features-close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--tap-min);
+    height: var(--tap-min);
+    padding: 0;
+    border-radius: 50%;
+    color: var(--color-label-secondary);
+    font-size: 1.5rem;
+}
+.coach-shell--chat .coach-features-close:hover {
+    background: var(--color-fill);
+    color: var(--color-label);
+}
+.coach-shell--chat .coach-features-intro,
+.coach-shell--chat .coach-features-column-title,
+.coach-shell--chat .coach-feature-desc {
+    color: var(--color-label-secondary);
+}
+.coach-shell--chat .coach-features-column {
+    border-color: var(--color-separator);
+}
+.coach-shell--chat .coach-features-status {
+    border-top-color: var(--color-separator);
+    color: var(--color-label);
+}
+.coach-shell--chat .coach-features-status-error {
+    color: var(--color-destructive);
+}
+.coach-shell--chat .coach-feature-name {
+    color: var(--color-label);
+}
+.coach-shell--chat .coach-feature-item:hover {
+    background: var(--color-fill);
+}
+.coach-shell--chat .coach-feature-thumb {
+    color: var(--color-label-secondary);
+}
+.coach-shell--chat .coach-feature-thumb:hover {
+    background: var(--color-fill-secondary);
+    color: var(--color-label);
+}
+.coach-shell--chat .coach-feature-thumb--active,
+.coach-shell--chat .coach-feature-thumb[aria-pressed="true"] {
+    color: var(--color-link);
+}
+.coach-shell--chat .coach-feature-enable-slider {
+    background: var(--color-fill-secondary);
+}
+.coach-shell--chat .coach-feature-enable-input:checked + .coach-feature-enable-slider {
+    background: var(--color-tint);
+}
+
+/* ── Banners above the log ───────────────────────────────────────────────── */
+.coach-shell--chat .coach-env-banner,
+.coach-shell--chat .coach-queue-banner {
+    flex: none;
+    margin: var(--space-2) 0 0;
+    padding: var(--space-2) var(--space-3);
+    background: var(--color-fill);
+    border: 1px solid var(--color-separator);
+    border-radius: var(--radius-md);
+    color: var(--color-label);
+    font-size: var(--text-footnote);
+    line-height: 1.4;
+    text-align: start;
+    animation: none;
+}
+.coach-shell--chat .coach-env-banner a {
+    color: var(--color-link);
+}
+
+/* ── Message list: the one scroll container ──────────────────────────────── */
+.coach-shell--chat .coach-log-wrap {
+    position: relative;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+.coach-shell--chat .coach-messages {
+    flex: 1;
+    min-height: 0;
+    max-height: none;
+    margin: 0;
+    padding: var(--space-4) 0 var(--space-2);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+}
+.coach-shell--chat .coach-messages:focus-visible {
+    outline-offset: -2px;
+}
+
+/* Empty-state card (the old intro panel) */
+.coach-shell--chat .coach-intro-panel {
+    display: none;
+    flex: none;
+    width: auto;
+    margin: 0;
+    padding: var(--space-4) var(--space-5) var(--space-5);
+    background: var(--color-bg-grouped);
+    border: 0;
+    border-radius: var(--radius-lg);
+}
+.coach-shell--chat .coach-messages.is-empty > .coach-intro-panel {
+    display: block;
+}
+.coach-shell--chat .coach-intro-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2);
+    margin: 0 calc(-1 * var(--space-3)) var(--space-1) 0;
+}
+.coach-shell--chat .coach-intro-panel h2 {
+    margin: 0;
+    color: var(--color-label);
+    font-size: var(--text-title3);
+    font-weight: 600;
+    letter-spacing: 0;
+}
+.coach-shell--chat .coach-intro-dismiss {
+    flex: none;
+    width: var(--tap-min);
+    height: var(--tap-min);
+    padding: 0;
+    border-radius: 50%;
+    color: var(--color-label-secondary);
+}
+.coach-shell--chat .coach-intro-dismiss:hover {
+    background: var(--color-fill);
+    color: var(--color-label);
+}
+.coach-shell--chat .coach-intro-subtitle {
+    margin: 0 0 var(--space-3);
+    color: var(--color-label-secondary);
+    font-size: var(--text-subhead);
+    font-style: normal;
+}
+.coach-shell--chat .coach-intro-text {
+    margin: 0 0 var(--space-3);
+    color: var(--color-label-secondary);
+    font-size: var(--text-footnote);
+}
+.coach-shell--chat .coach-intro-text a {
+    color: var(--color-link);
+}
+.coach-shell--chat .coach-intro-features li {
+    padding: var(--space-1) 0 var(--space-1) 1.5rem;
+    color: var(--color-label-secondary);
+    font-size: var(--text-subhead);
+}
+.coach-shell--chat .coach-intro-features li::before {
+    color: var(--color-link);
+}
+[dir="rtl"] .coach-shell--chat .coach-intro-features li {
+    padding: var(--space-1) 1.5rem var(--space-1) 0;
+}
+
+/* Messages: AI = plain readable text, user = tinted bubble at the trailing edge */
+.coach-shell--chat .coach-msg {
+    flex: none;
+    max-width: 68ch;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    color: var(--color-label);
+    font-size: var(--text-body);
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+    word-break: normal;
+}
+.coach-shell--chat .coach-msg-ai {
+    align-self: stretch;
+}
+.coach-shell--chat .coach-msg-user {
+    align-self: flex-end;
+    max-width: min(85%, 46ch);
+    padding: var(--space-2) var(--space-4);
+    border-radius: var(--radius-lg);
+    border-end-end-radius: 6px;
+    background: var(--color-tint-pressed); /* >=4.5:1 with --color-on-tint in both schemes */
+    color: var(--color-on-tint);
+    white-space: pre-wrap;
+}
+.coach-shell--chat .coach-msg-user a {
+    color: inherit;
+}
+.coach-shell--chat .coach-msg-system {
+    align-self: center;
+    max-width: min(100%, 52ch);
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-md);
+    background: var(--color-fill);
+    color: var(--color-label-secondary);
+    font-size: var(--text-subhead);
+    text-align: center;
+}
+.coach-shell--chat .coach-para {
+    margin: 0;
+}
+.coach-shell--chat .coach-para + .coach-para {
+    margin-top: 0.75em;
+}
+.coach-shell--chat .coach-msg-ai em {
+    font-style: italic;
+    font-weight: 600;
+}
+.coach-shell--chat .coach-harmonizing {
+    color: var(--color-label-secondary);
+    font-size: var(--text-subhead);
+    font-style: italic;
+    opacity: 1;
+}
+
+/* Sources as pill chips */
+.coach-shell--chat .coach-msg-ai .coach-sources {
+    margin: var(--space-2) 0 0;
+    font-size: var(--text-footnote);
+}
+.coach-shell--chat .coach-source-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+.coach-shell--chat .coach-source-list li {
+    display: flex;
+    max-width: 100%;
+    min-width: 0;
+}
+.coach-shell--chat .coach-source-chip {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--tap-min);
+    max-width: 100%;
+    padding: 0 var(--space-4);
+    border-radius: var(--radius-pill);
+    background: var(--color-fill);
+    color: var(--color-label-secondary);
+    font-size: var(--text-footnote);
+    text-decoration: none;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.coach-shell--chat a.coach-source-chip {
+    /* label colour + underline: --color-link on --color-fill is under 4.5:1 in dark */
+    color: var(--color-label);
+    text-decoration: underline;
+    text-decoration-color: var(--color-label-tertiary);
+    text-underline-offset: 3px;
+}
+.coach-shell--chat a.coach-source-chip:hover {
+    background: var(--color-fill-secondary);
+}
+
+/* Feedback: 44pt SVG icon buttons */
+.coach-shell--chat .coach-feedback-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-1);
+    margin-top: var(--space-1);
+    padding-top: 0;
+}
+.coach-shell--chat .coach-fb-chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--tap-min);
+    height: var(--tap-min);
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--color-label-secondary);
+    opacity: 1;
+    cursor: pointer;
+    transition: background var(--duration-fast) var(--ease-standard), color var(--duration-fast) var(--ease-standard);
+}
+.coach-shell--chat .coach-fb-chip:hover {
+    background: var(--color-fill);
+    color: var(--color-label);
+}
+.coach-shell--chat .coach-fb-chip.coach-fb-selected {
+    background: var(--color-fill);
+    border: 0;
+    color: var(--color-link);
+}
+.coach-shell--chat .coach-fb-chip.coach-fb-selected svg {
+    fill: currentColor;
+    fill-opacity: 0.25;
+}
+.coach-shell--chat .coach-fb-detail {
+    flex-basis: 100%;
+    margin-top: var(--space-1);
+}
+.coach-shell--chat .coach-fb-detail-prompt {
+    color: var(--color-label-secondary);
+    font-size: var(--text-footnote);
+}
+.coach-shell--chat .coach-fb-detail-input,
+.coach-shell--chat .coach-fb-detail-submit {
+    min-height: var(--tap-min);
+    padding: 0 var(--space-3);
+    border: 1px solid var(--color-separator);
+    border-radius: var(--radius-sm);
+    background: var(--color-bg-elevated);
+    color: var(--color-label);
+    font-size: var(--text-callout);
+}
+.coach-shell--chat .coach-fb-detail-submit {
+    min-width: var(--tap-min);
+    background: var(--color-tint-pressed); /* >=4.5:1 with --color-on-tint in both schemes */
+    border-color: transparent;
+    color: var(--color-on-tint);
+    font-weight: 600;
+}
+
+/* Handoff, video and link-card blocks inside AI messages */
+.coach-shell--chat .coach-msg-ai .coach-handoff-notice,
+.coach-shell--chat .coach-msg-ai .coach-handoff-clarify {
+    padding: var(--space-3) var(--space-4);
+    background: var(--color-bg-grouped);
+    border: 0;
+    border-radius: var(--radius-md);
+}
+.coach-shell--chat .coach-msg-ai .coach-handoff-notice a,
+.coach-shell--chat .coach-msg-ai .coach-video-jump-link,
+.coach-shell--chat .coach-msg-ai .coach-video-play-link,
+.coach-shell--chat .coach-msg-ai .coach-link-fallback {
+    color: var(--color-link);
+}
+.coach-shell--chat .coach-msg-ai .coach-handoff-notified,
+.coach-shell--chat .coach-msg-ai .coach-handoff-clarify-prompt {
+    color: var(--color-label);
+}
+.coach-shell--chat .coach-msg-ai .coach-handoff-expiry {
+    color: var(--color-label-secondary);
+}
+.coach-shell--chat .coach-msg-ai .coach-handoff-clarify-input {
+    border: 1px solid var(--color-separator);
+    background: var(--color-bg-elevated);
+    color: var(--color-label);
+    font-size: max(16px, var(--text-callout));
+}
+.coach-shell--chat .coach-msg-ai .coach-handoff-clarify-send,
+.coach-shell--chat .coach-msg-ai .coach-handoff-clarify-skip {
+    min-height: var(--tap-min);
+    padding: 0 var(--space-4);
+    color: var(--color-label-secondary);
+}
+.coach-shell--chat .coach-msg-ai .coach-handoff-clarify-send {
+    background: var(--color-tint-pressed); /* >=4.5:1 with --color-on-tint in both schemes */
+    border: 0;
+    border-radius: var(--radius-pill);
+    color: var(--color-on-tint);
+    font-weight: 600;
+}
+.coach-shell--chat .coach-msg-ai .coach-link-card,
+.coach-shell--chat .coach-msg-ai .coach-link-card-skeleton {
+    background: var(--color-bg-grouped);
+    border: 0;
+    border-radius: var(--radius-md);
+}
+.coach-shell--chat .coach-msg-ai .coach-link-card-title {
+    color: var(--color-label);
+}
+.coach-shell--chat .coach-msg-ai .coach-link-card-desc,
+.coach-shell--chat .coach-msg-ai .coach-link-card-site,
+.coach-shell--chat .coach-msg-ai .coach-link-card-skeleton::after {
+    color: var(--color-label-secondary);
+}
+.coach-shell--chat .coach-msg-ai .coach-link-card-thumb {
+    background: var(--color-fill);
+}
+
+/* Jump to latest (44pt) and the undo toast float over the log */
+.coach-shell--chat .coach-scroll-bottom-btn {
+    position: absolute;
+    inset-inline-end: var(--space-1);
+    bottom: var(--space-3);
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--tap-min);
+    height: var(--tap-min);
+    padding: 0;
+    border: 1px solid var(--color-separator);
+    border-radius: 50%;
+    background: var(--color-bg-elevated);
+    color: var(--color-label);
+    box-shadow: 0 2px 10px var(--shadow-color);
+    cursor: pointer;
+}
+.coach-shell--chat .coach-scroll-bottom-btn:hover {
+    background: var(--color-bg-grouped);
+    color: var(--color-label);
+}
+.coach-shell--chat .coach-toast {
+    position: absolute;
+    inset-inline: var(--space-3);
+    bottom: var(--space-3);
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2);
+    width: fit-content;
+    max-width: calc(100% - 2 * var(--space-3) - var(--tap-min));
+    min-height: var(--tap-min);
+    margin-inline: auto;
+    padding: 0 var(--space-1) 0 var(--space-4);
+    border-radius: var(--radius-pill);
+    background: var(--color-label);
+    color: var(--color-bg);
+    font-size: var(--text-subhead);
+    box-shadow: 0 6px 20px var(--shadow-color);
+}
+.coach-shell--chat .coach-toast-undo {
+    min-width: var(--tap-min);
+    min-height: var(--tap-min);
+    padding: 0 var(--space-3);
+    border: 0;
+    border-radius: var(--radius-pill);
+    background: transparent;
+    color: var(--color-bg);
+    font: inherit;
+    font-weight: 700;
+    text-decoration: underline;
+    cursor: pointer;
+}
+.coach-shell--chat .coach-toast :focus-visible {
+    outline-color: var(--color-bg);
+}
+
+/* ── Composer: pinned, rounded field + circular send ─────────────────────── */
+.coach-shell--chat .coach-composer-form {
+    flex: none;
+    display: block;
+    padding: var(--space-2) 0 max(var(--space-3), var(--safe-bottom));
+}
+.coach-shell--chat .coach-composer {
+    display: flex;
+    align-items: flex-end;
+    gap: var(--space-2);
+    padding: 4px 4px 4px var(--space-4);
+    background: var(--color-fill);
+    border: 1px solid var(--color-separator);
+    border-radius: 26px;
+}
+.coach-shell--chat .coach-composer:focus-within {
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 2px;
+}
+.coach-shell--chat .coach-composer-input {
+    flex: 1;
+    min-width: 0;
+    min-height: var(--tap-min);
+    max-height: none;
+    padding: 10px 0;
+    border: 0;
+    outline: none;
+    background: transparent;
+    color: var(--color-label);
+    font: inherit;
+    font-size: max(16px, var(--text-body)); /* >=16px stops iOS focus zoom (#152) */
+    line-height: 1.4;
+    resize: none;
+    overflow-y: hidden;
+}
+.coach-shell--chat .coach-composer-input::placeholder {
+    color: var(--color-label-secondary);
+    opacity: 1;
+}
+#coach-chat #coach-send-btn {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    align-self: flex-end;
+    width: var(--tap-min);
+    min-width: var(--tap-min);
+    height: var(--tap-min);
+    min-height: var(--tap-min);
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: var(--color-tint);
+    color: var(--color-on-tint);
+    cursor: pointer;
+    transition: background var(--duration-fast) var(--ease-standard);
+}
+#coach-chat #coach-send-btn:hover:not(:disabled) {
+    background: var(--color-tint-pressed);
+}
+#coach-chat #coach-send-btn:disabled {
+    background: var(--color-fill-secondary);
+    color: var(--color-label-tertiary);
+    cursor: default;
+}
+.coach-shell--chat .coach-composer-meta {
+    padding: 0 var(--space-3);
+    text-align: end;
+}
+.coach-shell--chat .coach-composer-count {
+    color: var(--color-label-secondary);
+    font-size: var(--text-caption);
+}
+.coach-shell--chat .coach-composer-count.over-limit {
+    color: var(--color-destructive);
+}
+
+/* ── Motion ──────────────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+    .coach-shell--chat *,
+    .coach-shell--chat *::before,
+    .coach-shell--chat *::after {
+        animation: none !important;
+        transition: none !important;
+        scroll-behavior: auto !important;
+    }
+    .coach-shell--chat .coach-harmonizing-dots::after {
+        content: "\2026";
+    }
+}
+
+/* Landscape phones: keep the composer and a few lines of log on screen */
+@media (max-height: 500px) and (orientation: landscape) {
+    .coach-shell--chat .coach-bar {
+        min-height: 52px;
+    }
+}

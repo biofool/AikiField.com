@@ -1,4 +1,4 @@
-<!-- AI coding config version: 2026-07-25 — sourced from biofool/starter template.
+<!-- AI coding config version: 2026-10-03 — sourced from biofool/starter template.
      Shared settings across all biofool projects; see ~/.codeium/windsurf/memories/shared_template_config.md -->
 
 # CLAUDE.md
@@ -58,9 +58,26 @@ site. Validate changes by visual review and accessibility checks.
   `TURNSTILE_SITE_KEY`), `includes/beta-gate.load.php` (redirects unauthed
   `/beta/` requests to `/login.php?next=…`), `.htaccess`.
   See `docs/coach-auth-prd.md`. Note: `projects.php` no longer hosts any
-  login or chat — it shows an invitation card instead. The inline
-  `coach-chat.js` was removed; the live chat lives on
-  `quantumaikido.com/members.php`.
+  login or chat — it shows an invitation card instead. The AI chat is
+  replicated at `/members` (`members.php` + `coach-chat.js` +
+  `css/coach-chat.css`, gated by `beta-gate.load.php`, linked from the
+  nav's Digital Experience menu as "Enter the Unified Field Chat");
+  `quantumaikido.com/members` stays live too.
+- **Primary nav:** duplicated in every page (no include). Services is a
+  submenu (Process, Approach); Digital Experience lists the public games
+  (`/games/lucky-wave/`, `/games/verbal-aikido/`, `/games/exercises/`) and
+  `/members`. Submenu behaviour: `js/nav-menu.js` + `.af-nav__group` rules
+  in `css/redesign.css`.
+- **Games AI help:** `games/ai-coach.php` (+ `games/ai-coach.json`
+  vocabulary) — members-only "Ask the AI Chat" button in Lucky Wave V1/V2
+  and Verbal Aikido; composes the message server-side and calls the AI Chat
+  (`/v1/chat-secure`) as the signed-in member. No API keys in the games.
+  Lucky Wave stores each round (+ AI answer) in `localStorage`
+  `waveLuck_results` (last 30, shared by V1/V2), reopens it after sign-in,
+  and for signed-in players syncs it to their AI Chat account via
+  `games/results.php` → AI Chat backend `POST /v1/game-results/sync`
+  (Firestore). Deploy the backend first; until then sync falls back to
+  browser-only storage.
 - **Content source of truth:** `SITE_CONTENT.md` -- update this alongside HTML
   when any site copy changes.
 - **Binary assets:** `AikiField.pdf` and redesign zips are DVC-tracked
@@ -127,6 +144,11 @@ edit one, edit both.
   system (e.g. frontend + backend with a shared auth flow), document the
   sister repo in `AGENTS.md` and require both PRDs + both repos to be
   updated and deployed together for shared-flow changes.
+
+- **Reply in Simplified Technical English (STE).** Write chat replies in
+  STE: short sentences, active voice, one instruction per sentence,
+  consistent terminology, no unexplained jargon. Applies to chat output
+  only — code, commit messages, and docs keep their normal style.
 
 See `AGENTS.md` for the full text of each rule.
 

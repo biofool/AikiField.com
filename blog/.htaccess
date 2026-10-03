@@ -1,0 +1,26 @@
+# Blog moved from quantumaikido.com/blog/ (QA Pages → aikifield.com Apache).
+# Canonical URL form mirrors the old site: extensionless (/blog/nz-tour).
+# .php/.html variants and trailing slashes 301 to the canonical form so the
+# old relative links (wigo.php etc.) and legacy /blog/*.php URLs keep working.
+# REDIRECT_STATUS guards keep internally-rewritten/dir-index sub-requests
+# out of the 301 rules (per-dir rewrite loop protection).
+RewriteEngine On
+
+# /blog/<post>/ -> /blog/<post> (trailing slash off non-directories)
+RewriteCond %{ENV:REDIRECT_STATUS} ^$
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.+)/$ /blog/$1 [R=301,L]
+
+# /blog/index and /blog/index.html -> /blog/
+RewriteCond %{ENV:REDIRECT_STATUS} ^$
+RewriteRule ^index(\.html)?$ /blog/ [R=301,L]
+
+# /blog/<post>.php and /blog/<post>.html -> /blog/<post>
+RewriteCond %{ENV:REDIRECT_STATUS} ^$
+RewriteRule ^(.+)\.(php|html)$ /blog/$1 [R=301,L]
+
+# Extensionless request -> serve the .html file if it exists (END: do not
+# re-enter this ruleset after the internal rewrite)
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME}.html -f
+RewriteRule ^(.+?)$ $1.html [END]

@@ -1,0 +1,27 @@
+{
+  "kind": "question",
+  "question": "What is Extraordinary Listening?",
+  "canonical_slug": "what-is-extraordinary-listening",
+  "short_answer": "Extraordinary Listening is the title of Richard Moon's public study PDF *The Power of Extraordinary Listening*, offered on this site as a quantum leap in communication and commonwealth.",
+  "answer_markdown": "On the public books index, *The Power of Extraordinary Listening* is listed as a free PDF: \"A quantum leap in communication & commonwealth.\" A companion PDF, *The Business of Listening*, collects conversations with CEOs who used the Listening work.\n\nThis knowledge page does not excerpt the PDF body. It points at the already-public listing and the downloadable file so readers can read Moon's own words there.\n\nListening in the wider teaching is the same move as WIGO and Dialogue: attend to what is actually going on, not only to the stated position.",
+  "claims": [
+    {
+      "claim": "The books index lists The Power of Extraordinary Listening as a public PDF.",
+      "source_id": "page-books-index",
+      "quote": "The Power of Extraordinary Listening — A quantum leap in communication & commonwealth"
+    },
+    {
+      "claim": "The PDF source record matches that public listing.",
+      "source_id": "pdf-tpoel",
+      "quote": "The Power of Extraordinary Listening — A quantum leap in communication & commonwealth"
+    }
+  ],
+  "related_questions": [
+    "how-does-dialogue-function",
+    "how-can-quantum-aikido-apply-to-leadership",
+    "what-is-wigo"
+  ],
+  "review_status": "published",
+  "last_reviewed": "2026-08-18",
+  "attribution": "richard-moon"
+}

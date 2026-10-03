@@ -1,0 +1,24 @@
+# AikiField
+
+> B2B cybersecurity consulting: fractional CISO services, AI-assisted DevSecOps, and security leadership coaching for SaaS and AI-powered product companies. Also hosts a sourced Q&A knowledge layer (Ask AikiField) covering both AikiField services and Richard Moon's public Quantum Aikido teachings.
+
+## Public pages
+
+- [Home](https://aikifield.com/index.html): services overview and outcomes
+- [Services](https://aikifield.com/services.html): engagement menu
+- [Approach](https://aikifield.com/approach.html): security leadership method
+- [Case Studies](https://aikifield.com/case-studies.html): client outcomes
+- [Self-Assessment](https://aikifield.com/assessment.html): security maturity + leadership presence
+- [AI DevSecOps Remediation](https://aikifield.com/ai-devsecops-vulnerability-remediation.html): 21 days → 3 days workflow
+- [Fractional CISO](https://aikifield.com/fractional-ciso.html): SaaS & industrial IoT security leadership
+- [Demonstration Technologies](https://aikifield.com/projects.php): sponsored projects
+- [Ask AikiField](https://aikifield.com/ask/): sourced Q&A knowledge layer — questions, books, videos with visible citations
+
+## Not for crawlers
+
+- /beta/ — pre-release assessments (login-gated, Disallow)
+- /members, /login.php — Unified Field chat (login-gated)
+- /AEO/ — editorial review index (login-gated, Disallow)
+- /for-review/ — gated review content (login-gated)
+
+Corrections: https://aikifield.com/contact.html (subject: Ask AikiField correction)

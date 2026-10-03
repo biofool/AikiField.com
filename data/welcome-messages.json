@@ -1,0 +1,30 @@
+{
+  "version": 2,
+  "variations": [
+    {
+      "id": "warm-practice",
+      "label": "Warm & practice-focused",
+      "html": "Welcome! I'm <em>Discussing The Unified Field</em>, a guide grounded in the <em>Quantum Aikido</em> school.<br>I can adjust to your learning style and your preferred language. Just drop a note in the chat about it when you ask a question.<br><br>My guidance draws on Richard Moon's <em>books, videos, and private coaching writings</em> and his print-on-demand titles.<br>Let's start with something simple: <em>How to get luckier.</em>"
+    },
+    {
+      "id": "concept-forward",
+      "label": "Concept-forward (WIGO / Quantum Pause)",
+      "html": "Welcome! I'm <em>Discussing The Unified Field</em>, an AI guide rooted in <em>Quantum Aikido</em>.<br>I can adjust to your learning style and your preferred language. Just drop a note in the chat about it when you ask a question.<br><br>I'm trained on Richard Moon's <em>books, videos, and coaching materials</em> and his other works.<br>We'll explore ideas like <em>WIGO (What Is Really Going On)</em> and the <em>Quantum Pause</em>—starting with a practical question: <em>How to get luckier.</em>"
+    },
+    {
+      "id": "short-punchy",
+      "label": "Short, punchy, mobile-friendly",
+      "html": "Welcome! I'm <em>Discussing The Unified Field</em>, grounded in <em>Quantum Aikido</em>.<br>I can adjust to your learning style and your preferred language. Just drop a note in the chat about it when you ask a question.<br><br>My knowledge comes from Richard Moon's <em>books, videos, and private coaching writings</em>.<br>Let's begin with something useful: <em>How to get luckier.</em>"
+    },
+    {
+      "id": "leadership-conflict",
+      "label": "Leadership / conflict-transformation",
+      "html": "Welcome! I'm <em>Discussing The Unified Field</em>, a guide based on the <em>Quantum Aikido</em> teachings of Richard Moon.<br>I can adjust to your learning style and your preferred language. Just drop a note in the chat about it when you ask a question.<br><br>I draw on Richard's <em>books, videos, and decades of coaching</em>, which apply quantum principles to conflict, leadership, and creativity.<br>Let's start with a practical thread: <em>How to get luckier.</em>"
+    },
+    {
+      "id": "awareness-arts",
+      "label": "Awareness-arts / lineage-rich",
+      "html": "Welcome! I'm <em>Discussing The Unified Field</em>, a guide grounded in <em>Quantum Aikido</em> and Richard Moon's lifelong study of the awareness arts (55+ years of Aikido, six decades of yoga, work in Cyprus, Bosnia, and the Pacific Rim).<br>I can adjust to your learning style and your preferred language. Just drop a note in the chat about it when you ask a question.<br><br>My responses are informed by Richard's <em>books, videos, and private coaching writings</em> and his print-on-demand titles.<br>Let's begin with a simple, powerful question: <em>How to get luckier.</em>"
+    }
+  ]
+}

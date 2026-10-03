@@ -1,12 +1,12 @@
-// Unified login JS — AikiField projects.php (ported from quantumaikido.com
-// login.php, issue #51). Identical behaviour; AikiField renders the login form
-// inline at the top of the Sponsored Projects page instead of a standalone
-// login.php, and posts the backend-login to window.location.pathname
-// (projects.php) to establish the PHP session.
+// Unified login JS — AikiField login.php (ported from quantumaikido.com
+// login.php, issue #51). Identical behaviour; the form lives on the blind
+// /login.php page that gates /beta/ and /for-review/, and posts the
+// backend-login to window.location.pathname (login.php) to establish the
+// PHP session.
 // Handles: login (email+password), registration (email+password+invitation code),
 // email confirmation link, password reset link, Google OAuth, forgot-password.
 //
-// On successful auth, posts the session to projects.php (which stores it in the
+// On successful auth, posts the session to login.php (which stores it in the
 // PHP session cookie) and redirects to window.COACH_LOGIN_REDIRECT.
 //
 // This file consolidates the login logic from coach-auth.js and coach-auth-social.js.
@@ -99,7 +99,6 @@
     const regAliasInput  = document.getElementById("coach-reg-alias");
     const registerBtn    = document.getElementById("coach-register-btn");
     const registerStatus = document.getElementById("coach-register-status");
-    const regValidationSummary = document.getElementById("coach-reg-validation-summary");
 
     // Login-time activation form (shown when login returns needsValidation)
     const loginValidationContainer = document.getElementById("coach-login-validation");
@@ -128,16 +127,21 @@
         el.hidden = false;
         el.className = "coach-status status-" + type;
         el.textContent = msg;
+        // Errors are assertive alerts; loading/success/info are polite status.
+        el.setAttribute("role", type === "error" ? "alert" : "status");
     }
 
-    // Resend cooldown (ticket #510): after any send, disable the button for
-    // COOLDOWN_SECONDS with a visible countdown. Prevents rapid-fire code
-    // generation that floods the user's inbox. The backend keeps up to 2
-    // concurrent codes valid, so this is a UX guard, not a correctness one.
-    const RESEND_COOLDOWN_SECONDS = 60;
+    // Resend cooldown (ticket #510): after any send, disable the button with
+    // a visible countdown. Registration starts at 10 seconds and backs off
+    // exponentially; login-time activation retains its 60-second cooldown.
+    // The backend keeps up to 2 concurrent codes valid, so this is a UX guard.
+    const LOGIN_RESEND_COOLDOWN_SECONDS = 60;
+    const REGISTRATION_RESEND_BASE_SECONDS = 10;
+    const REGISTRATION_RESEND_MAX_SECONDS = 600;
+    let registrationResendCount = 0;
     let _cooldownTimers = {};
     function startResendCooldown(btn, seconds) {
-        const secs = seconds || RESEND_COOLDOWN_SECONDS;
+        const secs = seconds || LOGIN_RESEND_COOLDOWN_SECONDS;
         const originalText = btn.dataset.originalText || btn.textContent;
         btn.dataset.originalText = originalText;
         let remaining = secs;
@@ -197,7 +201,7 @@
     }
 
     // Fetch with timeout and bounded retry/backoff (issue #17).
-    async function fetchWithTimeout(url, opts, { timeoutMs = 15000, retries = 2, baseDelayMs = 500 } = {}) {
+    async function fetchWithTimeout(url, opts, { timeoutMs = 35000, retries = 2, baseDelayMs = 500 } = {}) {
         let lastErr;
         for (let attempt = 0; attempt <= retries; attempt++) {
             const controller = new AbortController();
@@ -232,16 +236,35 @@
         return fallback || "Something went wrong. Please try again.";
     }
 
+    // A resp.json() SyntaxError means the server (or an edge-level
+    // block/rate-limit page in front of it) returned a non-JSON body.
+    // Surfacing the raw parser message (e.g. `Unexpected token 'R',
+    // "Rate exceeded." is not valid JSON`) is confusing — show a generic
+    // retry message for that case. Other errors (timeouts, DNS failures)
+    // keep their specific message.
+    function friendlyErrorMessage(err) {
+        if (err instanceof SyntaxError) {
+            return "Something went wrong. Please try again.";
+        }
+        return "Network error: " + (err && err.message ? err.message : "unknown");
+    }
+
+    // "step" only matters for reset/confirm, which take over the whole layout.
+    // Login/register visibility is managed by the tab switcher (selectTab).
     function showStep(step) {
-        loginStep.hidden    = (step !== "login");
-        registerStep.hidden = (step !== "register");
+        const overlayStep = (step === "reset" || step === "confirm");
+        loginStep.hidden    = overlayStep;
+        registerStep.hidden = overlayStep;
         resetStep.hidden    = (step !== "reset");
         confirmStep.hidden  = (step !== "confirm");
-        // The panel wrapping the tab bar and both forms draws the card
-        // border, so it has to go during the reset/confirm overlays —
-        // otherwise an empty box and a live tab bar are left behind them.
+        // Hide the tab bar during reset/confirm overlays so users can't
+        // click back to login/register while an overlay is active. The panel
+        // that wraps the bar and both forms draws the card border, so it has
+        // to go too — otherwise an empty box is left behind the overlay.
+        const tabBar = document.getElementById("coach-auth-tab-bar");
+        if (tabBar) tabBar.hidden = overlayStep;
         const authPanel = document.getElementById("coach-auth-panel");
-        if (authPanel) authPanel.hidden = (step !== "login" && step !== "register");
+        if (authPanel) authPanel.hidden = overlayStep;
     }
 
     // --- Establish server-side session ---
@@ -298,11 +321,13 @@
     }
 
     // --- Turnstile captcha helpers ---
-    function getCaptchaToken() {
-        if (forgotCaptcha && !forgotCaptcha.hidden) {
+    // The token context cannot be inferred from which step is hidden — each
+    // call site passes it explicitly ("login" | "reg" | "forgot").
+    function getCaptchaToken(which) {
+        if (which === "forgot" && forgotCaptcha && !forgotCaptcha.hidden) {
             return (window.qaTurnstileTokens && window.qaTurnstileTokens.forgot) || "";
         }
-        if (loginStep && !loginStep.hidden) {
+        if (which === "login") {
             return (window.qaTurnstileTokens && window.qaTurnstileTokens.login) || "";
         }
         return (window.qaTurnstileTokens && window.qaTurnstileTokens.reg) || "";
@@ -341,7 +366,7 @@
             showStatus(loginStatus, data.error || "OAuth sign-in failed.", "error");
             return false;
         } catch (error) {
-            showStatus(loginStatus, "Network error: " + error.message, "error");
+            showStatus(loginStatus, friendlyErrorMessage(error), "error");
             return false;
         }
     }
@@ -361,6 +386,11 @@
                     ? ("You are signed in as " + email
                         + ", which does not have AEO review access. Ask an admin to grant the AEO review flag, or sign in with an admin account.")
                     : "Your account does not have AEO review access.";
+            case "site_reviewer_required":
+                return email
+                    ? ("You are signed in as " + email
+                        + ", which does not have site review access. Ask an admin to grant the site reviewer flag, or sign in with an admin account.")
+                    : "Your account does not have site review access.";
             case "session_expired":
                 return "Your session has expired. Please sign in again.";
             default:
@@ -406,7 +436,7 @@
             }
         } catch (err) {
             confirmText.textContent = "";
-            showStatus(confirmStatus, "Network error: " + err.message, "error");
+            showStatus(confirmStatus, friendlyErrorMessage(err), "error");
         }
         history.replaceState(null, "", window.location.pathname);
         return true;
@@ -458,14 +488,12 @@
                 pendingValidationToken = token;
                 lastSentEmail = email;
                 showStatus(regEmailStatus, "Your email is verified!", "success");
-                // Skip to step 2 (password) since email is already verified
-                goToRegStep(2);
                 if (regPasswordInput) regPasswordInput.focus();
             } else {
                 showStatus(regEmailStatus, data.error || "This validation link is invalid or expired. Please request a new code.", "error");
             }
         } catch (err) {
-            showStatus(regEmailStatus, "Network error: " + err.message, "error");
+            showStatus(regEmailStatus, friendlyErrorMessage(err), "error");
         }
         history.replaceState(null, "", window.location.pathname);
         return true;
@@ -537,7 +565,7 @@
                         email,
                         code: validationCode,
                         password,
-                        captchaToken: getCaptchaToken(),
+                        captchaToken: getCaptchaToken("login"),
                     }),
                 });
                 const data = await resp.json();
@@ -553,7 +581,7 @@
                 loginBtn.disabled = false;
                 const msg = err && err.name === "AbortError"
                     ? "The request timed out. Please try again."
-                    : "Network error: " + (err && err.message ? err.message : "unknown");
+                    : friendlyErrorMessage(err);
                 showStatus(loginStatus, msg, "error");
             }
             return;
@@ -566,7 +594,7 @@
             const resp = await fetchWithTimeout(API + "/v1/auth/verify", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email, password, captchaToken: getCaptchaToken() }),
+                body: JSON.stringify({ email, password, captchaToken: getCaptchaToken("login") }),
             });
             const data = await resp.json();
             loginBtn.disabled = false;
@@ -594,10 +622,119 @@
             loginBtn.disabled = false;
             const msg = err && err.name === "AbortError"
                 ? "The request timed out. Please try again."
-                : "Network error: " + (err && err.message ? err.message : "unknown");
+                : friendlyErrorMessage(err);
             showStatus(loginStatus, msg, "error");
         }
     });
+
+    // --- Passkey (WebAuthn) login — issue #650 ---
+    // Shown only when the browser supports WebAuthn. On click: fetch auth
+    // options → navigator.credentials.get() → verify → establishServerSession.
+    const passkeyBtn = document.getElementById("coach-passkey-btn");
+
+    // Gated on the backend feature flag as well as browser support
+    // (AIRichardMoon issue #657). Browser support alone is not enough: the
+    // passkey endpoints ship dark, and a button that 404s is worse than no
+    // button. GET /v1/feature-flags is public precisely so this decision can
+    // be made before a session exists. Fail closed — any error leaves the
+    // button hidden. The flag is per-environment, so staging can run passkey
+    // sign-in while production does not.
+    async function passkeyEnabled() {
+        try {
+            const resp = await fetchWithTimeout(API + "/v1/feature-flags", { method: "GET" });
+            if (!resp.ok) {
+                console.warn("feature_flags_unavailable status=" + resp.status + " — passkey stays hidden");
+                return false;
+            }
+            const data = await resp.json();
+            return !!(data && data.flags && data.flags.passkey_login);
+        } catch (err) {
+            console.warn("feature_flags_fetch_failed — passkey stays hidden", err);
+            return false;
+        }
+    }
+
+    if (passkeyBtn && window.PublicKeyCredential) {
+        passkeyEnabled().then((on) => { if (on) passkeyBtn.hidden = false; });
+        passkeyBtn.addEventListener("click", async () => {
+            passkeyBtn.disabled = true;
+            passkeyBtn.setAttribute("aria-busy", "true");
+            showStatus(loginStatus, "Use your passkey to sign in…", "loading");
+            try {
+                const identifier = emailInput.value.trim();
+                const beginResp = await fetchWithTimeout(API + "/v1/auth/passkey/login/begin", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ identifier: identifier || "" }),
+                });
+                const beginData = await beginResp.json();
+                if (!beginData.ok) {
+                    showStatus(loginStatus, beginData.error || "Passkey sign-in could not start.", "error");
+                    return;
+                }
+                const opts = beginData.options;
+                const publicKey = {
+                    challenge: Uint8Array.from(atob(opts.challenge), c => c.charCodeAt(0)),
+                    rpId: opts.rpId,
+                    timeout: opts.timeout,
+                    userVerification: opts.userVerification || "preferred",
+                };
+                if (opts.allowCredentials && opts.allowCredentials.length) {
+                    publicKey.allowCredentials = opts.allowCredentials.map(c => ({
+                        type: c.type,
+                        id: Uint8Array.from(atob(c.id), ch => ch.charCodeAt(0)),
+                    }));
+                }
+                const assertion = await navigator.credentials.get({ publicKey });
+                const assertionJson = JSON.stringify({
+                    id: assertion.id,
+                    rawId: assertion.id,
+                    type: assertion.type,
+                    response: {
+                        authenticatorData: assertion.response.authenticatorData
+                            ? btoa(String.fromCharCode(...new Uint8Array(assertion.response.authenticatorData)))
+                            : "",
+                        clientDataJSON: assertion.response.clientDataJSON
+                            ? btoa(String.fromCharCode(...new Uint8Array(assertion.response.clientDataJSON)))
+                            : "",
+                        signature: assertion.response.signature
+                            ? btoa(String.fromCharCode(...new Uint8Array(assertion.response.signature)))
+                            : "",
+                        userHandle: assertion.response.userHandle
+                            ? btoa(String.fromCharCode(...new Uint8Array(assertion.response.userHandle)))
+                            : null,
+                    },
+                    clientExtensionResults: assertion.getClientExtensionResults ? assertion.getClientExtensionResults() : {},
+                });
+                const finishResp = await fetchWithTimeout(API + "/v1/auth/passkey/login/finish", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        credential: assertionJson,
+                        challengeKey: beginData.challengeKey,
+                        captchaToken: getCaptchaToken("login"),
+                    }),
+                });
+                const finishData = await finishResp.json();
+                if (finishData.ok && finishData.sessionToken) {
+                    showStatus(loginStatus, "Signed in! Redirecting...", "success");
+                    establishServerSession(finishData.email, finishData.sessionToken);
+                } else {
+                    showStatus(loginStatus, finishData.error || "Passkey sign-in failed.", "error");
+                    resetCaptchaToken("login");
+                }
+            } catch (error) {
+                if (error && error.name === "NotAllowedError") {
+                    showStatus(loginStatus, "Passkey sign-in was cancelled.", "info");
+                } else {
+                    showStatus(loginStatus, friendlyErrorMessage(error), "error");
+                }
+            } finally {
+                passkeyBtn.disabled = false;
+                passkeyBtn.removeAttribute("aria-busy");
+            }
+        });
+    }
 
     // --- Login-time activation: resend code ---
     if (loginResendCodeBtn) {
@@ -614,7 +751,7 @@
                 const resp = await fetchWithTimeout(API + "/v1/auth/send-validation-code", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ email, captchaToken: getCaptchaToken() }),
+                    body: JSON.stringify({ email, captchaToken: getCaptchaToken("login") }),
                 });
                 const data = await resp.json();
                 if (data.ok) {
@@ -627,7 +764,7 @@
                 resetCaptchaToken("login");
             } catch (err) {
                 loginResendCodeBtn.disabled = false;
-                showStatus(loginStatus, "Network error: " + (err.message || "please try again."), "error");
+                showStatus(loginStatus, friendlyErrorMessage(err), "error");
             }
         });
     }
@@ -647,11 +784,11 @@
             forgotCaptchaShown = true;
             forgotCaptcha.hidden = false;
             if (loginCaptcha) loginCaptcha.hidden = true;
-            showStatus(loginStatus, "Please complete the captcha, then click \"Forgot password?\" again.", "info");
+            showStatus(loginStatus, "Please complete the captcha above, then click again.", "info");
             return;
         }
 
-        const captchaToken = getCaptchaToken();
+        const captchaToken = getCaptchaToken("forgot");
         if (forgotCaptcha && !captchaToken) {
             showStatus(loginStatus, "Please complete the captcha first.", "error");
             return;
@@ -675,7 +812,7 @@
             resetCaptchaToken("forgot");
         } catch (err) {
             forgotBtn.disabled = false;
-            showStatus(loginStatus, "Network error: " + err.message, "error");
+            showStatus(loginStatus, friendlyErrorMessage(err), "error");
         }
     });
 
@@ -691,7 +828,7 @@
                 const isPassword = input.type === "password";
                 input.type = isPassword ? "text" : "password";
                 toggle.setAttribute("aria-pressed", isPassword ? "true" : "false");
-                toggle.setAttribute("aria-label", isPassword ? "Hide password" : "Show password");
+                toggle.setAttribute("aria-label", isPassword ? "Hide password field" : "Show password field");
                 if (eyeShow) eyeShow.hidden = isPassword;
                 if (eyeHide) eyeHide.hidden = !isPassword;
             });
@@ -710,10 +847,10 @@
                 } else if (len < PASSWORD_MIN) {
                     const diff = PASSWORD_MIN - len;
                     feedback.textContent = diff + " more character" + (diff === 1 ? "" : "s") + " needed (minimum 12).";
-                    feedback.style.color = "#d9534f";
+                    feedback.style.color = "#C62828";
                 } else if (len > PASSWORD_MAX) {
                     feedback.textContent = "Password exceeds maximum length of " + PASSWORD_MAX + " characters.";
-                    feedback.style.color = "#d9534f";
+                    feedback.style.color = "#C62828";
                 } else {
                     feedback.textContent = "✓ Password meets length requirements.";
                     feedback.style.color = "#2e7d32";
@@ -726,20 +863,21 @@
 
     function initOtpControllers() {
         document.querySelectorAll(".coach-otp-wrapper").forEach(wrapper => {
-            const digits = Array.from(wrapper.querySelectorAll(".coach-otp-digit"));
-            const hiddenValue = wrapper.querySelector(".coach-otp-value");
-            if (!digits.length || !hiddenValue) return;
+            const digits = wrapper.querySelectorAll(".coach-otp-digit");
+            const hiddenInput = wrapper.querySelector(".coach-otp-value");
+            if (!digits.length || !hiddenInput) return;
 
-            function syncValue() {
-                const val = digits.map(d => d.value.trim()).join("");
-                hiddenValue.value = val;
+            function updateHidden() {
+                let val = "";
+                digits.forEach(d => { val += d.value.trim(); });
+                hiddenInput.value = val;
             }
 
             digits.forEach((digit, idx) => {
-                digit.addEventListener("input", (e) => {
+                digit.addEventListener("input", () => {
                     const val = digit.value.replace(/\D/g, "");
-                    digit.value = val ? val.charAt(val.length - 1) : "";
-                    syncValue();
+                    digit.value = val ? val.slice(-1) : "";
+                    updateHidden();
                     if (digit.value && idx < digits.length - 1) {
                         digits[idx + 1].focus();
                         digits[idx + 1].select();
@@ -749,7 +887,8 @@
                 digit.addEventListener("keydown", (e) => {
                     if (e.key === "Backspace" && !digit.value && idx > 0) {
                         digits[idx - 1].focus();
-                        digits[idx - 1].select();
+                        digits[idx - 1].value = "";
+                        updateHidden();
                     } else if (e.key === "ArrowLeft" && idx > 0) {
                         digits[idx - 1].focus();
                     } else if (e.key === "ArrowRight" && idx < digits.length - 1) {
@@ -759,14 +898,15 @@
 
                 digit.addEventListener("paste", (e) => {
                     e.preventDefault();
-                    const text = (e.clipboardData || window.clipboardData).getData("text").replace(/\D/g, "");
-                    if (!text) return;
-                    for (let i = 0; i < digits.length; i++) {
-                        digits[i].value = text.charAt(i) || "";
+                    const paste = (e.clipboardData || window.clipboardData).getData("text").replace(/\D/g, "").slice(0, digits.length);
+                    if (paste) {
+                        paste.split("").forEach((char, i) => {
+                            if (digits[i]) digits[i].value = char;
+                        });
+                        updateHidden();
+                        const nextIdx = Math.min(paste.length, digits.length - 1);
+                        digits[nextIdx].focus();
                     }
-                    syncValue();
-                    const nextIdx = Math.min(text.length, digits.length - 1);
-                    digits[nextIdx].focus();
                 });
             });
         });
@@ -774,103 +914,75 @@
 
     function initAuthTabs() {
         const tabLogin = document.getElementById("coach-tab-login");
-        const tabRegister = document.getElementById("coach-tab-register");
+        const tabReg = document.getElementById("coach-tab-register");
+        const tabs = [tabLogin, tabReg].filter(Boolean);
 
-        function switchTab(target) {
-            if (target === "register") {
-                showStep("register");
-                if (tabRegister) {
-                    tabRegister.classList.add("active");
-                    tabRegister.setAttribute("aria-selected", "true");
+        function selectTab(tab) {
+            // Hide any overlay steps (reset/confirm) when switching tabs.
+            if (resetStep) resetStep.hidden = true;
+            if (confirmStep) confirmStep.hidden = true;
+            const tabBar = document.getElementById("coach-auth-tab-bar");
+            if (tabBar) tabBar.hidden = false;
+            const authPanel = document.getElementById("coach-auth-panel");
+            if (authPanel) authPanel.hidden = false;
+
+            if (tab === "register") {
+                if (tabReg) {
+                    tabReg.classList.add("active");
+                    tabReg.setAttribute("aria-selected", "true");
+                    tabReg.setAttribute("tabindex", "0");
                 }
                 if (tabLogin) {
                     tabLogin.classList.remove("active");
                     tabLogin.setAttribute("aria-selected", "false");
+                    tabLogin.setAttribute("tabindex", "-1");
                 }
-                regEmailInput.focus();
+                if (loginStep) loginStep.hidden = true;
+                if (registerStep) registerStep.hidden = false;
+                if (regEmailInput) regEmailInput.focus();
             } else {
-                showStep("login");
                 if (tabLogin) {
                     tabLogin.classList.add("active");
                     tabLogin.setAttribute("aria-selected", "true");
+                    tabLogin.setAttribute("tabindex", "0");
                 }
-                if (tabRegister) {
-                    tabRegister.classList.remove("active");
-                    tabRegister.setAttribute("aria-selected", "false");
+                if (tabReg) {
+                    tabReg.classList.remove("active");
+                    tabReg.setAttribute("aria-selected", "false");
+                    tabReg.setAttribute("tabindex", "-1");
                 }
-                emailInput.focus();
+                if (loginStep) loginStep.hidden = false;
+                if (registerStep) registerStep.hidden = true;
+                if (emailInput) emailInput.focus();
             }
         }
 
-        if (tabLogin) tabLogin.addEventListener("click", () => switchTab("login"));
-        if (tabRegister) tabRegister.addEventListener("click", () => switchTab("register"));
-        if (toggleBtn) toggleBtn.addEventListener("click", () => switchTab("register"));
-        if (toggleBackBtn) toggleBackBtn.addEventListener("click", () => switchTab("login"));
-    }
-
-    // --- Multi-step registration wizard (ticket #510) ---
-    // Step 1: Email + validation code (optional)
-    // Step 2: Password + alias + language
-    // Step 3: Invitation code + submit
-    let regCurrentStep = 1;
-
-    function goToRegStep(step) {
-        regCurrentStep = step;
-        document.querySelectorAll(".coach-reg-step").forEach(el => {
-            el.hidden = parseInt(el.dataset.step, 10) !== step;
-        });
-        document.querySelectorAll(".coach-reg-step-dot").forEach(el => {
-            const s = parseInt(el.dataset.step, 10);
-            el.classList.toggle("active", s === step);
-            el.classList.toggle("done", s < step);
-        });
-        document.querySelectorAll(".coach-reg-step-label").forEach(el => {
-            el.classList.toggle("active", parseInt(el.dataset.step, 10) === step);
-        });
-        if (step === 3) updateValidationSummary();
-        if (registerStep) registerStep.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-
-    function updateValidationSummary() {
-        if (!regValidationSummary) return;
-        const hasCode = regValidationCodeInput && regValidationCodeInput.value.trim();
-        const hasToken = !!pendingValidationToken;
-        if (hasCode || hasToken) {
-            regValidationSummary.className = "coach-reg-validation-summary verified";
-            regValidationSummary.textContent = "Email verified — your account will be activated immediately.";
-        } else {
-            regValidationSummary.className = "coach-reg-validation-summary pending";
-            regValidationSummary.textContent = "Email not yet verified — you'll be asked for a validation code at first login.";
-        }
-    }
-
-    registerForm.addEventListener("click", (e) => {
-        if (e.target.matches(".coach-reg-next-btn")) {
-            const next = parseInt(e.target.dataset.next, 10);
-            if (regCurrentStep === 1) {
-                const email = regEmailInput.value.trim().toLowerCase();
-                if (!email || !email.includes("@") || email.indexOf("@") === email.length - 1) {
-                    showStatus(regEmailStatus, "Please enter a valid email address.", "error");
-                    return;
+        // Arrow-key navigation: Left/Right move focus between tabs (wrapping).
+        tabs.forEach((tab, idx) => {
+            tab.addEventListener("keydown", (e) => {
+                if (e.key === "ArrowRight") {
+                    e.preventDefault();
+                    const next = tabs[(idx + 1) % tabs.length];
+                    next.focus();
+                    selectTab(next === tabReg ? "register" : "login");
+                } else if (e.key === "ArrowLeft") {
+                    e.preventDefault();
+                    const prev = tabs[(idx - 1 + tabs.length) % tabs.length];
+                    prev.focus();
+                    selectTab(prev === tabReg ? "register" : "login");
                 }
-            }
-            if (regCurrentStep === 2) {
-                const password = regPasswordInput.value;
-                const pwProblem = newPasswordProblem(password);
-                if (pwProblem) {
-                    showStatus(registerStatus, pwProblem, "error");
-                    return;
-                }
-            }
-            showStatus(registerStatus, "", "");
-            goToRegStep(next);
-        }
-        if (e.target.matches(".coach-reg-back-btn")) {
-            const back = parseInt(e.target.dataset.back, 10);
-            showStatus(registerStatus, "", "");
-            goToRegStep(back);
-        }
-    });
+            });
+        });
+
+        if (tabLogin) tabLogin.addEventListener("click", () => selectTab("login"));
+        if (tabReg) tabReg.addEventListener("click", () => selectTab("register"));
+        if (toggleBtn) toggleBtn.addEventListener("click", () => selectTab("register"));
+        if (toggleBackBtn) toggleBackBtn.addEventListener("click", () => selectTab("login"));
+
+        // Initialize tabindex: selected tab gets 0, others get -1.
+        if (tabLogin) tabLogin.setAttribute("tabindex", "0");
+        if (tabReg) tabReg.setAttribute("tabindex", "-1");
+    }
 
     // --- Send email validation code ---
     // Manually via the "Send validation code" button. The backend
@@ -905,7 +1017,17 @@
             if (data.ok) {
                 lastSentEmail = email;
                 showStatus(regEmailStatus, data.message || "A validation code has been sent to " + email + ". Enter it below to continue.", "success");
-                if (regSendCodeBtn) startResendCooldown(regSendCodeBtn);
+                // Unhide the OTP input wrapper now that a code has been sent.
+                const otpWrapper = document.querySelector("#coach-reg-email-validation .coach-otp-wrapper");
+                if (otpWrapper) otpWrapper.hidden = false;
+                if (regSendCodeBtn) {
+                    const cooldownSeconds = Math.min(
+                        REGISTRATION_RESEND_BASE_SECONDS * (2 ** registrationResendCount),
+                        REGISTRATION_RESEND_MAX_SECONDS
+                    );
+                    registrationResendCount++;
+                    startResendCooldown(regSendCodeBtn, cooldownSeconds);
+                }
             } else {
                 if (regSendCodeBtn) regSendCodeBtn.disabled = false;
                 showStatus(regEmailStatus, data.error || "Failed to send validation code.", "error");
@@ -1025,11 +1147,36 @@
         }
     });
 
+    // --- Populate registration language select ---
+    // The select ships with only "English (auto-detect)". Populate it with
+    // the supported locales from the i18n config (data/i18n-config.json),
+    // reusing the AFLocale.loadConfig() data source already loaded by
+    // js/locale-utils.js on this page.
+    function initRegLanguageSelect() {
+        const select = document.getElementById("coach-reg-language");
+        if (!select) return;
+        if (!window.AFLocale || typeof window.AFLocale.loadConfig !== "function") return;
+        window.AFLocale.loadConfig().then(function (cfg) {
+            const locales = (cfg && cfg.supportedLocales) || ["en"];
+            const names = (cfg && cfg.localeNames) || {};
+            // Keep the existing "English (auto-detect)" option (value="").
+            // Add the rest as explicit options, skipping "en" (already covered).
+            locales.forEach(function (code) {
+                if (code === "en") return;
+                const opt = document.createElement("option");
+                opt.value = code;
+                opt.textContent = names[code] || code;
+                select.appendChild(opt);
+            });
+        }).catch(function () { /* leave the default English option */ });
+    }
+
     // --- Init ---
     initPasswordToggles();
     initPasswordFeedback();
     initOtpControllers();
     initAuthTabs();
+    initRegLanguageSelect();
 
     // handleOAuthCallback is async (one-time code exchange). If there's no
     // oauth_code, it returns false synchronously.

@@ -172,7 +172,10 @@ button.af-focus:focus-visible,
   padding: 0;
 }
 .af-nav__link {
-  padding: 10px 13px;
+  /* 10px sides (was 13px): with the Services toggle and Digital Experience
+     menu the nav is ~30px wider, and on the beta/login pages (no tagline row)
+     13px pushed it onto a second header row at 1440px. */
+  padding: 10px 10px;
   text-decoration: none;
   white-space: nowrap;
   font-weight: 600;
@@ -201,6 +204,89 @@ button.af-focus:focus-visible,
 .af-nav__cta:hover { background: var(--af-primary-dk); }
 .af-nav__toggle { display: none; }
 .af-nav-toggle-check { display: none; }
+
+/* ---------- Nav submenus (Services ▸ Process/Approach, Digital Experience) ----------
+   Disclosure pattern driven by js/nav-menu.js: a <button aria-expanded>
+   controls the sibling .af-nav__submenu. Wide hover-capable screens also
+   reveal on hover. The ≤720px column layout (see the max-width: 720px block
+   below) renders submenus inline instead of as a floating panel. */
+.af-nav__group {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+.af-nav__sub-toggle {
+  min-width: 28px;          /* ≥24px target (WCAG 2.5.8); 44px tall */
+  min-height: 44px;
+  margin-left: -8px;
+  padding: 0 6px;
+  background: transparent;
+  border: 0;
+  border-radius: 8px;
+  color: var(--af-text);
+  font-size: 14px;
+  cursor: pointer;
+}
+.af-nav__sub-toggle:hover { background: var(--af-hover-bg); }
+.af-nav__sub-toggle[aria-expanded="true"] span { display: inline-block; transform: rotate(180deg); }
+.af-nav__menu-btn {
+  border: 0;
+  font-family: inherit;
+  line-height: inherit;
+  cursor: pointer;
+}
+.af-nav__menu-btn::after {
+  content: "\25BE";
+  display: inline-block;
+  margin-left: 6px;
+  font-size: 0.8em;
+}
+.af-nav__menu-btn[aria-expanded="true"] { background: var(--af-hover-bg); }
+.af-nav__menu-btn[aria-expanded="true"]::after { transform: rotate(180deg); }
+.af-nav__sub-toggle:focus-visible,
+.af-nav__sublink:focus-visible {
+  outline: 3px solid var(--af-primary);
+  outline-offset: 2px;
+}
+.af-nav__submenu {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 110;
+  min-width: 240px;
+  margin: 0;
+  padding: 6px;
+  list-style: none;
+  background: var(--af-white);
+  border: 1px solid var(--af-border);
+  border-radius: 10px;
+  box-shadow: 0 12px 32px rgba(22, 32, 28, 0.14);
+}
+/* Right-aligned so the menu never runs past the viewport's right edge. */
+.af-nav__submenu--end { left: auto; right: 0; }
+[aria-expanded="true"] ~ .af-nav__submenu { display: block; }
+@media (hover: hover) and (min-width: 721px) {
+  .af-nav__group:hover:not(.af-nav__group--dismissed) > .af-nav__submenu { display: block; }
+}
+.af-nav__sublink {
+  display: block;
+  padding: 10px 12px;
+  border-radius: 8px;
+  color: var(--af-text);
+  font-weight: 600;
+  font-size: 15px;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.af-nav__sublink:hover { background: var(--af-hover-bg); }
+.af-nav__sublink--active { color: var(--af-primary); background: var(--af-hover-bg); }
+.af-nav__subsep {
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px solid var(--af-border);
+}
+.af-nav__sublink--feature { color: var(--af-primary); }
 
 /* ---------- Typography helpers ---------- */
 .af-kicker, .af-eyebrow {
@@ -541,11 +627,11 @@ a.af-card:hover .af-card__arrow { text-decoration: underline; }
   outline: 2px solid var(--af-primary);
   outline-offset: -2px;
 }
-.af-proj-table__row[aria-selected="true"] {
+.af-proj-table__row[aria-pressed="true"] {
   background: var(--af-primary);
 }
-.af-proj-table__row[aria-selected="true"] td { color: #fff; }
-.af-proj-table__row[aria-selected="true"] .af-proj-table__view { color: var(--af-mint); }
+.af-proj-table__row[aria-pressed="true"] td { color: #fff; }
+.af-proj-table__row[aria-pressed="true"] .af-proj-table__view { color: var(--af-mint); }
 .af-proj-table__num {
   width: 44px;
   text-align: center;
@@ -553,11 +639,11 @@ a.af-card:hover .af-card__arrow { text-decoration: underline; }
   color: var(--af-gold);
   font-variant-numeric: tabular-nums;
 }
-.af-proj-table__row[aria-selected="true"] .af-proj-table__num { color: var(--af-mint); }
+.af-proj-table__row[aria-pressed="true"] .af-proj-table__num { color: var(--af-mint); }
 .af-proj-table__name { font-weight: 600; color: var(--af-ink); white-space: nowrap; }
-.af-proj-table__row[aria-selected="true"] .af-proj-table__name { color: #fff; }
+.af-proj-table__row[aria-pressed="true"] .af-proj-table__name { color: #fff; }
 .af-proj-table__tech { font-size: 15px; color: var(--af-muted); }
-.af-proj-table__row[aria-selected="true"] .af-proj-table__tech { color: var(--af-dark-card-text); }
+.af-proj-table__row[aria-pressed="true"] .af-proj-table__tech { color: var(--af-dark-card-text); }
 .af-proj-table__view {
   width: 40px;
   text-align: center;
@@ -785,7 +871,7 @@ a.af-card:hover .af-card__arrow { text-decoration: underline; }
 
 /* ---------- Page header (interior pages) ---------- */
 .af-page-header { padding: 72px 0 40px; }
-.af-page-header__lead { margin-top: 20px; }
+.af-page-header__lead { margin-top: 20px; font-family: var(--af-serif); font-weight: 400; }
 .af-page-header--tight { padding-bottom: 48px; }
 
 /* Green hero variant — matches carousel background */
@@ -1327,6 +1413,23 @@ a.af-card:hover .af-card__arrow { text-decoration: underline; }
     padding: 12px 0 4px;
   }
   .af-nav__cta { margin-left: 0; margin-top: 8px; text-align: center; }
+  /* Submenus render inline in the column menu, opened by their button. */
+  .af-nav__group { display: flex; flex-wrap: wrap; align-items: center; }
+  .af-nav__group > .af-nav__link:not(.af-nav__menu-btn) { flex: 1; }
+  .af-nav__menu-btn { flex: 1; text-align: left; }
+  .af-nav__sub-toggle { min-width: 44px; margin-left: 0; }
+  .af-nav__submenu,
+  .af-nav__submenu--end {
+    position: static;
+    flex-basis: 100%;
+    min-width: 0;
+    padding: 2px 0 6px 16px;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+  .af-nav__sublink { white-space: normal; }
   .af-svc__bullets { grid-template-columns: 1fr; }
 }
 

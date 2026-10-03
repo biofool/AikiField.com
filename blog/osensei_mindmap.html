@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>O Sensei — Teachings of Morihei Ueshiba</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Zen+Kaku+Gothic+New:wght@300;400&display=swap" rel="stylesheet">
+
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink:       #1a1612;
+    --ink-mid:   #3d3530;
+    --ink-soft:  #6b5f58;
+    --ink-faint: #a8998f;
+    --paper:     #f5f0ea;
+    --paper-mid: #ede6dc;
+    --paper-dark:#ddd4c6;
+    --accent:    #8b3a2a;
+    --accent-mid:#b85c3a;
+    --gold:      #c4963a;
+    --gold-light:#e8c97a;
+    --teal:      #2a6b5e;
+    --teal-light:#4a9e8a;
+    --violet:    #4a3870;
+    --violet-light:#7a62aa;
+    --rose:      #8b3a52;
+    --rose-light:#c46a80;
+    --blue:      #2a4a6b;
+    --blue-light:#4a7aaa;
+    --border:    rgba(26,22,18,0.12);
+  }
+
+  html { font-size: 16px; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Zen Kaku Gothic New', sans-serif;
+    font-weight: 300;
+    line-height: 1.7;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── GRAIN OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.6;
+  }
+
+  /* ── HEADER ── */
+  header {
+    text-align: center;
+    padding: 4rem 2rem 2rem;
+    position: relative;
+  }
+
+  .japanese-mark {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3rem;
+    font-weight: 300;
+    color: var(--accent);
+    letter-spacing: 0.5rem;
+    display: block;
+    margin-bottom: 1rem;
+    opacity: 0;
+    animation: fadeUp 1s ease 0.2s forwards;
+  }
+
+  header h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 300;
+    letter-spacing: 0.15em;
+    color: var(--ink);
+    line-height: 1.2;
+    opacity: 0;
+    animation: fadeUp 1s ease 0.4s forwards;
+  }
+
+  header h1 em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  header p.subtitle {
+    margin-top: 0.75rem;
+    font-size: 0.875rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    opacity: 0;
+    animation: fadeUp 1s ease 0.6s forwards;
+  }
+
+  .header-rule {
+    width: 60px;
+    height: 1px;
+    background: var(--accent);
+    margin: 1.5rem auto;
+    opacity: 0;
+    animation: fadeUp 1s ease 0.8s forwards;
+  }
+
+  header p.intro {
+    max-width: 540px;
+    margin: 0 auto;
+    font-size: 0.9375rem;
+    color: var(--ink-soft);
+    font-style: italic;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    line-height: 1.8;
+    opacity: 0;
+    animation: fadeUp 1s ease 1s forwards;
+  }
+
+  /* ── MAP CONTAINER ── */
+  .map-wrapper {
+    max-width: 900px;
+    margin: 2rem auto 0;
+    padding: 0 1rem;
+    opacity: 0;
+    animation: fadeUp 1s ease 1.2s forwards;
+  }
+
+  .map-canvas {
+    width: 100%;
+    background: var(--paper-mid);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    position: relative;
+    overflow: visible;
+  }
+
+  /* ── SVG NODE STYLES ── */
+  .branch-node {
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+  .branch-node:hover { opacity: 0.82; }
+  .branch-node:hover .node-rect { filter: brightness(0.95); }
+
+  .leaf-node {
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+  .leaf-node:hover { opacity: 0.78; }
+
+  .center-node { cursor: pointer; }
+  .center-node:hover ellipse { opacity: 0.9; }
+
+  /* ── MODAL ── */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(26,22,18,0.55);
+    z-index: 500;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    backdrop-filter: blur(2px);
+  }
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    background: var(--paper);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    max-width: 560px;
+    width: 100%;
+    padding: 2.5rem;
+    position: relative;
+    animation: modalIn 0.3s ease;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+
+  @keyframes modalIn {
+    from { opacity: 0; transform: translateY(12px) scale(0.98); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  .modal-theme-bar {
+    height: 3px;
+    border-radius: 2px;
+    margin-bottom: 1.5rem;
+  }
+
+  .modal-label {
+    font-size: 0.7rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 0.5rem;
+  }
+
+  .modal h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.75rem;
+    font-weight: 400;
+    color: var(--ink);
+    margin-bottom: 1.25rem;
+    line-height: 1.3;
+  }
+
+  .modal-quote {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    font-style: italic;
+    color: var(--ink-mid);
+    line-height: 1.85;
+    border-left: 2px solid var(--paper-dark);
+    padding-left: 1.25rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .modal-quote-2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    font-style: italic;
+    color: var(--ink-soft);
+    line-height: 1.85;
+    border-left: 2px solid var(--paper-dark);
+    padding-left: 1.25rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .modal-source {
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    color: var(--ink-faint);
+    margin-bottom: 1.5rem;
+  }
+
+  .modal-body {
+    font-size: 0.9375rem;
+    color: var(--ink-soft);
+    line-height: 1.75;
+    margin-bottom: 1.5rem;
+  }
+
+  .modal-egbert {
+    background: var(--paper-mid);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 1rem 1.25rem;
+    margin-top: 1.25rem;
+  }
+
+  .modal-egbert-label {
+    font-size: 0.68rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 0.5rem;
+  }
+
+  .modal-egbert p {
+    font-size: 0.875rem;
+    color: var(--ink-mid);
+    line-height: 1.7;
+    font-style: italic;
+  }
+
+  .modal-close {
+    position: absolute;
+    top: 1.25rem;
+    right: 1.25rem;
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+    color: var(--ink-soft);
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s, color 0.15s;
+  }
+  .modal-close:hover {
+    background: var(--paper-dark);
+    color: var(--ink);
+  }
+
+  /* ── HINT ── */
+  .map-hint {
+    text-align: center;
+    font-size: 0.78rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    padding: 1rem 0 0.5rem;
+    opacity: 0;
+    animation: fadeUp 1s ease 1.8s forwards;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    text-align: center;
+    padding: 3rem 2rem 4rem;
+    opacity: 0;
+    animation: fadeUp 1s ease 2s forwards;
+  }
+
+  footer .footer-rule {
+    width: 40px;
+    height: 1px;
+    background: var(--border);
+    margin: 0 auto 1.5rem;
+  }
+
+  footer p {
+    font-size: 0.8125rem;
+    color: var(--ink-faint);
+    letter-spacing: 0.08em;
+    line-height: 1.8;
+  }
+
+  footer a {
+    color: var(--accent);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.2s;
+  }
+  footer a:hover { border-color: var(--accent); }
+
+  footer .book-note {
+    margin-top: 1rem;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 0.9375rem;
+    color: var(--ink-soft);
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 600px) {
+    header { padding: 2.5rem 1.5rem 1.5rem; }
+    .japanese-mark { font-size: 2rem; }
+    .modal { padding: 1.75rem 1.25rem; }
+    .modal h2 { font-size: 1.4rem; }
+  }
+</style>
+</head>
+<body>
+  <main>
+
+<header>
+  <span class="japanese-mark">合 気 道</span>
+  <h1>Teachings of <em>O Sensei</em></h1>
+  <p class="subtitle">Morihei Ueshiba · Founder of Aikido · 1883–1969</p>
+  <div class="header-rule"></div>
+  <p class="intro">"Aiki is not a technique to fight with or defeat the enemy.<br>
+  It is the way to reconcile the world and make human beings one family."</p>
+</header>
+
+<div class="map-wrapper">
+  <div class="map-canvas">
+
+<svg width="100%" viewBox="0 0 780 680" xmlns="http://www.w3.org/2000/svg"
+     style="display:block;">
+<defs>
+  <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5"
+          markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+    <path d="M2 2L8 5L2 8" fill="none" stroke="context-stroke"
+          stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs>
+
+<!-- ══ BRANCH LINES ══ -->
+<!-- Love — upper left -->
+<line x1="390" y1="320" x2="185" y2="150"
+      stroke="#8b3a2a" stroke-width="1.2" opacity="0.5"
+      marker-end="url(#arr)" fill="none"/>
+<!-- Self — upper right -->
+<line x1="390" y1="320" x2="600" y2="150"
+      stroke="#2a6b5e" stroke-width="1.2" opacity="0.5"
+      marker-end="url(#arr)" fill="none"/>
+<!-- Universe — left -->
+<line x1="390" y1="330" x2="95" y2="360"
+      stroke="#4a3870" stroke-width="1.2" opacity="0.5"
+      marker-end="url(#arr)" fill="none"/>
+<!-- No enemy — right -->
+<line x1="390" y1="330" x2="685" y2="360"
+      stroke="#2a4a6b" stroke-width="1.2" opacity="0.5"
+      marker-end="url(#arr)" fill="none"/>
+<!-- One family — lower left -->
+<line x1="390" y1="350" x2="185" y2="520"
+      stroke="#8b3a52" stroke-width="1.2" opacity="0.5"
+      marker-end="url(#arr)" fill="none"/>
+<!-- Change — lower right -->
+<line x1="390" y1="350" x2="600" y2="520"
+      stroke="#c4963a" stroke-width="1.2" opacity="0.5"
+      marker-end="url(#arr)" fill="none"/>
+
+<!-- ══ LEAF LINES ══ -->
+<!-- Love leaves -->
+<line x1="185" y1="143" x2="68" y2="76"
+      stroke="#8b3a2a" stroke-width="0.6" opacity="0.35" fill="none"/>
+<line x1="185" y1="143" x2="220" y2="56"
+      stroke="#8b3a2a" stroke-width="0.6" opacity="0.35" fill="none"/>
+<!-- Self leaves -->
+<line x1="600" y1="143" x2="556" y2="60"
+      stroke="#2a6b5e" stroke-width="0.6" opacity="0.35" fill="none"/>
+<line x1="600" y1="143" x2="706" y2="72"
+      stroke="#2a6b5e" stroke-width="0.6" opacity="0.35" fill="none"/>
+<!-- Universe leaves -->
+<line x1="95" y1="353" x2="44" y2="262"
+      stroke="#4a3870" stroke-width="0.6" opacity="0.35" fill="none"/>
+<line x1="95" y1="368" x2="36" y2="458"
+      stroke="#4a3870" stroke-width="0.6" opacity="0.35" fill="none"/>
+<!-- No enemy leaves -->
+<line x1="685" y1="353" x2="730" y2="260"
+      stroke="#2a4a6b" stroke-width="0.6" opacity="0.35" fill="none"/>
+<line x1="685" y1="368" x2="736" y2="458"
+      stroke="#2a4a6b" stroke-width="0.6" opacity="0.35" fill="none"/>
+<!-- Family leaves -->
+<line x1="185" y1="527" x2="80" y2="610"
+      stroke="#8b3a52" stroke-width="0.6" opacity="0.35" fill="none"/>
+<line x1="185" y1="527" x2="230" y2="624"
+      stroke="#8b3a52" stroke-width="0.6" opacity="0.35" fill="none"/>
+<!-- Change leaves -->
+<line x1="600" y1="527" x2="548" y2="624"
+      stroke="#c4963a" stroke-width="0.6" opacity="0.35" fill="none"/>
+<line x1="600" y1="527" x2="700" y2="612"
+      stroke="#c4963a" stroke-width="0.6" opacity="0.35" fill="none"/>
+
+<!-- ══════════════════════ CENTER ══════════════════════ -->
+<g class="center-node" onclick="openModal('center')">
+  <ellipse cx="390" cy="336" rx="80" ry="50"
+           fill="#1a1612" stroke="#3d3530" stroke-width="0.8"/>
+  <ellipse cx="390" cy="336" rx="74" ry="44"
+           fill="none" stroke="#6b5f58" stroke-width="0.4" opacity="0.5"/>
+  <text x="390" y="328" text-anchor="middle"
+        font-family="'Cormorant Garamond',serif" font-size="14"
+        font-weight="400" fill="#f5f0ea" letter-spacing="0.05em">O Sensei</text>
+  <text x="390" y="346" text-anchor="middle"
+        font-family="'Zen Kaku Gothic New',sans-serif" font-size="10"
+        font-weight="300" fill="#a8998f" letter-spacing="0.08em">Morihei Ueshiba</text>
+</g>
+
+<!-- ══════════════════════ BRANCH: LOVE (coral/red) ══════════════════════ -->
+<g class="branch-node" onclick="openModal('love')">
+  <rect x="122" y="116" width="126" height="54" rx="3"
+        fill="#8b3a2a" stroke="#6b2a1a" stroke-width="0.5" class="node-rect"/>
+  <rect x="122" y="116" width="126" height="54" rx="3"
+        fill="none" stroke="#e8a890" stroke-width="0.3" opacity="0.3"/>
+  <text x="185" y="136" text-anchor="middle"
+        font-family="'Cormorant Garamond',serif" font-size="14"
+        font-weight="400" fill="#f5f0ea" letter-spacing="0.08em">Love</text>
+  <text x="185" y="155" text-anchor="middle"
+        font-family="'Zen Kaku Gothic New',sans-serif" font-size="9.5"
+        font-weight="300" fill="#e8c0b0" letter-spacing="0.06em">Ai — heart of Aikido</text>
+</g>
+<!-- Love leaf 1 -->
+<g class="leaf-node" onclick="openModal('love-1')">
+  <rect x="8" y="46" width="128" height="60" rx="2"
+        fill="#f5f0ea" stroke="#8b3a2a" stroke-width="0.5" opacity="0.9"/>
+  <text x="72" y="64" text-anchor="middle"
+        font-family="'Cormorant Garamond',serif" font-size="11"
+        font-style="italic" fill="#3d3530">"Aikido is nothing</text>
+  <text x="72" y="79" text-anchor="middle"
+        font-family="'Cormorant Garamond',serif" font-size="11"
+        font-style="italic" fill="#3d3530">but the movement</text>
+  <text x="72" y="94" text-anchor="middle"
+        font-family="'Cormorant Garamond',serif" font-size="11"
+        font-style="italic" fill="#3d3530">of Love."</text>
+</g>
+<!-- Love leaf 2 -->
+<g class="leaf-node" onclick="openModal('love-2')">
+  <rect x="158" y="26" width="128" height="60" rx="2"
+        fill="#f5f0ea" stroke="#8b3a2a" stroke-width="0.5" opacity="0.9"/>
+  <text x="222" y="44" text-anchor="middle"
+        font-family="'Cormorant Garamond',serif" font-size="11"
+        font-style="italic" fill="#3d3530">"Aiki is the fiber</text>
+  <text x="222" y="59" text-anchor="middle"
+        font-family="'Cormorant Garamond',serif" font-size="11"
+        font-style="italic" fill="#3d3530">that links everything</text>
+  <text x="222" y="74" text-anchor="middle"
+        font-family="'Cormorant Garamond',serif" font-size="11"
+        font-style="italic" fill="#3d3530">together in Love."</text>
+</g>
+
+<!-- ══════════════════════ BRANCH: SELF (teal) ══════════════════════ -->
+<g class="branch-node" onclick="openModal('self')">
+  <rect x="537" y="116" width="126" height="54" rx="3"
+        fill="#2a6b5e" stroke="#1a5040" stroke-width="0.5" class="node-rect"/>
+  <rect x="537" y="116" width="126" height="54" rx="3"
+        fill="none" stroke="#80e8d0" stroke-width="0.3" opacity="0.25"/>
+  <text x="600" y="136" text-anchor="middle"
+        font-family="'Cormorant Garamond',serif" font-size="14"
+        font-weight="400" fill="#f5f0ea" letter-spacing="0.06em">Correct yourself</text>
+  <text x="600" y="155" text-anchor="middle"
+        font-family="'Zen Kaku Gothic New',sans-serif" font-size="9.5"
+        font-weight="300" fill="#a0e8d4" letter-spacing="0.06em">Not others — yourself</text>
+</g>
+<!-- Self leaf 1 -->
+<g class="leaf-node" onclick="openModal('self-1')">
+  <rect x="490" y="28" width="132" height="60" rx="2"
+        fill="#f5f0ea" stroke="#2a6b5e" stroke-width="0.5" opacity="0.9"/>
+  <text x="556" y="46" text-anchor="middle"
+        font-family="'Cormorant Garamond',serif" font-size="11"
+        font-style="italic" fill="#3d3530">"Not for correcting</text>
+  <text x="556" y="61" text-anchor="middle"
+        font-family="'Cormorant Garamond',serif" font-size="11"
+        font-style="italic" fill="#3d3530">others — correct</text>
+  <text x="556" y="76" text-anchor="middle"
+        font-family="'Cormorant Garamond',serif" font-size="11"
+        font-style="italic" fill="#3d3530">your own mind."</text>
+</g>
+<!-- Self leaf 2 -->
+<g class="leaf-node" onclick="openModal('self-2')">
+  <rect x="642" y="40" width="132" height="60" rx="2"
+        fill="#f5f0ea" stroke="#2a6b5e" stroke-width="0.5" opacity="0.9"/>
+  <text x="708" y="58" text-anchor="middle"
+        font-family="'Cormorant Garamond',serif" font-size="11"
+        font-style="italic" fill="#3d3530">"True victory is</text>
+  <text x="708" y="73" text-anchor="middle"
+        font-family="'Cormorant Garamond',serif" font-size="11"
+        font-style="italic" fill="#3d3530">self-victory —</text>
+  <text x="708" y="88" text-anchor="middle"
+        font-family="'Cormorant Garamond',serif" font-size="11"
+        font-style="italic" fill="#3d3530">Masakatsu Agatsu."</text>
+</g>
+
+<!-- ══════════════════════ BRANCH: UNIVERSE (violet) ══════════════════════ -->
+<g class="branch-node" onclick="openModal('universe')">
+  <rect x="33" y="326" width="124" height="54" rx="3"
+        fill="#4a3870" stroke="#342858" stroke-width="0.5" class="node-rect"/>
+  <rect x="33" y="326" width="124" height="54" rx="3"
+        fill="none" stroke="#c0b0f0" stroke-width="0.3" opacity="0.25"/>
+  <text x="95" y="346" text-anchor="middle"
+        font-family="'Cormorant Garamond',serif" font-size="14"
+        font-weight="400" fill="#f5f0ea" letter-spacing="0.08em">Universe</text>
+  <text x="95" y="365" text-anchor="middle"
+        font-family="'Zen Kaku Gothic New',sans-serif" font-size="9.5"
+        font-weight="300" fill="#c0b0f0" letter-spacing="0.06em">Become one with all</text>
+</g>
+<!-- Universe leaf 1 -->
+<g class="leaf-node" onclick="openModal('universe-1')">
+  <rect x="2" y="232" width="128" height="60" rx="2"
+        fill="#f5f0ea" stroke="#4a3870" stroke-width="0.5" opacity="0.9"/>
+  <text x="66" y="250" text-anchor="middle"
+        font-family="'Cormorant Garamond',serif" font-size="11"
+        font-style="italic" fill="#3d3530">"Harmonize with</text>
+  <text x="66" y="265" text-anchor="middle"
+        font-family="'Cormorant Garamond',serif" font-size="11"
+        font-style="italic" fill="#3d3530">the movement</text>
+  <text x="66" y="280" text-anchor="middle"
+        font-family="'Cormorant Garamond',serif" font-size="11"
+        font-style="italic" fill="#3d3530">of the universe."</text>
+</g>
+<!-- Universe leaf 2 -->
+<g class="leaf-node" onclick="openModal('universe-2')">
+  <rect x="2" y="428" width="128" height="60" rx="2"
+        fill="#f5f0ea" stroke="#4a3870" stroke-width="0.5" opacity="0.9"/>
+  <text x="66" y="446" text-anchor="middle"
+        font-family="'Cormorant Garamond',serif" font-size="11"
+        font-style="italic" fill="#3d3530">"I have everything</text>
+  <text x="66" y="461" text-anchor="middle"
+        font-family="'Cormorant Garamond',serif" font-size="11"
+        font-style="italic" fill="#3d3530">within myself —</text>
+  <text x="66" y="476" text-anchor="middle"
+        font-family="'Cormorant Garamond',serif" font-size="11"
+        font-style="italic" fill="#3d3530">the universe is me."</text>
+</g>
+
+<!-- ══════════════════════ BRANCH: NO ENEMY (blue) ══════════════════════ -->
+<g class="branch-node" onclick="openModal('no-enemy')">
+  <rect x="623" y="326" width="124" height="54" rx="3"
+        fill="#2a4a6b" stroke="#1a3050" stroke-width="0.5" class="node-rect"/>
+  <rect x="623" y="326" width="124" height="54" rx="3"
+        fill="none" stroke="#90c0f0" stroke-width="0.3" opacity="0.25"/>
+  <text x="685" y="346" text-anchor="middle"
+        font-family="'Cormorant Garamond',serif" font-size="14"
+        font-weight="400" fill="#f5f0ea" letter-spacing="0.08em">No enemy</text>
+  <text x="685" y="365" text-anchor="middle"
+        font-family="'Zen Kaku Gothic New',sans-serif" font-size="9.5"
+        font-weight="300" fill="#90c0f0" letter-spacing="0.06em">True Budo has none</text>
+</g>
+<!-- No enemy leaf 1 -->
+<g class="leaf-node" onclick="openModal('no-enemy-1')">
+  <rect x="650" y="230" width="128" height="60" rx="2"
+        fill="#f5f0ea" stroke="#2a4a6b" stroke-width="0.5" opacity="0.9"/>
+  <text x="714" y="248" text-anchor="middle"
+        font-family="'Cormorant Garamond',serif" font-size="11"
+        font-style="italic" fill="#3d3530">"There is no enemy</text>
+  <text x="714" y="263" text-anchor="middle"
+        font-family="'Cormorant Garamond',serif" font-size="11"
+        font-style="italic" fill="#3d3530">in Aikido. True</text>
+  <text x="714" y="278" text-anchor="middle"
+        font-family="'Cormorant Garamond',serif" font-size="11"
+        font-style="italic" fill="#3d3530">Budo has no enemy."</text>
+</g>
+<!-- No enemy leaf 2 -->
+<g class="leaf-node" onclick="openModal('no-enemy-2')">
+  <rect x="650" y="428" width="128" height="60" rx="2"
+        fill="#f5f0ea" stroke="#2a4a6b" stroke-width="0.5" opacity="0.9"/>
+  <text x="714" y="446" text-anchor="middle"
+        font-family="'Cormorant Garamond',serif" font-size="11"
+        font-style="italic" fill="#3d3530">"He who tries to</text>
+  <text x="714" y="461" text-anchor="middle"
+        font-family="'Cormorant Garamond',serif" font-size="11"
+        font-style="italic" fill="#3d3530">fight breaks harmony</text>
+  <text x="714" y="476" text-anchor="middle"
+        font-family="'Cormorant Garamond',serif" font-size="11"
+        font-style="italic" fill="#3d3530">— already defeated."</text>
+</g>
+
+<!-- ══════════════════════ BRANCH: ONE FAMILY (rose) ══════════════════════ -->
+<g class="branch-node" onclick="openModal('family')">
+  <rect x="122" y="496" width="126" height="54" rx="3"
+        fill="#8b3a52" stroke="#6b2a3a" stroke-width="0.5" class="node-rect"/>
+  <rect x="122" y="496" width="126" height="54" rx="3"
+        fill="none" stroke="#f0b0c8" stroke-width="0.3" opacity="0.25"/>
+  <text x="185" y="516" text-anchor="middle"
+        font-family="'Cormorant Garamond',serif" font-size="14"
+        font-weight="400" fill="#f5f0ea" letter-spacing="0.08em">One family</text>
+  <text x="185" y="535" text-anchor="middle"
+        font-family="'Zen Kaku Gothic New',sans-serif" font-size="9.5"
+        font-weight="300" fill="#f0b0c8" letter-spacing="0.06em">All humanity united</text>
+</g>
+<!-- Family leaf 1 -->
+<g class="leaf-node" onclick="openModal('family-1')">
+  <rect x="18" y="584" width="128" height="60" rx="2"
+        fill="#f5f0ea" stroke="#8b3a52" stroke-width="0.5" opacity="0.9"/>
+  <text x="82" y="602" text-anchor="middle"
+        font-family="'Cormorant Garamond',serif" font-size="11"
+        font-style="italic" fill="#3d3530">"I feel all people</text>
+  <text x="82" y="617" text-anchor="middle"
+        font-family="'Cormorant Garamond',serif" font-size="11"
+        font-style="italic" fill="#3d3530">are part of my</text>
+  <text x="82" y="632" text-anchor="middle"
+        font-family="'Cormorant Garamond',serif" font-size="11"
+        font-style="italic" fill="#3d3530">own family."</text>
+</g>
+<!-- Family leaf 2 -->
+<g class="leaf-node" onclick="openModal('family-2')">
+  <rect x="168" y="596" width="128" height="60" rx="2"
+        fill="#f5f0ea" stroke="#8b3a52" stroke-width="0.5" opacity="0.9"/>
+  <text x="232" y="614" text-anchor="middle"
+        font-family="'Cormorant Garamond',serif" font-size="11"
+        font-style="italic" fill="#3d3530">"Aiki leads humans</text>
+  <text x="232" y="629" text-anchor="middle"
+        font-family="'Cormorant Garamond',serif" font-size="11"
+        font-style="italic" fill="#3d3530">to live in harmony</text>
+  <text x="232" y="644" text-anchor="middle"
+        font-family="'Cormorant Garamond',serif" font-size="11"
+        font-style="italic" fill="#3d3530">like one family."</text>
+</g>
+
+<!-- ══════════════════════ BRANCH: CHANGE (gold) ══════════════════════ -->
+<g class="branch-node" onclick="openModal('change')">
+  <rect x="537" y="496" width="126" height="54" rx="3"
+        fill="#7a5c1a" stroke="#5a4010" stroke-width="0.5" class="node-rect"/>
+  <rect x="537" y="496" width="126" height="54" rx="3"
+        fill="none" stroke="#f0d080" stroke-width="0.3" opacity="0.3"/>
+  <text x="600" y="516" text-anchor="middle"
+        font-family="'Cormorant Garamond',serif" font-size="14"
+        font-weight="400" fill="#f5f0ea" letter-spacing="0.06em">Constant change</text>
+  <text x="600" y="535" text-anchor="middle"
+        font-family="'Zen Kaku Gothic New',sans-serif" font-size="9.5"
+        font-weight="300" fill="#f0d080" letter-spacing="0.06em">Budo must never stop</text>
+</g>
+<!-- Change leaf 1 -->
+<g class="leaf-node" onclick="openModal('change-1')">
+  <rect x="484" y="596" width="128" height="60" rx="2"
+        fill="#f5f0ea" stroke="#7a5c1a" stroke-width="0.5" opacity="0.9"/>
+  <text x="548" y="614" text-anchor="middle"
+        font-family="'Cormorant Garamond',serif" font-size="11"
+        font-style="italic" fill="#3d3530">"Budo must not</text>
+  <text x="548" y="629" text-anchor="middle"
+        font-family="'Cormorant Garamond',serif" font-size="11"
+        font-style="italic" fill="#3d3530">stop even for</text>
+  <text x="548" y="644" text-anchor="middle"
+        font-family="'Cormorant Garamond',serif" font-size="11"
+        font-style="italic" fill="#3d3530">an instant."</text>
+</g>
+<!-- Change leaf 2 -->
+<g class="leaf-node" onclick="openModal('change-2')">
+  <rect x="636" y="584" width="136" height="60" rx="2"
+        fill="#f5f0ea" stroke="#7a5c1a" stroke-width="0.5" opacity="0.9"/>
+  <text x="704" y="602" text-anchor="middle"
+        font-family="'Cormorant Garamond',serif" font-size="11"
+        font-style="italic" fill="#3d3530">"There are no kata.</text>
+  <text x="704" y="617" text-anchor="middle"
+        font-family="'Cormorant Garamond',serif" font-size="11"
+        font-style="italic" fill="#3d3530">No two situations</text>
+  <text x="704" y="632" text-anchor="middle"
+        font-family="'Cormorant Garamond',serif" font-size="11"
+        font-style="italic" fill="#3d3530">are ever alike."</text>
+</g>
+
+<!-- Legend dots -->
+<circle cx="30" cy="672" r="4" fill="#8b3a2a"/>
+<text x="40" y="676" font-family="'Zen Kaku Gothic New',sans-serif"
+      font-size="9" fill="#6b5f58" letter-spacing="0.05em">Love</text>
+<circle cx="90" cy="672" r="4" fill="#2a6b5e"/>
+<text x="100" y="676" font-family="'Zen Kaku Gothic New',sans-serif"
+      font-size="9" fill="#6b5f58" letter-spacing="0.05em">Self</text>
+<circle cx="150" cy="672" r="4" fill="#4a3870"/>
+<text x="160" y="676" font-family="'Zen Kaku Gothic New',sans-serif"
+      font-size="9" fill="#6b5f58" letter-spacing="0.05em">Universe</text>
+<circle cx="230" cy="672" r="4" fill="#2a4a6b"/>
+<text x="240" y="676" font-family="'Zen Kaku Gothic New',sans-serif"
+      font-size="9" fill="#6b5f58" letter-spacing="0.05em">No enemy</text>
+<circle cx="320" cy="672" r="4" fill="#8b3a52"/>
+<text x="330" y="676" font-family="'Zen Kaku Gothic New',sans-serif"
+      font-size="9" fill="#6b5f58" letter-spacing="0.05em">One family</text>
+<circle cx="410" cy="672" r="4" fill="#7a5c1a"/>
+<text x="420" y="676" font-family="'Zen Kaku Gothic New',sans-serif"
+      font-size="9" fill="#6b5f58" letter-spacing="0.05em">Change</text>
+
+</svg>
+  </div><!-- /.map-canvas -->
+</div><!-- /.map-wrapper -->
+
+<p class="map-hint">Tap any node to read the full teaching</p>
+
+<!-- ══════════════════════════════════════════════ -->
+<!-- MODAL -->
+<!-- ══════════════════════════════════════════════ -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModalIfOutside(event)">
+  <div class="modal" id="modal-box">
+    <button class="modal-close" onclick="closeModal()" aria-label="Close">✕</button>
+    <div class="modal-theme-bar" id="modal-bar"></div>
+    <p class="modal-label" id="modal-label"></p>
+    <h2 id="modal-title"></h2>
+    <div class="modal-quote" id="modal-quote"></div>
+    <div class="modal-quote-2" id="modal-quote-2" style="display:none"></div>
+    <p class="modal-source" id="modal-source"></p>
+    <p class="modal-body" id="modal-body"></p>
+    <div class="modal-egbert" id="modal-egbert">
+      <p class="modal-egbert-label">In the Egbert story</p>
+      <p id="modal-egbert-text"></p>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-rule"></div>
+  <p>From the Memoirs of Morihei Ueshiba O Sensei · Aiki News<br>
+     Compiled and shared freely in the spirit of Aikido</p>
+  <p class="book-note">
+    Companion to <em>Quantum Aikido: The Power of Harmony</em> by Richard Moon<br>
+    <a href="https://www.quantumaikido.com" target="_blank">quantumaikido.com</a>
+  </p>
+<p class="footer-last-updated">Last updated: <time datetime="2026-09-04">2026-09-04</time></p>
+</footer>
+
+<script>
+const TEACHINGS = {
+  center: {
+    color: '#3d3530', label: 'The Founder',
+    title: 'Morihei Ueshiba O Sensei',
+    quote: '"Aikido is not an art to fight with enemies and defeat them. It is a way to lead all human beings to live in harmony with each other like one big family."',
+    quote2: '"The divine beauty of heaven and earth! All creation, members of one family."',
+    source: 'Aiki News, Issue #3 (1994) · The Art of Peace',
+    body: 'O Sensei — Great Teacher — founded Aikido not as a fighting system but as a path of love and harmony. He believed the martial arts had been misunderstood for centuries, used for conquest rather than peace. His life\'s work was to reveal their true purpose: the unification of all humanity.',
+    egbert: 'Every scene in the Egbert story is a small enactment of O Sensei\'s vision. When Egbert bows to Marcus — his former adversary — he is practicing the one family teaching on the scale of a school hallway.'
+  },
+  love: {
+    color: '#8b3a2a', label: 'Theme · Love',
+    title: 'Ai — Love as the heart of Aikido',
+    quote: '"Aikido is nothing but an expression of the movement of Love for all living things. This movement of Love is something giving form to the universe, and purifying everything therein."',
+    source: 'Aiki News, Issue #2 (1994)',
+    body: 'The word Ai in Aikido carries a double meaning in Japanese — both "harmony" and "love." O Sensei was deliberate about this. He chose to name his art after Love. He taught that all technique flows from this source. Love is not a sentiment here — it is an active, intelligent force, the same force that holds creation together.',
+    egbert: 'Sue Anne doesn\'t explain love when she steps between Egbert and the bullies. She expresses it through movement — entering, yielding, protecting without harming. That is Ai in action.'
+  },
+  'love-1': {
+    color: '#8b3a2a', label: 'Quote · Love',
+    title: '"Aikido is nothing but the movement of Love."',
+    quote: '"Aikido is nothing but an expression of the movement of Love for all living things. This movement of Love is something giving form to the universe, and purifying everything therein. In fact, it is the very thing that fosters and protects the multitude of things in the universe, and causes them to be vibrant and lively in their development."',
+    source: 'Aiki News, Issue #2 (1994)',
+    body: 'This is perhaps O Sensei\'s clearest statement of purpose. Aikido is not a fighting art with a philosophical veneer. The Love itself is the art. The techniques are its physical expression.',
+    egbert: 'Richard Moon writes in Quantum Aikido: "The sword that cuts things together." Every technique is not a separation — it\'s a completion.'
+  },
+  'love-2': {
+    color: '#8b3a2a', label: 'Quote · Love',
+    title: '"Aiki is the fiber that links everything in Love."',
+    quote: '"Aiki is the fiber that links everything — not just man — together in Love. The origin of the Bu of Japan is love. Everything in this world is given shape according to Love."',
+    source: 'Aiki News, Issue #2 (1981)',
+    body: 'O Sensei understood Love not as a human emotion but as a universal principle — the connective tissue of creation itself. This puts Aikido in conversation with physics: what science calls fields and forces, O Sensei called Love.',
+    egbert: 'When Egbert and Marcus finally bow to each other honestly at the end of the story, the fiber between them becomes visible. That is the moment Aiki appears.'
+  },
+  self: {
+    color: '#2a6b5e', label: 'Theme · Correct yourself',
+    title: 'Begin with the self',
+    quote: '"It is not for correcting others; it is for correcting your own mind. This is Aikido. This is the mission of Aikido and should be your mission."',
+    source: 'O Sensei — general teachings',
+    body: 'This is the teaching that surprises most people who come to Aikido looking to become invincible. O Sensei consistently redirected attention inward. You cannot harmonize the world from a disordered interior. The mat is a mirror.',
+    egbert: 'Egbert\'s transformation doesn\'t happen because he learns to throw people. It happens because he learns to find his center — and then to keep it when math class humiliates him.'
+  },
+  'self-1': {
+    color: '#2a6b5e', label: 'Quote · Correct yourself',
+    title: '"Not for correcting others — correct your own mind."',
+    quote: '"I want considerate people to listen to the voice of Aikido. It is not for correcting others; it is for correcting your own mind. This is Aikido. This is the mission of Aikido and should be your mission."',
+    source: 'O Sensei — general teachings',
+    body: 'The repetition here is deliberate. O Sensei says it twice in the same breath. He knew this teaching would be forgotten. It is the teaching most contrary to human instinct — we are wired to fix the world, the other person, the situation. Aikido says: start here, inside.',
+    egbert: 'Sensei Bob says exactly this to Egbert after the incident with Marcus: "What were you listening to?" Not: what was Marcus doing. What were YOU listening to.'
+  },
+  'self-2': {
+    color: '#2a6b5e', label: 'Quote · Correct yourself',
+    title: '"True victory is self-victory — Masakatsu Agatsu."',
+    quote: '"To win without the battle is Aiki. To attack and gain victory in our mission to realize the True Victory of Self Mastery — Masakatsu Agatsu — is Aiki."',
+    source: 'Aiki News, Issue #3 (1982)',
+    body: 'Masakatsu Agatsu is one of O Sensei\'s most repeated phrases. Literally: true victory, self victory. The greatest battle is always internal. The most significant opponent is always the reactive, fear-driven self.',
+    egbert: 'Egbert\'s real test isn\'t the three boys on the walk home. It\'s the moment in math class when he feels the rabbit-breathing come back. Can he find his center there? That is Masakatsu Agatsu.'
+  },
+  universe: {
+    color: '#4a3870', label: 'Theme · Universe',
+    title: 'Become one with the universe',
+    quote: '"The secret of Aikido is to make oneself become one with the universe going along with its natural movements. Anyone who has attained this secret holds the universe within himself."',
+    source: 'Aiki News, Issue #3 (1994)',
+    body: 'For O Sensei, the ultimate goal of training was not technique but union — the practitioner dissolving the artificial boundary between self and cosmos. This is not mysticism separate from practice. It is what happens when center, harmony, and creativity function together.',
+    egbert: 'in Quantum Aikido as the unified field. The mat becomes a portal. When Egbert\'s weight drops and his breathing slows, he is touching the edge of this.'
+  },
+  'universe-1': {
+    color: '#4a3870', label: 'Quote · Universe',
+    title: '"Harmonize with the movement of the universe."',
+    quote: '"The secret of Aikido is to harmonize ourselves with the movement of the universe and bring ourselves into accord with the universe itself. I want considerate people to listen to the voice of Aikido."',
+    source: 'O Sensei — general teachings',
+    body: 'Harmonize — not control, not master, not conquer. The sailor uses the wind. The surfer uses the wave. The Aikidoka uses the attack. All are forms of harmonizing with what is, rather than fighting what is.',
+    egbert: 'Sue Anne\'s technique in the street isn\'t strength — it\'s harmonization. She enters the energy, moves with it, guides it. The bully throws himself.'
+  },
+  'universe-2': {
+    color: '#4a3870', label: 'Quote · Universe',
+    title: '"I have everything within myself — the universe is me."',
+    quote: '"I have everything within myself, for the universe is inside me. I am the universe itself."',
+    source: 'Aiki News, Issue #3 (1994)',
+    body: 'This sounds grandiose until you feel it. O Sensei was describing a state of complete interior sufficiency — the opposite of grasping, defending, or needing. When you are centered, you lack nothing. When you lack nothing, there is no enemy.',
+    egbert: 'The glossary in the Egbert book defines Ki as "the force that flows through all living things." When it flows freely — when the center holds — this is the experience O Sensei is pointing at.'
+  },
+  'no-enemy': {
+    color: '#2a4a6b', label: 'Theme · No enemy',
+    title: 'True Budo has no enemy',
+    quote: '"There is no enemy in Aikido. It is wrong to think that having an opponent or an enemy, or trying to be stronger than him and trying to overpower him, is true budo. True Budo has no opponent. True Budo has no enemy."',
+    source: 'Aiki News, Issue #2 (1976)',
+    body: 'This is the teaching that separates Aikido from nearly every other martial art. It is not that fighting is forbidden — it is that the entire concept of "enemy" is revealed as a misperception. The attacker is not your enemy. They are, as O Sensei would say, a lost member of the family.',
+    egbert: 'The bullies in Egbert\'s story are never framed as enemies. They are confused, reactive, hurting — exactly what Egbert was at the start. By the end, they are students in the same dojo.'
+  },
+  'no-enemy-1': {
+    color: '#2a4a6b', label: 'Quote · No enemy',
+    title: '"True Budo has no enemy."',
+    quote: '"There is no enemy in Aikido. It is wrong to think that having an opponent or an enemy, or trying to be stronger, is true budo. True Budo has no opponent. True Budo is to become one with the universe."',
+    source: 'Aiki News, Issue #2 (1976)',
+    body: 'O Sensei taught this with absolute consistency across decades. It was not a soft sentiment — it came from a man who had survived actual combat situations and tested his art against serious martial artists. The "no enemy" teaching is the conclusion of deep experience, not the avoidance of it.',
+    egbert: 'When Egbert stands before the bullies in the fall and speaks honestly — "I\'m sorry I hurt you" — he demonstrates this teaching at the scale of a child\'s life. There is no enemy here. There is only the situation, and what he brings to it.'
+  },
+  'no-enemy-2': {
+    color: '#2a4a6b', label: 'Quote · No enemy',
+    title: '"He who tries to fight has already broken harmony."',
+    quote: '"If anyone tries to fight with me, it means that he is going to break the harmony with the universe. At the very moment when he has the desire to fight, he is already defeated, beyond time and space."',
+    source: 'Aiki News, Issue #3 (1994)',
+    body: 'This is a remarkable claim. The aggressor\'s defeat is not a future event — it happens at the moment of aggressive intent. The aggression itself is the loss. Harmony is not broken by the stronger person. It is broken by whoever chooses opposition over accord.',
+    egbert: 'When Egbert pushes back against Marcus in Chapter Two, he loses his center — not because Marcus is stronger, but because he chose opposition. That is the teaching in action.'
+  },
+  family: {
+    color: '#8b3a52', label: 'Theme · One family',
+    title: 'All humanity as one family',
+    quote: '"Aiki is not a technique to fight with or defeat the enemy. It is the way to reconcile the world and make human beings one family."',
+    source: 'Aiki News, Issue #2 (1976)',
+    body: 'This was O Sensei\'s mission statement — the purpose behind every technique, every class, every bow. Not to produce better fighters. To produce people who see all others as family. The dojo is a laboratory for practicing this before taking it into the world.',
+    egbert: 'The Egbert story is a small-scale demonstration of this teaching. By the end, former enemies are training together. The circle expands. That is the mission of Aikido enacted in a children\'s book.'
+  },
+  'family-1': {
+    color: '#8b3a52', label: 'Quote · One family',
+    title: '"I feel all people are part of my own family."',
+    quote: '"I feel that all people are part of my own family. One\'s actions are not solely for the benefit of one\'s immediate family, but for the benefit of all. The meaning of this is that, if you know yourself first, you come to understand everything."',
+    source: 'Aiki News, Issue #2 (1978)',
+    body: 'O Sensei\'s expansion of family outward — from blood family to village to nation to all humanity — mirrors the order of training: first harmonize yourself, then your relationships, then your community, then the world. Each stage depends on the previous.',
+    egbert: 'Egbert sits down next to Marcus at lunch not because he was told to. He did it because he remembered a feeling. That remembered feeling is the beginning of the one-family teaching.'
+  },
+  'family-2': {
+    color: '#8b3a52', label: 'Quote · One family',
+    title: '"Aiki leads humans to live like one big family."',
+    quote: '"Aikido is not an art to fight with enemies and defeat them. It is a way to lead all human beings to live in harmony with each other like in a big family. The unity of the world comes from the unity of each country, and the unity of a country depends upon that of each family."',
+    source: 'Aiki News, Issue #3 (1994)',
+    body: 'The order matters: world unity begins with family unity, which begins with individual unity. No political program can create what only personal transformation can build. This is why O Sensei spent his life in a dojo rather than in a parliament.',
+    egbert: ' final image in the story — Egbert and Marcus bowing to each other — is this teaching in its simplest form. Two people choosing to see each other as family. The world gets one bow closer to what O Sensei was pointing at.'
+  },
+  change: {
+    color: '#7a5c1a', label: 'Theme · Constant change',
+    title: 'Budo must never stop renewing itself',
+    quote: '"Budo develops in an evolutionary manner together with the movements of the heavenly bodies and must not stop even for an instant. Its form must be continuously renewed."',
+    source: 'Aiki News, Winter 1992 — reprint of 1942 article',
+    body: 'O Sensei was suspicious of any form that had hardened into dogma. He saw the universe itself as in constant creative motion — and Aikido must move with it. This is why he left no fixed curriculum, why he never stopped training, and why Richard Moon\'s Quantum Aikido is a legitimate continuation of that spirit.',
+    egbert: 'Egbert learning the roll — falling, getting dizzy, trying again, finally moving fluidly — is a physical metaphor for this teaching. Change is the medium, not the obstacle.'
+  },
+  'change-1': {
+    color: '#7a5c1a', label: 'Quote · Constant change',
+    title: '"Budo must not stop even for an instant."',
+    quote: '"Martial arts must undergo constant change. Budo develops in an evolutionary manner together with the movements of the heavenly bodies and must not stop even for an instant. The first stage of my budo has come to an end and serves as the stepping-stone for the second stage."',
+    source: 'Aiki News, Winter 1992 — reprint of 1942 Shin Budo article',
+    body: 'O Sensei wrote this in 1942 — at the height of World War II, while Japan was pursuing the opposite of everything he taught. The courage of this statement in that context is worth noting. He was not describing Aikido as a product to be preserved. He was describing it as a living river.',
+    egbert: 'Quantum Aikido itself is an expression of this teaching — Richard Moon taking O Sensei\'s river and following it into quantum physics, executive coaching, and peace negotiation. The form changes. The river continues.'
+  },
+  'change-2': {
+    color: '#7a5c1a', label: 'Quote · Constant change',
+    title: '"There are no fixed kata. No two moments are alike."',
+    quote: '"There are no kata in Aiki budo. All phenomena of this world vary constantly according to the particular circumstances and no two situations are exactly alike. It is illogical to train using only a single kata, thereby limiting oneself."',
+    source: 'Aiki News, Winter 1992 — reprint of 1942 Shin Budo article',
+    body: 'This is radical in martial arts culture, which is deeply invested in preserving exact forms. O Sensei insisted that fixed forms are a trap. Reality is always new. The practitioner must be always new. Technique that cannot meet the actual moment is not technique — it is costume.',
+    egbert: 'Sensei Bob in the story never gives Egbert a script for dealing with bullies. He gives him a center. From center, the right response emerges — as it did when Egbert sat down next to Marcus at lunch. No kata. Just presence.'
+  }
+};
+
+function openModal(key) {
+  const t = TEACHINGS[key];
+  if (!t) return;
+  document.getElementById('modal-bar').style.background = t.color;
+  document.getElementById('modal-label').textContent = t.label;
+  document.getElementById('modal-title').textContent = t.title;
+  document.getElementById('modal-quote').textContent = t.quote;
+  const q2El = document.getElementById('modal-quote-2');
+  if (t.quote2) {
+    q2El.textContent = t.quote2;
+    q2El.style.display = 'block';
+  } else {
+    q2El.style.display = 'none';
+  }
+  document.getElementById('modal-source').textContent = t.source;
+  document.getElementById('modal-body').textContent = t.body;
+  document.getElementById('modal-egbert-text').textContent = t.egbert;
+  document.getElementById('modal-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function closeModalIfOutside(e) {
+  if (e.target === document.getElementById('modal-overlay')) closeModal();
+}
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeModal();
+});
+</script>
+
+  </main>
+</body>
+</html>

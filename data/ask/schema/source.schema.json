@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://quantumaikido.com/data/ask-richard-moon/schema/source.schema.json",
+  "title": "Discussing The Unified Field source record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "source_id",
+    "source_type",
+    "title",
+    "public_url",
+    "license_status",
+    "exact_source_text"
+  ],
+  "properties": {
+    "source_id": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+    "source_type": {
+      "type": "string",
+      "enum": ["page", "book", "video", "blog", "pdf"]
+    },
+    "title": { "type": "string", "minLength": 1 },
+    "author": { "type": "string" },
+    "public_url": { "type": "string", "minLength": 1 },
+    "isbn": { "type": "string" },
+    "publisher": { "type": "string" },
+    "date_published": { "type": "string" },
+    "youtube_url": { "type": "string" },
+    "youtube_id": { "type": "string" },
+    "segments": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["label", "start_seconds"],
+        "properties": {
+          "label": { "type": "string" },
+          "start_seconds": { "type": "integer", "minimum": 0 }
+        }
+      }
+    },
+    "license_status": {
+      "type": "string",
+      "enum": ["already-public-on-quantumaikido", "public-youtube", "public-pdf"]
+    },
+    "exact_source_text": { "type": "string", "minLength": 20 },
+    "notes": { "type": "string" }
+  }
+}

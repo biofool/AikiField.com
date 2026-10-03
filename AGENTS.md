@@ -1,4 +1,4 @@
-<!-- AI coding config version: 2026-07-25 — sourced from biofool/starter template.
+<!-- AI coding config version: 2026-10-03 — sourced from biofool/starter template.
      Shared settings across all biofool projects; see ~/.codeium/windsurf/memories/shared_template_config.md -->
 
 # AGENTS.md — Global Rules for AI Agents
@@ -79,6 +79,13 @@ Write commands on a single line — backslash continuations break copy-paste.
 Long `gcloud`/`terraform`/`gsutil`/`kubectl` commands stay on one line
 regardless of length.
 
+## Chat reply style — Simplified Technical English
+
+Write all chat replies in **Simplified Technical English (STE)**: short
+sentences, active voice, one instruction per sentence, approved and
+consistent terminology, no unexplained jargon. Applies to chat output only
+— code, commit messages, and documentation keep their normal style.
+
 ## One-off fix scripts (workflow convention)
 
 When building repair/fix scripts for data quality or operational issues:
@@ -148,7 +155,10 @@ pages link to it; it is a fully public marketing page (no auth).
 alongside the HTML when text changes. `sync.sh` handles deploy/dry-run
 (`./sync.sh dryrun`, `./sync.sh deploy`). Use `--staging` or `--prod` to
 select the target explicitly: `./sync.sh --staging deploy`,
-`./sync.sh --prod dryrun`. Large binary assets (e.g.
+`./sync.sh --prod dryrun`. Staging deploys run `scripts/ci-local.sh`
+(php-lint + unit + Playwright e2e against a detached HEAD worktree) in
+parallel and gate on it before exiting — skip with `--skip-ci`, override
+steps via `CI_LOCAL_ARGS`. Large binary assets (e.g.
 `AikiField.pdf`, redesign zips) are tracked via DVC, not git directly. The
 `input/` directory holds source materials and is gitignored.
 
@@ -160,13 +170,17 @@ auth surface is a **blind `/login.php`** page that gates
 the pre-release `/beta/` assessment pages and the `/for-review/` games area. It is NOT linked from the public
 nav. `projects.php` no longer hosts any login or chat — it shows an
 invitation card pointing visitors to `contact.html` to request a live demo.
-The inline AI Chat (`coach-chat.js`) was removed; the live chat lives on
-`quantumaikido.com/members.php`.
+The inline AI Chat was removed from `projects.php`. Since 2026-10-02 the
+QA members chat is replicated at `/members` (`members.php` + `coach-chat.js`
++ `css/coach-chat.css`), gated by `beta-gate.load.php` and linked from the
+public nav's **Digital Experience** menu as "Enter the Unified Field Chat";
+`quantumaikido.com/members` stays live too. Keep `coach-chat.js` in sync with
+the QA copy (AikiField-only edits are listed in its header).
 
 AikiField.com remains a **third frontend surface** for the shared coaching
 auth flow (same backend user store, same session contract), alongside
 `quantumaikido.com` and `AIRichardMoon/frontend` — but the surface is
-now minimal (beta gating only), not a public chat.
+now beta gating plus the gated `/members` chat replica.
 
 Files: `login.php` (blind login + PHP session POST handlers + `?next=`
 redirect), `coach-proxy.php`, `coach-login.js` (loaded by `login.php`),

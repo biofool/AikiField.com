@@ -58,6 +58,11 @@ module.exports = defineConfig({
     ignoreHTTPSErrors: true,
   },
 
+  // Visual baselines live in tests/e2e/visual-baselines/<project>/ —
+  // same convention as quantumaikido.com/web's visual suite. This is a
+  // config-level key, not a `use` option.
+  snapshotPathTemplate: '{testDir}/../visual-baselines/{projectName}/{arg}{ext}',
+
   projects: [
     { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
   ],

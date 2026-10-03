@@ -129,6 +129,29 @@ if ($path === '/__stub/requests') {
     stub_json(200, ['count' => count($entries), 'requests' => $entries]);
 }
 
+// Game-results stub state (see /v1/game-results/sync below).
+$GR_FILE = dirname($LOG_FILE) . '/af-e2e-stub-game-results.json';
+$GR_MISSING_FLAG = $GR_FILE . '.missing';
+if ($path === '/__stub/game-results' && $method === 'DELETE') {
+    @unlink($GR_FILE);
+    @unlink($GR_MISSING_FLAG);
+    @unlink($GR_FILE . '.last-request.json');
+    stub_json(200, ['ok' => true]);
+}
+if ($path === '/__stub/game-results/last-request' && $method === 'GET') {
+    $raw = @file_get_contents($GR_FILE . '.last-request.json');
+    stub_json(200, ['body' => $raw === false ? null : json_decode($raw, true)]);
+}
+if ($path === '/__stub/game-results/missing' && $method === 'POST') {
+    $on = (bool) (stub_body($rawBody)['missing'] ?? true);
+    if ($on) {
+        @touch($GR_MISSING_FLAG);
+    } else {
+        @unlink($GR_MISSING_FLAG);
+    }
+    stub_json(200, ['ok' => true, 'missing' => $on]);
+}
+
 // ── Proxy-secret enforcement (mirrors backend/app/main.py) ───────────────────
 
 $isExempt = str_starts_with($path, '/v1/auth/')
@@ -183,6 +206,67 @@ if ($path === '/v1/auth/check-session' && $method === 'POST') {
         'admin'             => $user['admin'],
         'targetEnvironment' => $user['targetEnvironment'],
     ]);
+}
+
+// ── AI Chat (games/ai-coach.php → /v1/chat-secure) ──────────────────────────
+// Requires the member's X-Auth-Email / X-Auth-Session like the real
+// _require_session_owner dependency. Echoes the message it received so tests
+// can assert the server composed it from the scores, and returns one cited
+// source with a YouTube link + start offset (the "1 video").
+
+if ($path === '/v1/chat-secure' && $method === 'POST') {
+    $email = strtolower(trim((string) ($_SERVER['HTTP_X_AUTH_EMAIL'] ?? '')));
+    $token = (string) ($_SERVER['HTTP_X_AUTH_SESSION'] ?? '');
+    if (!isset($USERS[$email]) || !hash_equals(stub_token($email), $token)) {
+        stub_json(401, ['detail' => 'Session expired.']);
+    }
+    $body = stub_body($rawBody);
+    stub_json(200, [
+        'sessionId' => (string) ($body['sessionId'] ?? 'stub'),
+        'response'  => 'STUB CHAT modality=' . ($body['modality'] ?? '-') . ' :: ' . (string) ($body['message'] ?? ''),
+        'intent'    => 'ai',
+        'sources'   => [
+            ['chunkId' => 'c1', 'title' => 'Corpus note', 'path' => 'notes/x.md'],
+            ['chunkId' => 'c2', 'title' => 'Blending practice', 'path' => 'videos/blend.md',
+             'youtubeUrl' => 'https://www.youtube.com/watch?v=stubVideo01', 'startSeconds' => 42],
+        ],
+    ]);
+}
+
+// ── Game results (AikiField games/results.php, games/ai-coach.php) ──────────
+// Same request/response shape and auth as AIRichardMoon POST
+// /v1/game-results/sync. Storage here is a plain per-email upsert by `at`
+// so AikiField's proxying can be tested end to end; the real merge, cap,
+// validation and isolation rules are tested in the backend's pytest
+// (tests/test_game_results.py), not re-implemented here. The request body is
+// logged so tests can assert what AikiField forwarded.
+
+if ($path === '/v1/game-results/sync' && $method === 'POST') {
+    if (is_file($GR_MISSING_FLAG)) {
+        stub_json(404, ['detail' => 'Not Found']);
+    }
+    $email = strtolower(trim((string) ($_SERVER['HTTP_X_AUTH_EMAIL'] ?? '')));
+    $token = (string) ($_SERVER['HTTP_X_AUTH_SESSION'] ?? '');
+    if (!isset($USERS[$email]) || !hash_equals(stub_token($email), $token)) {
+        stub_json(401, ['detail' => 'Invalid, inactive, or expired session. Please log in.']);
+    }
+    $body = stub_body($rawBody);
+    @file_put_contents($GR_FILE . '.last-request.json', $rawBody);
+    $all = is_file($GR_FILE) ? (json_decode((string) file_get_contents($GR_FILE), true) ?: []) : [];
+    $mine = $all[$email] ?? [];
+    $skipped = 0;
+    foreach (($body['results'] ?? []) as $r) {
+        if (!is_array($r) || !is_int($r['at'] ?? null) || !is_string($r['mode'] ?? null) || !is_array($r['scores'] ?? null)) {
+            $skipped++;
+            continue;
+        }
+        $mine[(string) $r['at']] = array_merge($mine[(string) $r['at']] ?? [], array_filter($r, fn ($v) => $v !== null));
+    }
+    $all[$email] = $mine;
+    file_put_contents($GR_FILE, json_encode($all), LOCK_EX);
+    $list = array_values($mine);
+    usort($list, fn ($a, $b) => $a['at'] <=> $b['at']);
+    stub_json(200, ['ok' => true, 'results' => $list, 'skipped' => $skipped]);
 }
 
 if ($path === '/v1/auth/register-with-password' && $method === 'POST') {

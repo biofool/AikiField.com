@@ -1,18 +1,24 @@
 # AikiField.com — Site Content
 
 > Source of truth for all text content on aikifield.com.
-> Last updated: 2026-08-08
+> Last updated: 2026-10-02
 
 ---
 
 ## Navigation
 
 - Home (`index.html`)
-- Process (`process.html`)
-- Approach (`approach.html`)
-- Services (`services.html`)
+- Services (`services.html`) — submenu:
+  - Process (`process.html`)
+  - Approach (`approach.html`)
 - Case Studies (`case-studies.html`)
 - Demonstration Technologies (`projects.php`)
+- Digital Experience — submenu (no landing page):
+  - Ride the Lucky Wave (`/games/lucky-wave/RideTheLuckyWaveV1-legacy.html`)
+  - Ride the Lucky Wave V2 (`/games/lucky-wave/RideTheLuckyWaveV2.html`)
+  - Verbal Aikido — Story Mode (`/games/verbal-aikido/`)
+  - Moon — 20 Exclusive Practices (`/games/exercises/`)
+  - Enter the Unified Field Chat (`/members` — AI chat, sign-in required)
 - Assessment (`assessment.html`)
 - Get Started (`contact.html`)
 
@@ -160,7 +166,7 @@ Where a leader places attention determines the security posture of the whole org
 **Mini links:**
 - Self-Assessment — Measure your security maturity and leadership presence — Two assessments in one — honest self-inquiry across five security categories and seven presence dimensions. (→ assessment.html)
 - Engagement Process — Six phases to a program that fits — A collaborative design cycle tailored to your stage, risks, and customers. (→ process.html)
-- Demonstration Technologies — Technology we built, ready to fit your needs — Quantum Aikido Wisdom, a cited coaching backend for the Quantum Aikido corpus; World Studio Finder, a global studio discovery pipeline; and MultiCloud-MultiPass, a multi-cloud cost kill switch. All built by AikiField; the same engineering is available to your organization. (→ projects.php)
+- Demonstration Technologies — Technology we built, ready to fit your needs — Quantum Aikido Wisdom, a cited coaching backend for the Quantum Aikido corpus; World Studio Finder, a global studio discovery pipeline; MultiCloud-MultiPass, a multi-cloud cost kill switch; and Story Gatherer, a provenance-first knowledge-graph research pipeline. All built by AikiField; the same engineering is available to your organization. (→ projects.php)
 
 ### CTA
 
@@ -615,7 +621,7 @@ The composure and curiosity to adapt to emerging threats and AI risk.
 ## Demonstration Technologies (`projects.php`)
 
 **Meta title:** AikiField — Technology We Build
-**Meta description:** Production AI and data pipelines designed and built by AikiField — a cited AI coaching chat and a global studio discovery pipeline. The same engineering capability is available to your organization, tailored to fit your needs.
+**Meta description:** Production AI and data pipelines designed and built by AikiField — AI coaching, studio outreach, multi-cloud cost control, resilience engineering, media intelligence, AI governance, and knowledge-graph research. The same engineering capability is available to your organization, tailored to fit your needs.
 
 ### Hero
 - Eyebrow: Built by AikiField
@@ -683,10 +689,90 @@ The composure and curiosity to adapt to emerging threats and AI risk.
 
 **Applied to your needs:** The same pattern — a multi-cloud cost control layer with intent/actual reporting and a kill switch — can be built for your organization: a single dashboard for your cloud spend across providers, real-time overrun detection on your AI and data workloads, and an emergency shut-off before a runaway job generates a surprise bill. We design, build, and operate it on a fixed budget.
 
+### Project 4: ChaosEngine — Controlled Failure Injection for Security Resilience
+
+**Tag:** Resilience Engineering
+**Built-by tag:** Built by AikiField
+**Title:** ChaosEngine — Controlled Failure Injection for Security Resilience
+**Lead:** A Go-based CLI that runs staging-scoped chaos experiments — latency injection, dependency failure, resource pressure, and controlled process termination — to prove your systems fail safely before a real incident does.
+**How it works:** Every experiment declares a blast radius and a verified staging target before it runs, can be previewed in dry-run mode before it touches anything live, and rolls back automatically the moment a guardrail trips or the run window ends.
+
+**What it does:**
+- **Environment-scoped by design** — refuses to run against anything but a verified staging target.
+- **Blast-radius limits** — caps how much of the environment an experiment can touch, so a bad run stays contained.
+- **Dry-run mode** — previews exactly what an experiment would do before it touches anything live.
+- **Four experiment types** — latency injection, dependency failure, resource pressure, and controlled process termination.
+- **Automatic rollback** — reverts the injected fault the moment a guardrail trips or the experiment window ends.
+- **CI/CD approval gates** — every experiment requires sign-off and leaves a full audit log.
+
+**Tech stack:** Go · Python/Bash · AWS SDK/CLI · Docker · CI/CD approval gates
+
+**Applied to your needs:** The same pattern — controlled, guardrailed failure injection with blast-radius limits and automatic rollback — is what we use to pressure-test your incident-response runbooks and business continuity plan: proving detection and recovery procedures actually hold up under realistic failure conditions, with the same environment verification, approval gates, and logging a security engagement requires, before a real breach or outage tests them for you. We design, build, and operate it on a fixed budget.
+
+### Project 5: ClipQuotes — Automated Evidence & Communications Extraction
+
+**Tag:** Media Intelligence
+**Built-by tag:** Built by AikiField
+**Title:** ClipQuotes — Automated Evidence & Communications Extraction
+**Lead:** A retrieval and computer-vision pipeline that locates one specific spoken moment inside hours of long-form video or audio and extracts it as an accurately framed, timestamped clip.
+**How it works:** It transcribes and diarizes the source recording, retrieves the passage matching the request, tracks the speaker's face across frames to set the crop, then cuts and exports the moment with its source timestamp attached.
+
+**What it does:**
+- **Finds the moment, not just the transcript** — retrieves the exact spoken passage out of hours of footage.
+- **Speaker diarization** — identifies who said what, so the right speaker ends up in frame.
+- **Accurate framing** — tracks faces across frames via computer vision, so clips aren't cropped mid-speaker.
+- **Timestamped exports** — every clip carries the timestamp back to the original recording.
+- **Built for long-form source material** — designed for meetings, webinars, and recorded sessions, not just short clips.
+- **Simple review interface** — a Flask front end for queuing extraction requests and reviewing results.
+
+**Tech stack:** Python · Whisper · pyannote.audio · OpenCV · FFmpeg · Flask
+
+**Applied to your needs:** The same pattern — retrieval plus computer vision to pull a verified, timestamped moment out of long-form recordings — is what we use to build security-awareness training content and to extract incident post-mortem evidence: pulling exact, timestamped moments from recorded meetings, tabletop exercises, or webinars for compliance documentation and stakeholder communication. We design, build, and operate it on a fixed budget.
+
+### Project 6: Voice Synthesis Benchmarking — Deepfake-Aware AI Governance
+
+**Tag:** AI Research & Governance
+**Built-by tag:** Built by AikiField
+**Title:** Voice Synthesis Benchmarking — Deepfake-Aware AI Governance
+**Lead:** A consent-based benchmarking pipeline that evaluates open-source text-to-speech and voice-conversion models for naturalness, speaker similarity, and failure modes.
+**How it works:** Every model is run against consented, provenance-tracked voice data, scored for naturalness and speaker similarity, and stress-tested for where it breaks down — with strict provenance and consent controls enforced on every training and evaluation dataset.
+
+**What it does:**
+- **Consent-first data pipeline** — every voice sample used for evaluation is provenance-tracked and consent-verified end to end.
+- **Naturalness and similarity scoring** — benchmarks models on how convincing and how close to the source speaker they are.
+- **Failure-mode mapping** — documents exactly where and how each model breaks down, not just its best-case output.
+- **Covers TTS and voice conversion** — evaluates both text-to-speech and voice-cloning approaches side by side.
+- **GPU-inference benchmarking harness** — repeatable evaluation runs across model versions.
+- **Governance-ready reporting** — findings are written up in a form usable for policy decisions, not just a research log.
+
+**Tech stack:** Python · PyTorch · torchaudio · Hugging Face Transformers · GPU inference pipelines
+
+**Applied to your needs:** The same rigor — benchmarking model failure modes under consent-first data controls — is what we bring to your organization's exposure to voice-phishing and deepfake social engineering: helping you understand what today's synthetic-voice models can and can't convincingly fake, and building the responsible-AI governance policy that governs any generative voice tooling your teams procure or build in-house. We design, build, and operate it on a fixed budget.
+
+### Project 7: Story Gatherer — Provenance-First Knowledge Graphs
+
+**Tag:** Knowledge Graph
+**Built-by tag:** Built by AikiField
+**Title:** Story Gatherer — Provenance-First Knowledge Graphs
+**Lead:** A research pipeline that turns scattered web material — blogs, interviews, news archives, social posts, forum threads, videos — into a single, queryable, fully sourced knowledge graph about people and the communities around them.
+**How it works:** Built to document The Source restaurant and the Source Family commune, it now runs as a general engine for mapping martial-arts teachers, lineages, and organizations. A scheduled research job expands targeted subjects daily, with centralized cost tracking and a remote kill switch.
+
+**What it does:**
+- **Gathers sources automatically** — crawls approved sites and searches newspaper archives, Reddit, Facebook groups, seminar listings, and video channels, including OCR of scanned periodicals.
+- **Extracts the cast and the claims** — identifies people, groups, places, works, and events, resolves aliases, and records every claim with its stance (supports, disputes).
+- **Preserves disagreement** — keeps "who said what about whom, and where" rather than collapsing sources into one canonical truth.
+- **Checks itself** — flags contradictions between sources and uses a bounded AI verification layer that abstains rather than guesses; no claim is ever discarded.
+- **Fully auditable** — every node, edge, and claim is tied to its source in a version-controlled, human-readable snapshot (~10,900 nodes, ~25,300 edges, ~5,800 sources).
+- **Produces publishable output** — Wikipedia draft proposals with source-reliability scoring and biographical reviews that grade every statement's citeability.
+
+**Tech stack:** Python · SQLite · Flask · Gemini API · Playwright · OCR pipeline · GitHub Actions · Google Cloud Run · GCP Secret Manager · Terraform
+
+**Applied to your needs:** The same pattern — a contradiction-aware research pipeline that makes provenance the product — can be built for your organization: aggregating vendor advisories, threat intelligence, and internal reports into an auditable graph where every statement is tied to its source, disagreements stay visible, and board- or regulator-facing output carries citations. We design, build, and operate it on a fixed budget.
+
 ### Overview
 
-**Heading:** Six systems we built — at a glance
-**Lead:** All six systems were designed and built by AikiField and run in production today — AI-grounded coaching, global studio outreach, multi-cloud cost control, resilience engineering, media intelligence, and AI governance research. The engineering patterns behind them are directly available to your engagement.
+**Heading:** Seven systems we built — at a glance
+**Lead:** All seven systems were designed and built by AikiField and run in production today — AI-grounded coaching, global studio outreach, multi-cloud cost control, resilience engineering, media intelligence, AI governance research, and provenance-first knowledge graphs. The engineering patterns behind them are directly available to your engagement.
 
 ### From these projects to your security program
 
@@ -1120,3 +1206,29 @@ normal light styling; only `<main class="bta-main">` is dark.
   text variants used on the warm panel, since teal and amber fail contrast there
 
 Verified contrast ratios are documented at the top of `beta/css/assessment.css`.
+
+## Ask AikiField — AEO knowledge layer (`/ask/`)
+
+Issue #65 — port of the quantumaikido.com "Discussing The Unified Field" AEO system. Public, indexable sourced Q&A pages rendered dynamically by `ask/index.php` (`.htaccess` routes `/ask/*`). Records live in `data/ask/{sources,answers}/*.json`; only `review_status: "published"` emits public HTML. Two corpora: `attribution: "aikifield"` (this site's public copy) and `attribution: "richard-moon"` (ported QA records, cited to quantumaikido.com). Editorial review index at `/AEO/` (sign-in + admin/aeoAccess). Validate with `php scripts/validate_ask.php`; test with `php tests/test_ask.php`; regenerate sitemap with `php scripts/generate-sitemap.php --write`. `llms.txt` describes the layer for AI crawlers.
+
+## Blog (`/blog/`)
+
+Migrated from `quantumaikido.com/blog/` (quantumaikido.com issue #365) — Richard
+Moon's long-form essays ("Insights") now live on AikiField. Nineteen posts plus
+an index; static HTML served extensionless (`/blog/nz-tour`) via `blog/.htaccess`,
+which also 301s the old `.php`/`.html`/trailing-slash variants — matching the
+extensionless canonical the posts had on Cloudflare Pages.
+
+Self-contained under `blog/`: `styles.css`, `js/locale-utils.js` +
+`js/language-selector.js` (QA copies patched to fetch `/blog/data/…`),
+`subscribe-popup.js` (subscribe CTA points back to
+`https://quantumaikido.com/sangha`), `favicon.ico`, `assets/`, and
+`data/` (i18n config + strings + terminology JSON the language selector needs).
+In-page nav links point back to `https://quantumaikido.com/…` absolute URLs;
+canonical/og/schema.org URLs use `https://aikifield.com/blog/<slug>`.
+
+Posts: Aikido and Conflict Resolution · Blowing the Whistle · Bosnia ·
+Collaborators · Cyprus · David Pearl · Endorsers (Business) · Future School ·
+Kenneth Kron · Music Events · NZ Tour · OSensei Mindmap · Pacific Rim ·
+Print-on-Demand Publishing · Quantum Pause · Quantum Physics and Aikido ·
+Using AI for Martial Arts Practice · WIGO.

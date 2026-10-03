@@ -1,0 +1,26 @@
+{
+  "kind": "question",
+  "attribution": "aikifield",
+  "question": "What is AikiField's approach to security leadership?",
+  "canonical_slug": "what-is-aikifields-security-leadership-approach",
+  "short_answer": "Security engineering and leadership development as one practice — the cardinal assumption is that energy follows attention, so leadership presence comes before tools, policies, or frameworks.",
+  "answer_markdown": "AikiField's stated cardinal assumption: **energy follows attention** — where leadership places attention decides the security posture, so leadership comes first, before tools, before policies, before frameworks.\n\nThe method moves teams from reactive, fear-driven, compliance-focused security to proactive, embodied leadership: grounded response to incidents, open perception of the full risk landscape, and leading from partnership and inquiry.",
+  "claims": [
+    {
+      "claim": "AikiField builds the security program and the leadership capacity to sustain it.",
+      "source_id": "af-page-approach",
+      "quote": "We build your security program — and the leadership capacity to sustain it, so the results outlast the engagement."
+    },
+    {
+      "claim": "The cardinal assumption is that energy follows attention; leadership precedes tools and frameworks.",
+      "source_id": "af-page-approach",
+      "quote": "Where you place your attention decides your security posture — so leadership comes first, before tools, before policies, before frameworks."
+    }
+  ],
+  "related_questions": [
+    "what-is-aikifield",
+    "what-is-the-security-leadership-assessment"
+  ],
+  "review_status": "published",
+  "last_reviewed": "2026-10-02"
+}

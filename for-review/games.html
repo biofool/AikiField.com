@@ -22,7 +22,8 @@ $csrf_token = $_SESSION['csrf_token'];
     <link rel="icon" href="/favicon.svg" type="image/x-icon">
     <title>Lucky Wave Games | For Review</title>
     <meta name="robots" content="noindex, nofollow">
-    <link rel="stylesheet" href="https://quantumaikido.com/styles.css">
+    <!-- pinned snapshot (issue #346) -->
+    <link rel="stylesheet" href="/for-review/qa-styles.css">
     <style>
         .container { max-width: 1100px; margin: 0 auto; padding: 0 2rem; }
 
@@ -362,15 +363,21 @@ $csrf_token = $_SESSION['csrf_token'];
     <script src="/js/language-selector.js"></script>
     <script>
     // Mobile nav collapse + Resources pull-down submenu.
+    // Mobile: the toggle opens an overlay sheet under the header (issue #326).
+    // While open: background scroll is locked, the rest of the page is inert,
+    // Tab is trapped in the header + sheet, Escape closes and refocuses the
+    // toggle. Desktop nav starts at 961px (<=960px is the sheet); keep in sync with styles.css.
+    // 961px is the width where the widest locale's nav clears the wordmark
+    // (fr measured to overlap until ~880px; issue #329).
     (function () {
         var toggle = document.getElementById('nav-toggle');
         var links = document.getElementById('qa-nav-links');
         if (!toggle || !links) return;
+        var header = toggle.closest('header') || document.querySelector('header[role="banner"]');
+        var inerted = [];
 
         function isDesktop() {
-            // Must match the nav breakpoint in the shared stylesheet
-            // (quantumaikido.com/styles.css: min-width 769px desktop nav).
-            return window.matchMedia('(min-width: 769px)').matches;
+            return window.matchMedia('(min-width: 961px)').matches;
         }
 
         function closeAllDropdowns() {
@@ -382,10 +389,65 @@ $csrf_token = $_SESSION['csrf_token'];
             }
         }
 
+        function setBackgroundInert(on) {
+            if (on) {
+                var kids = document.body.children;
+                for (var i = 0; i < kids.length; i++) {
+                    var el = kids[i];
+                    if (el === header || el.contains(header) || el.tagName === 'SCRIPT' || el.hasAttribute('inert')) continue;
+                    el.setAttribute('inert', '');
+                    inerted.push(el);
+                }
+            } else {
+                while (inerted.length) inerted.pop().removeAttribute('inert');
+            }
+        }
+
+        var navScrollY = 0;
+        var bodyLocked = false;
+
+        function lockBody(on) {
+            // html.qa-nav-open{overflow:hidden} alone does not stop touch
+            // scrolling on iOS Safari <16 — the fixed-body pattern is the
+            // reliable lock (issue #341).
+            if (on && !bodyLocked) {
+                navScrollY = window.scrollY;
+                document.body.style.position = 'fixed';
+                document.body.style.top = (-navScrollY) + 'px';
+                document.body.style.width = '100%';
+                bodyLocked = true;
+            } else if (!on && bodyLocked) {
+                document.body.style.position = '';
+                document.body.style.top = '';
+                document.body.style.width = '';
+                bodyLocked = false;
+                window.scrollTo(0, navScrollY);
+            }
+        }
+
         function setExpanded(open) {
+            var wasOpen = links.classList.contains('open');
+            if (open && !isDesktop()) {
+                // Sheet starts right under the header, wherever it is stuck.
+                links.style.setProperty('--qa-nav-top', Math.round(header.getBoundingClientRect().bottom) + 'px');
+            }
             links.classList.toggle('open', open);
             toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+            document.documentElement.classList.toggle('qa-nav-open', open);
+            lockBody(open && !isDesktop());
+            setBackgroundInert(open);
             if (!open) closeAllDropdowns();
+            return wasOpen !== open;
+        }
+
+        // Focusable controls in DOM order: header controls + the sheet's links.
+        function trapTargets() {
+            var all = header.querySelectorAll('a[href], button:not([disabled]), select:not([disabled])');
+            var out = [];
+            for (var i = 0; i < all.length; i++) {
+                if (all[i].offsetParent !== null || all[i] === toggle) out.push(all[i]);
+            }
+            return out;
         }
 
         toggle.addEventListener('click', function (e) {
@@ -417,7 +479,7 @@ $csrf_token = $_SESSION['csrf_token'];
                     return;
                 }
             }
-            // Close the hamburger after following a real nav link (mobile UX).
+            // Close the sheet after following a real nav link (mobile UX).
             if (!isDesktop() && e.target.closest && e.target.closest('a')) {
                 setExpanded(false);
             }
@@ -436,24 +498,41 @@ $csrf_token = $_SESSION['csrf_token'];
             });
         });
 
-        // Escape closes the submenu first, then the hamburger (WCAG 2.1.2).
         document.addEventListener('keydown', function (e) {
-            if (e.key !== 'Escape') return;
-            var openDropdown = links.querySelector('.dropdown.open');
-            if (openDropdown) {
-                closeAllDropdowns();
-                var btn = openDropdown.querySelector('.dropdown-trigger');
-                if (btn) btn.focus();
+            // Escape closes the submenu first, then the sheet (WCAG 2.1.2).
+            if (e.key === 'Escape') {
+                var openDropdown = links.querySelector('.dropdown.open');
+                if (openDropdown) {
+                    closeAllDropdowns();
+                    var btn = openDropdown.querySelector('.dropdown-trigger');
+                    if (btn) btn.focus();
+                    return;
+                }
+                if (links.classList.contains('open')) {
+                    setExpanded(false);
+                    toggle.focus();
+                }
                 return;
             }
-            if (links.classList.contains('open')) {
-                setExpanded(false);
-                toggle.focus();
+            // Focus trap while the sheet is open.
+            if (e.key === 'Tab' && links.classList.contains('open') && !isDesktop()) {
+                var items = trapTargets();
+                if (!items.length) return;
+                var first = items[0];
+                var last = items[items.length - 1];
+                var active = document.activeElement;
+                if (e.shiftKey && (active === first || !header.contains(active))) {
+                    e.preventDefault();
+                    last.focus();
+                } else if (!e.shiftKey && (active === last || !header.contains(active))) {
+                    e.preventDefault();
+                    first.focus();
+                }
             }
         });
 
         document.addEventListener('click', function (e) {
-            if (!links.contains(e.target) && !toggle.contains(e.target)) {
+            if (!links.contains(e.target) && !toggle.contains(e.target) && !(e.target.closest && e.target.closest('.qa-lang-selector'))) {
                 closeAllDropdowns();
                 setExpanded(false);
             }
@@ -463,6 +542,7 @@ $csrf_token = $_SESSION['csrf_token'];
             if (isDesktop()) setExpanded(false);
         });
     })();
+    
     </script>
 
 
@@ -512,7 +592,7 @@ $csrf_token = $_SESSION['csrf_token'];
             <li>Session summary</li>
             <li>3-minute timer</li>
         </ul>
-        <button class="play-btn btn-v1" onclick="openGame('games/lucky-wave/RideTheLuckyWaveV1-legacy.html', 'Lucky Wave — Version 1')">
+        <button class="play-btn btn-v1" onclick="openGame('/games/lucky-wave/RideTheLuckyWaveV1-legacy.html', 'Lucky Wave — Version 1')">
             ▶ Play Version 1
         </button>
     </div>
@@ -528,7 +608,7 @@ $csrf_token = $_SESSION['csrf_token'];
             <li>Colorblind-safe</li>
             <li>Richer scoring</li>
         </ul>
-        <button class="play-btn btn-v2" onclick="openGame('games/lucky-wave/RideTheLuckyWaveV2.html', 'Lucky Wave — Version 2 (R.Moon Edition)')">
+        <button class="play-btn btn-v2" onclick="openGame('/games/lucky-wave/RideTheLuckyWaveV2.html', 'Lucky Wave — Version 2 (R.Moon Edition)')">
             ▶ Play Version 2
         </button>
     </div>
@@ -544,7 +624,7 @@ $csrf_token = $_SESSION['csrf_token'];
             <li>Discovery unlocks</li>
             <li>Offline PWA</li>
         </ul>
-        <button class="play-btn btn-va" onclick="openGame('games/verbal-aikido/', 'Verbal Aikido — Story Mode')">
+        <button class="play-btn btn-va" onclick="openGame('/games/verbal-aikido/', 'Verbal Aikido — Story Mode')">
             ▶ Play Verbal Aikido
         </button>
     </div>

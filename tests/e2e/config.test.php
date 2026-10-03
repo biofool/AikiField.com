@@ -8,9 +8,11 @@
  *
  * The backend URL MUST point at the stub backend started by Playwright on
  * port 8201 — coach-proxy.php and login.php both forward to it during tests.
+ * AF_E2E_STUB_PORT overrides the port (same env var playwright.config.js
+ * uses) so ci-local.sh can run the suite on non-default ports.
  */
 
-define('COACH_BACKEND_URL', 'http://0.0.0.0:8201');  // stub backend
+define('COACH_BACKEND_URL', 'http://0.0.0.0:' . (getenv('AF_E2E_STUB_PORT') ?: '8201'));  // stub backend
 
 // Must match QA_STUB_PROXY_SECRET in playwright.config.js. The stub enforces
 // it exactly like the real backend does, so a proxy that forgets to load

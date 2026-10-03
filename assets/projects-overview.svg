@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 760" font-family="'Public Sans', system-ui, sans-serif" role="img" aria-labelledby="ov-title ov-desc">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 972" font-family="'Public Sans', system-ui, sans-serif" role="img" aria-labelledby="ov-title ov-desc">
   <title id="ov-title">AikiField Sponsored Projects — Overview</title>
-  <desc id="ov-desc">Six sponsored projects built and operated by AikiField — Quantum Aikido Wisdom (AI coaching), World Studio Finder (outreach pipeline), MultiCloud-MultiPass (cloud cost control), ChaosEngine (resilience engineering), ClipQuotes (media intelligence) and Voice Synthesis Benchmarking (AI governance) — each with its principal technologies, all standing on a shared substrate: Python in all six systems, Docker, OpenTofu/Terraform and SQLite in three each, and FastAPI, Cloud Run, Firestore, Flask and Cloud Storage in two each.</desc>
+  <desc id="ov-desc">Seven sponsored projects built and operated by AikiField — Quantum Aikido Wisdom (AI coaching), World Studio Finder (outreach pipeline), MultiCloud-MultiPass (cloud cost control), ChaosEngine (resilience engineering), ClipQuotes (media intelligence), Voice Synthesis Benchmarking (AI governance) and Story Gatherer (knowledge graph) — each with its principal technologies, all standing on a shared substrate: Python in all seven systems, Docker, OpenTofu/Terraform and SQLite in four each, Cloud Run and Flask in three each, and FastAPI, Firestore and Gemini in two each.</desc>
 
   <defs>
     <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
@@ -8,10 +8,10 @@
     </marker>
   </defs>
 
-  <rect x="0" y="0" width="1120" height="760" fill="#F6F2EA"/>
+  <rect x="0" y="0" width="1120" height="972" fill="#F6F2EA"/>
 
   <!-- ── Header ─────────────────────────────────────────────── -->
-  <text x="20" y="34" font-size="19" font-weight="700" fill="#16201C">Six systems, one engineering substrate</text>
+  <text x="20" y="34" font-size="19" font-weight="700" fill="#16201C">Seven systems, one engineering substrate</text>
   <text x="20" y="56" font-size="13" fill="#5A655F">Every system below was designed, built, cost-controlled and is operated by AikiField.</text>
   <line x1="20" y1="72" x2="1100" y2="72" stroke="#E0D9CB" stroke-width="1"/>
 
@@ -121,46 +121,64 @@
   <rect x="784" y="445" width="118" height="22" rx="3" fill="#EFEADF" stroke="#E0D9CB"/>
   <text x="843" y="460" font-size="11" text-anchor="middle" fill="#2C3833">GPU inference</text>
 
+  <!-- ── Row 3 ──────────────────────────────────────────────── -->
+  <!-- Card 7 -->
+  <rect x="392" y="514" width="336" height="196" rx="4" fill="#FFFFFF" stroke="#E0D9CB" stroke-width="1.2"/>
+  <rect x="392" y="514" width="336" height="3" fill="#0E4E44"/>
+  <text x="412" y="543" font-size="10" font-weight="700" letter-spacing="1.4" fill="#5A655F">KNOWLEDGE GRAPH</text>
+  <text x="412" y="569" font-size="16" font-weight="700" fill="#16201C">Story Gatherer</text>
+  <text x="412" y="595" font-size="12.5" fill="#2C3833">Scattered web sources into one sourced,</text>
+  <text x="412" y="613" font-size="12.5" fill="#2C3833">queryable knowledge graph.</text>
+  <rect x="412" y="629" width="62" height="22" rx="3" fill="#EFEADF" stroke="#E0D9CB"/>
+  <text x="443" y="644" font-size="11" text-anchor="middle" fill="#2C3833">Python</text>
+  <rect x="480" y="629" width="66" height="22" rx="3" fill="#EFEADF" stroke="#E0D9CB"/>
+  <text x="513" y="644" font-size="11" text-anchor="middle" fill="#2C3833">SQLite</text>
+  <rect x="552" y="629" width="60" height="22" rx="3" fill="#EFEADF" stroke="#E0D9CB"/>
+  <text x="582" y="644" font-size="11" text-anchor="middle" fill="#2C3833">Flask</text>
+  <rect x="412" y="657" width="104" height="22" rx="3" fill="#EFEADF" stroke="#E0D9CB"/>
+  <text x="464" y="672" font-size="11" text-anchor="middle" fill="#2C3833">Cloud Run</text>
+  <rect x="522" y="657" width="100" height="22" rx="3" fill="#EFEADF" stroke="#E0D9CB"/>
+  <text x="572" y="672" font-size="11" text-anchor="middle" fill="#2C3833">Gemini API</text>
+  <text x="412" y="697" font-size="10.5" font-weight="600" fill="#0B6E58">Live · daily research job</text>
+
   <!-- ── Converging arrows to the substrate ─────────────────── -->
   <g stroke="#0E4E44" stroke-width="1.2" opacity="0.55" fill="none" marker-end="url(#arrow)">
-    <line x1="188" y1="498" x2="188" y2="546"/>
-    <line x1="560" y1="498" x2="560" y2="546"/>
-    <line x1="932" y1="498" x2="932" y2="546"/>
+    <line x1="560" y1="710" x2="560" y2="758"/>
   </g>
-  <text x="560" y="527" font-size="11" font-weight="600" letter-spacing="1" text-anchor="middle" fill="#5A655F">all six build on</text>
+  <text x="560" y="739" font-size="11" font-weight="600" letter-spacing="1" text-anchor="middle" fill="#5A655F">all seven build on</text>
 
   <!-- ── Shared substrate ───────────────────────────────────── -->
-  <rect x="20" y="554" width="1080" height="176" rx="4" fill="#FFFFFF" stroke="#0E4E44" stroke-width="1.2" opacity="0.98"/>
-  <text x="40" y="580" font-size="10" font-weight="700" letter-spacing="1.4" fill="#5A655F">SHARED SUBSTRATE</text>
+  <rect x="20" y="766" width="1080" height="176" rx="4" fill="#FFFFFF" stroke="#0E4E44" stroke-width="1.2" opacity="0.98"/>
+  <text x="40" y="792" font-size="10" font-weight="700" letter-spacing="1.4" fill="#5A655F">SHARED SUBSTRATE</text>
 
   <!-- Tier 1 -->
-  <rect x="40" y="592" width="1040" height="34" rx="3" fill="#DCF0E8" stroke="#0B6E58" stroke-width="1.4"/>
-  <text x="58" y="614" font-size="14" font-weight="700" fill="#16201C">Python</text>
-  <text x="122" y="614" font-size="11.5" fill="#5A655F">one language across every system</text>
-  <text x="1062" y="614" font-size="12" font-weight="700" text-anchor="end" fill="#16201C">6 / 6</text>
+  <rect x="40" y="804" width="1040" height="34" rx="3" fill="#DCF0E8" stroke="#0B6E58" stroke-width="1.4"/>
+  <text x="58" y="826" font-size="14" font-weight="700" fill="#16201C">Python</text>
+  <text x="122" y="826" font-size="11.5" fill="#5A655F">one language across every system</text>
+  <text x="1062" y="826" font-size="12" font-weight="700" text-anchor="end" fill="#16201C">7 / 7</text>
 
   <!-- Tier 2 -->
-  <rect x="40" y="634" width="336" height="30" rx="3" fill="#F6F2EA" stroke="#E0D9CB"/>
-  <text x="58" y="654" font-size="12" font-weight="600" fill="#16201C">Docker</text>
-  <text x="358" y="654" font-size="11" text-anchor="end" fill="#5A655F">3 / 6</text>
-  <rect x="392" y="634" width="336" height="30" rx="3" fill="#F6F2EA" stroke="#E0D9CB"/>
-  <text x="410" y="654" font-size="12" font-weight="600" fill="#16201C">OpenTofu / Terraform</text>
-  <text x="710" y="654" font-size="11" text-anchor="end" fill="#5A655F">3 / 6</text>
-  <rect x="744" y="634" width="336" height="30" rx="3" fill="#F6F2EA" stroke="#E0D9CB"/>
-  <text x="762" y="654" font-size="12" font-weight="600" fill="#16201C">SQLite</text>
-  <text x="1062" y="654" font-size="11" text-anchor="end" fill="#5A655F">3 / 6</text>
+  <rect x="40" y="846" width="336" height="30" rx="3" fill="#F6F2EA" stroke="#E0D9CB"/>
+  <text x="58" y="866" font-size="12" font-weight="600" fill="#16201C">Docker</text>
+  <text x="358" y="866" font-size="11" text-anchor="end" fill="#5A655F">4 / 7</text>
+  <rect x="392" y="846" width="336" height="30" rx="3" fill="#F6F2EA" stroke="#E0D9CB"/>
+  <text x="410" y="866" font-size="12" font-weight="600" fill="#16201C">OpenTofu / Terraform</text>
+  <text x="710" y="866" font-size="11" text-anchor="end" fill="#5A655F">4 / 7</text>
+  <rect x="744" y="846" width="336" height="30" rx="3" fill="#F6F2EA" stroke="#E0D9CB"/>
+  <text x="762" y="866" font-size="12" font-weight="600" fill="#16201C">SQLite</text>
+  <text x="1062" y="866" font-size="11" text-anchor="end" fill="#5A655F">4 / 7</text>
 
   <!-- Tier 3 -->
-  <rect x="40" y="672" width="200" height="28" rx="3" fill="#F6F2EA" stroke="#E0D9CB"/>
-  <text x="140" y="691" font-size="11" text-anchor="middle" fill="#2C3833">FastAPI · 2</text>
-  <rect x="248" y="672" width="200" height="28" rx="3" fill="#F6F2EA" stroke="#E0D9CB"/>
-  <text x="348" y="691" font-size="11" text-anchor="middle" fill="#2C3833">Cloud Run · 2</text>
-  <rect x="456" y="672" width="200" height="28" rx="3" fill="#F6F2EA" stroke="#E0D9CB"/>
-  <text x="556" y="691" font-size="11" text-anchor="middle" fill="#2C3833">Firestore · 2</text>
-  <rect x="664" y="672" width="200" height="28" rx="3" fill="#F6F2EA" stroke="#E0D9CB"/>
-  <text x="764" y="691" font-size="11" text-anchor="middle" fill="#2C3833">Flask · 2</text>
-  <rect x="872" y="672" width="208" height="28" rx="3" fill="#F6F2EA" stroke="#E0D9CB"/>
-  <text x="976" y="691" font-size="11" text-anchor="middle" fill="#2C3833">Cloud Storage · 2</text>
+  <rect x="40" y="884" width="200" height="28" rx="3" fill="#F6F2EA" stroke="#E0D9CB"/>
+  <text x="140" y="903" font-size="11" text-anchor="middle" fill="#2C3833">FastAPI · 2</text>
+  <rect x="248" y="884" width="200" height="28" rx="3" fill="#F6F2EA" stroke="#E0D9CB"/>
+  <text x="348" y="903" font-size="11" text-anchor="middle" fill="#2C3833">Cloud Run · 3</text>
+  <rect x="456" y="884" width="200" height="28" rx="3" fill="#F6F2EA" stroke="#E0D9CB"/>
+  <text x="556" y="903" font-size="11" text-anchor="middle" fill="#2C3833">Firestore · 2</text>
+  <rect x="664" y="884" width="200" height="28" rx="3" fill="#F6F2EA" stroke="#E0D9CB"/>
+  <text x="764" y="903" font-size="11" text-anchor="middle" fill="#2C3833">Flask · 3</text>
+  <rect x="872" y="884" width="208" height="28" rx="3" fill="#F6F2EA" stroke="#E0D9CB"/>
+  <text x="976" y="903" font-size="11" text-anchor="middle" fill="#2C3833">Gemini · 2</text>
 
-  <text x="40" y="720" font-size="11" fill="#5A655F">Plus 24 domain specialists used by a single system each — chosen per problem rather than carried everywhere.</text>
+  <text x="40" y="932" font-size="11" fill="#5A655F">Plus 30 domain specialists used by a single system each — chosen per problem rather than carried everywhere.</text>
 </svg>
