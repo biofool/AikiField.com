@@ -1,0 +1,73 @@
+{
+  "$schema": "https://quantumaikido.com/data/i18n-config.schema.json",
+  "version": 1,
+  "defaultLocale": "en",
+  "comment": "Foundational i18n configuration for quantumaikido.com. Addresses issues #75-#84. Locales are listed with their native (endonym) names rather than flags, because flags represent nations and can be politically sensitive (issue #76). Color semantics are cultural (issue #77): the per-locale overrides let meaning be tuned without forking the palette. Data meaning must never be conveyed by color alone.",
+  "supportedLocales": [
+    "en",
+    "es",
+    "fr",
+    "de",
+    "pt",
+    "ja",
+    "zh",
+    "ko",
+    "ar",
+    "he",
+    "fa",
+    "hi"
+  ],
+  "localeNames": {
+    "en": "English",
+    "es": "Español",
+    "fr": "Français",
+    "de": "Deutsch",
+    "pt": "Português",
+    "ja": "日本語",
+    "zh": "中文",
+    "ko": "한국어",
+    "ar": "العربية",
+    "he": "עברית",
+    "fa": "فارسی",
+    "hi": "हिन्दी"
+  },
+  "rtlLocales": ["ar", "he", "fa"],
+  "defaultCurrency": "USD",
+  "defaultTimeZone": "UTC",
+  "defaultMeasurementSystem": "metric",
+  "measurementSystemOverrides": {
+    "en-US": "imperial",
+    "en": "imperial",
+    "en-GB": "imperial",
+    "us": "imperial",
+    "uk": "imperial"
+  },
+  "colorSemantics": {
+    "_doc": "Semantic color tokens per locale/theme. Color meaning is cultural (e.g. red = luck/celebration in China, danger in much of the West). These overrides are consumed by CSS via [data-locale] attribute scoping. The base palette in styles.css is already colorblind-safe and never conveys meaning by color alone (issue #77).",
+    "base": {
+      "success": "var(--status-success)",
+      "warning": "var(--status-warning)",
+      "danger": "var(--status-danger)",
+      "info": "var(--status-info)"
+    },
+    "overrides": {
+      "zh": {
+        "_doc": "In Chinese culture red is auspicious/celebratory, not primarily 'danger'. Remap danger to a neutral high-contrast tone and reserve red for festive/positive accents.",
+        "danger": "var(--status-info)",
+        "festive": "var(--status-danger)"
+      },
+      "ja": {
+        "_doc": "Red (aka) carries protective/sacred connotations (torii, shrine). Treat red as accent rather than alarm.",
+        "danger": "var(--status-warning)",
+        "sacred": "var(--status-danger)"
+      }
+    }
+  },
+  "sacredOrPoliticalSymbolsToAvoid": [
+    "national flags as language indicators",
+    "religious iconography in secular badges",
+    "disputed-border map labels without neutral alternatives"
+  ],
+  "textExpansionFactor": 0.4,
+  "_textExpansionNote": "Translations can be 30-40% longer than English; layouts should leave room for expansion (issue #76). Use this factor when sizing fixed-width containers."
+}

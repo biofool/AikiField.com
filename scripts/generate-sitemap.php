@@ -103,11 +103,34 @@ foreach ($askPaths as $p) {
     $xml .= "  </url>\n";
 }
 
+// Blog (moved from quantumaikido.com/blog/ — QA issue #365): static HTML
+// served extensionless via blog/.htaccess, so the canonical URL is /blog/<slug>.
+$blogSlugs = array();
+foreach (glob($root . '/blog/*.html') ?: array() as $f) {
+    $slug = basename($f, '.html');
+    if ($slug !== 'index') {
+        $blogSlugs[] = $slug;
+    }
+}
+sort($blogSlugs);
+$xml .= "  <url>\n";
+$xml .= "    <loc>" . htmlspecialchars($baseUrl . '/blog/', ENT_XML1) . "</loc>\n";
+$xml .= "    <changefreq>weekly</changefreq>\n";
+$xml .= "    <priority>0.7</priority>\n";
+$xml .= "  </url>\n";
+foreach ($blogSlugs as $slug) {
+    $xml .= "  <url>\n";
+    $xml .= "    <loc>" . htmlspecialchars($baseUrl . '/blog/' . $slug, ENT_XML1) . "</loc>\n";
+    $xml .= "    <changefreq>monthly</changefreq>\n";
+    $xml .= "    <priority>0.6</priority>\n";
+    $xml .= "  </url>\n";
+}
+
 $xml .= '</urlset>' . "\n";
 
 // Output
 $writeMode = in_array('--write', $argv, true);
-$count = count($localizablePages) * count($supportedLocales) + count($nonLocalizablePages) + count($askPaths);
+$count = count($localizablePages) * count($supportedLocales) + count($nonLocalizablePages) + count($askPaths) + count($blogSlugs) + 1;
 if ($writeMode) {
     file_put_contents($sitemapPath, $xml);
     echo "Wrote $sitemapPath ($count URLs)\n";

@@ -1210,3 +1210,25 @@ Verified contrast ratios are documented at the top of `beta/css/assessment.css`.
 ## Ask AikiField — AEO knowledge layer (`/ask/`)
 
 Issue #65 — port of the quantumaikido.com "Discussing The Unified Field" AEO system. Public, indexable sourced Q&A pages rendered dynamically by `ask/index.php` (`.htaccess` routes `/ask/*`). Records live in `data/ask/{sources,answers}/*.json`; only `review_status: "published"` emits public HTML. Two corpora: `attribution: "aikifield"` (this site's public copy) and `attribution: "richard-moon"` (ported QA records, cited to quantumaikido.com). Editorial review index at `/AEO/` (sign-in + admin/aeoAccess). Validate with `php scripts/validate_ask.php`; test with `php tests/test_ask.php`; regenerate sitemap with `php scripts/generate-sitemap.php --write`. `llms.txt` describes the layer for AI crawlers.
+
+## Blog (`/blog/`)
+
+Migrated from `quantumaikido.com/blog/` (quantumaikido.com issue #365) — Richard
+Moon's long-form essays ("Insights") now live on AikiField. Nineteen posts plus
+an index; static HTML served extensionless (`/blog/nz-tour`) via `blog/.htaccess`,
+which also 301s the old `.php`/`.html`/trailing-slash variants — matching the
+extensionless canonical the posts had on Cloudflare Pages.
+
+Self-contained under `blog/`: `styles.css`, `js/locale-utils.js` +
+`js/language-selector.js` (QA copies patched to fetch `/blog/data/…`),
+`subscribe-popup.js` (subscribe CTA points back to
+`https://quantumaikido.com/sangha`), `favicon.ico`, `assets/`, and
+`data/` (i18n config + strings + terminology JSON the language selector needs).
+In-page nav links point back to `https://quantumaikido.com/…` absolute URLs;
+canonical/og/schema.org URLs use `https://aikifield.com/blog/<slug>`.
+
+Posts: Aikido and Conflict Resolution · Blowing the Whistle · Bosnia ·
+Collaborators · Cyprus · David Pearl · Endorsers (Business) · Future School ·
+Kenneth Kron · Music Events · NZ Tour · OSensei Mindmap · Pacific Rim ·
+Print-on-Demand Publishing · Quantum Pause · Quantum Physics and Aikido ·
+Using AI for Martial Arts Practice · WIGO.
