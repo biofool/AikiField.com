@@ -119,7 +119,7 @@
           <span class="af-svc__tag af-svc__tag--built">Free</span>
           <h2 class="af-svc__title">Want to see it in action?</h2>
           <p class="af-svc__lead">If you want to see it live, request an invitation when you <a href="contact.html">contact us</a> &mdash; we&rsquo;re happy to show you how easy it is to stand one up.</p>
-          <p class="af-svc__bestfor">Quantum Aikido Wisdom runs in production at <a href="https://quantumaikido.com">quantumaikido.com</a>. We can walk you through a live demo, then design and build a corpus-specific chat grounded in your own knowledge base &mdash; runbooks, policies, product docs, or any body of text your team or customers keep asking about.</p>
+          <p class="af-svc__bestfor">Tech Support and Security AI runs in production at <a href="https://quantumaikido.com">quantumaikido.com</a>. We can walk you through a live demo, then design and build a corpus-specific chat grounded in your own knowledge base &mdash; runbooks, policies, product docs, or any body of text your team or customers keep asking about.</p>
           <a href="contact.html" class="af-btn af-btn--light af-svc__cta">Request an invitation</a>
           <p class="af-svc__fineprint">No account needed to look around this page &mdash; the project cards below describe what each system does and how the same pattern fits your needs.</p>
         </div>
@@ -155,8 +155,8 @@
           <tbody>
             <tr class="af-proj-table__row" data-project="1" tabindex="0" role="button" aria-pressed="true" aria-controls="project-1">
               <td class="af-proj-table__num">1</td>
-              <td class="af-proj-table__name">Quantum Aikido Wisdom</td>
-              <td>AI Coaching</td>
+              <td class="af-proj-table__name">Tech Support and Security AI</td>
+              <td>Support AI</td>
               <td class="af-proj-table__tech">Python &middot; FastAPI &middot; Gemini &middot; Cloud Run &middot; Firestore</td>
               <td class="af-proj-table__view" aria-hidden="true">&rarr;</td>
             </tr>
@@ -211,14 +211,14 @@
         <!-- LEFT COLUMN: sponsored projects -->
         <div class="af-projects-split__projects">
 
-          <!-- PROJECT 1: AIKIFIELD AI CHAT -->
+          <!-- PROJECT 1: TECH SUPPORT AND SECURITY AI -->
           <article class="af-svc af-svc--flagship" id="project-1" data-project="1">
             <div class="af-svc__tag-row">
-              <span class="af-svc__tag af-svc__tag--flagship">AI Coaching</span>
+              <span class="af-svc__tag af-svc__tag--flagship">Support AI</span>
               <span class="af-svc__tag af-svc__tag--built">Built by AikiField</span>
             </div>
-            <h2 class="af-svc__title">Quantum Aikido Wisdom</h2>
-            <p class="af-svc__lead">Corpus-specific AI Chat. Designed to provide hallucination-free Q&amp;A against a specific knowledge base. Free your team to handle the hard questions; give your customers a better interface to the documentation &mdash; because, who wants to read docs?</p>
+            <h2 class="af-svc__title">Tech Support and Security AI</h2>
+            <p class="af-svc__lead">Corpus-specific support AI. Designed to reliably draft answers to customer security questionnaires and guide support personnel with access to the latest technical updates. Free your team to handle the hard questions; give your customers a better interface to the documentation &mdash; because, who wants to read docs?</p>
             <p class="af-svc__bestfor">Live at <a href="https://quantumaikido.com">quantumaikido.com</a> &mdash; a public chat plus a members area (invitation-only, with email or Google login).</p>
             <p class="af-svc__bestfor">How it works: it searches the teaching archive for relevant passages, drafts an answer with citations, keeps costs under control, and hands off to a human coach by video (a premium feature) when it can&rsquo;t help or the member asks.</p>
             <h3 class="af-svc__bullets-label">What it does</h3>
@@ -240,8 +240,8 @@
 
             <div class="af-diagram">
               <figure class="af-diagram__figure">
-                <img src="assets/aichat-flow.svg" data-af-diagram="aichat-flow" data-i18n-attr="alt:svg.aichat_flow.alt" alt="Quantum Aikido Wisdom request flow: step 1 member asks a question; step 2a authenticate (email, password, Google OAuth, Turnstile) and 2b rate limit and queue; step 3 search teaching corpus via SQLite FTS5; step 4 Gemini drafts cited answer; step 5 decision — can it answer confidently? YES leads to 6a return cited answer (24/7, free, within budget), NO leads to 6b escalate to human coach via video link; step 7 member receives response. Infrastructure: Cloud Run, Firestore, Secret Manager, Pub/Sub, Cloud Functions, Docker, OpenTofu, DVC plus GCS." class="af-diagram__img" width="780" height="980" loading="lazy"/>
-                <figcaption class="af-diagram__caption"><strong>Figure 1.</strong> Quantum Aikido Wisdom request flow &mdash; from member question through corpus search, Gemini-drafted answer, and the decision to return a cited answer or escalate to a live human coach. <a href="assets/aichat-flow.png" class="af-diagram__download" download>Download PNG &darr;</a></figcaption>
+                <img src="assets/aichat-flow.svg" data-af-diagram="aichat-flow" data-i18n-attr="alt:svg.aichat_flow.alt" alt="Tech Support and Security AI request flow: step 1 member asks a question; step 2a authenticate (email, password, Google OAuth, Turnstile) and 2b rate limit and queue; step 3 search teaching corpus via SQLite FTS5; step 4 Gemini drafts cited answer; step 5 decision — can it answer confidently? YES leads to 6a return cited answer (24/7, free, within budget), NO leads to 6b escalate to human coach via video link; step 7 member receives response. Infrastructure: Cloud Run, Firestore, Secret Manager, Pub/Sub, Cloud Functions, Docker, OpenTofu, DVC plus GCS." class="af-diagram__img" width="780" height="980" loading="lazy"/>
+                <figcaption class="af-diagram__caption"><strong>Figure 1.</strong> Tech Support and Security AI request flow &mdash; from member question through corpus search, Gemini-drafted answer, and the decision to return a cited answer or escalate to a live human coach. <a href="assets/aichat-flow.png" class="af-diagram__download" download>Download PNG &darr;</a></figcaption>
               </figure>
             </div>
           </article>
@@ -428,7 +428,7 @@
       <p class="af-lead af-lead--wide">All seven systems were designed and built by AikiField and run in production today &mdash; AI-grounded coaching, global studio outreach, multi-cloud cost control, resilience engineering, media intelligence, AI governance research, and provenance-first knowledge graphs. The engineering patterns behind them are directly available to your engagement.</p>
       <div class="af-diagram">
         <figure class="af-diagram__figure">
-          <img src="assets/projects-overview.svg" data-af-diagram="projects-overview" data-i18n-attr="alt:svg.projects_overview.alt" alt="Overview diagram: AikiField sponsors seven projects — Quantum Aikido Wisdom (AI coaching; Gemini API, Cloud Run, Firestore, SQLite FTS5, Cloudflare), World Studio Finder (outreach pipeline; Playwright, Places API, Hunter.io, Sheets API, SQLite SCD Type 2), MultiCloud-MultiPass (cloud cost control; FastAPI, BigQuery, OpenStack, Cloudflare, Cloud Scheduler), ChaosEngine (resilience engineering; Go, AWS SDK, Docker, CI/CD approval gates), ClipQuotes (media intelligence; Whisper, pyannote, OpenCV, FFmpeg), Voice Synthesis Benchmarking (AI governance; PyTorch, torchaudio, Hugging Face, GPU inference) and Story Gatherer (knowledge graph; Python, SQLite, Flask, Cloud Run, Gemini API). All seven stand on a shared substrate: Python in all seven systems; Docker, OpenTofu/Terraform and SQLite in four each; Cloud Run and Flask in three each; FastAPI, Firestore and Gemini in two each; plus 30 domain specialists used by a single system each." class="af-diagram__img" width="1120" height="972" loading="lazy"/>
+          <img src="assets/projects-overview.svg" data-af-diagram="projects-overview" data-i18n-attr="alt:svg.projects_overview.alt" alt="Overview diagram: AikiField sponsors seven projects — Tech Support and Security AI (support AI; Gemini API, Cloud Run, Firestore, SQLite FTS5, Cloudflare), World Studio Finder (outreach pipeline; Playwright, Places API, Hunter.io, Sheets API, SQLite SCD Type 2), MultiCloud-MultiPass (cloud cost control; FastAPI, BigQuery, OpenStack, Cloudflare, Cloud Scheduler), ChaosEngine (resilience engineering; Go, AWS SDK, Docker, CI/CD approval gates), ClipQuotes (media intelligence; Whisper, pyannote, OpenCV, FFmpeg), Voice Synthesis Benchmarking (AI governance; PyTorch, torchaudio, Hugging Face, GPU inference) and Story Gatherer (knowledge graph; Python, SQLite, Flask, Cloud Run, Gemini API). All seven stand on a shared substrate: Python in all seven systems; Docker, OpenTofu/Terraform and SQLite in four each; Cloud Run and Flask in three each; FastAPI, Firestore and Gemini in two each; plus 30 domain specialists used by a single system each." class="af-diagram__img" width="1120" height="972" loading="lazy"/>
           <figcaption class="af-diagram__caption"><strong>Figure 3.</strong> The seven systems AikiField built, each with its principal technologies, and the substrate they share &mdash; one language across all seven, with containerisation and infrastructure-as-code on every system that ships to a cloud. <a href="assets/projects-overview.png" class="af-diagram__download" download>Download PNG &darr;</a></figcaption>
         </figure>
       </div>

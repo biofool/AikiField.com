@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 972" font-family="'Public Sans', system-ui, sans-serif" role="img" aria-labelledby="ov-title ov-desc">
   <title id="ov-title">AikiField Sponsored Projects — Overview</title>
-  <desc id="ov-desc">Seven sponsored projects built and operated by AikiField — Quantum Aikido Wisdom (AI coaching), World Studio Finder (outreach pipeline), MultiCloud-MultiPass (cloud cost control), ChaosEngine (resilience engineering), ClipQuotes (media intelligence), Voice Synthesis Benchmarking (AI governance) and Story Gatherer (knowledge graph) — each with its principal technologies, all standing on a shared substrate: Python in all seven systems, Docker, OpenTofu/Terraform and SQLite in four each, Cloud Run and Flask in three each, and FastAPI, Firestore and Gemini in two each.</desc>
+  <desc id="ov-desc">Seven sponsored projects built and operated by AikiField — Tech Support and Security AI (support AI), World Studio Finder (outreach pipeline), MultiCloud-MultiPass (cloud cost control), ChaosEngine (resilience engineering), ClipQuotes (media intelligence), Voice Synthesis Benchmarking (AI governance) and Story Gatherer (knowledge graph) — each with its principal technologies, all standing on a shared substrate: Python in all seven systems, Docker, OpenTofu/Terraform and SQLite in four each, Cloud Run and Flask in three each, and FastAPI, Firestore and Gemini in two each.</desc>
 
   <defs>
     <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
@@ -19,8 +19,8 @@
   <!-- Card 1 -->
   <rect x="20" y="90" width="336" height="196" rx="4" fill="#FFFFFF" stroke="#E0D9CB" stroke-width="1.2"/>
   <rect x="20" y="90" width="336" height="3" fill="#0E4E44"/>
-  <text x="40" y="119" font-size="10" font-weight="700" letter-spacing="1.4" fill="#5A655F">AI COACHING</text>
-  <text x="40" y="145" font-size="16" font-weight="700" fill="#16201C">Quantum Aikido Wisdom</text>
+  <text x="40" y="119" font-size="10" font-weight="700" letter-spacing="1.4" fill="#5A655F">SUPPORT AI</text>
+  <text x="40" y="145" font-size="16" font-weight="700" fill="#16201C">Tech Support and Security AI</text>
   <text x="40" y="171" font-size="12.5" fill="#2C3833">Cited answers from a fixed corpus,</text>
   <text x="40" y="189" font-size="12.5" fill="#2C3833">escalating to a human when unsure.</text>
   <rect x="40" y="205" width="118" height="22" rx="3" fill="#EFEADF" stroke="#E0D9CB"/>
