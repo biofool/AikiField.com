@@ -1,3 +1,11 @@
+<?php
+/**
+ * Members-only entry point (issue #71 — Digital Experience previews + login gate).
+ * Unauthenticated requests are redirected to /login.php?next=<this page> by the
+ * shared coaching session gate, same as /beta/ and /members.
+ */
+require dirname(__DIR__, 2) . '/includes/beta-gate.load.php';
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -5,7 +13,33 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Ride the Lucky Wave</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600;700&family=Noto+Sans+JP:wght@400;700&family=Noto+Sans+Arabic:wght@400;700&display=swap" rel="stylesheet">
   <style>
+    :root {
+      /* Semantic Color Tokens for Localization */
+      --status-muted: #94A3B8;
+      --status-muted-bg: #1A2030;
+      
+      --status-warning: #FB923C;
+      --status-warning-bg: #2A1A08;
+      
+      --status-info: #60A5FA;
+      --status-info-bg: #081828;
+      
+      --status-accent: #A78BFA;
+      --status-accent-bg: #180E2A;
+      
+      --status-success: #34D399;
+      --status-success-bg: #082218;
+
+      --phase-enter: #00C9B8;
+      --phase-return: #B89EE8;
+      --phase-voice: #F4C842;
+      --phase-rest: #F47C42;
+    }
+
     * {
       box-sizing: border-box;
       margin: 0;
@@ -28,7 +62,6 @@
   <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
   <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
   <script src="https://unpkg.com/@babel/standalone@8.0.4/babel.min.js" integrity="sha384-bdF7m0Y1IFKt9Q6xC8X9qkXn0OBriQWKyWwZKYsN05zF6P/g9OakjjL0G2Sd4pB4" crossorigin="anonymous"></script>
-  <script src="language.js"></script>
 
   <script type="text/babel">
     const { useState, useEffect, useRef, useCallback } = React;
@@ -74,6 +107,103 @@
       `;
       document.head.appendChild(style);
     }
+
+    const SCORES = [
+      { v: 1, label: "Skipped", short: "Skip", color: "#94A3B8", symbol: "—", bg: "#1A2030" },
+      { v: 2, label: "Barely", short: "Barely", color: "#FB923C", symbol: "◐", bg: "#2A1A08" },
+      { v: 3, label: "Partial", short: "Partial", color: "#60A5FA", symbol: "◑", bg: "#081828" },
+      { v: 4, label: "Solid", short: "Solid", color: "#A78BFA", symbol: "◕", bg: "#180E2A" },
+      { v: 5, label: "Full", short: "Full", color: "#34D399", symbol: "●", bg: "#082218" },
+    ];
+
+    const SCORES_RMOONE = [
+      { v: 1, label: "Absent", short: "Absent", color: "#94A3B8", symbol: "—", bg: "#1A2030" },
+      { v: 2, label: "Stirring", short: "Stir", color: "#FB923C", symbol: "◐", bg: "#2A1A08" },
+      { v: 3, label: "Blending", short: "Blend", color: "#60A5FA", symbol: "◑", bg: "#081828" },
+      { v: 4, label: "Flowing", short: "Flow", color: "#A78BFA", symbol: "◕", bg: "#180E2A" },
+      { v: 5, label: "Unified-Field", short: "Aiki", color: "#34D399", symbol: "●", bg: "#082218" },
+    ];
+
+    const PHASES = [
+      {
+        id: "activate", label: "Activate", emoji: '<svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>', color: "var(--phase-enter, #00C9B8)", seconds: 35,
+        components: ["Posture & Alignment", "State Interruption"],
+        instruction: [
+          "Elongate your entire body from toes to crown — imagine being pulled in two directions simultaneously. Long bones, short bones, spine, fascia, nerves — everything extending.",
+          "Shake your hands hard — like flicking water off your fingertips. Let it spread to your whole body: bounce, swing your arms, let your head roll if safe. Get the energy moving through every cell."
+        ],
+        cue: "Your body is the antenna. Whatever state you held before is gone.",
+      },
+      {
+        id: "access", label: "Access", emoji: '<svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.9 5.8a2 2 0 0 0 1.3 1.3L21 12l-5.8 1.9a2 2 0 0 0-1.3 1.3L12 21l-1.9-5.8a2 2 0 0 0-1.3-1.3L3 12l5.8-1.9a2 2 0 0 0 1.3-1.3L12 3z"/></svg>', color: "var(--phase-return, #B89EE8)", seconds: 50,
+        components: ["Lucky Memory Recall", "Power Breathing"],
+        instruction: [
+          "Recall a moment when things were 📢going your way📢. See it through your own eyes. Hear exactly what you heard. Feel what you felt. Make the image bigger, brighter, closer — intensify every sensation.",
+          "Three power breaths: massive inhale → hold → explode out through your mouth. On the last round, draw golden energy up from the earth. Release with any sound — a groan, a shout."
+        ],
+        cue: "You're not just remembering luck — you're generating its frequency right now.",
+      },
+      {
+        id: "declare", label: "Declare", emoji: '<svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>', color: "var(--phase-voice, #F4C842)", seconds: 50,
+        components: ["Spoken Affirmation", "Anchor Stacking"],
+        instruction: [
+          'Out loud — command voice: "I am a wave generator. I stay sharp and alert. More breaks my way when I\'m in this state. I move through friction. The odds tilt in my favor. I ride the lucky wave." Again. Louder.',
+          'Three rounds — maximum intensity: clench fist → tongue to roof of mouth → power stance → shout: "I ride the wave of fortune. I am momentum." This is your neurological switch — it belongs to you now.'
+        ],
+        cue: "Anytime today: fist + tongue + stance = instant access to this peak state.",
+      },
+      {
+        id: "launch", label: "Launch", emoji: '<svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5c2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/><path d="M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/><path d="M2 18c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/></svg>', color: "var(--phase-rest, #F47C42)", seconds: 45,
+        components: ["Future Vision", "Intention", "Pre-Celebration"],
+        instruction: [
+          "Close your eyes. See your calendar stretching ahead — each day glowing with golden energy, each one its own wave of luck, lined up and waiting.",
+          "Identify ONE thing that would make today successful. See it clearly. Feel what it would feel like to already have it.",
+          "Smile — actually smile, right now. Pre-celebrate. Let gratitude flood through you for fortune that's already in motion."
+        ],
+        cue: "More breaks your way today than yesterday. Keep showing up and the odds keep tilting.",
+      },
+    ];
+
+    // ── RMOONE PHASES — language derived from R. Moon's books ─────────
+    const PHASES_RMOONE = [
+      {
+        id: "activate", label: "Center", emoji: '<svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>', color: "var(--phase-enter, #00C9B8)", seconds: 35,
+        components: ["centered, grounded", "world of duality"],
+        instruction: [
+          "Feel where you are — from toes to crown, from earth to sky. Let your weight pour into the ground. Elongate. Zanshin: extend your attention through time-space in both directions at once. Long bones, short bones, spine, fascia — one unified field of Ki.",
+          "Shake your hands as if flicking water from your fingertips. Let the shaking spread — bounce, swing, let the head roll if it is safe. This is the Thalamic Pause in motion: interrupt the world of duality and return to Unified-Field."
+        ],
+        cue: "You can't get there from not-here. You are here. The Ki you held before dissolves into presence.",
+      },
+      {
+        id: "access", label: "Attune", emoji: '<svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.9 5.8a2 2 0 0 0 1.3 1.3L21 12l-5.8 1.9a2 2 0 0 0-1.3 1.3L12 21l-1.9-5.8a2 2 0 0 0-1.3-1.3L3 12l5.8-1.9a2 2 0 0 0 1.3-1.3L12 3z"/></svg>', color: "var(--phase-return, #B89EE8)", seconds: 50,
+        components: ["free-flowing awareness", "Kokyu breath"],
+        instruction: [
+          "Enter Unified-Field in memory: recall a moment when the Ki was flowing freely — when you were non-resistant, fluid, alive. See it through your own eyes. Hear exactly what you heard in that place. Feel the unified field. Make the image bigger, brighter — intensify the felt sense until it moves through you now.",
+          "Three Kokyu breaths — draw Ki up from the earth on the inhale, hold, then release through the mouth with any sound your spirit calls for. On the final breath, sense the golden energy of the universal field rising through you. Let it flood every cell."
+        ],
+        cue: "You are not remembering — you are generating the frequency of Unified-Field right now. The whisperings are already here.",
+      },
+      {
+        id: "declare", label: "Voice the Ki", emoji: '<svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>', color: "var(--phase-voice, #F4C842)", seconds: 50,
+        components: ["Authentic Voice", "reciprocating echo"],
+        instruction: [
+          'Share who you are — out loud, from your center. This is the third principle: when you are present and non-resistant, your contribution flows freely. Command voice: "I am the unified field. Ki flows through me. I move in harmonious relationship with fortune. I share who I am. I ride the lucky wave." Again — louder and truer each time.',
+          'Three rounds — maximum presence: clench fist → tongue to roof of mouth → Aiki stance → speak from your center: "I ride the wave of fortune. I am creative joy in motion." This is your somatic anchor. It belongs to you now — body, mind, spirit.'
+        ],
+        cue: "Anytime today: fist + tongue + stance = instant return to Aiki-land. This is the way of loving protection.",
+      },
+      {
+        id: "launch", label: "Take Musu", emoji: '<svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5c2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/><path d="M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/><path d="M2 18c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/></svg>', color: "var(--phase-rest, #F47C42)", seconds: 45,
+        components: ["whisperings of the Kami", "bestowed mission", "divine creation"],
+        instruction: [
+          "Close your eyes. See the river stretching ahead — each day is a wave of Ki, lined up and flowing, one system of divine creation. Listen for the whisperings of the Kami. They are always present. The mystery is infinite.",
+          "Identify the ONE act that would complete your bestowed mission today. See it clearly. Feel the unified field receiving it. You are not working toward it — you are already moving in harmonious relationship with it.",
+          "Smile — let it rise naturally. Pre-celebrate with Aiki gratitude. Bow deeply to the universe and feel it bow back. Fortune that is already in motion needs only your non-resistant presence."
+        ],
+        cue: "The wind is already blowing. Set your sails in harmony with it. The odds tilt when you live in Unified-Field.",
+      },
+    ];
 
     const TOTAL = 180;
     const fmt = s => `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`;
@@ -243,7 +373,63 @@
       const activeSCORES = isRMoonE ? SCORES_RMOONE : SCORES;
 
       // Language-keyed UI strings
-      const L = isRMoonE ? UI_STRINGS.rmoone : UI_STRINGS.standard;
+      const L = isRMoonE ? {
+        title: "Ride the Lucky Wave",
+        subtitle: "3-minute Ki activation",
+        intro: "Center, attune, declare, contribute — then check with what the Kami is whispering.",
+        begin: "Begin Ki Activation",
+        beginHint: "Find a space to move, speak aloud, and breathe freely — feel where you are",
+        scoreTitle: "How did you ride the wave of Ki?",
+        scoreSub: "Tap your felt sense for each phase",
+        resultTitle: "Your Aiki-Wave Report",
+        resultSub: "Average Ki compliance",
+        coaching: "Whisperings",
+        loading: "Listening to the Kami...",
+        timerLabel: "Ki timer",
+        repeatLow: (emojis) => `Reenter Low Phases — ${emojis}`,
+        repeatFull: "Repeat Full Activation",
+        done: "Done for Now",
+        rateAll: "Sense all 4 phases to continue",
+        coachBtn: "Check in →",
+        defaultReview: "Even partial activation shifts the field. Your nervous system responds to intention as much as execution — keep riding.",
+        aiBtn: "Ask the AI Chat: 1 video + 1 exercise",
+        aiNote: "For Unified Field Chat members — sends your lowest-scoring phases to the AI Chat.",
+        aiUnavailable: "The AI Chat is not available right now — the message above still holds.",
+        aiNeedsAccount: "Sign up for a Unified Field Chat account (or sign in) to get AI help.",
+        aiSignUp: "Sign up or sign in →",
+        aiWatch: "▶ Watch:",
+        aiContinue: "Continue in the Unified Field Chat →",
+        lastResult: "View your last result",
+        syncedNote: "Your results are saved to your Unified Field Chat account.",
+      } : {
+        title: "Ride the Lucky Wave",
+        subtitle: "3-minute nervous system activation",
+        intro: "Move, breathe, declare, launch — then self-report so the practice adapts to what you need most.",
+        begin: "Begin Activation",
+        beginHint: "Find a space to move, speak aloud, and breathe freely",
+        scoreTitle: "How did you ride?",
+        scoreSub: "Tap your compliance for each phase",
+        resultTitle: "Your Wave Report",
+        resultSub: "Average compliance",
+        coaching: "Coaching",
+        loading: "Reading your wave...",
+        timerLabel: "Phase timer",
+        repeatLow: (emojis) => `Repeat Low Phases — ${emojis}`,
+        repeatFull: "Repeat Full Exercise",
+        done: "Done for Now",
+        rateAll: "Rate all 4 phases to continue",
+        coachBtn: "Get Coaching Review →",
+        defaultReview: "Even partial activation shifts the field. Your nervous system responds to intention as much as execution — keep riding.",
+        aiBtn: "Ask the AI Chat: 1 video + 1 exercise",
+        aiNote: "For Unified Field Chat members — sends your lowest-scoring phases to the AI Chat.",
+        aiUnavailable: "The AI Chat is not available right now — the message above still applies.",
+        aiNeedsAccount: "Sign up for a Unified Field Chat account (or sign in) to get AI help.",
+        aiSignUp: "Sign up or sign in →",
+        aiWatch: "▶ Watch:",
+        aiContinue: "Continue in the Unified Field Chat →",
+        lastResult: "View your last result",
+        syncedNote: "Your results are saved to your Unified Field Chat account.",
+      };
 
       const allRated = activePHASES.every(p => scores[p.id]);
 
@@ -620,7 +806,7 @@
       }, [retestPlan]);
 
       const S = {
-        page: { background: "#070C1A", minHeight: "100dvh", color: T.primary, fontFamily: "system-ui, -apple-system, sans-serif", overflowY: "auto" },
+        page: { background: "#070C1A", minHeight: "100dvh", color: T.primary, fontFamily: "'Noto Sans', 'Noto Sans JP', 'Noto Sans SC', 'Noto Sans KR', 'Noto Sans Arabic', 'Noto Sans Devanagari', system-ui, -apple-system, sans-serif", overflowY: "auto" },
         inner: { maxWidth: 480, margin: "0 auto", padding: "0 16px 52px" },
         card: { background: "#0E1525", border: "1px solid #1E2A3D", borderRadius: 18, padding: "18px 16px", marginBottom: 14 },
         btnPri: {
@@ -643,7 +829,7 @@
       if (screen === "splash") return (
         <div style={S.page}>
           <div style={{ ...S.inner, paddingTop: 60, width: "100%", maxWidth: 480, margin: "0 auto", textAlign: "center", display: "flex", flexDirection: "column", minHeight: "80vh", justifyContent: "center" }}>
-            <div style={{ fontSize: 52, marginBottom: 20, lineHeight: 1 }} dangerouslySetInnerHTML={{__html: '<svg viewBox="0 0 24 24" width="52" height="52" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5c2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/><path d="M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/><path d="M2 18c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/></svg>'}} />
+            <div style={{ fontSize: 52, marginBottom: 20 }}>🌊</div>
             <h1 style={{ fontFamily: "Georgia, serif", fontSize: 28, fontWeight: 300, color: "#F4C842", marginBottom: 30, lineHeight: 1.4 }}>
               Do you feel like an adventure or do you want lots of instructions..
             </h1>
@@ -724,7 +910,7 @@
           <PageHeader />
           <div style={{ ...S.inner, paddingTop: 20 }}>
             <div style={{ textAlign: "center", marginBottom: 20 }}>
-              <div style={{ fontSize: 52, marginBottom: 14, lineHeight: 1 }} dangerouslySetInnerHTML={{__html: '<svg viewBox="0 0 24 24" width="52" height="52" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5c2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/><path d="M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/><path d="M2 18c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/></svg>'}} />
+              <div style={{ fontSize: 52, marginBottom: 14 }}>🌊</div>
               <h1 style={{ fontFamily: "Georgia, serif", fontSize: 36, fontWeight: 300, color: "#F4C842", margin: "0 0 18px", lineHeight: 1.1 }}>
                 {L.title}
               </h1>
@@ -743,7 +929,7 @@
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 22 }}>
               {activePHASES.map(p => (
                 <div key={p.id} style={{ ...S.card, marginBottom: 0, textAlign: "center", borderColor: p.color + "55", padding: "16px 10px" }}>
-                  <div style={{ fontSize: 26, marginBottom: 6 }}>{p.emoji}</div>
+                  <div style={{ fontSize: 26, marginBottom: 6, lineHeight: 1 }} dangerouslySetInnerHTML={{__html: p.emoji}} />
                   <div style={{ fontWeight: 800, fontSize: 14, color: p.color, marginBottom: 4 }}>{p.label}</div>
                   <div style={{ fontSize: 12, color: T.secondary }}>{p.seconds}s</div>
                 </div>
@@ -757,7 +943,7 @@
             </div>
 
             <div style={{ background: "rgba(244,200,66,0.1)", border: "1px solid rgba(244,200,66,0.3)", borderRadius: 12, padding: "14px 16px", marginBottom: 24, display: "flex", alignItems: "center", gap: 12 }}>
-              <div style={{ fontSize: 24, lineHeight: 1 }} dangerouslySetInnerHTML={{__html: '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>'}} />
+              <div style={{ fontSize: 24 }}>⚠️</div>
               <p style={{ fontSize: 14, color: "#F4E8A8", margin: 0, lineHeight: 1.5, fontWeight: 600 }}>
                 {L.beginHint}
               </p>
@@ -813,7 +999,7 @@
 
             <div style={{ ...S.inner, flex: 1, paddingTop: 10, display: "flex", flexDirection: "column" }}>
               <div style={{ marginBottom: 20 }}>
-                <div style={{ fontSize: 34, marginBottom: 8 }}>{phase.emoji}</div>
+                <div style={{ fontSize: 34, marginBottom: 8, lineHeight: 1 }} dangerouslySetInnerHTML={{__html: phase.emoji}} />
                 <div style={{ fontWeight: 800, fontSize: 22, color: phase.color, marginBottom: 6 }}>{phase.label}</div>
                 <div style={{ ...S.label, color: T.secondary }}>{phase.components.join(" · ")}</div>
               </div>
@@ -863,7 +1049,7 @@
             <PageHeader />
             <div style={{ ...S.inner, paddingTop: 22 }}>
               <div style={{ textAlign: "center", marginBottom: 22 }}>
-                <div style={{ fontSize: 36, marginBottom: 10, lineHeight: 1 }} dangerouslySetInnerHTML={{__html: '<svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5c2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/><path d="M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/><path d="M2 18c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/></svg>'}} />
+                <div style={{ fontSize: 36, marginBottom: 10 }}>🌊</div>
                 <h1 style={{ fontFamily: "Georgia, serif", fontSize: 32, fontWeight: 300, color: "#F4C842", margin: "0 0 8px" }}>
                   {L.scoreTitle}
                 </h1>
@@ -892,7 +1078,7 @@
                       transition: "background 0.2s",
                     }}>
                       <div style={{ padding: "14px 16px 10px", display: "flex", alignItems: "center", gap: 10 }}>
-                        <span style={{ fontSize: 22 }}>{phase.emoji}</span>
+                        <span style={{ fontSize: 22, lineHeight: 1, display: "inline-flex" }} dangerouslySetInnerHTML={{__html: phase.emoji}} />
                         <div>
                           <div style={{ fontWeight: 800, fontSize: 16, color: sel ? sObj.color : phase.color, transition: "color 0.2s" }}>
                             {phase.label}
@@ -991,7 +1177,7 @@
                       borderBottom: i < activePHASES.length - 1 ? "1px solid #1E2A3D" : "none",
                       background: sObj ? sObj.bg : "#0E1525",
                     }}>
-                      <div style={{ fontSize: 28 }}>{p.emoji}</div>
+                      <div style={{ fontSize: 28, lineHeight: 1 }} dangerouslySetInnerHTML={{__html: p.emoji}} />
                       <div style={{ flex: 1 }}>
                         <div style={{ fontWeight: 800, fontSize: 17, color: p.color }}>{p.label}</div>
                         <div style={{ fontSize: 12, color: T.secondary, marginTop: 3 }}>{p.components.join(" · ")}</div>
@@ -1009,7 +1195,7 @@
               <div style={{ ...S.card, marginBottom: 20 }}>
                 {loading ? (
                   <div style={{ textAlign: "center", padding: "20px 0" }}>
-                    <div style={{ fontSize: 28, marginBottom: 10, lineHeight: 1 }} dangerouslySetInnerHTML={{__html: '<svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5c2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/><path d="M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/><path d="M2 18c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/></svg>'}} />
+                    <div style={{ fontSize: 28, marginBottom: 10 }}>🌊</div>
                     <div style={{ fontSize: 14, color: T.secondary }}>{L.loading}</div>
                   </div>
                 ) : (
@@ -1106,9 +1292,7 @@
               {!loading && (
                 <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
                   {low.length > 0 && (
-                    <button style={S.btnPri} onClick={() => begin(low)}>
-                      {L.repeatLow(low.map(p => p.emoji).join(" "))}
-                    </button>
+                    <button style={S.btnPri} onClick={() => begin(low)} dangerouslySetInnerHTML={{__html: L.repeatLow(low.map(p => p.emoji).join(" "))}} />
                   )}
                   <button style={S.btnSec} onClick={() => begin(activePHASES)}>{L.repeatFull}</button>
                   <button style={S.btnSec} onClick={() => setScreen("intro")}>{L.done}</button>

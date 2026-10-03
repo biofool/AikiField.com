@@ -9,8 +9,8 @@
     "lucky-wave": {
       "title": "Ride the Lucky Wave",
       "returnPaths": [
-        "/games/lucky-wave/RideTheLuckyWaveV1-legacy.html",
-        "/games/lucky-wave/RideTheLuckyWaveV2.html"
+        "/games/lucky-wave/RideTheLuckyWaveV1-legacy.php",
+        "/games/lucky-wave/RideTheLuckyWaveV2.php"
       ],
       "modes": {
         "rmoone": {

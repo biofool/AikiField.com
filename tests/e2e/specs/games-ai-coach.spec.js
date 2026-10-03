@@ -8,7 +8,7 @@
 // the message and returns one cited YouTube source.
 
 const { test, expect } = require('@playwright/test');
-const { establishSession, resetStubGameResults } = require('../helpers');
+const { establishSession, resetStubGameResults, browserLogin, TEST_EMAIL, PASSWORD } = require('../helpers');
 
 const ENDPOINT = '/games/ai-coach.php';
 
@@ -21,12 +21,12 @@ test.describe('ai-coach.php — signed out', () => {
   test('401 with a sign-up link back to the game', async ({ request }) => {
     const resp = await request.post(ENDPOINT, {
       data: { game: 'lucky-wave', mode: 'rmoone', scores: { activate: 2, access: 5, declare: 3, launch: 1 },
-              returnTo: '/games/lucky-wave/RideTheLuckyWaveV2.html' },
+              returnTo: '/games/lucky-wave/RideTheLuckyWaveV2.php' },
     });
     expect(resp.status()).toBe(401);
     const body = await resp.json();
     expect(body.needsAccount).toBe(true);
-    expect(body.loginUrl).toBe('/login.php?next=' + encodeURIComponent('/games/lucky-wave/RideTheLuckyWaveV2.html'));
+    expect(body.loginUrl).toBe('/login.php?next=' + encodeURIComponent('/games/lucky-wave/RideTheLuckyWaveV2.php'));
   });
 
   test('an unknown returnTo falls back to the game, never an open redirect', async ({ request }) => {
@@ -107,8 +107,8 @@ test.describe('ai-coach.php — signed in', () => {
 
 // ── Game UIs ────────────────────────────────────────────────────────────────
 
-async function playLuckyWaveToResult(page, url, submit) {
-  await page.goto(url);
+async function playLuckyWaveToResult(page, url, submit, { skipGoto = false } = {}) {
+  if (!skipGoto) await page.goto(url);
   await page.getByRole('button', { name: 'Adventure (Skip to Start)' }).click();
   await page.getByRole('button', { name: 'Begin Ki Activation' }).click();
   for (let i = 0; i < 4; i++) await page.getByRole('button', { name: 'Next screen' }).click();
@@ -121,20 +121,19 @@ async function playLuckyWaveToResult(page, url, submit) {
 }
 
 for (const [name, url, submit] of [
-  ['Lucky Wave V1', '/games/lucky-wave/RideTheLuckyWaveV1-legacy.html', /Check in/],
-  ['Lucky Wave V2', '/games/lucky-wave/RideTheLuckyWaveV2.html', /Receive Whisperings/],
+  ['Lucky Wave V1', '/games/lucky-wave/RideTheLuckyWaveV1-legacy.php', /Check in/],
+  ['Lucky Wave V2', '/games/lucky-wave/RideTheLuckyWaveV2.php', /Receive Whisperings/],
 ]) {
   test.describe(name, () => {
     test('no API-key prompt left in the page', async ({ request }) => {
+      await establishSession(request);
       const html = await (await request.get(url)).text();
       expect(html).not.toMatch(/anthropic|sk-ant|x-api-key|api-key-input|setApiKey|ai-review/i);
     });
 
-    test('signed out: the AI button offers sign-up and returns to the game', async ({ page }) => {
-      await playLuckyWaveToResult(page, url, submit);
-      await page.getByRole('button', { name: 'Ask the AI Chat: 1 video + 1 exercise' }).click();
-      const link = page.getByRole('link', { name: 'Sign up or sign in →' });
-      await expect(link).toHaveAttribute('href', '/login.php?next=' + encodeURIComponent(url));
+    test('signed out: the gate sends the player to login (issue #71)', async ({ page }) => {
+      await page.goto(url);
+      await expect(page).toHaveURL(/\/login\.php\?next=/);
     });
 
     test('signed in: shows the AI Chat answer, the video and a link to keep chatting', async ({ page }) => {
@@ -148,10 +147,13 @@ for (const [name, url, submit] of [
     });
 
     test('results are stored and can be reopened from the intro screen', async ({ page }) => {
+      await establishSession(page.request);
       await playLuckyWaveToResult(page, url, submit);
       const stored = await page.evaluate(() => JSON.parse(localStorage.getItem('waveLuck_results')));
       expect(stored).toHaveLength(1);
-      expect(stored[0]).toMatchObject({ v: 1, mode: 'rmoone', scores: { activate: 2, access: 5, declare: 3, launch: 1 } });
+      // Signed-in results are re-stored from the account sync, which keeps
+      // only at/mode/scores — the local `v` schema field is not round-tripped.
+      expect(stored[0]).toMatchObject({ mode: 'rmoone', scores: { activate: 2, access: 5, declare: 3, launch: 1 } });
 
       await page.reload();
       await page.getByRole('button', { name: 'Adventure (Skip to Start)' }).click();
@@ -160,16 +162,14 @@ for (const [name, url, submit] of [
       await expect(page.getByText('Absent', { exact: true })).toBeVisible();
     });
 
-    test('after signing in, the player lands back on the same result with its AI answer kept', async ({ page }) => {
-      await playLuckyWaveToResult(page, url, submit);
-      await page.getByRole('button', { name: 'Ask the AI Chat: 1 video + 1 exercise' }).click();
-      await page.getByRole('link', { name: 'Sign up or sign in →' }).click();
+    test('gate → login → back to the game; AI answer kept on the result', async ({ page }) => {
+      // Signed out: the page itself is gated, so we start at the login form.
+      await page.goto(url);
       await expect(page).toHaveURL(/\/login\.php\?next=/);
 
-      // Sign in, then follow login.php's ?next= back to the game.
-      await establishSession(page.request);
-      await page.goto(url);
-      await expect(page.getByText('Even partial activation shifts the field.')).toBeVisible();
+      // Sign in through the real flow — login.php follows ?next= back to the game.
+      await browserLogin(page, { email: TEST_EMAIL, password: PASSWORD, next: url });
+      await playLuckyWaveToResult(page, url, submit, { skipGoto: true });
       await page.getByRole('button', { name: 'Ask the AI Chat: 1 video + 1 exercise' }).click();
       await expect(page.getByText(/STUB CHAT .*Take Musu — 1\/5 \(Absent\)/)).toBeVisible();
 
@@ -196,11 +196,9 @@ test.describe('Verbal Aikido', () => {
     await page.locator('[data-choice-id="ch1_r2_reply_a"]').click();        // then Aikido → success
   }
 
-  test('signed out: chapter ending offers sign-up', async ({ page }) => {
-    await finishChapter1WithOneSlip(page);
-    await page.getByRole('button', { name: 'Ask the AI Chat: 1 video + 1 exercise' }).click();
-    await expect(page.getByRole('link', { name: 'Sign up or sign in →' }))
-      .toHaveAttribute('href', '/login.php?next=' + encodeURIComponent('/games/verbal-aikido/'));
+  test('signed out: the gate sends the player to login (issue #71)', async ({ page }) => {
+    await page.goto('/games/verbal-aikido/');
+    await expect(page).toHaveURL(/\/login\.php\?next=/);
   });
 
   test('signed in: chapter ending sends the reactive responses to the AI Chat', async ({ page }) => {

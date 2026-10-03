@@ -293,11 +293,12 @@ $coachLoginUrl = $_SERVER['SCRIPT_NAME'] ?? '/login.php';
       <div class="af-nav__group">
         <button type="button" class="af-nav__link af-nav__menu-btn" aria-expanded="false" aria-controls="af-nav-sub-dx">Digital Experience</button>
         <ul class="af-nav__submenu af-nav__submenu--end" id="af-nav-sub-dx">
-          <li><a href="/games/lucky-wave/RideTheLuckyWaveV1-legacy.html" class="af-nav__sublink">Ride the Lucky Wave</a></li>
-          <li><a href="/games/lucky-wave/RideTheLuckyWaveV2.html" class="af-nav__sublink">Ride the Lucky Wave V2</a></li>
-          <li><a href="/games/verbal-aikido/" class="af-nav__sublink">Verbal Aikido — Story Mode</a></li>
-          <li><a href="/games/exercises/" class="af-nav__sublink">Moon — 20 Exclusive Practices</a></li>
-          <li class="af-nav__subsep"><a href="/members" class="af-nav__sublink af-nav__sublink--feature">Enter the Unified Field Chat</a></li>
+          <li><a href="/digital-experience/" class="af-nav__sublink">All experiences</a></li>
+          <li><a href="/digital-experience/lucky-wave.html#v1" class="af-nav__sublink">Ride the Lucky Wave</a></li>
+          <li><a href="/digital-experience/lucky-wave.html#v2" class="af-nav__sublink">Ride the Lucky Wave V2</a></li>
+          <li><a href="/digital-experience/verbal-aikido.html" class="af-nav__sublink">Verbal Aikido — Story Mode</a></li>
+          <li><a href="/digital-experience/moon-practices.html" class="af-nav__sublink">Moon — 20 Exclusive Practices</a></li>
+          <li class="af-nav__subsep"><a href="/digital-experience/unified-field-chat.html" class="af-nav__sublink af-nav__sublink--feature">Enter the Unified Field Chat</a></li>
         </ul>
       </div>
       <a href="assessment.html" class="af-nav__link">Assessment</a>

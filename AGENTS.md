@@ -175,7 +175,10 @@ QA members chat is replicated at `/members` (`members.php` + `coach-chat.js`
 + `css/coach-chat.css`), gated by `beta-gate.load.php` and linked from the
 public nav's **Digital Experience** menu as "Enter the Unified Field Chat";
 `quantumaikido.com/members` stays live too. Keep `coach-chat.js` in sync with
-the QA copy (AikiField-only edits are listed in its header).
+the QA copy (AikiField-only edits are listed in its header). Since 2026-10-04
+(issue #71) all `/games/` experiences are gated by `beta-gate.load.php` too —
+the nav's Digital Experience menu links to public preview pages under
+`/digital-experience/` instead of the gated game URLs.
 
 AikiField.com remains a **third frontend surface** for the shared coaching
 auth flow (same backend user store, same session contract), alongside

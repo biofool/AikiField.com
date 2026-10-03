@@ -49,6 +49,28 @@ up/sign in). **Triple-PRD note:** this is a new caller of `/v1/chat-secure`
 with the new backend `POST /v1/game-results/sync` and the `login.php`
 GET-only fast-path fix (QA's login was not affected).
 
+**2026-10-04 — Digital Experience previews; all games re-gated (issue #71).**
+The `/games/` experiences are members-only again: the four public entry
+points became session-gated PHP behind `includes/beta-gate.load.php`
+(`games/lucky-wave/RideTheLuckyWaveV1-legacy.php`,
+`games/lucky-wave/RideTheLuckyWaveV2.php`,
+`games/verbal-aikido/index.php`, `games/exercises/index.php`; the old
+`.html` URLs 301 to the gated paths, and `/games/exercises/:slug` deep
+links still work — the gate preserves `REQUEST_URI` in `?next=`). In their
+place the nav's **Digital Experience** menu now links to a public preview
+surface at `/digital-experience/` (hub + one preview page per experience:
+`lucky-wave.html` covering V1 `#v1` and V2 `#v2`, `verbal-aikido.html`,
+`moon-practices.html`, `unified-field-chat.html`). Each preview describes
+the experience and points to the gated URL; unauthenticated clicks land on
+`/login.php?next=<experience>` and return to the game after sign-in.
+`/members` was already gated — its menu item now links to the chat preview
+instead. Supporting pages stay public: `games/lucky-wave/about.html`,
+`games/index.html` hub, `games/404.html`. The `games/exercises/` "unlock
+all practices for members" model is superseded — anonymous visitors no
+longer reach the app at all. **Triple-PRD note:** no change to the shared
+session contract, endpoints, or login flow — this is AikiField-local
+access-control surface only; QA and AIRichardMoon PRDs unaffected.
+
 ### AIQA / krishnafats cutover (#318) — COMPLETE 2026-09-02
 
 **Status: DONE, not pending.** The AIQA production cutover (AIRichardMoon

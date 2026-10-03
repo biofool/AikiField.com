@@ -1,3 +1,11 @@
+<?php
+/**
+ * Members-only entry point (issue #71 — Digital Experience previews + login gate).
+ * Unauthenticated requests are redirected to /login.php?next=<this page> by the
+ * shared coaching session gate, same as /beta/ and /members.
+ */
+require dirname(__DIR__, 2) . '/includes/beta-gate.load.php';
+?>
 <!DOCTYPE html>
 <html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>MOON — 20 Exclusive Practices — AikiField Games</title>
@@ -108,7 +116,6 @@ function showLockedModal(ex){
    <h2 style="font-size:20px;margin-bottom:10px">${ex.title}</h2>
    <p style="font-size:14px;font-style:italic">20 exclusive practices unavailable anywhere else — By Richard Moon 6th Dan</p>
    <p style="font-size:12px;opacity:0.7;margin:14px 0">Free practices: DBSO, Wrist Grab Grounding, Ten to the Tenth. Unlock all 15+5 with Creator membership.</p>
-   <p style="font-size:12px;margin:10px 0"><a href="/login.php?next=/games/exercises/" style="color:#1A1A1A;font-weight:700">Signed-in members get all practices free — sign in →</a></p>
    <button class="btn" id="lockClose">Back to free practices</button>
  </div>`;
  document.body.appendChild(overlay);

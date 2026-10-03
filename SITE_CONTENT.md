@@ -13,12 +13,14 @@
   - Approach (`approach.html`)
 - Case Studies (`case-studies.html`)
 - Demonstration Technologies (`projects.php`)
-- Digital Experience — submenu (no landing page):
-  - Ride the Lucky Wave (`/games/lucky-wave/RideTheLuckyWaveV1-legacy.html`)
-  - Ride the Lucky Wave V2 (`/games/lucky-wave/RideTheLuckyWaveV2.html`)
-  - Verbal Aikido — Story Mode (`/games/verbal-aikido/`)
-  - Moon — 20 Exclusive Practices (`/games/exercises/`)
-  - Enter the Unified Field Chat (`/members` — AI chat, sign-in required)
+- Digital Experience — submenu (links point at public preview pages; the
+  experiences themselves require sign-in — issue #71):
+  - All experiences (`/digital-experience/` — hub)
+  - Ride the Lucky Wave (`/digital-experience/lucky-wave.html#v1` → gated `/games/lucky-wave/RideTheLuckyWaveV1-legacy.php`)
+  - Ride the Lucky Wave V2 (`/digital-experience/lucky-wave.html#v2` → gated `/games/lucky-wave/RideTheLuckyWaveV2.php`)
+  - Verbal Aikido — Story Mode (`/digital-experience/verbal-aikido.html` → gated `/games/verbal-aikido/`)
+  - Moon — 20 Exclusive Practices (`/digital-experience/moon-practices.html` → gated `/games/exercises/`)
+  - Enter the Unified Field Chat (`/digital-experience/unified-field-chat.html` → gated `/members` — AI chat, sign-in required)
 - Assessment (`assessment.html`)
 - Get Started (`contact.html`)
 

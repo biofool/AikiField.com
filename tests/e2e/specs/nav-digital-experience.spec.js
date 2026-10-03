@@ -1,19 +1,20 @@
 // Primary nav restructure + Digital Experience menu + /members AI chat.
 //
 //  - Services is a submenu holding Process and Approach.
-//  - Digital Experience lists the games promoted out of /for-review/ (now
-//    public under /games/) and "Enter the Unified Field Chat" → /members.
-//  - /members is session-gated (beta-gate.load.php) like /beta/.
+//  - Digital Experience links to the public /digital-experience/ preview
+//    pages (issue #71); the experiences themselves are session-gated PHP
+//    behind beta-gate.load.php, same as /beta/ and /members.
 
 const { test, expect } = require('@playwright/test');
 const { establishSession, TEST_EMAIL } = require('../helpers');
 
 const DX_LINKS = [
-  ['Ride the Lucky Wave', '/games/lucky-wave/RideTheLuckyWaveV1-legacy.html'],
-  ['Ride the Lucky Wave V2', '/games/lucky-wave/RideTheLuckyWaveV2.html'],
-  ['Verbal Aikido — Story Mode', '/games/verbal-aikido/'],
-  ['Moon — 20 Exclusive Practices', '/games/exercises/'],
-  ['Enter the Unified Field Chat', '/members'],
+  ['All experiences', '/digital-experience/'],
+  ['Ride the Lucky Wave', '/digital-experience/lucky-wave.html#v1'],
+  ['Ride the Lucky Wave V2', '/digital-experience/lucky-wave.html#v2'],
+  ['Verbal Aikido — Story Mode', '/digital-experience/verbal-aikido.html'],
+  ['Moon — 20 Exclusive Practices', '/digital-experience/moon-practices.html'],
+  ['Enter the Unified Field Chat', '/digital-experience/unified-field-chat.html'],
 ];
 
 test.describe('primary nav submenus', () => {
@@ -70,11 +71,25 @@ test.describe('primary nav submenus', () => {
   });
 });
 
-test.describe('promoted games are public', () => {
-  for (const path of ['/games/lucky-wave/RideTheLuckyWaveV2.html', '/games/lucky-wave/RideTheLuckyWaveV1-legacy.html', '/games/verbal-aikido/']) {
-    test(`${path} is served without a session`, async ({ request }) => {
-      const resp = await request.get(path, { maxRedirects: 0 });
-      expect(resp.status()).toBe(200);
+test.describe('games require a session (issue #71)', () => {
+  const GATED = [
+    ['/games/lucky-wave/RideTheLuckyWaveV1-legacy.html', '/games/lucky-wave/RideTheLuckyWaveV1-legacy.php'],
+    ['/games/lucky-wave/RideTheLuckyWaveV2.html', '/games/lucky-wave/RideTheLuckyWaveV2.php'],
+    ['/games/verbal-aikido/', null],
+    ['/games/exercises/', null],
+    ['/games/exercises/wrist-grab-grounding', null],
+  ];
+  for (const [path, htmlRedirect] of GATED) {
+    test(`${path} redirects signed-out visitors to login`, async ({ request }) => {
+      if (htmlRedirect) {
+        // Old .html URL 301s to the gated .php entry point first.
+        const moved = await request.get(path, { maxRedirects: 0 });
+        expect(moved.status()).toBe(301);
+        expect(moved.headers()['location']).toBe(htmlRedirect);
+      }
+      const resp = await request.get(htmlRedirect || path, { maxRedirects: 0 });
+      expect([302, 303]).toContain(resp.status());
+      expect(resp.headers()['location']).toBe('/login.php?next=' + encodeURIComponent(htmlRedirect || path));
     });
   }
 

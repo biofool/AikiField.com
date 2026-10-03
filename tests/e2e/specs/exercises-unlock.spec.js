@@ -1,24 +1,28 @@
-// Signed-in members get every practice free in /games/exercises/.
-// Anonymous visitors keep the freemium split (3 free, 12 locked).
-// auth-state.php reports the same PHP session login.php establishes.
+// /games/exercises/ is members-only (issue #71): anonymous visitors are
+// redirected to /login.php?next=… before the app loads — the freemium split
+// (3 free, 12 locked) no longer exists because the app itself is gated.
+// Signed-in members get every practice unlocked; auth-state.php still
+// reports the same PHP session login.php establishes (AF_GATE_NO_REDIRECT).
 
 const { test, expect } = require('@playwright/test');
 const { TEST_EMAIL, PASSWORD, browserLogin } = require('../helpers');
 
-test.describe('exercises freemium + member unlock', () => {
-  test('anonymous: 3 free, 12 locked, modal links to sign-in', async ({ page }) => {
+test.describe('exercises gate (issue #71)', () => {
+  test('anonymous: redirected to the blind login with ?next=', async ({ page }) => {
     await page.goto('/games/exercises/');
-    await expect(page.locator('.ex-chip')).toHaveCount(15);
-    await expect(page.locator('.ex-chip.locked')).toHaveCount(12);
-    await expect(page.locator('#authBadge')).toBeHidden();
+    await expect(page).toHaveURL(/\/login\.php\?next=/);
+  });
 
-    await page.locator('.ex-chip.locked').first().click();
-    await expect(page.locator('#lockModal')).toBeVisible();
-    await expect(page.locator('#lockModal a[href^="/login.php"]')).toHaveCount(1);
+  test('anonymous deep link: ?next= preserves the practice slug', async ({ request }) => {
+    const resp = await request.get('/games/exercises/wrist-grab-grounding', { maxRedirects: 0 });
+    expect([302, 303]).toContain(resp.status());
+    expect(resp.headers()['location']).toBe(
+      '/login.php?next=' + encodeURIComponent('/games/exercises/wrist-grab-grounding')
+    );
   });
 
   test('auth-state.php reflects the session', async ({ page, request }) => {
-    // Anonymous
+    // Anonymous — public JSON endpoint, no redirect
     const anon = await request.get('/games/exercises/auth-state.php');
     expect(await anon.json()).toEqual({ authed: false });
     expect(anon.headers()['cache-control']).toContain('no-store');

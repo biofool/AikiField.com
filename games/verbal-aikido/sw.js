@@ -9,7 +9,6 @@ const MEDIA_CACHE = `va-game-media-${CACHE_VERSION}`;
 
 const SHELL_ASSETS = [
   './',
-  './index.html',
   './game.css',
   './game.js',
   './content.json',

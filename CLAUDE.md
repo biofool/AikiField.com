@@ -64,8 +64,11 @@ site. Validate changes by visual review and accessibility checks.
   nav's Digital Experience menu as "Enter the Unified Field Chat");
   `quantumaikido.com/members` stays live too.
 - **Primary nav:** duplicated in every page (no include). Services is a
-  submenu (Process, Approach); Digital Experience lists the public games
-  (`/games/lucky-wave/`, `/games/verbal-aikido/`, `/games/exercises/`) and
+  submenu (Process, Approach); Digital Experience links to public preview
+  pages under `/digital-experience/` (hub + one page per experience, issue
+  #71). The experiences themselves are gated PHP behind
+  `includes/beta-gate.load.php`: `games/lucky-wave/*.php`,
+  `games/verbal-aikido/index.php`, `games/exercises/index.php`, and
   `/members`. Submenu behaviour: `js/nav-menu.js` + `.af-nav__group` rules
   in `css/redesign.css`.
 - **Games AI help:** `games/ai-coach.php` (+ `games/ai-coach.json`
