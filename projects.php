@@ -35,11 +35,11 @@
   <link rel="apple-touch-icon" href="/favicon.svg">
   <meta name="theme-color" content="#0f2942">
   <title>AikiField — Technology We Build</title>
-  <meta name="description" content="Production AI and data pipelines designed and built by AikiField — a cited AI coaching chat and a global studio discovery pipeline. The same engineering capability is available to your organization, tailored to fit your needs.">
+  <meta name="description" content="Production AI and data pipelines designed and built by AikiField — AI coaching, studio outreach, multi-cloud cost control, resilience engineering, media intelligence, AI governance, and knowledge-graph research. The same engineering capability is available to your organization, tailored to fit your needs.">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="AikiField">
   <meta property="og:title" content="Technology We Build">
-  <meta property="og:description" content="Production AI and data pipelines designed and built by AikiField — a cited AI coaching chat and a global studio discovery pipeline. The same engineering capability is available to your organization, tailored to fit your needs.">
+  <meta property="og:description" content="Production AI and data pipelines designed and built by AikiField — AI coaching, studio outreach, multi-cloud cost control, resilience engineering, media intelligence, AI governance, and knowledge-graph research. The same engineering capability is available to your organization, tailored to fit your needs.">
   <meta property="og:url" content="https://aikifield.com/projects.php">
   <meta property="og:image" content="https://aikifield.com/favicon.svg">
   <meta name="twitter:card" content="summary">
@@ -135,7 +135,7 @@
   <section class="af-section">
     <div class="af-container">
       <h2 class="af-h2" id="projects-heading">Projects completed</h2>
-      <p class="af-lead af-lead--wide">Six systems designed and built by AikiField, running in production today. Select a project from the table to view its details &mdash; one at a time.</p>
+      <p class="af-lead af-lead--wide">Seven systems designed and built by AikiField, running in production today. Select a project from the table to view its details &mdash; one at a time.</p>
 
       <!-- ============================================================ -->
       <!-- PROJECT SELECTOR TABLE — click a row to show that project    -->
@@ -192,6 +192,13 @@
               <td class="af-proj-table__name">Voice Synthesis Benchmarking</td>
               <td>AI Research & Governance</td>
               <td class="af-proj-table__tech">Python &middot; PyTorch &middot; torchaudio &middot; Hugging Face</td>
+              <td class="af-proj-table__view" aria-hidden="true">&rarr;</td>
+            </tr>
+            <tr class="af-proj-table__row" data-project="7" tabindex="0" role="button" aria-pressed="false" aria-controls="project-7">
+              <td class="af-proj-table__num">7</td>
+              <td class="af-proj-table__name">Story Gatherer</td>
+              <td>Knowledge Graph</td>
+              <td class="af-proj-table__tech">Python &middot; SQLite &middot; Flask &middot; Gemini &middot; Cloud Run</td>
               <td class="af-proj-table__view" aria-hidden="true">&rarr;</td>
             </tr>
           </tbody>
@@ -380,6 +387,33 @@
             </div>
           </article>
 
+          <!-- PROJECT 7: STORY GATHERER -->
+          <article class="af-svc" id="project-7" data-project="7" hidden>
+            <div class="af-svc__tag-row">
+              <span class="af-svc__tag">Knowledge Graph</span>
+              <span class="af-svc__tag af-svc__tag--built">Built by AikiField</span>
+            </div>
+            <h2 class="af-svc__title">Story Gatherer &mdash; Provenance-First Knowledge Graphs</h2>
+            <p class="af-svc__lead">A research pipeline that turns scattered web material &mdash; blogs, interviews, news archives, social posts, forum threads, videos &mdash; into a single, queryable, fully sourced knowledge graph about people and the communities around them.</p>
+            <p class="af-svc__bestfor">Built to document The Source restaurant and the Source Family commune, it now runs as a general engine for mapping martial-arts teachers, lineages, and organizations. A scheduled research job expands targeted subjects daily, with centralized cost tracking and a remote kill switch.</p>
+            <h3 class="af-svc__bullets-label">What it does</h3>
+            <ul class="af-svc__bullets">
+              <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Gathers sources automatically</strong> &mdash; crawls approved sites and searches newspaper archives, Reddit, Facebook groups, seminar listings, and video channels, including OCR of scanned periodicals.</span></li>
+              <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Extracts the cast and the claims</strong> &mdash; identifies people, groups, places, works, and events, resolves aliases, and records every claim with its stance (supports, disputes).</span></li>
+              <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Preserves disagreement</strong> &mdash; keeps &ldquo;who said what about whom, and where&rdquo; rather than collapsing sources into one canonical truth.</span></li>
+              <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Checks itself</strong> &mdash; flags contradictions between sources and uses a bounded AI verification layer that abstains rather than guesses; no claim is ever discarded.</span></li>
+              <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Fully auditable</strong> &mdash; every node, edge, and claim is tied to its source in a version-controlled, human-readable snapshot (~10,900 nodes, ~25,300 edges, ~5,800 sources).</span></li>
+              <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Produces publishable output</strong> &mdash; Wikipedia draft proposals with source-reliability scoring and biographical reviews that grade every statement&rsquo;s citeability.</span></li>
+            </ul>
+            <h3 class="af-svc__bullets-label" style="margin-top:28px;">Tech stack</h3>
+            <p class="af-body">Python &middot; SQLite &middot; Flask &middot; Gemini API &middot; Playwright &middot; OCR pipeline &middot; GitHub Actions &middot; Google Cloud Run &middot; GCP Secret Manager &middot; Terraform</p>
+
+            <div class="af-svc__applied">
+              <p class="af-svc__applied-label">Applied to your needs</p>
+              <p class="af-svc__applied-body">The same pattern &mdash; <strong>a contradiction-aware research pipeline that makes provenance the product</strong> &mdash; can be built for your organization: aggregating vendor advisories, threat intelligence, and internal reports into an auditable graph where every statement is tied to its source, disagreements stay visible, and board- or regulator-facing output carries citations. We design, build, and operate it on a fixed budget.</p>
+            </div>
+          </article>
+
         </div><!-- /.af-projects-split__projects -->
 
       </div><!-- /.af-projects-split -->
@@ -389,12 +423,12 @@
   <!-- OVERVIEW DIAGRAM — below the split -->
   <section class="af-section">
     <div class="af-container">
-      <h2 class="af-h2">Six systems we built &mdash; at a glance</h2>
-      <p class="af-lead af-lead--wide">All six systems were designed and built by AikiField and run in production today &mdash; AI-grounded coaching, global studio outreach, multi-cloud cost control, resilience engineering, media intelligence, and AI governance research. The engineering patterns behind them are directly available to your engagement.</p>
+      <h2 class="af-h2">Seven systems we built &mdash; at a glance</h2>
+      <p class="af-lead af-lead--wide">All seven systems were designed and built by AikiField and run in production today &mdash; AI-grounded coaching, global studio outreach, multi-cloud cost control, resilience engineering, media intelligence, AI governance research, and provenance-first knowledge graphs. The engineering patterns behind them are directly available to your engagement.</p>
       <div class="af-diagram">
         <figure class="af-diagram__figure">
-          <img src="assets/projects-overview.svg" data-af-diagram="projects-overview" data-i18n-attr="alt:svg.projects_overview.alt" alt="Overview diagram: AikiField sponsors six projects — Quantum Aikido Wisdom (AI coaching; Gemini API, Cloud Run, Firestore, SQLite FTS5, Cloudflare), World Studio Finder (outreach pipeline; Playwright, Places API, Hunter.io, Sheets API, SQLite SCD Type 2), MultiCloud-MultiPass (cloud cost control; FastAPI, BigQuery, OpenStack, Cloudflare, Cloud Scheduler), ChaosEngine (resilience engineering; Go, AWS SDK, Docker, CI/CD approval gates), ClipQuotes (media intelligence; Whisper, pyannote, OpenCV, FFmpeg) and Voice Synthesis Benchmarking (AI governance; PyTorch, torchaudio, Hugging Face, GPU inference). All six stand on a shared substrate: Python in all six systems; Docker, OpenTofu/Terraform and SQLite in three each; FastAPI, Cloud Run, Firestore, Flask and Cloud Storage in two each; plus 24 domain specialists used by a single system each." class="af-diagram__img" width="1120" height="760" loading="lazy"/>
-          <figcaption class="af-diagram__caption"><strong>Figure 3.</strong> The six systems AikiField built, each with its principal technologies, and the substrate they share &mdash; one language across all six, with containerisation and infrastructure-as-code on every system that ships to a cloud. <a href="assets/projects-overview.png" class="af-diagram__download" download>Download PNG &darr;</a></figcaption>
+          <img src="assets/projects-overview.svg" data-af-diagram="projects-overview" data-i18n-attr="alt:svg.projects_overview.alt" alt="Overview diagram: AikiField sponsors seven projects — Quantum Aikido Wisdom (AI coaching; Gemini API, Cloud Run, Firestore, SQLite FTS5, Cloudflare), World Studio Finder (outreach pipeline; Playwright, Places API, Hunter.io, Sheets API, SQLite SCD Type 2), MultiCloud-MultiPass (cloud cost control; FastAPI, BigQuery, OpenStack, Cloudflare, Cloud Scheduler), ChaosEngine (resilience engineering; Go, AWS SDK, Docker, CI/CD approval gates), ClipQuotes (media intelligence; Whisper, pyannote, OpenCV, FFmpeg), Voice Synthesis Benchmarking (AI governance; PyTorch, torchaudio, Hugging Face, GPU inference) and Story Gatherer (knowledge graph; Python, SQLite, Flask, Cloud Run, Gemini API). All seven stand on a shared substrate: Python in all seven systems; Docker, OpenTofu/Terraform and SQLite in four each; Cloud Run and Flask in three each; FastAPI, Firestore and Gemini in two each; plus 30 domain specialists used by a single system each." class="af-diagram__img" width="1120" height="972" loading="lazy"/>
+          <figcaption class="af-diagram__caption"><strong>Figure 3.</strong> The seven systems AikiField built, each with its principal technologies, and the substrate they share &mdash; one language across all seven, with containerisation and infrastructure-as-code on every system that ships to a cloud. <a href="assets/projects-overview.png" class="af-diagram__download" download>Download PNG &darr;</a></figcaption>
         </figure>
       </div>
     </div>
@@ -596,7 +630,7 @@
     }
 
     // Restore selection from URL hash on load (e.g. #project-3)
-    var hashMatch = window.location.hash.match(/^#project-([1-6])$/);
+    var hashMatch = window.location.hash.match(/^#project-([1-7])$/);
     if (hashMatch) {
       selectProject(hashMatch[1]);
     }
