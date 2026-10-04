@@ -11,8 +11,8 @@ fi
 #  Pushes the site to public_html/aikifield.com/ on peec.biz
 #
 #  Two deploy targets share this script:
-#    ./sync.sh deploy          -> prod    (public_html/aikifield/)
-#    ./sync.sh staging deploy  -> staging (public_html/aikifield.peec.biz/)
+#    ./sync.sh deploy          -> prod    (public_html/aikifield.peec.biz/ — aikifield.com + aikifield.peec.biz)
+#    ./sync.sh staging deploy  -> staging (public_html/aikifield-staging/ — staging.peec.biz)
 #  "staging"/"prod" are recognized anywhere in the argument list (see
 #  KNOWN_REMOTES below) — no separate flag needed. Omitting a remote name
 #  always defaults to prod, matching the script's historical behavior.
@@ -144,7 +144,7 @@ SSH_KEY="$HOME/.ssh/quantumaikido_ed25519"
 # coach-config.staging.php exclude below.
 KNOWN_REMOTES=(
     "prod|peec.biz|peecbiz|public_html/aikifield.peec.biz/|Production server (aikifield.com — cPanel docroot is aikifield.peec.biz/)"
-    "staging|peec.biz|peecbiz|public_html/aikifield.peec.biz/|Staging server (aikifield.peec.biz)"
+    "staging|peec.biz|peecbiz|public_html/aikifield-staging/|Staging server (staging.peec.biz — dedicated docroot, issue #67)"
 )
 DEFAULT_REMOTE_NAME="prod"
 
@@ -721,10 +721,11 @@ case "$CMD" in
         if [[ "$REMOTE_NAME" == "staging" ]]; then
             require_git_branch "staging"
             echo ""
-            # Branch is settled — HEAD is what rsync ships. Kick off local CI
-            # in parallel; wait_ci_local (end of this case) gates the result.
-            start_ci_local
         fi
+        # Issue #67: local CI gates every deploy, not just staging — prod
+        # deploys ship the same content and deserve the same check. Kick it
+        # off in parallel; wait_ci_local (end of this case) gates the result.
+        start_ci_local
         php_lint
         echo ""
         cloudflare_ip_check
