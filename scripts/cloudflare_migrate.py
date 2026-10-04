@@ -78,6 +78,11 @@ DESIRED_SETTINGS = {
     # valid cert first; run --verify-only to confirm before --apply.
     "ssl": "strict",
     "always_use_https": "on",
+    # Serve the last cached copy of a page when the origin is down or
+    # errors — the shared host (peec.biz) has intermittent contention that
+    # produces edge 520/521s (issue #76). Always Online turns those into
+    # a degraded-but-working page view instead of an error page.
+    "always_online": "on",
     "http3": "on",
     "0rtt": "on",
     "brotli": "on",
