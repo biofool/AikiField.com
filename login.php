@@ -541,16 +541,13 @@ $coachLoginUrl = $_SERVER['SCRIPT_NAME'] ?? '/login.php';
           <h2>Beta Access <span class="coach-free-badge">Members</span></h2>
           <p class="coach-intro-subtitle">Sign in to access the AikiField beta assessment pages and games review area.</p>
           <p class="coach-intro-text">
-            This sign-in gates the pre-release assessment tools under
-            <code>/beta/</code> and the games review area under
-            <code>/for-review/</code>. The same account works on
+            The same account works on
             <a href="https://quantumaikido.com">quantumaikido.com</a> if you
             are an AI Ki Questions Fielded member.
           </p>
           <ul class="coach-intro-features">
             <li>Register with an invitation code, or sign in if you already have an account.</li>
             <li>Your session lasts 7 days and covers the whole <code>aikifield.com</code> origin.</li>
-            <li>You can sign out from any beta page.</li>
           </ul>
         </div>
 
@@ -559,7 +556,6 @@ $coachLoginUrl = $_SERVER['SCRIPT_NAME'] ?? '/login.php';
           <h2>Before you begin</h2>
           <ul class="coach-privacy-list">
             <li>Your session is stored in a cookie so you can return to the beta pages without signing in again.</li>
-            <li>Authentication is handled by the AI Ki Questions Fielded backend on Google Cloud Run.</li>
             <li>Please do not enter sensitive personal information.</li>
           </ul>
           <div class="coach-privacy-links">
