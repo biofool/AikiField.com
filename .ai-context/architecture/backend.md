@@ -106,7 +106,7 @@ handling, and an ops dashboard.
 ## External backend dependency (INFERRED from PRD + proxy code)
 
 - **Service:** AIRichardMoon (FastAPI on Google Cloud Run)
-- **URL:** `https://quantum-aikido-coach-6bfpsd3kkq-uc.a.run.app`
+- **URL:** `https://aiqa-coach-uj5nyskptq-uc.a.run.app`
   (OBSERVED: `coach-config.php:22`)
 - **Endpoints used:** `/v1/auth/verify`, `/v1/auth/register-with-password`,
   `/v1/auth/check-session`, `/v1/auth/request-reset`,

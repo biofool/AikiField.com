@@ -76,11 +76,17 @@ access-control surface only; QA and AIRichardMoon PRDs unaffected.
 **Status: DONE, not pending.** The AIQA production cutover (AIRichardMoon
 backend + quantumaikido.com frontend) completed 2026-09-02; live
 `quantumaikido.com` traffic now runs on the `aiqa-coaching` GCP project's
-Cloud Run services. AikiField's own `coach-config.php` `COACH_BACKEND_URL`
-should be updated to the new host,
-`https://aiqa-coach-uj5nyskptq-uc.a.run.app` (was
+Cloud Run services. AikiField's `coach-config.php` `COACH_BACKEND_URL`
+was updated to the new host,
+`https://aiqa-coach-uj5nyskptq-uc.a.run.app`, on 2026-10-04 under
+AIRichardMoon issue #814 (was
 `https://quantum-aikido-coach-6bfpsd3kkq-uc.a.run.app`, now legacy —
-pending decommission, not yet torn down). Cutover state file (historical):
+pending decommission, not yet torn down). `COACH_STAGING_URL`
+(`https://aiqa-coach-staging-uj5nyskptq-uc.a.run.app`) was added at the
+same time so the `/staging/` wrappers route to the aiqa staging service.
+User-data reconciliation between the two Firestore projects was done in
+the same change (audit: `AIRichardMoon/backend/data/audit/`). Cutover
+state file (historical):
 `~/projects/AIRichardMoon/backend/data/migration/aiqa_frontend_cutover.json`.
 
 **Note — this is a separate config surface.** AikiField's

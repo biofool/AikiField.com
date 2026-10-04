@@ -18,8 +18,11 @@
  *   - this repo                         (docs/coach-auth-prd.md)
  */
 
-// Public Quantum Aikido Wisdom backend (Cloud Run).
-define('COACH_BACKEND_URL', 'https://quantum-aikido-coach-6bfpsd3kkq-uc.a.run.app');
+// Public Quantum Aikido Wisdom backend (Cloud Run, aiqa-coaching project).
+define('COACH_BACKEND_URL', 'https://aiqa-coach-uj5nyskptq-uc.a.run.app');
+// Staging backend, used when COACH_FORCE_STAGING is set or a request carries
+// X-Target-Environment: staging.
+define('COACH_STAGING_URL', 'https://aiqa-coach-staging-uj5nyskptq-uc.a.run.app');
 
 // Shared proxy secret — MUST match PROXY_SECRET in the backend's GCP Secret
 // Manager. When set, coach-proxy.php sends it as X-Proxy-Secret so the backend
