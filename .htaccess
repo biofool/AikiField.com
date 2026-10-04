@@ -171,6 +171,15 @@ RewriteRule ^games/exercises/index\.html$ /games/exercises/ [R=301,L]
   <FilesMatch "\.html$">
     Header set Cache-Control "public, max-age=3600"
   </FilesMatch>
+
+  # Site JSON (i18n strings/config, welcome messages, terminology) — mutable
+  # render-critical content read by locale-utils.js on every page load. A
+  # missing header let browsers/edge heuristic-cache stale strings, which
+  # reverted freshly-deployed text after first paint (issue #73). Keep a
+  # short TTL with revalidation so deploys propagate in minutes.
+  <FilesMatch "\.json$">
+    Header set Cache-Control "public, max-age=300, must-revalidate"
+  </FilesMatch>
 </IfModule>
 
 # Static assets (CSS, JS, SVG, fonts, images) — cache for 1 year with

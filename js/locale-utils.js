@@ -26,6 +26,12 @@
   var CONFIG_URL = '/data/i18n-config.json';
   var STRINGS_URL = '/data/i18n-strings/';
   var DEFAULT_LOCALE = 'en';
+  // Cache-busting version applied to every /data/ JSON fetch. These files are
+  // mutable render-critical content (issue #73): a stale-cached strings file
+  // would overwrite freshly-deployed data-i18n text after first paint. Bump
+  // this whenever the shipped strings/config change — the .htaccess 5-minute
+  // must-revalidate rule bounds staleness, this guarantees a clean break.
+  var DATA_V = 'v=20261004';
 
   var config = null;
   var currentLocale = DEFAULT_LOCALE;
@@ -37,7 +43,7 @@
   function loadConfig() {
     if (config) return Promise.resolve(config);
     if (global.fetch) {
-      return global.fetch(CONFIG_URL)
+      return global.fetch(CONFIG_URL + '?' + DATA_V)
         .then(function (r) { return r.ok ? r.json() : null; })
         .then(function (c) {
           config = c || { supportedLocales: [DEFAULT_LOCALE], rtlLocales: [], localeNames: {}, defaultCurrency: 'USD', defaultTimeZone: 'UTC', defaultMeasurementSystem: 'metric', measurementSystemOverrides: {}, colorSemantics: { overrides: {} } };
@@ -283,7 +289,7 @@
       stringsCache[loc] = {};
       return Promise.resolve(stringsCache[loc]);
     }
-    stringsLoading[loc] = global.fetch(STRINGS_URL + loc + '.json?v=2')
+    stringsLoading[loc] = global.fetch(STRINGS_URL + loc + '.json?' + DATA_V)
       .then(function (r) { return r.ok ? r.json() : null; })
       .then(function (s) {
         stringsCache[loc] = s || {};
@@ -335,7 +341,7 @@
   function loadCategoryTerms() {
     if (categoryTerms) return Promise.resolve(categoryTerms);
     if (!global.fetch) { categoryTerms = {}; return Promise.resolve(categoryTerms); }
-    return global.fetch('/data/category-terminology.json')
+    return global.fetch('/data/category-terminology.json?' + DATA_V)
       .then(function (r) { return r.ok ? r.json() : null; })
       .then(function (d) { categoryTerms = d || {}; return categoryTerms; })
       .catch(function (err) {
@@ -348,7 +354,7 @@
   function loadGranularityLabels() {
     if (granularityLabels) return Promise.resolve(granularityLabels);
     if (!global.fetch) { granularityLabels = {}; return Promise.resolve(granularityLabels); }
-    return global.fetch('/data/granularity-labels.json')
+    return global.fetch('/data/granularity-labels.json?' + DATA_V)
       .then(function (r) { return r.ok ? r.json() : null; })
       .then(function (d) { granularityLabels = d || {}; return granularityLabels; })
       .catch(function (err) {

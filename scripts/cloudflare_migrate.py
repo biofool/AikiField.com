@@ -106,7 +106,11 @@ CACHE_RULES = [
             '(starts_with(http.request.uri.path, "/beta/")) or '
             # /members is extensionless (rewritten to members.php) and embeds
             # the session token, so it needs its own explicit bypass.
-            '(starts_with(http.request.uri.path, "/members"))'
+            '(starts_with(http.request.uri.path, "/members")) or '
+            # *.json is mutable render-critical content (i18n strings/config,
+            # welcome messages) fetched by locale-utils.js on every page —
+            # never edge-cache it (issue #73).
+            '(http.request.uri.path wildcard "*.json")'
         ),
         "action": "set_cache_settings",
         "action_parameters": {"cache": False},
