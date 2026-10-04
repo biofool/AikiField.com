@@ -31,7 +31,7 @@
   // would overwrite freshly-deployed data-i18n text after first paint. Bump
   // this whenever the shipped strings/config change — the .htaccess 5-minute
   // must-revalidate rule bounds staleness, this guarantees a clean break.
-  var DATA_V = 'v=20261004';
+  var DATA_V = 'v=20261004-2';
 
   var config = null;
   var currentLocale = DEFAULT_LOCALE;
@@ -472,12 +472,19 @@
     }
     // Translatable text: data-i18n="key" replaces textContent with t(key).
     // data-i18n-params='{"name":"value"}' for {placeholder} interpolation.
+    // Guard (issue #74): data-i18n must only live on leaf elements. Setting
+    // textContent on a container deletes all its descendant markup, so
+    // elements with element children are skipped and warned about instead.
     var i18nEls = document.querySelectorAll('[data-i18n]');
     if (global.console && console.info) console.info('[AFLocale] Localizing ' + i18nEls.length + ' data-i18n elements for locale "' + currentLocale + '"');
     for (var m = 0; m < i18nEls.length; m++) {
       var tel = i18nEls[m];
       var key = tel.getAttribute('data-i18n');
       if (!key) continue;
+      if (tel.firstElementChild) {
+        if (global.console && console.warn) console.warn('[AFLocale] data-i18n on container "' + key + '" skipped — move the attribute to a leaf element.');
+        continue;
+      }
       var paramsRaw = tel.getAttribute('data-i18n-params');
       var params = paramsRaw ? JSON.parse(paramsRaw) : undefined;
       var translated = t(key, params);
