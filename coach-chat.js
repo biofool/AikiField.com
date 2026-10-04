@@ -108,7 +108,7 @@
 
     async function loadWelcomeVariation() {
         try {
-            const resp = await fetchWithTimeout("/data/welcome-messages.json", { headers: { "Accept": "application/json" } }, { timeoutMs: 3000 });
+            const resp = await fetchWithTimeout("/data/welcome-messages.json", { headers: { "Accept": "application/json" } }, { timeoutMs: 3000, slowNotice: false });
             if (!resp.ok) throw new Error("HTTP " + resp.status);
             const data = await resp.json();
             if (data && Array.isArray(data.variations) && data.variations.length > 0) {
@@ -263,7 +263,7 @@
             const resp = await fetchWithTimeout(
                 API + "/v1/link-preview?url=" + encodeURIComponent(url),
                 { headers: authHeaders(), method: "GET" },
-                { timeoutMs: 8000, retries: 0 }
+                { timeoutMs: 8000, retries: 0, slowNotice: false }
             );
             if (!resp.ok) throw new Error("link-preview returned " + resp.status);
             const data = await resp.json();
@@ -474,7 +474,7 @@
             method: "POST",
             headers: authHeaders(),
             body: JSON.stringify({ features: features }),
-        }, { timeoutMs: 5000, retries: 0 })
+        }, { timeoutMs: 5000, retries: 0, slowNotice: false })
             .then(function(r) { return r.ok ? r.json() : null; })
             .then(function(data) {
                 if (data && data.ok) {
@@ -502,7 +502,7 @@
         try {
             var flagsResp = await fetchWithTimeout(API + "/v1/admin/feature-flags", {
                 headers: authHeaders(),
-            }, { timeoutMs: 5000, retries: 0 });
+            }, { timeoutMs: 5000, retries: 0, slowNotice: false });
             if (!flagsResp.ok) return;
             var data = await flagsResp.json();
             if (data && Array.isArray(data.flags)) {
@@ -571,7 +571,7 @@
                         method: "PATCH",
                         headers: authHeaders(),
                         body: JSON.stringify({ key: feature, enabled: enabled }),
-                    }, { timeoutMs: 5000, retries: 0 });
+                    }, { timeoutMs: 5000, retries: 0, slowNotice: false });
                     if (resp.ok) {
                         var data = await resp.json().catch(function() { return null; });
                         if (data && Array.isArray(data.flags)) currentFeatureFlags = data.flags;
@@ -705,8 +705,54 @@
         }
     }
 
+    // Cold-start notice (biofool/AIRichardMoon#817). The coaching backend
+    // scales to zero, so the first request after a quiet period waits while
+    // Cloud Run starts an instance (measured 10-17s, up to ~30s). If a request
+    // is still pending after COLD_START_NOTICE_MS, show a polite notice so the
+    // wait does not look like a hang. A counter (not a flag) covers
+    // overlapping requests; the notice hides when the last one settles.
+    // Background calls with short timeouts pass { slowNotice: false }.
+    const COLD_START_NOTICE_MS = 4000;
+    const COLD_START_NOTICE_TEXT = "The coach is waking up. The first request after a quiet period can take up to 30 seconds.";
+    let coldStartPending = 0;
+    let coldStartEl = null;
+    function trackSlowRequest() {
+        let shown = false;
+        const timer = setTimeout(() => {
+            shown = true;
+            coldStartPending++;
+            if (!coldStartEl) {
+                coldStartEl = document.createElement("div");
+                coldStartEl.className = "coach-coldstart-notice";
+                coldStartEl.setAttribute("role", "status");
+                coldStartEl.setAttribute("aria-live", "polite");
+                document.body.appendChild(coldStartEl);
+            }
+            coldStartEl.hidden = false;
+            coldStartEl.textContent = COLD_START_NOTICE_TEXT;
+        }, COLD_START_NOTICE_MS);
+        return function settle() {
+            clearTimeout(timer);
+            if (!shown) return;
+            coldStartPending--;
+            if (coldStartPending === 0 && coldStartEl) {
+                coldStartEl.hidden = true;
+                coldStartEl.textContent = "";
+            }
+        };
+    }
+
+    async function fetchWithTimeout(url, opts, options = {}) {
+        const settle = options.slowNotice === false ? null : trackSlowRequest();
+        try {
+            return await fetchWithRetry(url, opts, options);
+        } finally {
+            if (settle) settle();
+        }
+    }
+
     // Fetch with timeout and bounded retry/backoff (issue #17).
-    async function fetchWithTimeout(url, opts, { timeoutMs = 35000, retries = 2, baseDelayMs = 500 } = {}) {
+    async function fetchWithRetry(url, opts, { timeoutMs = 35000, retries = 2, baseDelayMs = 500 } = {}) {
         let lastErr;
         for (let attempt = 0; attempt <= retries; attempt++) {
             const controller = new AbortController();
@@ -1311,7 +1357,7 @@
         const messagesResp = await fetchWithTimeout(
             API + "/v1/sessions/" + encodeURIComponent(sessionId) + "/messages",
             { headers: authHeaders() },
-            { timeoutMs: 8000, retries: 0 }
+            { timeoutMs: 8000, retries: 0, slowNotice: false }
         );
         if (!messagesResp.ok) throw new Error("session messages returned " + messagesResp.status);
         const messageData = await messagesResp.json();
@@ -1351,7 +1397,7 @@
             const recentResp = await fetchWithTimeout(
                 API + "/v1/sessions/recent?limit=20",
                 { headers: authHeaders() },
-                { timeoutMs: 8000, retries: 0 }
+                { timeoutMs: 8000, retries: 0, slowNotice: false }
             );
             if (!recentResp.ok) throw new Error("recent sessions returned " + recentResp.status);
             const recentData = await recentResp.json();
@@ -1701,7 +1747,7 @@
                         const recentResp = await fetchWithTimeout(
                             API + "/v1/sessions/recent?limit=20",
                             { headers: authHeaders() },
-                            { timeoutMs: 5000, retries: 0 }
+                            { timeoutMs: 5000, retries: 0, slowNotice: false }
                         );
                         if (recentResp.ok) {
                             const recentData = await recentResp.json();
@@ -1877,7 +1923,7 @@
     // Use a short timeout (5s, no retries) to minimize the blank-page window.
     (async function verifySessionOnLoad() {
         try {
-            const resp = await fetchWithTimeout(API + "/v1/auth/me", { headers: authHeaders() }, { timeoutMs: 5000, retries: 0 });
+            const resp = await fetchWithTimeout(API + "/v1/auth/me", { headers: authHeaders() }, { timeoutMs: 5000, retries: 0, slowNotice: false });
             if (resp.status === 401) {
                 console.warn("coach-chat: session expired on page load — redirecting to login");
                 window.location.href = '/login.php?error=session_expired&next=' + encodeURIComponent(window.location.pathname);

@@ -1969,3 +1969,30 @@ main .coach-shell.coach-shell--chat:has(#coach-chat) {
         min-height: 52px;
     }
 }
+
+/* Cold-start notice (biofool/AIRichardMoon#817) — created by fetchWithTimeout
+   in coach-login.js / coach-chat.js when a backend request is still pending
+   after a few seconds. Top-anchored so it never covers the chat composer. */
+.coach-coldstart-notice {
+    position: fixed;
+    top: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    box-sizing: border-box;
+    width: max-content;
+    max-width: calc(100vw - 2rem);
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--accent-light);
+    border-radius: 0.5rem;
+    background: var(--secondary-bg, #fff);
+    color: var(--text-primary, inherit);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    font-size: 0.85rem;
+    line-height: 1.4;
+    text-align: center;
+}
+
+.coach-coldstart-notice[hidden] {
+    display: none;
+}

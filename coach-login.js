@@ -200,8 +200,54 @@
         return null;
     }
 
+    // Cold-start notice (biofool/AIRichardMoon#817). The coaching backend
+    // scales to zero, so the first request after a quiet period waits while
+    // Cloud Run starts an instance (measured 10-17s, up to ~30s). If a request
+    // is still pending after COLD_START_NOTICE_MS, show a polite notice so the
+    // wait does not look like a hang. A counter (not a flag) covers
+    // overlapping requests; the notice hides when the last one settles.
+    // Background calls with short timeouts pass { slowNotice: false }.
+    const COLD_START_NOTICE_MS = 4000;
+    const COLD_START_NOTICE_TEXT = "The coach is waking up. The first request after a quiet period can take up to 30 seconds.";
+    let coldStartPending = 0;
+    let coldStartEl = null;
+    function trackSlowRequest() {
+        let shown = false;
+        const timer = setTimeout(() => {
+            shown = true;
+            coldStartPending++;
+            if (!coldStartEl) {
+                coldStartEl = document.createElement("div");
+                coldStartEl.className = "coach-coldstart-notice";
+                coldStartEl.setAttribute("role", "status");
+                coldStartEl.setAttribute("aria-live", "polite");
+                document.body.appendChild(coldStartEl);
+            }
+            coldStartEl.hidden = false;
+            coldStartEl.textContent = COLD_START_NOTICE_TEXT;
+        }, COLD_START_NOTICE_MS);
+        return function settle() {
+            clearTimeout(timer);
+            if (!shown) return;
+            coldStartPending--;
+            if (coldStartPending === 0 && coldStartEl) {
+                coldStartEl.hidden = true;
+                coldStartEl.textContent = "";
+            }
+        };
+    }
+
+    async function fetchWithTimeout(url, opts, options = {}) {
+        const settle = options.slowNotice === false ? null : trackSlowRequest();
+        try {
+            return await fetchWithRetry(url, opts, options);
+        } finally {
+            if (settle) settle();
+        }
+    }
+
     // Fetch with timeout and bounded retry/backoff (issue #17).
-    async function fetchWithTimeout(url, opts, { timeoutMs = 35000, retries = 2, baseDelayMs = 500 } = {}) {
+    async function fetchWithRetry(url, opts, { timeoutMs = 35000, retries = 2, baseDelayMs = 500 } = {}) {
         let lastErr;
         for (let attempt = 0; attempt <= retries; attempt++) {
             const controller = new AbortController();

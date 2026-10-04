@@ -243,7 +243,7 @@ $coachLoginUrl = $_SERVER['SCRIPT_NAME'] ?? '/login.php';
   <link rel="preload" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Public+Sans:wght@400;600;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <noscript><link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Public+Sans:wght@400;600;700&display=swap" rel="stylesheet"></noscript>
   <link rel="stylesheet" href="css/redesign.css?v=20261003">
-  <link rel="stylesheet" href="coach-auth.css">
+  <link rel="stylesheet" href="coach-auth.css?v=20261005">
   <?php if (defined('TURNSTILE_SITE_KEY') && TURNSTILE_SITE_KEY): ?>
   <script>
     // Turnstile callbacks must be defined BEFORE coach-login.js loads.
@@ -623,7 +623,7 @@ window.COACH_LOGIN_URL = <?= json_encode($coachLoginUrl) ?>;
 window.COACH_LOGOUT_URL = <?= json_encode($coachLoginUrl) ?>;
 </script>
 <script src="js/locale-utils.js" defer></script>
-<script src="coach-login.js" defer></script>
+<script src="coach-login.js?v=20261005" defer></script>
 
 <script src="/js/nav-menu.js?v=20261002" defer></script>
 </body>

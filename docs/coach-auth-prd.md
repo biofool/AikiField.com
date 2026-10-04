@@ -351,6 +351,20 @@ AikiField's `coach-proxy.php` forwards `CF-Connecting-IP` and
 X-Forwarded-For so the backend rate-limits per real visitor IP rather than
 the shared proxy IP.
 
+### Cold-start notice (biofool/AIRichardMoon#817)
+
+The backend scales to zero, so the first request after a quiet period can
+wait 10-30s for a Cloud Run cold start. `coach-login.js` and `coach-chat.js`
+share the same `fetchWithTimeout` helper as quantumaikido.com (keep the two
+copies identical): when a request is still pending after 4s it shows a polite
+top-of-page `.coach-coldstart-notice` ("The coach is waking up. The first
+request after a quiet period can take up to 30 seconds.") and hides it when
+the last pending request settles. Background calls with short timeouts pass
+`{ slowNotice: false }`. Styles: `coach-auth.css` (login) and
+`css/coach-chat.css` (members). Not covered: `login.php`'s server-side
+`check-session` curl (10s timeout) — no client notice can run there; the
+preceding `/v1/auth/verify` call normally wakes the instance first.
+
 ### Passkey (WebAuthn) login — issue #650
 
 A "Sign in with passkey" button (`#coach-passkey-btn`) appears below the login status region on `login.php`, shown only when `window.PublicKeyCredential` is available (graceful degradation on unsupported browsers). On click:
