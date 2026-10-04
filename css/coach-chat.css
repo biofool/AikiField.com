@@ -1972,7 +1972,8 @@ main .coach-shell.coach-shell--chat:has(#coach-chat) {
 
 /* Cold-start notice (biofool/AIRichardMoon#817) — created by fetchWithTimeout
    in coach-login.js / coach-chat.js when a backend request is still pending
-   after a few seconds. Top-anchored so it never covers the chat composer. */
+   after a few seconds (backend cold start). Top-anchored so it never covers
+   the chat composer. The progress bar is time-based; JS sets its width. */
 .coach-coldstart-notice {
     position: fixed;
     top: 1rem;
@@ -1981,6 +1982,7 @@ main .coach-shell.coach-shell--chat:has(#coach-chat) {
     z-index: 1000;
     box-sizing: border-box;
     width: max-content;
+    min-width: min(20rem, calc(100vw - 2rem));
     max-width: calc(100vw - 2rem);
     padding: 0.75rem 1rem;
     border: 1px solid var(--accent-light);
@@ -1995,4 +1997,29 @@ main .coach-shell.coach-shell--chat:has(#coach-chat) {
 
 .coach-coldstart-notice[hidden] {
     display: none;
+}
+
+.coach-coldstart-text {
+    margin: 0 0 0.5rem;
+}
+
+.coach-coldstart-bar {
+    height: 0.375rem;
+    border-radius: 999px;
+    background: rgba(127, 127, 127, 0.25);
+    overflow: hidden;
+}
+
+.coach-coldstart-fill {
+    width: 0;
+    height: 100%;
+    border-radius: inherit;
+    background: var(--accent-light);
+    transition: width 0.25s linear;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .coach-coldstart-fill {
+        transition: none;
+    }
 }

@@ -706,39 +706,97 @@
     }
 
     // Cold-start notice (biofool/AIRichardMoon#817). The coaching backend
-    // scales to zero, so the first request after a quiet period waits while
-    // Cloud Run starts an instance (measured 10-17s, up to ~30s). If a request
-    // is still pending after COLD_START_NOTICE_MS, show a polite notice so the
-    // wait does not look like a hang. A counter (not a flag) covers
+    // scales to zero with no keep-warm job (owner decision, 2026-10-04), so
+    // the first request after a quiet period waits while Cloud Run starts an
+    // instance (measured 10-17s, up to ~30s). If a request is still pending
+    // after COLD_START_NOTICE_MS, show a polite notice with a progress bar so
+    // the wait does not look like a hang. A counter (not a flag) covers
     // overlapping requests; the notice hides when the last one settles.
     // Background calls with short timeouts pass { slowNotice: false }.
+    //
+    // The bar is time-based, not real progress — Cloud Run reports none. It
+    // eases toward COLD_START_BAR_CAP so it never claims to be finished, then
+    // fills to 100% when the request settles.
     const COLD_START_NOTICE_MS = 4000;
-    const COLD_START_NOTICE_TEXT = "The coach is waking up. The first request after a quiet period can take up to 30 seconds.";
+    const COLD_START_BAR_TAU_MS = 8000;
+    const COLD_START_BAR_CAP = 95;
+    const COLD_START_TICK_MS = 250;
+    const COLD_START_DONE_HOLD_MS = 400;
+    const COLD_START_NOTICE_TEXT = "The coach is starting up, so there is a slight delay. This usually takes 10 to 20 seconds.";
     let coldStartPending = 0;
     let coldStartEl = null;
+    let coldStartText = null;
+    let coldStartBar = null;
+    let coldStartFill = null;
+    let coldStartTicker = null;
+    let coldStartHideTimer = null;
+
+    function coldStartNotice() {
+        if (!coldStartEl) {
+            coldStartEl = document.createElement("div");
+            coldStartEl.className = "coach-coldstart-notice";
+            coldStartEl.setAttribute("role", "status");
+            coldStartEl.setAttribute("aria-live", "polite");
+            coldStartEl.hidden = true;
+            coldStartText = document.createElement("p");
+            coldStartText.className = "coach-coldstart-text";
+            coldStartBar = document.createElement("div");
+            coldStartBar.className = "coach-coldstart-bar";
+            coldStartBar.setAttribute("role", "progressbar");
+            coldStartBar.setAttribute("aria-label", "Starting the coach");
+            coldStartBar.setAttribute("aria-valuemin", "0");
+            coldStartBar.setAttribute("aria-valuemax", "100");
+            coldStartFill = document.createElement("div");
+            coldStartFill.className = "coach-coldstart-fill";
+            coldStartBar.appendChild(coldStartFill);
+            coldStartEl.append(coldStartText, coldStartBar);
+            document.body.appendChild(coldStartEl);
+        }
+        return coldStartEl;
+    }
+
+    function setColdStartProgress(pct) {
+        const value = Math.round(pct);
+        coldStartFill.style.width = value + "%";
+        coldStartBar.setAttribute("aria-valuenow", String(value));
+    }
+
+    function showColdStartNotice(startedAt) {
+        const el = coldStartNotice();
+        clearTimeout(coldStartHideTimer);
+        el.hidden = false;
+        coldStartText.textContent = COLD_START_NOTICE_TEXT;
+        const tick = () => {
+            const elapsed = Date.now() - startedAt;
+            setColdStartProgress(COLD_START_BAR_CAP * (1 - Math.exp(-elapsed / COLD_START_BAR_TAU_MS)));
+        };
+        tick();
+        coldStartTicker = setInterval(tick, COLD_START_TICK_MS);
+    }
+
+    function hideColdStartNotice() {
+        clearInterval(coldStartTicker);
+        coldStartTicker = null;
+        setColdStartProgress(100);
+        coldStartHideTimer = setTimeout(() => {
+            coldStartEl.hidden = true;
+            coldStartText.textContent = "";
+        }, COLD_START_DONE_HOLD_MS);
+    }
+
     function trackSlowRequest() {
+        const startedAt = Date.now();
         let shown = false;
         const timer = setTimeout(() => {
             shown = true;
             coldStartPending++;
-            if (!coldStartEl) {
-                coldStartEl = document.createElement("div");
-                coldStartEl.className = "coach-coldstart-notice";
-                coldStartEl.setAttribute("role", "status");
-                coldStartEl.setAttribute("aria-live", "polite");
-                document.body.appendChild(coldStartEl);
-            }
-            coldStartEl.hidden = false;
-            coldStartEl.textContent = COLD_START_NOTICE_TEXT;
+            if (!coldStartTicker) showColdStartNotice(startedAt);
         }, COLD_START_NOTICE_MS);
         return function settle() {
             clearTimeout(timer);
             if (!shown) return;
             coldStartPending--;
-            if (coldStartPending === 0 && coldStartEl) {
-                coldStartEl.hidden = true;
-                coldStartEl.textContent = "";
-            }
+            if (coldStartPending === 0) hideColdStartNotice();
         };
     }
 

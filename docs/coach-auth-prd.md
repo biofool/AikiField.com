@@ -363,9 +363,12 @@ The backend scales to zero, so the first request after a quiet period can
 wait 10-30s for a Cloud Run cold start. `coach-login.js` and `coach-chat.js`
 share the same `fetchWithTimeout` helper as quantumaikido.com (keep the two
 copies identical): when a request is still pending after 4s it shows a polite
-top-of-page `.coach-coldstart-notice` ("The coach is waking up. The first
-request after a quiet period can take up to 30 seconds.") and hides it when
-the last pending request settles. Background calls with short timeouts pass
+top-of-page `.coach-coldstart-notice` ("The coach is starting up, so there is
+a slight delay. This usually takes 10 to 20 seconds.") with a time-based
+`role="progressbar"` that eases toward 95% and fills to 100% when the request
+settles, and hides it when the last pending request settles. The backend has
+no keep-warm job (paused by owner decision, 2026-10-04), so this notice is the
+only cold-start mitigation. Background calls with short timeouts pass
 `{ slowNotice: false }`. Styles: `coach-auth.css` (login) and
 `css/coach-chat.css` (members). Not covered: `login.php`'s server-side
 `check-session` curl (10s timeout) — no client notice can run there; the
