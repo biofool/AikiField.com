@@ -1,10 +1,9 @@
 // Verbal Aikido game (aikifield.com/games/verbal-aikido/) —
 // Story/Discovery/Practice/Community/Extras/Profile e2e.
 //
-// The game is public (promoted from the gated /for-review/ area to the
-// Digital Experience menu). To run: serve this repo on a PHP server and run
-// this spec against that base URL. It is no longer part of the
-// quantumaikido.com Playwright suite.
+// The game is login-gated (issue #71 — all Digital Experience games require
+// a session; the public previews live under /digital-experience/). Each test
+// signs in via browserLogin() before visiting the game.
 //
 // Covers the automatable acceptance criteria of tickets #299–#306:
 // branching story + anger meter, Discovery unlock/quiz gating, Practice
@@ -16,6 +15,7 @@
 // Run with: bash tests/e2e/run.sh va-game
 
 const { test, expect } = require('@playwright/test');
+const { browserLogin } = require('../helpers');
 
 const GAME = '/games/verbal-aikido/';
 const STORAGE_KEY = 'va-game-progress';
@@ -43,6 +43,11 @@ async function savedAgeGate(page) {
 }
 
 test.describe.serial('VA game journey', () => {
+  // Each test gets a fresh browser context, so sign in once per test.
+  test.beforeEach(async ({ page }) => {
+    await browserLogin(page);
+  });
+
   test('loads with six mode tabs and no console errors', async ({ page }) => {
     const errors = [];
     page.on('console', (m) => { if (m.type() === 'error') errors.push(m.text()); });
