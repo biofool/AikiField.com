@@ -136,74 +136,19 @@
   <section class="af-section">
     <div class="af-container">
       <h2 class="af-h2" id="projects-heading">Projects completed</h2>
-      <p class="af-lead af-lead--wide">Seven systems designed and built by AikiField, running in production today. Select a project from the table to view its details &mdash; one at a time.</p>
+      <p class="af-lead af-lead--wide">Seven systems designed and built by AikiField, running in production today. Select a technology to view its details &mdash; one at a time.</p>
 
       <!-- ============================================================ -->
-      <!-- PROJECT SELECTOR TABLE — click a row to show that project    -->
+      <!-- PROJECT SELECTOR PILLS — pick one to show that project       -->
       <!-- ============================================================ -->
-      <div class="af-proj-table-wrap">
-        <table class="af-proj-table" id="project-table" aria-describedby="projects-heading">
-          <thead>
-            <tr>
-              <th scope="col" class="af-proj-table__num">#</th>
-              <th scope="col">Project</th>
-              <th scope="col">Category</th>
-              <th scope="col" class="af-proj-table__tech">Tech stack</th>
-              <th scope="col" class="af-proj-table__view"><span class="af-sr-only">View</span></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr class="af-proj-table__row" data-project="1" tabindex="0" role="button" aria-pressed="true" aria-controls="project-1">
-              <td class="af-proj-table__num">1</td>
-              <td class="af-proj-table__name">Tech Support and Security AI</td>
-              <td>Support AI</td>
-              <td class="af-proj-table__tech">Python &middot; FastAPI &middot; Gemini &middot; Cloud Run &middot; Firestore</td>
-              <td class="af-proj-table__view" aria-hidden="true">&rarr;</td>
-            </tr>
-            <tr class="af-proj-table__row" data-project="2" tabindex="0" role="button" aria-pressed="false" aria-controls="project-2">
-              <td class="af-proj-table__num">2</td>
-              <td class="af-proj-table__name">World Studio Finder</td>
-              <td>Outreach Pipeline</td>
-              <td class="af-proj-table__tech">Python &middot; Playwright &middot; Flask &middot; Places API &middot; Hunter.io</td>
-              <td class="af-proj-table__view" aria-hidden="true">&rarr;</td>
-            </tr>
-            <tr class="af-proj-table__row" data-project="3" tabindex="0" role="button" aria-pressed="false" aria-controls="project-3">
-              <td class="af-proj-table__num">3</td>
-              <td class="af-proj-table__name">MultiCloud-MultiPass</td>
-              <td>Cloud Management</td>
-              <td class="af-proj-table__tech">Python &middot; FastAPI &middot; Cloud Run &middot; Firestore &middot; BigQuery</td>
-              <td class="af-proj-table__view" aria-hidden="true">&rarr;</td>
-            </tr>
-            <tr class="af-proj-table__row" data-project="4" tabindex="0" role="button" aria-pressed="false" aria-controls="project-4">
-              <td class="af-proj-table__num">4</td>
-              <td class="af-proj-table__name">ChaosEngine</td>
-              <td>Resilience Engineering</td>
-              <td class="af-proj-table__tech">Go &middot; Python/Bash &middot; AWS SDK &middot; Docker</td>
-              <td class="af-proj-table__view" aria-hidden="true">&rarr;</td>
-            </tr>
-            <tr class="af-proj-table__row" data-project="5" tabindex="0" role="button" aria-pressed="false" aria-controls="project-5">
-              <td class="af-proj-table__num">5</td>
-              <td class="af-proj-table__name">ClipQuotes</td>
-              <td>Media Intelligence</td>
-              <td class="af-proj-table__tech">Python &middot; Whisper &middot; pyannote &middot; OpenCV &middot; FFmpeg</td>
-              <td class="af-proj-table__view" aria-hidden="true">&rarr;</td>
-            </tr>
-            <tr class="af-proj-table__row" data-project="6" tabindex="0" role="button" aria-pressed="false" aria-controls="project-6">
-              <td class="af-proj-table__num">6</td>
-              <td class="af-proj-table__name">Voice Synthesis Benchmarking</td>
-              <td>AI Research & Governance</td>
-              <td class="af-proj-table__tech">Python &middot; PyTorch &middot; torchaudio &middot; Hugging Face</td>
-              <td class="af-proj-table__view" aria-hidden="true">&rarr;</td>
-            </tr>
-            <tr class="af-proj-table__row" data-project="7" tabindex="0" role="button" aria-pressed="false" aria-controls="project-7">
-              <td class="af-proj-table__num">7</td>
-              <td class="af-proj-table__name">Story Gatherer</td>
-              <td>Knowledge Graph</td>
-              <td class="af-proj-table__tech">Python &middot; SQLite &middot; Flask &middot; Gemini &middot; Cloud Run</td>
-              <td class="af-proj-table__view" aria-hidden="true">&rarr;</td>
-            </tr>
-          </tbody>
-        </table>
+      <div class="af-proj-pills" id="project-pills" role="group" aria-label="Select a project">
+        <button type="button" class="af-proj-pills__pill" data-project="1" aria-pressed="true" aria-controls="project-1">Tech Support and Security AI</button>
+        <button type="button" class="af-proj-pills__pill" data-project="2" aria-pressed="false" aria-controls="project-2">World Studio Finder</button>
+        <button type="button" class="af-proj-pills__pill" data-project="3" aria-pressed="false" aria-controls="project-3">MultiCloud-MultiPass</button>
+        <button type="button" class="af-proj-pills__pill" data-project="4" aria-pressed="false" aria-controls="project-4">ChaosEngine</button>
+        <button type="button" class="af-proj-pills__pill" data-project="5" aria-pressed="false" aria-controls="project-5">ClipQuotes</button>
+        <button type="button" class="af-proj-pills__pill" data-project="6" aria-pressed="false" aria-controls="project-6">Voice Synthesis Benchmarking</button>
+        <button type="button" class="af-proj-pills__pill" data-project="7" aria-pressed="false" aria-controls="project-7">Story Gatherer</button>
       </div>
 
       <div class="af-projects-split af-projects-split--full">
@@ -213,8 +158,8 @@
 
           <!-- PROJECT 1: TECH SUPPORT AND SECURITY AI -->
           <article class="af-svc af-svc--flagship" id="project-1" data-project="1">
+            <p class="af-svc__category">Support AI</p>
             <div class="af-svc__tag-row">
-              <span class="af-svc__tag af-svc__tag--flagship">Support AI</span>
               <span class="af-svc__tag af-svc__tag--built">Built by AikiField</span>
             </div>
             <h2 class="af-svc__title">Tech Support and Security AI</h2>
@@ -248,8 +193,8 @@
 
           <!-- PROJECT 2: STUDIO DISCOVERY -->
           <article class="af-svc" id="project-2" data-project="2" hidden>
+            <p class="af-svc__category">Outreach Pipeline</p>
             <div class="af-svc__tag-row">
-              <span class="af-svc__tag">Outreach Pipeline</span>
               <span class="af-svc__tag af-svc__tag--built">Built by AikiField</span>
             </div>
             <h2 class="af-svc__title">World Studio Finder &mdash; Global Studio Discovery</h2>
@@ -281,8 +226,8 @@
 
           <!-- PROJECT 3: MULTICLOUD-MULTIPASS -->
           <article class="af-svc" id="project-3" data-project="3" hidden>
+            <p class="af-svc__category">Cloud Management</p>
             <div class="af-svc__tag-row">
-              <span class="af-svc__tag">Cloud Management</span>
               <span class="af-svc__tag af-svc__tag--built">Built by AikiField</span>
             </div>
             <h2 class="af-svc__title">MultiCloud-MultiPass &mdash; Multi-Cloud Cost Kill Switch</h2>
@@ -309,8 +254,8 @@
 
           <!-- PROJECT 4: CHAOSENGINE -->
           <article class="af-svc" id="project-4" data-project="4" hidden>
+            <p class="af-svc__category">Resilience Engineering</p>
             <div class="af-svc__tag-row">
-              <span class="af-svc__tag">Resilience Engineering</span>
               <span class="af-svc__tag af-svc__tag--built">Built by AikiField</span>
             </div>
             <h2 class="af-svc__title">ChaosEngine &mdash; Controlled Failure Injection for Security Resilience</h2>
@@ -336,8 +281,8 @@
 
           <!-- PROJECT 5: CLIPQUOTES -->
           <article class="af-svc" id="project-5" data-project="5" hidden>
+            <p class="af-svc__category">Media Intelligence</p>
             <div class="af-svc__tag-row">
-              <span class="af-svc__tag">Media Intelligence</span>
               <span class="af-svc__tag af-svc__tag--built">Built by AikiField</span>
             </div>
             <h2 class="af-svc__title">ClipQuotes &mdash; Automated Evidence &amp; Communications Extraction</h2>
@@ -363,8 +308,8 @@
 
           <!-- PROJECT 6: VOICE SYNTHESIS BENCHMARKING -->
           <article class="af-svc" id="project-6" data-project="6" hidden>
+            <p class="af-svc__category">AI Research &amp; Governance</p>
             <div class="af-svc__tag-row">
-              <span class="af-svc__tag">AI Research &amp; Governance</span>
               <span class="af-svc__tag af-svc__tag--built">Built by AikiField</span>
             </div>
             <h2 class="af-svc__title">Voice Synthesis Benchmarking &mdash; Deepfake-Aware AI Governance</h2>
@@ -390,8 +335,8 @@
 
           <!-- PROJECT 7: STORY GATHERER -->
           <article class="af-svc" id="project-7" data-project="7" hidden>
+            <p class="af-svc__category">Knowledge Graph</p>
             <div class="af-svc__tag-row">
-              <span class="af-svc__tag">Knowledge Graph</span>
               <span class="af-svc__tag af-svc__tag--built">Built by AikiField</span>
             </div>
             <h2 class="af-svc__title">Story Gatherer &mdash; Provenance-First Knowledge Graphs</h2>
@@ -542,8 +487,8 @@
   <div class="af-footer__legal">&copy; 2026 AikiField. All rights reserved.</div>
 </footer>
 
-<script src="/js/locale-utils.js?v=20260818i18n"></script>
-<script src="/js/language-selector.js?v=20260818i18n"></script>
+<script src="/js/locale-utils.js?v=20261004-2"></script>
+<script src="/js/language-selector.js?v=20261004-2"></script>
 <script>
   // Toggle the "See it live" invitation dropdown from the page-header pill.
   // The pill is a <button> that shows/hides the invitation panel below it.
@@ -571,18 +516,19 @@
     });
   })();
 
-  // Project selector table — click a row to show that project's detail.
+  // Project selector pills — pick a pill to show that project's detail.
   // Only one project detail card is visible at a time; the rest are hidden.
   (function () {
-    var rows = document.querySelectorAll('.af-proj-table__row');
+    var pills = document.querySelectorAll('.af-proj-pills__pill');
     var panels = document.querySelectorAll('.af-projects-split__projects > article');
-    if (!rows.length || !panels.length) return;
+    if (!pills.length || !panels.length) return;
+    var pillList = Array.prototype.slice.call(pills);
 
     function selectProject(num) {
-      // Update row states
-      rows.forEach(function (row) {
-        var isMatch = row.getAttribute('data-project') === String(num);
-        row.setAttribute('aria-pressed', isMatch ? 'true' : 'false');
+      // Update pill states
+      pillList.forEach(function (pill) {
+        var isMatch = pill.getAttribute('data-project') === String(num);
+        pill.setAttribute('aria-pressed', isMatch ? 'true' : 'false');
       });
       // Show only the matching panel
       panels.forEach(function (panel) {
@@ -594,38 +540,31 @@
       }
     }
 
-    rows.forEach(function (row) {
-      var num = row.getAttribute('data-project');
-      row.addEventListener('click', function () { selectProject(num); });
-      row.addEventListener('keydown', function (e) {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          selectProject(num);
-        }
-      });
+    pillList.forEach(function (pill) {
+      var num = pill.getAttribute('data-project');
+      pill.addEventListener('click', function () { selectProject(num); });
     });
 
-    // Arrow-key navigation between rows (up/down)
-    var table = document.getElementById('project-table');
-    if (table) {
-      table.addEventListener('keydown', function (e) {
+    // Arrow-key navigation between pills (left/right, plus up/down)
+    var bar = document.getElementById('project-pills');
+    if (bar) {
+      bar.addEventListener('keydown', function (e) {
         var focused = document.activeElement;
-        if (!focused || !focused.classList.contains('af-proj-table__row')) return;
-        var rowList = Array.prototype.slice.call(rows);
-        var idx = rowList.indexOf(focused);
+        if (!focused || !focused.classList.contains('af-proj-pills__pill')) return;
+        var idx = pillList.indexOf(focused);
         if (idx === -1) return;
-        if (e.key === 'ArrowDown' && idx < rowList.length - 1) {
+        if ((e.key === 'ArrowRight' || e.key === 'ArrowDown') && idx < pillList.length - 1) {
           e.preventDefault();
-          rowList[idx + 1].focus();
-        } else if (e.key === 'ArrowUp' && idx > 0) {
+          pillList[idx + 1].focus();
+        } else if ((e.key === 'ArrowLeft' || e.key === 'ArrowUp') && idx > 0) {
           e.preventDefault();
-          rowList[idx - 1].focus();
+          pillList[idx - 1].focus();
         } else if (e.key === 'Home') {
           e.preventDefault();
-          rowList[0].focus();
+          pillList[0].focus();
         } else if (e.key === 'End') {
           e.preventDefault();
-          rowList[rowList.length - 1].focus();
+          pillList[pillList.length - 1].focus();
         }
       });
     }

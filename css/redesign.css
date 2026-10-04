@@ -575,85 +575,51 @@ a.af-card:hover .af-card__arrow { text-decoration: underline; }
   white-space: nowrap; border: 0;
 }
 
-/* ---------- Project selector table (projects.php) ---------- */
-/* A clickable table of completed projects; selecting a row shows that
-   project's detail card below, one at a time. */
-.af-proj-table-wrap {
+/* ---------- Project selector pills (projects.php) ---------- */
+/* A wrapping row of pills, one per completed project; selecting a pill shows
+   that project's detail card below, one at a time. The pressed pill is lit
+   with the primary fill plus a mint glow (issue #75). */
+.af-proj-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
   margin: 0 0 32px;
-  /* position:relative so absolutely-positioned descendants (e.g. .af-sr-only
-     inside the table header) are clipped by this scroller instead of escaping
-     to the page's containing block and widening the document (issue found in
-     the overflow audit: a 1px sr-only span at x=503 created a 184px horizontal
-     scrollbar on 320px viewports). */
-  position: relative;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
 }
-.af-proj-table {
-  width: 100%;
-  border-collapse: collapse;
+.af-proj-pills__pill {
+  font-family: var(--af-sans);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--af-text);
   background: var(--af-white);
   border: 1px solid var(--af-border);
-  border-radius: 16px;
-  overflow: hidden;
-  font-size: 16px;
+  border-radius: 999px;
+  padding: 10px 18px;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
 }
-.af-proj-table thead th {
-  text-align: left;
-  font-family: var(--af-sans);
+.af-proj-pills__pill:hover {
+  border-color: var(--af-primary);
+  color: var(--af-primary);
+}
+.af-proj-pills__pill:focus-visible {
+  outline: 2px solid var(--af-primary);
+  outline-offset: 2px;
+}
+.af-proj-pills__pill[aria-pressed="true"] {
+  background: var(--af-primary);
+  border-color: var(--af-primary);
+  color: #fff;
+  box-shadow: 0 0 0 3px var(--af-bg), 0 4px 16px rgba(78, 192, 160, 0.5);
+}
+
+/* Category kicker — heads each project description card (issue #75). */
+.af-svc__category {
   font-size: 13px;
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--af-gold);
-  padding: 16px 20px;
-  background: var(--af-bg);
-  border-bottom: 1px solid var(--af-border);
-  white-space: nowrap;
-}
-.af-proj-table__row {
-  cursor: pointer;
-  transition: background 0.15s ease;
-  border-bottom: 1px solid var(--af-border);
-}
-.af-proj-table__row:last-child { border-bottom: none; }
-.af-proj-table__row td {
-  padding: 18px 20px;
-  color: var(--af-text);
-  vertical-align: middle;
-}
-.af-proj-table__row:hover { background: var(--af-hover-bg); }
-.af-proj-table__row:focus-visible {
-  outline: 2px solid var(--af-primary);
-  outline-offset: -2px;
-}
-.af-proj-table__row[aria-pressed="true"] {
-  background: var(--af-primary);
-}
-.af-proj-table__row[aria-pressed="true"] td { color: #fff; }
-.af-proj-table__row[aria-pressed="true"] .af-proj-table__view { color: var(--af-mint); }
-.af-proj-table__num {
-  width: 44px;
-  text-align: center;
-  font-weight: 700;
-  color: var(--af-gold);
-  font-variant-numeric: tabular-nums;
-}
-.af-proj-table__row[aria-pressed="true"] .af-proj-table__num { color: var(--af-mint); }
-.af-proj-table__name { font-weight: 600; color: var(--af-ink); white-space: nowrap; }
-.af-proj-table__row[aria-pressed="true"] .af-proj-table__name { color: #fff; }
-.af-proj-table__tech { font-size: 15px; color: var(--af-muted); }
-.af-proj-table__row[aria-pressed="true"] .af-proj-table__tech { color: var(--af-dark-card-text); }
-.af-proj-table__view {
-  width: 40px;
-  text-align: center;
-  font-size: 20px;
-  color: var(--af-border);
-}
-.af-proj-table__row:hover .af-proj-table__view { color: var(--af-primary); }
-@media (max-width: 720px) {
-  .af-proj-table__tech { display: none; }
-  .af-proj-table thead th.af-proj-table__tech { display: none; }
+  margin-bottom: 10px;
 }
 
 /* ---------- Invitation dropdown panel (projects.php page header) ---------- */
