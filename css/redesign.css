@@ -880,6 +880,7 @@ a.af-card:hover .af-card__arrow { text-decoration: underline; }
   padding: 88px 0 72px;
 }
 .af-page-header--green .af-eyebrow { color: var(--af-mint); }
+.af-page-header .af-eyebrow { margin-bottom: 10px; }
 .af-page-header--green .af-h1 { color: #fff; }
 .af-page-header--green .af-lead,
 .af-page-header--green .af-page-header__lead { color: var(--af-dark-card-text); }

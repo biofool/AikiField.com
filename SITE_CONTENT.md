@@ -626,8 +626,8 @@ The composure and curiosity to adapt to emerging threats and AI risk.
 **Meta description:** Production AI and data pipelines designed and built by AikiField — AI coaching, studio outreach, multi-cloud cost control, resilience engineering, media intelligence, AI governance, and knowledge-graph research. The same engineering capability is available to your organization, tailored to fit your needs.
 
 ### Hero
-- Eyebrow: Built by AikiField
-- Title: Technology we built — ready to fit your needs.
+- Eyebrow: Bespoke Custom Software
+- Title: Bespoke Software, Designed by AikiField Written by AI
 - Lead: AikiField designs, builds, and operates the systems below — production AI and data pipelines running today, not demos or slide-ware. The same engineering capability, cost discipline, and leadership judgment that built them is available to your organization, tailored to fit your security program and your stage.
 
 ### Project 1: Tech Support and Security AI

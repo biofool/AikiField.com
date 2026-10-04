@@ -104,8 +104,8 @@
   <!-- ============================================================ -->
   <section class="af-page-header af-page-header--tight af-page-header--green">
     <div class="af-container">
-      <p class="af-eyebrow">Built by AikiField</p>
-      <h1 class="af-h1">Technology we built &mdash; ready to fit your needs.</h1>
+      <p class="af-eyebrow">Bespoke Custom Software</p>
+      <h1 class="af-h1">Bespoke Software, Designed by AikiField Written by AI</h1>
       <p class="af-lead af-lead--wide af-page-header__lead">AikiField designs, builds, and operates the systems below &mdash; production AI and data pipelines running today, not demos or slide-ware. The same engineering capability, cost discipline, and leadership judgment that built them is available to your organization, tailored to fit your security program and your stage.</p>
       <button type="button" id="see-it-live-toggle" class="af-page-header__chat-cta" aria-expanded="false" aria-controls="see-it-live-panel">
         <span class="af-page-header__chat-cta-badge">Free</span>
