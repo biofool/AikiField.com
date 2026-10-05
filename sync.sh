@@ -11,8 +11,8 @@ fi
 #  Pushes the site to public_html/aikifield.com/ on peec.biz
 #
 #  Two deploy targets share this script:
-#    ./sync.sh deploy          -> prod    (public_html/aikifield.peec.biz/ — aikifield.com + aikifield.peec.biz)
-#    ./sync.sh staging deploy  -> staging (public_html/aikifield-staging/ — staging.peec.biz)
+#    ./sync.sh deploy          -> prod    (public_html/aikifield.peec.biz/ — aikifield.com only)
+#    ./sync.sh staging deploy  -> staging (public_html/aikifield-staging/ — staging.peec.biz + aikifield.peec.biz)
 #  "staging"/"prod" are recognized anywhere in the argument list (see
 #  KNOWN_REMOTES below) — no separate flag needed. Omitting a remote name
 #  always defaults to prod, matching the script's historical behavior.
@@ -143,17 +143,22 @@ SSH_KEY="$HOME/.ssh/quantumaikido_ed25519"
 # and is also used to keep staging-only files out of the prod sync — see the
 # coach-config.staging.php exclude below.
 KNOWN_REMOTES=(
-    "prod|peec.biz|peecbiz|public_html/aikifield.peec.biz/|Production server (aikifield.com — cPanel docroot is aikifield.peec.biz/)"
-    "staging|peec.biz|peecbiz|public_html/aikifield-staging/|Staging server (staging.peec.biz — dedicated docroot, issue #67)"
+    "prod|peec.biz|peecbiz|public_html/aikifield.peec.biz/|Production server (aikifield.com — docroot dir is still named aikifield.peec.biz/)"
+    "staging|peec.biz|peecbiz|public_html/aikifield-staging/|Staging server (aikifield.peec.biz + staging.peec.biz — issues #67, #81)"
 )
 DEFAULT_REMOTE_NAME="prod"
 
 SCP_KEY_ARGS=(-i "$SSH_KEY" -o LogLevel=ERROR)
 LOGS_DIR="${LOCAL_PATH}/logs/"
-# The cPanel log name is aikifield.peec.biz, NOT aikifield.com.peec.biz —
-# the wrong name made every log download fail silently into "archived data only".
-ACCESS_LOG_PATH="access-logs/aikifield.peec.biz-ssl_log"
-ARCHIVE_LOG_PATH="logs/aikifield.peec.biz-ssl_log"
+# cPanel names logs after the vhost servername. Since the 2026-10-06 vhost
+# split (issue #81) aikifield.com is an addon with servername
+# aikifield.com.peec.biz; aikifield.peec.biz is now the STAGING subdomain, so
+# its logs no longer hold production traffic. Archives up to and including
+# Oct-2026 were written under the old name and are fetched as legacy files.
+ACCESS_LOG_PATH="access-logs/aikifield.com.peec.biz-ssl_log"
+ARCHIVE_LOG_PATH="logs/aikifield.com.peec.biz-ssl_log"
+LEGACY_ARCHIVE_LOG_PATH="logs/aikifield.peec.biz-ssl_log"
+LEGACY_ARCHIVE_LAST_MONTH="202610"
 
 if [[ "$(uname -s)" == "Linux" ]]; then
     RSYNC_BIN="rsync"
@@ -197,12 +202,6 @@ EXCLUDES=(
     # The dir + .htaccess deploy; the JSON contents stay server-side and must
     # not be removed by --delete.
     --exclude='data/private/*.json'
-    # staging-mirror is a server-side symlink (created once by hand) inside the
-    # aikifield.peec.biz docroot -> public_html/aikifield-staging/. The
-    # .htaccess staging rules (issue #80) rewrite aikifield.peec.biz requests
-    # into it. Excluding it keeps rsync --delete from removing it on prod
-    # deploys (excluded remote files are protected from deletion).
-    --exclude='staging-mirror'
     --exclude='.DS_Store'
     --exclude='Thumbs.db'
     --exclude='*.tmp'
@@ -466,6 +465,13 @@ print('\\n'.join(months))
         scp "${SCP_KEY_ARGS[@]}" "${LOG_USER}@${LOG_HOST}:~/${ARCHIVE_LOG_PATH}-${MONTH}.gz" "${LOGS_DIR}archive-ssl-${MONTH}.gz" 2>/dev/null
         if [ -f "${LOGS_DIR}archive-ssl-${MONTH}.gz" ]; then
             gunzip -f "${LOGS_DIR}archive-ssl-${MONTH}.gz" 2>/dev/null
+        fi
+        # Pre-split months (prod traffic logged under aikifield.peec.biz).
+        if [[ "$(date -d "1-${MONTH}" +%Y%m)" -le "$LEGACY_ARCHIVE_LAST_MONTH" ]]; then
+            scp "${SCP_KEY_ARGS[@]}" "${LOG_USER}@${LOG_HOST}:~/${LEGACY_ARCHIVE_LOG_PATH}-${MONTH}.gz" "${LOGS_DIR}archive-ssl-legacy-${MONTH}.gz" 2>/dev/null
+            if [ -f "${LOGS_DIR}archive-ssl-legacy-${MONTH}.gz" ]; then
+                gunzip -f "${LOGS_DIR}archive-ssl-legacy-${MONTH}.gz" 2>/dev/null
+            fi
         fi
     done
 

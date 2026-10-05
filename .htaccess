@@ -94,13 +94,11 @@ RewriteEngine On
   </IfModule>
 </IfModule>
 
-# ── Staging surfaces (issue #80) ────────────────────────────────────────────
-# aikifield.peec.biz shares this Apache vhost/docroot with aikifield.com
-# (cPanel serveralias) — the vhost cannot be split without root access, so
-# staging is split by Host here instead. The staging-mirror symlink inside
-# this docroot points at public_html/aikifield-staging/, the staging remote's
-# deploy target. All rules are Host-gated so they are inert on aikifield.com
-# and inside the staging docroot itself (staging.peec.biz gets its own rules).
+# ── Staging surfaces (issues #80, #81) ──────────────────────────────────────
+# This file ships to both docroots. Since the #81 vhost split,
+# aikifield.peec.biz and staging.peec.biz are cPanel vhosts whose docroot is
+# public_html/aikifield-staging/; aikifield.com has public_html/aikifield.peec.biz/.
+# All rules here are Host-gated, so they are inert on aikifield.com.
 
 # aikifield.peec.biz: canonicalize www → non-www and http → https WITHOUT
 # bouncing to aikifield.com (the generic redirects below would otherwise
@@ -117,37 +115,8 @@ RewriteCond %{HTTP_HOST} ^(www\.)?staging\.peec\.biz$ [NC]
 RewriteCond %{HTTPS} off
 RewriteRule ^(.*)$ https://staging.peec.biz/$1 [R=301,L]
 
-# Never serve the staging-mirror symlink directly (aikifield.com/staging-mirror/*
-# would leak the staging tree under the prod domain). Requests whose URI maps
-# inside the symlink are handled by THIS file again in the staging-mirror/
-# directory context — the staging-mirror/ prefix is already stripped there,
-# so a ^staging-mirror URI pattern can never match; match REQUEST_URI
-# instead. The REDIRECT_STATUS guard keeps direct requests (empty) distinct
-# from the internal mirror sub-requests below (non-empty).
-RewriteCond %{ENV:REDIRECT_STATUS} ^$
-RewriteCond %{REQUEST_URI} ^/staging-mirror(/|$)
-RewriteRule ^ - [F]
-
-# aikifield.peec.biz IS the staging site: internally rewrite every request
-# into the staging-mirror symlink (→ public_html/aikifield-staging/). The
-# REQUEST_URI negative-match (rather than REDIRECT_STATUS) is what makes
-# this safe across multiple passes: absolute-path rewrites later in this
-# file (e.g. the /es/ locale strip) restart the URI at the docroot with
-# REDIRECT_STATUS already set — without this, locale URLs on
-# aikifield.peec.biz would silently fall back to the production docroot.
-# The -d guard keeps this inert once aikifield.peec.biz gets its own vhost
-# with docroot public_html/aikifield-staging/ (issue #81): that docroot has
-# no staging-mirror, so rewriting into it would 404 the whole staging site.
-RewriteCond %{HTTP_HOST} ^aikifield\.peec\.biz$ [NC]
-RewriteCond %{DOCUMENT_ROOT}/staging-mirror -d
-RewriteCond %{REQUEST_URI} !^/staging-mirror(/|$)
-RewriteRule ^(.*)$ staging-mirror/$1 [L]
-
 # staging.peec.biz/<project>/* — identical alias pattern for every project:
 # redirect to the project's own staging subdomain, path preserved.
-# (In-place mounts are not symmetric — /aikifield could only serve in place
-# because this vhost's docroot IS the aikifield staging site, while QA lives
-# in a different docroot whose root-relative links could not resolve here.)
 RewriteCond %{HTTP_HOST} ^(www\.)?staging\.peec\.biz$ [NC]
 RewriteRule ^aikifield/?(.*)$ https://aikifield.peec.biz/$1 [R=301,L]
 RewriteCond %{HTTP_HOST} ^(www\.)?staging\.peec\.biz$ [NC]
