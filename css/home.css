@@ -1,0 +1,161 @@
+/* ============================================================
+   AikiField — Home page (Aikido leadership coaching)
+   Implements the "AikiField Redesign" design canvas (Home artboard).
+   Loaded only by index.html, after css/redesign.css; uses its tokens.
+   Grid tracks use min(<px>, 100%) so no column forces horizontal
+   overflow at a 320px viewport.
+   ============================================================ */
+
+.af-home-eyebrow {
+  margin-bottom: 16px;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--af-primary);
+}
+.af-section--dark .af-home-eyebrow { color: var(--af-mint); }
+
+.af-home-h2 {
+  font-size: clamp(30px, 3.6vw, 40px);
+  line-height: 1.15;
+  text-wrap: balance;
+}
+.af-home-sub {
+  margin-top: 12px;
+  margin-bottom: 40px;
+  font-size: 20px;
+  color: var(--af-text-2);
+}
+
+.af-home-split {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr));
+  gap: 56px;
+}
+
+/* Dark sections: buttons and focus rings need on-dark colors. */
+.af-section--dark .af-btn:focus-visible,
+.af-home-game--feature .af-btn:focus-visible { outline-color: var(--af-mint-dk); }
+
+/* ---------- Hero ---------- */
+.af-home-hero { padding: 88px 0 72px; }
+.af-home-hero .af-home-split { align-items: center; }
+.af-home-hero__title {
+  margin-bottom: 28px;
+  font-size: clamp(38px, 5vw, 60px);
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+.af-home-hero__eyebrow { margin-bottom: 20px; }
+.af-home-hero__lead {
+  margin-bottom: 40px;
+  font-size: 21px;
+  color: var(--af-text);
+}
+.af-home-hero .af-btn-row { gap: 16px; }
+
+/* Decorative block composition (aria-hidden in markup). */
+.af-home-blocks { position: relative; height: 380px; }
+.af-home-blocks span { position: absolute; border-radius: 16px; }
+.af-home-blocks span:nth-child(1) { left: 0;   top: 0;    width: 62%; height: 62%; background: var(--af-primary); }
+.af-home-blocks span:nth-child(2) { right: 0;  top: 0;    width: 34%; height: 30%; background: var(--af-gold); }
+.af-home-blocks span:nth-child(3) { right: 0;  top: 34%;  width: 34%; height: 66%; background: var(--af-hover-bg); }
+.af-home-blocks span:nth-child(4) { left: 0;   bottom: 0; width: 28%; height: 34%; background: var(--af-dark-bg); }
+.af-home-blocks span:nth-child(5) { left: 31%; bottom: 0; width: 31%; height: 34%; background: var(--af-mint); }
+
+/* ---------- Your coach ---------- */
+.af-home-coach__body {
+  display: grid;
+  gap: 18px;
+  font-size: 19px;
+  color: var(--af-text-2);
+}
+
+/* ---------- Coaching ideas + game cards ---------- */
+.af-home-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr));
+  gap: 24px;
+}
+.af-home-card {
+  padding: 32px;
+  background: var(--af-white);
+  border: 1px solid var(--af-border);
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(14, 78, 68, 0.08);
+}
+.af-home-card h3 { margin-bottom: 12px; font-size: 24px; line-height: 1.2; }
+.af-home-card p  { font-size: 17px; color: var(--af-text-2); }
+
+/* ---------- 20 exercises ---------- */
+.af-home-exercises { padding: 88px 0; }
+.af-home-exercises .af-home-h2 { margin-bottom: 16px; }
+.af-home-exercises__lead {
+  max-width: 720px;
+  margin-bottom: 40px;
+  font-size: 20px;
+  color: var(--af-dark-muted);
+}
+.af-home-tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(210px, 100%), 1fr));
+  gap: 16px;
+  margin: 0 0 40px;
+  padding: 0;
+  list-style: none;
+}
+.af-home-tile {
+  padding: 20px 22px;
+  background: var(--af-dark-card);
+  border: 1px solid var(--af-dark-border);
+  border-radius: 16px;
+}
+.af-home-tile__label {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--af-dark-finite);
+}
+.af-home-tile__title {
+  display: block;
+  margin-top: 6px;
+  font-family: var(--af-serif);
+  font-size: 20px;
+  line-height: 1.25;
+  color: #fff;
+}
+
+/* ---------- Games ---------- */
+.af-home-games { padding: 88px 0; }
+.af-home-games .af-home-cards {
+  grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
+  gap: 28px;
+}
+.af-home-game { padding: 36px; }
+.af-home-game h3 { font-size: 30px; line-height: 1.15; }
+.af-home-game p  { margin-bottom: 28px; }
+.af-home-game--feature {
+  background: var(--af-primary);
+  border-color: var(--af-primary);
+  box-shadow: none;
+}
+.af-home-game--feature h3 { color: #fff; }
+.af-home-game--feature p  { color: var(--af-inf-text); }
+
+/* ---------- Closing call to action ---------- */
+.af-home-begin { text-align: center; }
+.af-home-begin .af-container { max-width: 820px; }
+.af-home-begin .af-home-h2 { margin-bottom: 16px; }
+.af-home-begin p { margin-bottom: 36px; font-size: 20px; color: var(--af-text-2); }
+.af-home-begin .af-btn-row { gap: 16px; justify-content: center; }
+
+@media (max-width: 720px) {
+  .af-home-hero { padding: 56px 0 48px; }
+  .af-home-blocks { height: 240px; }
+  .af-home-split { gap: 40px; }
+  .af-home-card, .af-home-game { padding: 24px; }
+}

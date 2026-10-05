@@ -14,7 +14,8 @@
  *   4. coach-config.php                   — deployed production config
  *
  * coach-config.staging.php is committed to the repo but sync.sh only ever
- * deploys it to the staging remote (public_html/aikifield.peec.biz/) — the
+ * deploys it to the staging remote (public_html/aikifield-staging/, served
+ * at staging.peec.biz and mirrored on aikifield.peec.biz — issue #80) — the
  * production deploy target excludes it by name. So on prod this file simply
  * never exists and step 3 is skipped; on staging it exists and safely
  * overrides COACH_BACKEND_URL with a non-resolving placeholder instead of
