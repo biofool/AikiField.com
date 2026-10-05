@@ -197,6 +197,12 @@ EXCLUDES=(
     # The dir + .htaccess deploy; the JSON contents stay server-side and must
     # not be removed by --delete.
     --exclude='data/private/*.json'
+    # staging-mirror is a server-side symlink (created once by hand) inside the
+    # aikifield.peec.biz docroot -> public_html/aikifield-staging/. The
+    # .htaccess staging rules (issue #80) rewrite aikifield.peec.biz requests
+    # into it. Excluding it keeps rsync --delete from removing it on prod
+    # deploys (excluded remote files are protected from deletion).
+    --exclude='staging-mirror'
     --exclude='.DS_Store'
     --exclude='Thumbs.db'
     --exclude='*.tmp'

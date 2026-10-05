@@ -702,7 +702,9 @@ Completed optimizations deployed to production:
 
 ## Deploy
 
-1. `./sync.sh dryrun` — preview the rsync to `peec.biz:public_html/aikifield/`.
+1. `./sync.sh dryrun` — preview the rsync to
+   `peec.biz:public_html/aikifield.peec.biz/` (the shared `aikifield.com` +
+   `aikifield.peec.biz` vhost docroot).
 2. Fill in `coach-config.local.php` locally with `COACH_PROXY_SECRET` (and
    `TURNSTILE_SITE_KEY` if using captcha) and deploy it out-of-band (it is
    gitignored). **Never commit it.**
@@ -717,29 +719,38 @@ Completed optimizations deployed to production:
 8. Confirm `https://aikifield.com/projects.html` 301-redirects to
    `projects.php`.
 
-**Staging deploy** (`./sync.sh staging deploy` or `./sync.sh --staging deploy` → `aikifield.peec.biz`):
+**Staging deploy** (`./sync.sh staging deploy` or `./sync.sh --staging deploy` → `staging.peec.biz`, mirrored on `aikifield.peec.biz` — issue #80):
 
 1. `./sync.sh staging dryrun` (or `./sync.sh --staging dryrun`) — preview the rsync to
-   `peec.biz:public_html/aikifield.peec.biz/`.
+   `peec.biz:public_html/aikifield-staging/` (the `staging.peec.biz` vhost
+   docroot; `aikifield.peec.biz` serves the same tree via the
+   `staging-mirror` symlink + `.htaccess` Host rewrite — see
+   `docs/STAGING.md` for the full staging URL map).
 2. Ensure `coach-config.staging.php` defines `COACH_STAGING_URL` pointing
    to the staging Cloud Run backend
    (`https://aiqa-coach-staging-uj5nyskptq-uc.a.run.app` — legacy host
    `https://quantum-aikido-coach-staging-6bfpsd3kkq-uc.a.run.app` pending
    decommission).
 3. `./sync.sh staging deploy` (or `./sync.sh --staging deploy`) — push to staging.
-4. Confirm `https://aikifield.peec.biz/staging/login.php` loads the login
-   form with `window.COACH_API_BASE = "/staging/coach-api"` and
-   `window.COACH_FORCE_STAGING = true`.
-5. Confirm `https://aikifield.peec.biz/staging/coach-api/v1/auth/providers`
-   returns JSON from the staging backend.
-6. Test a full register → login → beta-access round-trip on staging.
+4. Confirm `https://staging.peec.biz/login.php` and
+   `https://aikifield.peec.biz/login.php` both load the login form (same
+   docroot, different hosts — session cookies do not carry between them).
+5. Confirm `https://staging.peec.biz/coach-api/v1/auth/providers` and
+   `https://aikifield.peec.biz/coach-api/v1/auth/providers` return JSON
+   from the backend the effective config points at (the `.invalid`
+   placeholder yields a clean 502 "Coach backend unavailable").
+6. Confirm `https://aikifield.com/staging-mirror/` returns 403 and
+   `https://aikifield.com/` is unchanged.
+7. Test a full register → login → beta-access round-trip on staging.
 
-### Staging folder (`/staging/*`)
+### Staging folder (`/staging/*`) — design only, never deployed
 
-A dedicated staging entry point is available at
-`https://aikifield.peec.biz/staging/login.php` so operators can test
-login/registration changes in staging before promoting to production.
-This originally mirrored the quantumaikido.com `/staging/` pattern. That QA-local staging surface is now retired: `quantumaikido.com/staging` permanently redirects to `https://quantumaikido.peec.biz/`, while AikiField’s independent staging wrappers remain in service.
+The `/staging/` wrapper folder described below was designed but never
+committed or deployed — `ls staging/` is empty. The live staging mechanism
+is the dedicated docroot described above (`public_html/aikifield-staging/`
+→ `staging.peec.biz`, mirrored on `aikifield.peec.biz`; issue #80). The
+wrapper design is retained here in case an in-path staging surface is ever
+needed again.
 
 Every file in `/staging/` is a thin wrapper: it defines `COACH_FORCE_STAGING`
 and `require`s its parent. There is no staging-specific markup, JS or CSS

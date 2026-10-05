@@ -94,6 +94,56 @@ RewriteEngine On
   </IfModule>
 </IfModule>
 
+# ── Staging surfaces (issue #80) ────────────────────────────────────────────
+# aikifield.peec.biz shares this Apache vhost/docroot with aikifield.com
+# (cPanel serveralias) — the vhost cannot be split without root access, so
+# staging is split by Host here instead. The staging-mirror symlink inside
+# this docroot points at public_html/aikifield-staging/, the staging remote's
+# deploy target. All rules are Host-gated so they are inert on aikifield.com
+# and inside the staging docroot itself (staging.peec.biz gets its own rules).
+
+# aikifield.peec.biz: canonicalize www → non-www and http → https WITHOUT
+# bouncing to aikifield.com (the generic redirects below would otherwise
+# send staging visitors to production).
+RewriteCond %{HTTP_HOST} ^www\.aikifield\.peec\.biz$ [NC]
+RewriteRule ^(.*)$ https://aikifield.peec.biz/$1 [R=301,L]
+RewriteCond %{HTTP_HOST} ^aikifield\.peec\.biz$ [NC]
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://aikifield.peec.biz/$1 [R=301,L]
+
+# staging.peec.biz: http → https preserving the staging host (the generic
+# redirect below would bounce to aikifield.com).
+RewriteCond %{HTTP_HOST} ^(www\.)?staging\.peec\.biz$ [NC]
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://staging.peec.biz/$1 [R=301,L]
+
+# Never serve the staging-mirror symlink directly (aikifield.com/staging-mirror/*
+# would leak the staging tree under the prod domain). The REDIRECT_STATUS
+# guard lets the internal rewrite below reach it — sub-requests carry a
+# non-empty REDIRECT_STATUS, direct requests have an empty one.
+RewriteCond %{ENV:REDIRECT_STATUS} ^$
+RewriteRule ^staging-mirror(/.*)?$ - [F]
+
+# aikifield.peec.biz IS the staging site: internally rewrite every request
+# into the staging-mirror symlink (→ public_html/aikifield-staging/). The
+# second pass re-runs this file inside the symlinked directory, where
+# REDIRECT_STATUS is set — so both this rule and the block above stay inert
+# and the normal site rules below serve the file.
+RewriteCond %{HTTP_HOST} ^aikifield\.peec\.biz$ [NC]
+RewriteCond %{ENV:REDIRECT_STATUS} ^$
+RewriteRule ^(.*)$ staging-mirror/$1 [L]
+
+# staging.peec.biz/aikifield/* — path alias for the staging site. The vhost
+# docroot already IS the staging site, so just strip the prefix.
+RewriteCond %{HTTP_HOST} ^(www\.)?staging\.peec\.biz$ [NC]
+RewriteRule ^aikifield/?(.*)$ $1 [L]
+
+# staging.peec.biz/quantumaikido/* — the QA staging site lives in a different
+# docroot (public_html/quantumaikido.peec.biz); serving it under this path
+# would break its root-relative links, so redirect to its own host instead.
+RewriteCond %{HTTP_HOST} ^(www\.)?staging\.peec\.biz$ [NC]
+RewriteRule ^quantumaikido/?(.*)$ https://quantumaikido.peec.biz/$1 [R=301,L]
+
 # www → non-www (single canonical domain)
 RewriteCond %{HTTP_HOST} ^www\.aikifield\.com$ [NC]
 RewriteRule ^(.*)$ https://aikifield.com/$1 [R=301,L]
