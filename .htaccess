@@ -118,19 +118,25 @@ RewriteCond %{HTTPS} off
 RewriteRule ^(.*)$ https://staging.peec.biz/$1 [R=301,L]
 
 # Never serve the staging-mirror symlink directly (aikifield.com/staging-mirror/*
-# would leak the staging tree under the prod domain). The REDIRECT_STATUS
-# guard lets the internal rewrite below reach it — sub-requests carry a
-# non-empty REDIRECT_STATUS, direct requests have an empty one.
+# would leak the staging tree under the prod domain). Requests whose URI maps
+# inside the symlink are handled by THIS file again in the staging-mirror/
+# directory context — the staging-mirror/ prefix is already stripped there,
+# so a ^staging-mirror URI pattern can never match; match REQUEST_URI
+# instead. The REDIRECT_STATUS guard keeps direct requests (empty) distinct
+# from the internal mirror sub-requests below (non-empty).
 RewriteCond %{ENV:REDIRECT_STATUS} ^$
-RewriteRule ^staging-mirror(/.*)?$ - [F]
+RewriteCond %{REQUEST_URI} ^/staging-mirror(/|$)
+RewriteRule ^ - [F]
 
 # aikifield.peec.biz IS the staging site: internally rewrite every request
 # into the staging-mirror symlink (→ public_html/aikifield-staging/). The
-# second pass re-runs this file inside the symlinked directory, where
-# REDIRECT_STATUS is set — so both this rule and the block above stay inert
-# and the normal site rules below serve the file.
+# REQUEST_URI negative-match (rather than REDIRECT_STATUS) is what makes
+# this safe across multiple passes: absolute-path rewrites later in this
+# file (e.g. the /es/ locale strip) restart the URI at the docroot with
+# REDIRECT_STATUS already set — without this, locale URLs on
+# aikifield.peec.biz would silently fall back to the production docroot.
 RewriteCond %{HTTP_HOST} ^aikifield\.peec\.biz$ [NC]
-RewriteCond %{ENV:REDIRECT_STATUS} ^$
+RewriteCond %{REQUEST_URI} !^/staging-mirror(/|$)
 RewriteRule ^(.*)$ staging-mirror/$1 [L]
 
 # staging.peec.biz/aikifield/* — path alias for the staging site. The vhost
