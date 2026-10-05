@@ -139,14 +139,13 @@ RewriteCond %{HTTP_HOST} ^aikifield\.peec\.biz$ [NC]
 RewriteCond %{REQUEST_URI} !^/staging-mirror(/|$)
 RewriteRule ^(.*)$ staging-mirror/$1 [L]
 
-# staging.peec.biz/aikifield/* — path alias for the staging site. The vhost
-# docroot already IS the staging site, so just strip the prefix.
+# staging.peec.biz/<project>/* — identical alias pattern for every project:
+# redirect to the project's own staging subdomain, path preserved.
+# (In-place mounts are not symmetric — /aikifield could only serve in place
+# because this vhost's docroot IS the aikifield staging site, while QA lives
+# in a different docroot whose root-relative links could not resolve here.)
 RewriteCond %{HTTP_HOST} ^(www\.)?staging\.peec\.biz$ [NC]
-RewriteRule ^aikifield/?(.*)$ $1 [L]
-
-# staging.peec.biz/quantumaikido/* — the QA staging site lives in a different
-# docroot (public_html/quantumaikido.peec.biz); serving it under this path
-# would break its root-relative links, so redirect to its own host instead.
+RewriteRule ^aikifield/?(.*)$ https://aikifield.peec.biz/$1 [R=301,L]
 RewriteCond %{HTTP_HOST} ^(www\.)?staging\.peec\.biz$ [NC]
 RewriteRule ^quantumaikido/?(.*)$ https://quantumaikido.peec.biz/$1 [R=301,L]
 
