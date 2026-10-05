@@ -4,15 +4,16 @@ AikiField staging is the `staging` branch deployed to a dedicated docroot on
 the same GreenGeeks/cPanel account (`peec.biz`) as production, with the
 coaching-auth backend and the contact form both made safe by default.
 
-## Staging URL map (issue #80)
+## Staging URL map (issues #80, #81)
 
 | URL | Serves | Mechanism |
 |-----|--------|-----------|
-| `https://staging.peec.biz/` | AikiField staging | cPanel vhost → `public_html/aikifield-staging/` |
+| `https://aikifield.peec.biz/` | AikiField staging | cPanel subdomain vhost → `public_html/aikifield-staging/` |
+| `https://staging.peec.biz/` | AikiField staging | cPanel subdomain vhost → `public_html/aikifield-staging/` |
 | `https://staging.peec.biz/aikifield/*` | 301 → `aikifield.peec.biz/*` | `.htaccess` (same pattern for every project) |
-| `https://aikifield.peec.biz/` | AikiField staging | `.htaccess` Host-rewrite → `staging-mirror/` symlink → `public_html/aikifield-staging/` |
-| `https://quantumaikido.peec.biz/` | Quantum Aikido staging | cPanel vhost → `public_html/quantumaikido.peec.biz/` |
+| `https://quantumaikido.peec.biz/` | Quantum Aikido staging | cPanel subdomain vhost → `public_html/quantumaikido.peec.biz/` |
 | `https://staging.peec.biz/quantumaikido/*` | 301 → `quantumaikido.peec.biz/*` | `.htaccess` (same pattern for every project) |
+| `https://aikifield.com/` | **Production** | cPanel addon domain (servername `aikifield.com.peec.biz`) → `public_html/aikifield.peec.biz/` |
 
 The per-project contract is identical: `<project>.peec.biz` serves the
 staging site, and `staging.peec.biz/<project>` redirects to it with the
@@ -20,50 +21,31 @@ path preserved.
 
 Notes:
 
-- `aikifield.peec.biz` shares its Apache vhost with `aikifield.com` (cPanel
-  `serveralias`), so its docroot `public_html/aikifield.peec.biz/` is also
-  the production origin. Splitting the vhost needs cPanel/root access, so
-  the split is done by `.htaccess` Host conditions instead: requests for
-  `aikifield.peec.biz` are internally rewritten into the `staging-mirror`
-  symlink, while `aikifield.com` requests fall through to the normal rules.
-- `staging-mirror` is a **server-side symlink** created once by hand inside
-  `public_html/aikifield.peec.biz/`. `sync.sh` excludes it, so deploys do
-  not upload over it and `--delete` does not remove it. Direct requests to
-  `/staging-mirror/*` are denied (`403`) so the staging tree never leaks
-  under the production domain.
+- The production docroot directory is still *named* `aikifield.peec.biz/`
+  for historical reasons, but since issue #81 (2026-10-06) the
+  `aikifield.peec.biz` host does **not** serve it. Before #81,
+  `aikifield.peec.biz` was the built-in subdomain of the `aikifield.com`
+  addon (one shared vhost) and staging was mirrored in through a
+  `staging-mirror` symlink + `.htaccess` Host-rewrite; both are gone. The
+  addon was removed and re-added in cPanel, which renamed its servername to
+  `aikifield.com.peec.biz` and freed `aikifield.peec.biz` for a real
+  subdomain.
+- Apache logs are named after the servername: production traffic is in
+  `access-logs/aikifield.com.peec.biz-ssl_log`; the `aikifield.peec.biz-*`
+  logs now hold staging traffic (archives up to Oct-2026 are production —
+  `sync.sh logs` fetches them as legacy files).
 - `staging.peec.biz/<project>` is a redirect, not an in-place mount: each
   staging site lives in a different docroot and its root-relative links
   (`/css/…`, `/members.php`) could not resolve under another vhost's
-  docroot. The `staging.peec.biz` root itself serves the AikiField staging
-  site (that directory is its vhost docroot).
+  docroot.
 - `staginging.peec.biz` does not exist — `staging.peec.biz` is the host.
-
-## Making aikifield.peec.biz a true dedicated vhost (cPanel, manual)
-
-Today `aikifield.peec.biz` mirrors the staging docroot because its vhost is
-shared with `aikifield.com`. To make it a dedicated staging vhost identical
-to `quantumaikido.peec.biz` (removing the `staging-mirror` symlink and the
-Host-rewrite rules):
-
-1. In cPanel → Domains, convert `aikifield.com` from an alias on the
-   `aikifield.peec.biz` vhost into its own domain entry with document root
-   `public_html/aikifield.peec.biz/` (the existing prod files — content
-   unchanged). Depending on the cPanel version this means removing the
-   `aikifield.com` alias and re-adding it as a new domain pointed at the
-   same docroot — brief propagation gap, plan it off-peak.
-2. Change the `aikifield.peec.biz` subdomain's document root to
-   `public_html/aikifield-staging/`.
-3. Remove the staging-surface `.htaccess` block for `aikifield.peec.biz`
-   (keep the `staging.peec.biz` alias rules), delete the `staging-mirror`
-   symlink, and remove the `staging-mirror` exclude from `sync.sh`.
-4. Point the `staging` rsync remote directly at `aikifield.peec.biz`'s new
-   docroot (it already is `public_html/aikifield-staging/`).
 
 ## What's automated
 
 - **`./sync.sh staging deploy`** — deploys the `staging` branch to
   `public_html/aikifield-staging/` on `peec.biz` (same host, same SSH key,
-  same rsync excludes as prod). `./sync.sh deploy` deploys to prod at
+  same rsync excludes as prod), which serves both `aikifield.peec.biz` and
+  `staging.peec.biz`. `./sync.sh deploy` deploys to prod at
   `public_html/aikifield.peec.biz/` (the `aikifield.com` origin).
   `staging`/`prod` can be selected as a bare word anywhere in the arguments,
   or with `--staging`/`--prod`. Run `./sync.sh help` for the full list.
@@ -111,7 +93,7 @@ never touches production sessions.
 - `https://staging.peec.biz/` and `https://aikifield.peec.biz/` serve the
   staging site (check a staging-only change is visible on both).
 - `https://aikifield.com/` is unchanged (production unaffected).
-- `https://aikifield.com/staging-mirror/` → `403` (no staging leak).
+- `https://aikifield.com/staging-mirror/` → `404` (the #80 mirror symlink is gone).
 - `https://staging.peec.biz/aikifield/` → `301` →
   `https://aikifield.peec.biz/` and
   `https://staging.peec.biz/quantumaikido/` → `301` →

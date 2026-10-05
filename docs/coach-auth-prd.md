@@ -719,12 +719,11 @@ Completed optimizations deployed to production:
 8. Confirm `https://aikifield.com/projects.html` 301-redirects to
    `projects.php`.
 
-**Staging deploy** (`./sync.sh staging deploy` or `./sync.sh --staging deploy` → `staging.peec.biz`, mirrored on `aikifield.peec.biz` — issue #80):
+**Staging deploy** (`./sync.sh staging deploy` or `./sync.sh --staging deploy` → `staging.peec.biz` + `aikifield.peec.biz` — issues #80, #81):
 
 1. `./sync.sh staging dryrun` (or `./sync.sh --staging dryrun`) — preview the rsync to
-   `peec.biz:public_html/aikifield-staging/` (the `staging.peec.biz` vhost
-   docroot; `aikifield.peec.biz` serves the same tree via the
-   `staging-mirror` symlink + `.htaccess` Host rewrite — see
+   `peec.biz:public_html/aikifield-staging/` (the docroot of both the
+   `staging.peec.biz` and `aikifield.peec.biz` vhosts — see
    `docs/STAGING.md` for the full staging URL map).
 2. Ensure `coach-config.staging.php` defines `COACH_STAGING_URL` pointing
    to the staging Cloud Run backend
@@ -739,8 +738,7 @@ Completed optimizations deployed to production:
    `https://aikifield.peec.biz/coach-api/v1/auth/providers` return JSON
    from the backend the effective config points at (the `.invalid`
    placeholder yields a clean 502 "Coach backend unavailable").
-6. Confirm `https://aikifield.com/staging-mirror/` returns 403 and
-   `https://aikifield.com/` is unchanged.
+6. Confirm `https://aikifield.com/` is unchanged.
 7. Test a full register → login → beta-access round-trip on staging.
 
 ### Staging folder (`/staging/*`) — design only, never deployed
