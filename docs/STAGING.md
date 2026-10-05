@@ -40,6 +40,14 @@ Notes:
 
 ## Making aikifield.peec.biz a true dedicated vhost (cPanel, manual)
 
+Tracked in issue #81, which has the verified vhost table, the pre-cutover
+risks (re-add docroot default, `kenneth@aikifield.com` mailbox, DKIM, origin
+TLS, log paths) and the full runbook. `aikifield.peec.biz` is the built-in
+subdomain (servername) of the `aikifield.com` addon domain, so the addon must
+be removed and re-added; the account shell has no API for that. The
+mirror Host-rewrite already requires `%{DOCUMENT_ROOT}/staging-mirror` to
+exist, so it goes inert by itself once the vhost is split.
+
 Today `aikifield.peec.biz` mirrors the staging docroot because its vhost is
 shared with `aikifield.com`. To make it a dedicated staging vhost identical
 to `quantumaikido.peec.biz` (removing the `staging-mirror` symlink and the

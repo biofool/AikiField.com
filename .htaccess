@@ -135,7 +135,11 @@ RewriteRule ^ - [F]
 # file (e.g. the /es/ locale strip) restart the URI at the docroot with
 # REDIRECT_STATUS already set — without this, locale URLs on
 # aikifield.peec.biz would silently fall back to the production docroot.
+# The -d guard keeps this inert once aikifield.peec.biz gets its own vhost
+# with docroot public_html/aikifield-staging/ (issue #81): that docroot has
+# no staging-mirror, so rewriting into it would 404 the whole staging site.
 RewriteCond %{HTTP_HOST} ^aikifield\.peec\.biz$ [NC]
+RewriteCond %{DOCUMENT_ROOT}/staging-mirror -d
 RewriteCond %{REQUEST_URI} !^/staging-mirror(/|$)
 RewriteRule ^(.*)$ staging-mirror/$1 [L]
 
