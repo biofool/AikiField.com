@@ -1,7 +1,7 @@
 # AikiField.com — Site Content
 
 > Source of truth for all text content on aikifield.com.
-> Last updated: 2026-10-02
+> Last updated: 2026-10-06
 
 ---
 
@@ -40,141 +40,69 @@
 
 ## Home (`index.html`)
 
-**Meta title:** AikiField — Security Leadership for Product Companies
-**Meta description:** AikiField is a B2B cybersecurity consulting firm providing Fractional CISO services, AI-assisted DevSecOps integration, and executive security leadership coaching for B2B SaaS and product companies. Specializing in reducing vulnerability remediation cycles, passing SOC 2/ISO 27001 compliance audits, and unblocking enterprise sales channels.
+Aikido-based leadership coaching home page, implemented 2026-10-06 from the
+"AikiField Redesign" design canvas (Home artboard). It replaced the previous
+security-consulting home page; that content still lives on `services.html`,
+`fractional-ciso-for-saas.html`, `ai-devsecops-vulnerability-remediation.html`,
+`case-studies.html` and `process.html`. Styles: `css/home.css` (home only).
+New copy has no `data-i18n` keys yet, so it shows in English in every locale.
+
+**Meta title:** AikiField — Aikido Leadership Coaching
+**Meta description:** Leadership coaching built on forty years of Quantum Aikido, from a virtual CISO with real security accountability in IoT. Presence under pressure, plus 20 free exercises and two practice games.
+**OG / Twitter title:** Aikido Leadership Coaching — Lead from centre, not from tension
 
 ### JSON-LD structured data (`<head>`)
 
-Multi-entity nested JSON-LD (`@graph`) for RAG/AEO parsers. `ProfessionalService` with `@id` `https://aikifield.com/#organization`, `areaServed: Global`, `knowsAbout` (Fractional CISO, DevSecOps, Application Security, Threat Modeling, SOC 2 Compliance, Vulnerability Remediation), and an `OfferCatalog` with two `Offer` items:
+`ProfessionalService` with `@id` `https://aikifield.com/#organization` (kept), `areaServed: Global`, `knowsAbout` (Leadership Coaching, Executive Presence, Aikido, Quantum Aikido, Fractional CISO, vCISO, DevSecOps), and an `OfferCatalog` with three `Offer` items:
+- **Aikido-Based Leadership Coaching** — Coaching in presence under pressure: centre, blend, and lead, practised on the job.
 - **Fractional CISO Leadership** — Executive security leadership, compliance roadmap execution, and enterprise sales unblocking.
 - **AI-Assisted DevSecOps Triage** — Automated application and cloud vulnerability triage reducing mitigation time from 21 days to 3 days using Aikido.dev integration.
 
-### Hero (static, green background, two-column: copy + "Why AikiField" panel)
+### Hero (two columns: copy + decorative colour blocks)
 
-- Eyebrow: B2B Cybersecurity Consulting
-- Title (H1): vCISO, DevSecOps AI & Cyber Leadership Development
-- Body para 1 (20px, full container width): AikiField is a B2B cybersecurity consulting firm providing Fractional CISO services, AI-assisted DevSecOps integration, and security leadership coaching for SaaS and product companies.
-- Body para 2 (20px, full container width): Fractional CISO leadership experienced in AI adoption, data center technology, and IoT. We specialize in cutting vulnerability remediation cycles (from 165 days down to 21), passing SOC 2/ISO 27001 audits, and unblocking enterprise sales channels.
-- CTAs: Book a Discovery Call | Explore Services
+- Eyebrow: Aikido-based leadership coaching
+- Title (H1): Lead from centre, not from tension.
+- Lead: Leadership coaching built on forty years of Quantum Aikido, from a seasoned virtual CISO who has carried real security accountability in the IoT space. Presence under pressure, learned the way it is practised.
+- CTAs: Book a conversation (→ contact.html) | Start with 20 free exercises (→ #exercises)
 
-**Proof metrics (3):**
-- $5M — Blocked sales channel recovered by resolving customer security objections. _Sub: Engagement cost under $25K — delivered as planned._
-- 87% — Customer-reported security risk eliminated in three thirty-minute meetings. _Sub: Optimized existing workflows and eliminated unnecessary activities._
-- 21 → 3 days — Vulnerability remediation time cut with AI-assisted triage workflows. _Sub: Same team, less engineering effort — 7× faster with AI-assisted triage workflows._
+### Your coach (`#coach`, white)
 
-**Side panel — Why AikiField (3 signals):**
-- Protection that doesn't slow you down — Security left-shifted into your development budget and aligned to your revenue model — lean, without dragging on velocity.
-- Vulnerabilities fixed in days, not weeks — AI-assisted triage and remediation across application, cloud, infrastructure, and customer-reported issues.
-- Leadership that sticks — Security advisory paired with presence-based coaching, so your leaders can carry the program for the long haul.
+- Eyebrow: Your coach
+- Heading: Security accountability and a lifetime of practice.
+- Para 1: Kenneth Kron is a virtual CISO with more than twenty years in cybersecurity, most recently in the IoT space, where leaders answer for products that live in the physical world.
+- Para 2: He has also practised Quantum Aikido for over forty years. Coaching here joins the two: the calm, decisive posture of Aikido applied to board rooms, incidents and hard conversations.
+- TODO (from the design): one sentence on lineage and teachers, and one on the clients served.
 
-### Role-and-outcome gateway ("What brings you here?")
+### How the coaching works (`#coaching`)
 
-Sits directly below the hero, above the carousel — the first routing decision
-on the page. Outcome-first: the visitor picks the result they want, not their
-job title. The "Who We Help" section below the carousel then covers who those
-outcomes have been delivered for.
+**Heading:** How the coaching works
+**Sub:** Three ideas from Aikido, practised on the job.
 
-**Heading:** What brings you here?
-**Sub:** Pick the outcome you need — we'll take you straight to it.
+- **Centre** — Find your stable ground before you decide. Leaders who are centred hear more and react less.
+- **Blend** — Meet force with awareness instead of resistance. Turn conflict and pushback into direction.
+- **Lead** — Act with clarity and let others move with you. Influence that comes from presence, not pressure.
 
-| Outcome (visitor's voice) | Goes to |
-|---|---|
-| "I need to win enterprise deals" | Fractional CISO → `fractional-ciso-for-saas.html` |
-| "I need to reduce security risk" | AI DevSecOps → `ai-devsecops-vulnerability-remediation.html` |
-| "I need security leadership" | Services → `services.html` |
-| "I need board-level clarity" | Case Studies → `case-studies.html` |
+### 20 exercises (`#exercises`, dark)
 
-### Client strip (10 chips)
+- Eyebrow: Free with an AikiField account
+- Heading: 20 exercises to begin your journey to personal mastery
+- Lead: Create a free account to open all twenty. Work through them in order or pick the one your day calls for.
+- Tiles (static list; titles from `games/exercises/data/collected_exercises_app_data.json`): Exercise 01 DropBackSinkOpen (DBSO) · 02 Listen to the impulse to breathe · 03 Feel / Locate / Align / Unify (Kamae) · 04 Tense & Release Body Scan · 05 Center of the Central Core Relaxation · 06 Wrist Grab Grounding · 07 Breathe Universal Harmony (Aiki Kokyu) · 08 Breathing the Whole System · 09 The O2 Continuum · 10 Ocean Breathing · 11 Infant Breathing · 12 Ten to the Tenth — State Shifting Scale · 13 Enjoy / Joy / Appreciate · 14 Shoulder Slap — Sensing Finer Dimensions · 15 Application Visualization · Interludes: Opening · After Part I · After Part II · After Part III · Closing
+- CTA: Start exercise 01 (→ /digital-experience/moon-practices.html)
 
-Series A–C startups | SaaS companies | AI-powered product teams | Venture-backed companies | Engineering-led organizations | Mid-market enterprises | Professional services firms | Critical service providers | Boards & audit committees | Mission-driven organisations
+### Games (`#games`)
 
-### Who We Help
+**Heading:** Two games to practise with
+**Sub:** Free with an AikiField account, quick and built to teach by doing.
 
-> **Note — no geography is specified.** References to New Zealand / NZ /
-> Aotearoa were removed site-wide by decision, not by accident. Persona
-> cards, the client strip, and regulatory references are deliberately
-> region-neutral. Do not reintroduce a place name without checking first.
+- **Slow Your Roll** — Coming soon to the Digital Experience. CTA: See all experiences (→ /digital-experience/). TODO: game URL and one-sentence description.
+- **Ride The Lucky Wave** (green card) — The four-phase lucky-wave protocol — Activate, Access, Declare, Launch. Score each phase and build momentum over time. CTA: Play Ride The Lucky Wave (→ /digital-experience/lucky-wave.html)
 
-**Heading:** Built for leaders who own security but can't hire a full-time CISO.
-**Intro:** Enterprise customers are asking hard questions, the backlog is growing, and security keeps landing on someone's already-full plate. We meet each of those leaders where they are — from venture-backed product teams to mid-market organisations.
+### CTA (`#begin`, white)
 
-Four cards. Two pairs were merged after the geography was removed, because
-the place name had been the only thing distinguishing them.
-
-**Founder / CEO / GM — Turn security from deal-blocker into business advantage.**  (→ fractional-ciso-for-saas.html)
-Win enterprise deals with a credible security story — clear questionnaires without panic, and a posture that builds customer trust instead of stalling revenue. Translate cyber risk into decisions about continuity, reputation, and growth, without overwhelming non-technical stakeholders.
-
-**CTO / VP Engineering — Get senior support on architecture and delivery.**  (→ ai-devsecops-vulnerability-remediation.html)
-Threat modeling in the design phase, security in the CI/CD pipeline, and a remediation workflow that clears the backlog without derailing the roadmap.
-
-**Board / Investors / Audit committee — Gain a defensible view of risk, resilience, and readiness.**  (→ services.html)
-Concise, defensible reporting on exposure, capability gaps, and practical next steps — technical risk translated into the business language governance actually needs, aligned to privacy legislation and critical-service obligations.
-
-**Mission-driven organisation — Security that fits your mission, not a corporate template.**
-Practical security for NGOs and community organisations — right-sized to your risk, your budget, and the trust your community places in you.
-
-### Services (staggered two-column teaser, links to services.html)
-
-**Heading:** Engagements built around the outcome you need.
-**Intro:** Every engagement is designed to meet your security maturity and business stage — and to move a metric your business actually cares about. Leadership coaching runs through all of them.
-
-- **Fractional CISO (Flagship)** — CISO-level leadership without a full-time hire. Bullets: roadmap and risk prioritization aligned to revenue model; AI governance; monthly strategy, async help, incident availability.
-- **Program buildout** — A security program right-sized to your risk. Bullets: critical controls ranked; incident playbook and tabletop; living risk register.
-- **DevSecOps** — Clear the backlog blocking your enterprise deals. Bullets: pipeline assessment and rearchitecture; AI-assisted triage and remediation; team training.
-- **Threat modeling** — Catch security flaws before you write the code. Bullets: facilitated workshops; attack-surface mapping ranked by likelihood and impact; implementable mitigation plans.
-
-CTA: View All Services
-
-### Comparison table (How AikiField Compares)
-
-**Heading:** Why leaders choose fractional over traditional consulting or a full-time hire.
-**Intro:** Three paths to security leadership — only one delivers executive-level capability, AI-assisted velocity, and a cost model that fits a product company's stage.
-
-| Service Dimension | Traditional Security Consulting | In-House Full-Time CISO | AikiField Fractional CISO + AI DevSecOps |
-|---|---|---|---|
-| Cost Model | High hourly / project billing | $250k–$400k/yr + equity | Retainer-based / fractional |
-| Time to Deployment | 4–6 weeks (assessments) | 3–6 months (hiring) | Immediate (< 48 hours) |
-| Vulnerability Triage Speed | Manual (165-day avg.) | Variable | AI-assisted workflow (3-day avg.) |
-| Core Deliverable | Static PDF audits | Internal management | Operational capability & executive presence |
-
-### Engagement Process (4-step strip, links to process.html)
-
-**Heading:** Four agreements that make it stick.
-**Intro:** The container for security transformation — a clear path from where you are to where you want to be, with a concrete result at every step.
-
-- Agreement I · Aspiration — Leadership agreement — A clear, shared vision of what you're protecting, why, and at what level.
-- Agreement II · Execution — Management agreement — A security program that actually runs — roadmap, owners, and a review cadence.
-- Agreement III · Change — Development agreement — Deep trust between security, engineering, and product — no blame culture.
-- Agreement IV · Inspiration — Inquiry agreement — The composure and curiosity to adapt to emerging threats and AI risk.
-
-CTA: See the Six Phases
-
-### Deep Dives (cluster cards linking to dedicated AEO pages)
-
-**Heading:** Targeted answers to the questions buyers and AI engines ask.
-**Intro:** Two dedicated deep-dive pages targeting the specific sub-questions that come up when someone evaluates fractional CISO services and AI-assisted DevSecOps — structured for RAG parsers and written for decision-makers.
-
-- **Commercial / Conversion** — When should a Series A SaaS hire a Fractional CISO vs full-time? → `/fractional-ciso-for-saas.html`
-- **Technical / Product** — How to reduce vulnerability remediation time from 21 days to 3 days using AI tooling → `/ai-devsecops-vulnerability-remediation.html`
-
-### How We Think (dark section: featured insight + 3 mini links)
-
-**Heading:** From roadmap to reality.
-**Subhead:** Most security engagements produce a document. Ours produce a capability — here's the thinking behind it.
-
-**Featured — Cardinal assumption: Energy follows attention.**
-Where a leader places attention determines the security posture of the whole organization — the starting point before tools, before policies, before frameworks. Focus the leaders, and secure software follows. → Explore the Approach
-
-**Mini links:**
-- Self-Assessment — Measure your security maturity and leadership presence — Two assessments in one — honest self-inquiry across five security categories and seven presence dimensions. (→ assessment.html)
-- Engagement Process — Six phases to a program that fits — A collaborative design cycle tailored to your stage, risks, and customers. (→ process.html)
-- Demonstration Technologies — Technology we built, ready to fit your needs — Tech Support and Security AI, a cited support backend for security questionnaires and team knowledge bases; World Studio Finder, a global studio discovery pipeline; MultiCloud-MultiPass, a multi-cloud cost kill switch; and Story Gatherer, a provenance-first knowledge-graph research pipeline. All built by AikiField; the same engineering is available to your organization. (→ projects.php)
-
-### CTA
-
-**Heading:** Ready to begin?
-**Body:** Whether you need a fractional CISO, AI-assisted security engineering, or leadership coaching for your engineering leaders — we'll design an engagement that meets you where you are.
-**Button:** Book a Discovery Call
+**Heading:** Ready to practise leadership as a discipline?
+**Body:** Begin with the free exercises, or talk with Kenneth about coaching for you or your team.
+**Buttons:** Book a conversation (→ contact.html) | Try the exercises (→ #exercises)
 
 ---
 
