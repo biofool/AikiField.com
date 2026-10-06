@@ -132,10 +132,9 @@ login-time activation resend keeps its flat 60-second cooldown.
 `coach-login.js` also matches the canonical file on: `friendlyErrorMessage`
 (SyntaxError → generic retry message), a 35s default fetch timeout,
 `role=alert`/`role=status` on status lines, arrow-key tab navigation with
-roving tabindex, the explicit `getCaptchaToken(which)` context, the
-`site_reviewer_required` error code, and the registration
-preferred-language select populated from `data/i18n-config.json` via
-`AFLocale.loadConfig()` (js/locale-utils.js is loaded on this page).
+roving tabindex, the explicit `getCaptchaToken(which)` context, and the
+`site_reviewer_required` error code. The outdated registration language
+selector is not shown; language auto-detection remains the default.
 
 The login page uses a **two-column layout** (`.coach-login-layout`):
 - **Left column** (`.coach-login-forms`): sign-in form, registration form,
@@ -168,8 +167,8 @@ still describes the side-by-side experiment and is stale as of 2026-10.
   that you have read the privacy notice and agree to the processing
   described in the Privacy Policy."
 - Intro panel: "Beta Access [Members]" — explains the session lasts 7 days
-  and covers the whole `aikifield.com` origin, and that the same account
-  works on quantumaikido.com.
+  and covers the whole `aikifield.com` origin. It does not advertise
+  cross-site credential reuse.
 - Privacy notice: 3-bullet summary (session cookie, backend on Cloud Run,
   don't enter sensitive info) + links to the Privacy Policy and AI Security
   & Safety Notice.

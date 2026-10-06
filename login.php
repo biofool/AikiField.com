@@ -447,11 +447,6 @@ $coachLoginUrl = $_SERVER['SCRIPT_NAME'] ?? '/login.php';
               <input type="text" id="coach-reg-alias" class="coach-input" placeholder="Choose a login name (or leave blank)" autocomplete="username" dir="auto">
               <p class="coach-reg-hint">If set, you can log in with this instead of your email. Letters, numbers, hyphens, underscores, and dots only.</p>
 
-              <label for="coach-reg-language" class="coach-label">Preferred language</label>
-              <select id="coach-reg-language" class="coach-input">
-                <option value="">English (auto-detect)</option>
-              </select>
-              <p class="coach-reg-hint">Overrides auto-detection. AI Ki Questions Fielded will respond in this language.</p>
             </div>
           </div>
 
@@ -540,11 +535,6 @@ $coachLoginUrl = $_SERVER['SCRIPT_NAME'] ?? '/login.php';
         <div class="coach-intro-panel coach-intro-panel--highlight">
           <h2>Beta Access <span class="coach-free-badge">Members</span></h2>
           <p class="coach-intro-subtitle">Sign in to access the AikiField beta assessment pages and games review area.</p>
-          <p class="coach-intro-text">
-            The same account works on
-            <a href="https://quantumaikido.com">quantumaikido.com</a> if you
-            are an AI Ki Questions Fielded member.
-          </p>
           <ul class="coach-intro-features">
             <li>Register with an invitation code, or sign in if you already have an account.</li>
             <li>Your session lasts 7 days and covers the whole <code>aikifield.com</code> origin.</li>

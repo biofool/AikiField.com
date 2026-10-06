@@ -1251,36 +1251,11 @@
         }
     });
 
-    // --- Populate registration language select ---
-    // The select ships with only "English (auto-detect)". Populate it with
-    // the supported locales from the i18n config (data/i18n-config.json),
-    // reusing the AFLocale.loadConfig() data source already loaded by
-    // js/locale-utils.js on this page.
-    function initRegLanguageSelect() {
-        const select = document.getElementById("coach-reg-language");
-        if (!select) return;
-        if (!window.AFLocale || typeof window.AFLocale.loadConfig !== "function") return;
-        window.AFLocale.loadConfig().then(function (cfg) {
-            const locales = (cfg && cfg.supportedLocales) || ["en"];
-            const names = (cfg && cfg.localeNames) || {};
-            // Keep the existing "English (auto-detect)" option (value="").
-            // Add the rest as explicit options, skipping "en" (already covered).
-            locales.forEach(function (code) {
-                if (code === "en") return;
-                const opt = document.createElement("option");
-                opt.value = code;
-                opt.textContent = names[code] || code;
-                select.appendChild(opt);
-            });
-        }).catch(function () { /* leave the default English option */ });
-    }
-
     // --- Init ---
     initPasswordToggles();
     initPasswordFeedback();
     initOtpControllers();
     initAuthTabs();
-    initRegLanguageSelect();
 
     // handleOAuthCallback is async (one-time code exchange). If there's no
     // oauth_code, it returns false synchronously.
