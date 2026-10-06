@@ -7,6 +7,8 @@
 
 ## Navigation
 
+**Header brand tagline:** B2B Cybersecurity Consulting + And Team Dynamics Coach
+
 - Home (`index.html`)
 - Services (`services.html`) — submenu:
   - Process (`process.html`)
