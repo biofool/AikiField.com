@@ -1,7 +1,7 @@
 # AikiField.com — Site Content
 
 > Source of truth for all text content on aikifield.com.
-> Last updated: 2026-10-06
+> Last updated: 2026-10-07
 
 ---
 
@@ -968,6 +968,44 @@ Practice and review regularly. Adjust based on results, incidents, and changing 
 > **Trust signals** have been moved from below the form into the hero section
 > (on the green background) so they aid conversion at first glance rather than
 > after scrolling past the form.
+
+## Books (`books.html`)
+
+Ported from `quantumaikido.com/books/` (2026-10-07), reordered: the commercial
+book sits at the **bottom** of the page instead of as the top hero, and the
+review carousels sit just above it. Not linked from the nav yet — add it to
+the Digital Experience submenu or footer if it should be discoverable.
+
+**Meta title:** Books by Richard Moon | AikiField
+**Stylesheet:** `css/books.css` — QA component styles scoped under `.af-books`,
+custom properties mapped onto `--af-*` tokens.
+**JavaScript:** `js/books.js` — book search/filter controls + two quote
+carousels (ported from QA `script.js`).
+
+### Page order
+
+1. Print-on-Demand Books (links to `quantumaikido.com/books/print-on-demand`)
+2. Richard's Open Source Books — search box + topic chips + six grouped
+   sections (Start Here / Listening / Business / Personal / Movement / Children)
+   with 13 book cards. All PDF links are absolute `quantumaikido.com/books/…`
+   URLs — the PDFs stay single-sourced on QA.
+3. Videos — three `videos.quantumaikido.com` embeds.
+4. **Reviews — "What people are saying about the New Moonies"** — two
+   auto-rotating quote carousels: **Reviewers** (10 expert endorsements) and
+   **Readers** (6 reader quotes), data in `js/books.js`. Portrait photos load
+   from `quantumaikido.com/ReviewPortraits/…`. "Submit a Review/Comment" links
+   point at the QA contact form; a footer line links to `quantumaikido.com/reviews`.
+5. Featured Book (commercial) — `Quantum Aikido: The Power of Harmony` hero
+   card with Amazon / Inner Traditions / Barnes & Noble buy links, the
+   free-chapter banner (→ `quantumaikido.com/free_chapter`), and a
+   "More about" link (→ `quantumaikido.com/book`).
+
+### Supporting data
+
+- `data/books-search.json` — verbatim copy of QA's `books/books-search.json`
+  full-text index (fetched lazily on first search input; `js/books.js` strips
+  the `https://quantumaikido.com/books/` prefix from card hrefs so index keys
+  still match). Regenerate/copy again if the QA book set changes.
 
 ## Design System
 
