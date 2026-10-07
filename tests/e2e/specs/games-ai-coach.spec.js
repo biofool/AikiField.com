@@ -33,7 +33,7 @@ test.describe('ai-coach.php — signed out', () => {
     const resp = await request.post(ENDPOINT, {
       data: { game: 'verbal-aikido', kind: 'quiz', lesson: 'disc_verbal_mat', score: 1, total: 3, returnTo: '//evil.example/' },
     });
-    expect((await resp.json()).loginUrl).toBe('/login.php?next=' + encodeURIComponent('/games/verbal-aikido/'));
+    expect((await resp.json()).loginUrl).toBe('/login.php?next=' + encodeURIComponent('/for-review/games/verbal-aikido/'));
   });
 
   test('rejects GET (405) and cross-origin POSTs (403)', async ({ request }) => {
@@ -187,7 +187,7 @@ for (const [name, url, submit] of [
 
 test.describe('Verbal Aikido', () => {
   async function finishChapter1WithOneSlip(page) {
-    await page.goto('/games/verbal-aikido/');
+    await page.goto('/for-review/games/verbal-aikido/');
     await page.waitForSelector('#mode-tabs .mode-tab');
     await page.locator('#choices .choice-btn', { hasText: 'Chapter 1' }).first().click();
     await page.locator('#choices .choice-btn.primary', { hasText: 'Start chapter' }).click();
@@ -197,7 +197,7 @@ test.describe('Verbal Aikido', () => {
   }
 
   test('signed out: the gate sends the player to login (issue #71)', async ({ page }) => {
-    await page.goto('/games/verbal-aikido/');
+    await page.goto('/for-review/games/verbal-aikido/');
     await expect(page).toHaveURL(/\/login\.php\?next=/);
   });
 

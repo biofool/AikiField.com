@@ -24,7 +24,7 @@ From the repo root (`~/projects/github/AikiField.com/`) or this directory:
 php -S 0.0.0.0:8080
 ```
 
-Then open `http://localhost:8080/games/verbal-aikido/` (or `http://0.0.0.0:8080/games/verbal-aikido/` from another host).
+Then open `http://localhost:8080/for-review/games/verbal-aikido/` (or `http://0.0.0.0:8080/for-review/games/verbal-aikido/` from another host).
 
 If you want to run only the game folder:
 
@@ -375,10 +375,10 @@ The Verbal Aikido game is now an installable PWA.
 
 ## Site integration
 
-- The game lives at `aikifield.com/games/verbal-aikido/` — public, no login.
-  It was promoted out of the gated `/for-review/` area into the site's
-  **Digital Experience** nav menu; `.htaccess` 301-redirects the old
-  `/for-review/games/verbal-aikido/*` URLs here.
+- The game lives at `aikifield.com/for-review/games/verbal-aikido/` behind
+  the shared review-area login gate. It is not listed in the site's Digital
+  Experience menu; `.htaccess` redirects the old `/games/verbal-aikido/*`
+  URLs here.
 - Chapter endings and Discovery quiz results show an **Ask the AI Chat**
   button (`renderAiCoach` in `game.js` → `/games/ai-coach.php`). It is for
   Unified Field Chat members: signed-out players get a sign-up/sign-in link
@@ -387,8 +387,9 @@ The Verbal Aikido game is now an installable PWA.
 - The page still carries `<meta name="robots" content="noindex, nofollow">`
   and is not in the sitemap.
 - The gated review hub `for-review/games.html` keeps a "Verbal Aikido — Story
-  Mode" card that opens `/games/verbal-aikido/` in its iframe modal (feedback
-  comments stay gated). Old `quantumaikido.com/for-review/games*` and
+  Mode" card that opens `/for-review/games/verbal-aikido/` in its iframe
+  modal (feedback comments stay gated). Old
+  `quantumaikido.com/for-review/games*` and
   `/va-game*` URLs redirect to the review hub.
 - End-to-end coverage lives in `tests/e2e/va-game.spec.js` (requires an
   authed session — see the file header).

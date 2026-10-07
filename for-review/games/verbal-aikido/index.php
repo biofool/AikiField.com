@@ -1,10 +1,10 @@
 <?php
 /**
- * Members-only entry point (issue #71 — Digital Experience previews + login gate).
+ * Members-only review entry point.
  * Unauthenticated requests are redirected to /login.php?next=<this page> by the
- * shared coaching session gate, same as /beta/ and /members.
+ * shared coaching session gate, same as the rest of /for-review/.
  */
-require dirname(__DIR__, 2) . '/includes/beta-gate.load.php';
+require_once dirname(__DIR__, 3) . '/includes/beta-gate.load.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">

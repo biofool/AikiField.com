@@ -24,9 +24,9 @@ declare(strict_types=1);
  *   — with resultAt, the AI Chat answer is also saved on that round in the
  *     member's account (AI Chat backend POST /v1/game-results/sync).
  *   {"game":"verbal-aikido", "kind":"story", "chapter":"ch1",
- *    "reactive":{"J":0-99,"C":0-99,…}, "returnTo":"/games/verbal-aikido/"}
+ *    "reactive":{"J":0-99,"C":0-99,…}, "returnTo":"/for-review/games/verbal-aikido/"}
  *   {"game":"verbal-aikido", "kind":"quiz", "lesson":"disc_…",
- *    "score":0-50, "total":1-50, "returnTo":"/games/verbal-aikido/"}
+ *    "score":0-50, "total":1-50, "returnTo":"/for-review/games/verbal-aikido/"}
  * Response (JSON):
  *   200 {"ok":true, "response":"…", "video":{"title","url"}|null, "chatUrl":"/members"}
  *   401 {"ok":false, "needsAccount":true, "loginUrl":"/login.php?next=…"}

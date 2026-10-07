@@ -20,9 +20,9 @@
   - All experiences (`/digital-experience/` — hub)
   - Ride the Lucky Wave (`/digital-experience/lucky-wave.html#v1` → gated `/games/lucky-wave/RideTheLuckyWaveV1-legacy.php`)
   - Ride the Lucky Wave V2 (`/digital-experience/lucky-wave.html#v2` → gated `/games/lucky-wave/RideTheLuckyWaveV2.php`)
-  - Verbal Aikido — Story Mode (`/digital-experience/verbal-aikido.html` → gated `/games/verbal-aikido/`)
   - Moon — 20 Exclusive Practices (`/digital-experience/moon-practices.html` → gated `/games/exercises/`)
   - Enter the Unified Field Chat (`/digital-experience/unified-field-chat.html` → gated `/members` — AI chat, sign-in required)
+- Verbal Aikido — Story Mode is not listed in the Digital Experience menu. Its review build is gated at `/for-review/games/verbal-aikido/`; the former `/games/verbal-aikido/` URL redirects there.
 - Assessment (`assessment.html`)
 - Get Started (`contact.html`)
 

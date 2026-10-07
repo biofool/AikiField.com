@@ -764,7 +764,7 @@
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           credentials: 'same-origin',
-          body: JSON.stringify({ game: 'verbal-aikido', returnTo: '/games/verbal-aikido/', ...payload }),
+          body: JSON.stringify({ game: 'verbal-aikido', returnTo: '/for-review/games/verbal-aikido/', ...payload }),
         });
         const d = await res.json().catch(() => ({}));
         out.textContent = '';
@@ -793,7 +793,7 @@
           const msg = document.createElement('p');
           msg.textContent = `${d.error || ''} ${t('ai.needsAccount')}`.trim();
           const link = document.createElement('a');
-          link.href = d.loginUrl || '/login.php?next=%2Fgames%2Fverbal-aikido%2F';
+          link.href = d.loginUrl || '/login.php?next=%2Ffor-review%2Fgames%2Fverbal-aikido%2F';
           link.textContent = t('ai.signUp');
           out.append(msg, link);
           announce(msg.textContent);

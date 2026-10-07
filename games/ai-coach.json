@@ -1,5 +1,5 @@
 {
-  "_comment": "Server-side vocabulary for /games/ai-coach.php — the 'Ask the AI Chat' button in the Digital Experience games. Browsers send only ids and integers; the endpoint turns them into the chat message using the labels here, so it cannot be used to send free text to the AI Chat. Keep in sync with: Lucky Wave PHASES / PHASES_RMOONE + SCORES / SCORES_RMOONE (games/lucky-wave/language.js and RideTheLuckyWaveV1-legacy.html), Verbal Aikido responseTypes / chapters / discovery.lessons (games/verbal-aikido/content.json).",
+  "_comment": "Server-side vocabulary for /games/ai-coach.php — the 'Ask the AI Chat' button in the Digital Experience games. Browsers send only ids and integers; the endpoint turns them into the chat message using the labels here, so it cannot be used to send free text to the AI Chat. Keep in sync with: Lucky Wave PHASES / PHASES_RMOONE + SCORES / SCORES_RMOONE (games/lucky-wave/language.js and RideTheLuckyWaveV1-legacy.html), Verbal Aikido responseTypes / chapters / discovery.lessons (for-review/games/verbal-aikido/content.json).",
   "ask": "Please recommend exactly 1 video and 1 exercise from Richard Moon's teachings to help me {goal}. Keep it brief: name the video and the exercise, and give one sentence on why each helps.",
   "goals": {
     "improve": "improve these",
@@ -50,7 +50,7 @@
     "verbal-aikido": {
       "title": "Verbal Aikido",
       "returnPaths": [
-        "/games/verbal-aikido/"
+        "/for-review/games/verbal-aikido/"
       ],
       "responseTypes": {
         "J": "Justify",

@@ -1,4 +1,4 @@
-// Verbal Aikido game (aikifield.com/games/verbal-aikido/) —
+// Verbal Aikido game (aikifield.com/for-review/games/verbal-aikido/) —
 // Story/Discovery/Practice/Community/Extras/Profile e2e.
 //
 // The game is login-gated (issue #71 — all Digital Experience games require
@@ -17,7 +17,7 @@
 const { test, expect } = require('@playwright/test');
 const { browserLogin } = require('../helpers');
 
-const GAME = '/games/verbal-aikido/';
+const GAME = '/for-review/games/verbal-aikido/';
 const STORAGE_KEY = 'va-game-progress';
 const AGE_GATE_KEY = 'va-age-gate';
 

@@ -5,7 +5,7 @@
 A reference validator lives in `tests/validate-content.js`. It compares `content.json` against `tests/chapter2-reference.json` and checks all 43 Chapter 2 paths, meter transitions, and text matches.
 
 ```bash
-node games/verbal-aikido/tests/validate-content.js
+node for-review/games/verbal-aikido/tests/validate-content.js
 ```
 
 Result expected: `PASS: content.json covers the normalized Chapter 2 reference.`
@@ -144,7 +144,7 @@ bash tests/e2e/run.sh va-game
 
 ### Service worker & manifest
 
-1. Serve the folder: `cd /home/kkron/projects/github/AikiField.com/games/verbal-aikido && php -S 0.0.0.0:8081`
+1. Serve the folder: `cd /home/kkron/projects/github/AikiField.com/for-review/games/verbal-aikido && php -S 0.0.0.0:8081`
 2. Open `http://localhost:8081/` in Chrome/Edge.
 3. Open DevTools → **Application → Service Workers**: confirm a worker is registered for scope `http://localhost:8081/` and status is "activated".
 4. **Application → Manifest**: verify the name, short name, start URL, theme color, background color, and icons appear.

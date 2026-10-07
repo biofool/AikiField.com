@@ -12,7 +12,6 @@ const DX_LINKS = [
   ['All experiences', '/digital-experience/'],
   ['Ride the Lucky Wave', '/digital-experience/lucky-wave.html#v1'],
   ['Ride the Lucky Wave V2', '/digital-experience/lucky-wave.html#v2'],
-  ['Verbal Aikido — Story Mode', '/digital-experience/verbal-aikido.html'],
   ['Moon — 20 Exclusive Practices', '/digital-experience/moon-practices.html'],
   ['Enter the Unified Field Chat', '/digital-experience/unified-field-chat.html'],
 ];
@@ -45,7 +44,7 @@ test.describe('primary nav submenus', () => {
     await expect(page.locator('#af-nav-sub-services a[aria-current="page"]')).toHaveAttribute('href', 'process.html');
   });
 
-  test('Digital Experience lists the games and the Unified Field Chat', async ({ page }) => {
+  test('Digital Experience lists the released games and the Unified Field Chat', async ({ page }) => {
     await page.goto('/index.html');
     const btn = page.getByRole('button', { name: 'Digital Experience' });
     await btn.click();
@@ -75,7 +74,7 @@ test.describe('games require a session (issue #71)', () => {
   const GATED = [
     ['/games/lucky-wave/RideTheLuckyWaveV1-legacy.html', '/games/lucky-wave/RideTheLuckyWaveV1-legacy.php'],
     ['/games/lucky-wave/RideTheLuckyWaveV2.html', '/games/lucky-wave/RideTheLuckyWaveV2.php'],
-    ['/games/verbal-aikido/', null],
+    ['/for-review/games/verbal-aikido/', null],
     ['/games/exercises/', null],
     ['/games/exercises/wrist-grab-grounding', null],
   ];
@@ -93,14 +92,11 @@ test.describe('games require a session (issue #71)', () => {
     });
   }
 
-  test('old /for-review/games/* URLs 301 to /games/*', async ({ request }) => {
-    const resp = await request.get('/for-review/games/verbal-aikido/', { maxRedirects: 0 });
+  test('old Verbal Aikido game URL redirects to the review area', async ({ request }) => {
+    const resp = await request.get('/games/verbal-aikido/', { maxRedirects: 0 });
     expect(resp.status()).toBe(301);
-    expect(resp.headers()['location']).toBe('/games/verbal-aikido/');
+    expect(resp.headers()['location']).toBe('/for-review/games/verbal-aikido/');
   });
-  // The review hub (/for-review/games.html) stays gated, but this harness's
-  // router does not emulate the /for-review/ → for-review-serve.php gate, so
-  // that is not asserted here.
 });
 
 test.describe('/members AI chat', () => {

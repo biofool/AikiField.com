@@ -44,7 +44,6 @@
           <li><a href="/digital-experience/" class="af-nav__sublink">All experiences</a></li>
           <li><a href="/digital-experience/lucky-wave.html#v1" class="af-nav__sublink">Ride the Lucky Wave</a></li>
           <li><a href="/digital-experience/lucky-wave.html#v2" class="af-nav__sublink">Ride the Lucky Wave V2</a></li>
-          <li><a href="/digital-experience/verbal-aikido.html" class="af-nav__sublink">Verbal Aikido — Story Mode</a></li>
           <li><a href="/digital-experience/moon-practices.html" class="af-nav__sublink">Moon — 20 Exclusive Practices</a></li>
           <li class="af-nav__subsep"><a href="/digital-experience/unified-field-chat.html" class="af-nav__sublink af-nav__sublink--feature">Enter the Unified Field Chat</a></li>
         </ul>

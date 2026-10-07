@@ -157,10 +157,12 @@ RewriteRule ^projects\.html$ /projects.php [R=301,L]
 # session-gated (beta-gate.load.php) and redirects to /login.php when unauthed.
 RewriteRule ^members/?$ members.php [L]
 
-# Digital Experience games were promoted out of the gated review area to the
-# public /games/ tree. Permanently redirect the old gated URLs. These MUST stay
-# above the /for-review/ catch-all below, or that rule swallows them first.
-RewriteRule ^for-review/games/(lucky-wave|verbal-aikido)(/.*)?$ /games/$1$2 [R=301,L]
+# Lucky Wave was promoted out of the gated review area to /games/. Verbal
+# Aikido moved back into /for-review/ and its former /games/ URL redirects to
+# the gated review path. These rules must stay above the catch-all below.
+RewriteRule ^for-review/games/lucky-wave(/.*)?$ /games/lucky-wave$1 [R=301,L]
+RewriteRule ^games/verbal-aikido/index\.html$ /for-review/games/verbal-aikido/ [R=301,L]
+RewriteRule ^games/verbal-aikido(/.*)?$ /for-review/games/verbal-aikido$1 [R=301,L]
 
 # /ask/* — Ask AikiField AEO knowledge layer (issue #65). Public, indexable
 # sourced Q&A pages; ask/index.php renders them dynamically from data/ask/.
@@ -187,7 +189,6 @@ RewriteRule ^beta/assessment-crossview\.html$ /beta/assessment-crossview.php [R=
 # URLs so existing links and bookmarks keep working.
 RewriteRule ^games/lucky-wave/RideTheLuckyWaveV1-legacy\.html$ /games/lucky-wave/RideTheLuckyWaveV1-legacy.php [R=301,L]
 RewriteRule ^games/lucky-wave/RideTheLuckyWaveV2\.html$ /games/lucky-wave/RideTheLuckyWaveV2.php [R=301,L]
-RewriteRule ^games/verbal-aikido/index\.html$ /games/verbal-aikido/ [R=301,L]
 RewriteRule ^games/exercises/index\.html$ /games/exercises/ [R=301,L]
 
 # ── Caching ────────────────────────────────────────────────────────────────

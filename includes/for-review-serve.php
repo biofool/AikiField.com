@@ -46,7 +46,8 @@ if ($path === false || strpos($path, $base . '/') !== 0) {
     exit;
 }
 if (is_dir($path)) {
-    $path = realpath($path . '/index.html');
+    $index = is_file($path . '/index.php') ? '/index.php' : '/index.html';
+    $path = realpath($path . $index);
     if ($path === false || strpos($path, $base . '/') !== 0) {
         http_response_code(404);
         exit;
@@ -55,6 +56,7 @@ if (is_dir($path)) {
 
 $types = [
     'html' => 'text/html; charset=utf-8',
+    'php'  => 'text/html; charset=utf-8',
     'css'  => 'text/css; charset=utf-8',
     'js'   => 'text/javascript; charset=utf-8',
     'jsx'  => 'text/plain; charset=utf-8',
@@ -76,7 +78,7 @@ if (!isset($types[$ext])) {
 }
 
 header('Content-Type: ' . $types[$ext]);
-if ($ext === 'html') {
+if ($ext === 'html' || $ext === 'php') {
     include $path; // executes embedded PHP (games.html CSRF block, index pages)
 } else {
     readfile($path);

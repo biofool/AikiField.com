@@ -1,6 +1,6 @@
 // Layout/behaviour spot-checks for the login.php parity port (issue #57):
 // tab switching + arrow-key nav, hidden-until-sent OTP, single-row OTP grid,
-// compact-footprint sizing, and the i18n-populated language select.
+// compact-footprint sizing, and the intentionally absent language select.
 const { test, expect } = require('@playwright/test');
 
 test('login page parity spot-checks', async ({ page }) => {
@@ -42,9 +42,8 @@ test('login page parity spot-checks', async ({ page }) => {
     els => els.map(e => Math.round(e.getBoundingClientRect().top)));
   expect(new Set(tops).size).toBe(1);
 
-  // Language select populated from i18n config (en + es expected)
-  const opts = await page.locator('#coach-reg-language option').allTextContents();
-  expect(opts.join(',')).toContain('Español');
+  // The outdated registration language select is intentionally absent
+  await expect(page.locator('#coach-reg-language')).toHaveCount(0);
 
   // Status role wiring
   expect(await page.locator('#coach-login-status').getAttribute('role')).toBe('status');
