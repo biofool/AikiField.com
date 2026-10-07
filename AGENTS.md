@@ -162,7 +162,9 @@ select the target explicitly: `./sync.sh --staging deploy`,
 (php-lint + unit + Playwright e2e against a detached HEAD worktree) in
 parallel and gate on it before exiting — skip with `--skip-ci`, override
 steps via `CI_LOCAL_ARGS`. Large binary assets (e.g.
-`AikiField.pdf`, redesign zips) are tracked via DVC, not git directly. The
+`AikiField.pdf`, redesign zips) are tracked via DVC, not git directly
+(remote `r2` → Cloudflare R2 `s3://biofool-dvc/aikifield`; keys in
+gitignored `.dvc/config.local`). The
 `input/` directory holds source materials and is gitignored.
 
 ### Coaching auth (shared flow — triple-PRD rule)

@@ -22,7 +22,9 @@ build step and no framework.
   Use `--staging` or `--prod` to select a target explicitly:
   `./sync.sh --staging dryrun`, `./sync.sh --prod deploy`.
 - **DVC:** used for large binary assets (`AikiField.pdf`, redesign zips).
-  `dvc pull` / `dvc push` to sync tracked binaries.
+  `dvc pull` / `dvc push` to sync tracked binaries. Remote `r2` is
+  Cloudflare R2 (`s3://biofool-dvc/aikifield`); keys in gitignored
+  `.dvc/config.local`.
 - **Git:** remote is `https://github.com/biofool/AikiField.com.git`, branch
   `main`.
 
@@ -84,7 +86,7 @@ site. Validate changes by visual review and accessibility checks.
 - **Content source of truth:** `SITE_CONTENT.md` -- update this alongside HTML
   when any site copy changes.
 - **Binary assets:** `AikiField.pdf` and redesign zips are DVC-tracked
-  (`.dvc` files committed, binaries in DVC remote).
+  (`.dvc` files committed, binaries in Cloudflare R2 remote).
 - **Source materials:** `input/` (gitignored).
 - **Deploy script:** `sync.sh` (production-sensitive -- supports dry-run).
 

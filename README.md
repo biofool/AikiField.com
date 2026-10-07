@@ -76,6 +76,10 @@ dvc pull   # fetch large binary assets
 dvc push   # upload updated large binary assets
 ```
 
+Remote `r2` points at Cloudflare R2 (`s3://biofool-dvc/aikifield`).
+Credentials live in the gitignored `.dvc/config.local` (see
+`.ai-context/architecture/infrastructure.md` for where they come from).
+
 ## Project Structure
 
 ```
