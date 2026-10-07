@@ -7,7 +7,7 @@
 
 ## Navigation
 
-**Header brand tagline:** B2B Cybersecurity Consulting + And Team Dynamics Coach
+**Header brand tagline:** Security Acceleration from a Cyber Aikido Guy
 
 - Home (`index.html`)
 - Services (`services.html`) — submenu:
@@ -50,8 +50,8 @@ security-consulting home page; that content still lives on `services.html`,
 New copy has no `data-i18n` keys yet, so it shows in English in every locale.
 
 **Meta title:** AikiField — Aikido Leadership Coaching
-**Meta description:** Leadership coaching built on forty years of Quantum Aikido, from a virtual CISO with real security accountability in IoT. Presence under pressure, plus 20 free exercises and two practice games.
-**OG / Twitter title:** Aikido Leadership Coaching — Lead from centre, not from tension
+**Meta description:** Security acceleration from a cyber aikido guy — leadership coaching that teaches you to surface conflict and ride the wave. Plus 20 free exercises and two practice games.
+**OG / Twitter title:** Aikido Leadership Coaching — Ride the wave, don't try to guide the wave
 
 ### JSON-LD structured data (`<head>`)
 
@@ -63,8 +63,9 @@ New copy has no `data-i18n` keys yet, so it shows in English in every locale.
 ### Hero (two columns: copy + decorative colour blocks)
 
 - Eyebrow: Aikido-based leadership coaching
-- Title (H1): Lead from centre, not from tension.
-- Lead: Leadership coaching built on forty years of Quantum Aikido, from a seasoned virtual CISO who has carried real security accountability in the IoT space. Presence under pressure, learned the way it is practised.
+- Title (H1): Ride the wave — don't try to guide the wave.
+- Lead: Learn to become someone who loves to surface conflict. It's the hidden conflict that's killing your business and your joy.
+- Aphorisms: Joy is the warrior's challenge. Learn to panic! Courage is not the lack of fear — it's facing the fear and doing it anyway!
 - CTAs: Book a conversation (→ contact.html) | Start with 20 free exercises (→ #exercises)
 
 ### Your coach (`#coach`, white)

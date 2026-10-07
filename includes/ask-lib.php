@@ -605,7 +605,7 @@ function ask_chrome_header(): string
         . '<a href="/index.html" class="af-brand">'
         . '<span class="af-brand__icon" aria-hidden="true">A</span>'
         . '<span class="af-brand__text">AikiField</span>'
-        . '<span class="af-brand__tagline">B2B Cybersecurity Consulting</span>'
+        . '<span class="af-brand__tagline">Security Acceleration from a Cyber Aikido Guy</span>'
         . '</a>'
         . '<nav aria-label="Primary" class="af-nav">'
         . '<a href="/index.html" class="af-nav__link">Home</a>'
