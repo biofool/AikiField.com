@@ -993,7 +993,7 @@ carousels (ported from QA `script.js`).
    with 13 book cards. All PDF links are absolute `quantumaikido.com/books/…`
    URLs — the PDFs stay single-sourced on QA.
 3. Videos — three `videos.quantumaikido.com` embeds.
-4. **Reviews — "What people are saying about the New Moonies"** — two
+4. **Reviews — "About Richard's Writings"** — two
    auto-rotating quote carousels: **Reviewers** (10 expert endorsements) and
    **Readers** (6 reader quotes), data in `js/books.js`. Portrait photos load
    from `quantumaikido.com/ReviewPortraits/…`. "Submit a Review/Comment" links
