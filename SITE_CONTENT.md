@@ -974,8 +974,10 @@ Practice and review regularly. Adjust based on results, incidents, and changing 
 
 Ported from `quantumaikido.com/books/` (2026-10-07), reordered: the commercial
 book sits at the **bottom** of the page instead of as the top hero, and the
-review carousels sit just above it. Not linked from the nav yet — add it to
-the Digital Experience submenu or footer if it should be discoverable.
+review carousels sit just above it. Canonical since 2026-10-09: QA 301s its
+`/books` landing variants here while `/books/*` assets (PDFs, print-on-demand,
+egbert) stay hosted on QA. Not linked from the nav — same blind-page pattern
+as the blog.
 
 **Meta title:** Books by Richard Moon | AikiField
 **Stylesheet:** `css/books.css` — QA component styles scoped under `.af-books`,
