@@ -87,6 +87,7 @@
           <li class="af-nav__subsep"><a href="/digital-experience/unified-field-chat.html" class="af-nav__sublink af-nav__sublink--feature" data-i18n="nav.dx_unified_field_chat">Enter the Unified Field Chat</a></li>
         </ul>
       </div>
+      <a href="somatic-studios/" class="af-nav__link" data-i18n="nav.somatic_studios">For Somatic Studios</a>
       <a href="assessment.html" class="af-nav__link" data-i18n="nav.assessment">Assessment</a>
       <a href="contact.html" class="af-nav__cta" data-i18n="nav.get_started">Get Started</a>
       <div id="af-language-selector" class="af-lang-selector" data-i18n-attr="aria-label:nav.language_selection">

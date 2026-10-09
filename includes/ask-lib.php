@@ -611,6 +611,7 @@ function ask_chrome_header(): string
         . '<a href="/index.html" class="af-nav__link">Home</a>'
         . '<a href="/services.html" class="af-nav__link">Services</a>'
         . '<a href="/case-studies.html" class="af-nav__link">Case Studies</a>'
+        . '<a href="/somatic-studios/" class="af-nav__link">For Somatic Studios</a>'
         . '<a href="/assessment.html" class="af-nav__link">Assessment</a>'
         . '<a href="/contact.html" class="af-nav__cta">Get Started</a>'
         . '</nav>'

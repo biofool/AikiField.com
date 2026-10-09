@@ -23,6 +23,8 @@
   - Moon — 20 Exclusive Practices (`/digital-experience/moon-practices.html` → gated `/games/exercises/`)
   - Enter the Unified Field Chat (`/digital-experience/unified-field-chat.html` → gated `/members` — AI chat, sign-in required)
 - Verbal Aikido — Story Mode is not listed in the Digital Experience menu. Its review build is gated at `/for-review/games/verbal-aikido/`; the former `/games/verbal-aikido/` URL redirects there.
+- For Somatic Studios (`/somatic-studios/`) — audience pathway for somatic
+  practitioners and studios (see "Somatic Studios" section below)
 - Assessment (`assessment.html`)
 - Get Started (`contact.html`)
 
@@ -67,6 +69,17 @@ New copy has no `data-i18n` keys yet, so it shows in English in every locale.
 - Lead: Learn to become someone who loves to surface conflict. It's the hidden conflict that's killing your business and your joy.
 - Aphorisms: Joy is the warrior's challenge. Learn to panic! Courage is not the lack of fear — it's facing the fear and doing it anyway!
 - CTAs: Book a conversation (→ contact.html) | Start with 20 free exercises (→ #exercises)
+
+### Audience gateway (`#paths`)
+
+**Heading:** What brings you to AikiField?
+
+Four cards, each with a short description and a ghost button:
+
+- **I want leadership coaching** — Aikido-based coaching for leaders who want to meet conflict with calm, decisive presence. → `#coaching` (How it works)
+- **I need security leadership** — Fractional CISO, DevSecOps remediation, and AI-assisted security engineering for product companies. → `services.html` (See services)
+- **I run a somatic or movement studio** — Free practical help for somatic practitioners and studios — a visibility review and a World Studio Finder listing. → `somatic-studios/` (For Somatic Studios)
+- **I want to try the practices** — Twenty free Aikido-based exercises and two games, with a free AikiField account. → `#exercises` (Start with the exercises)
 
 ### Your coach (`#coach`, white)
 
@@ -1205,3 +1218,52 @@ Collaborators · Cyprus · David Pearl · Endorsers (Business) · Future School 
 Kenneth Kron · Music Events · NZ Tour · OSensei Mindmap · Pacific Rim ·
 Print-on-Demand Publishing · Quantum Pause · Quantum Physics and Aikido ·
 Using AI for Martial Arts Practice · WIGO.
+
+## Somatic Studios (`/somatic-studios/`)
+
+Top-of-funnel pathway for somatic practitioners and studios — a distinct
+audience route alongside the security and coaching offers. English-only
+(`thanks.html` is `noindex`). The page is the conversion path for the free
+**Studio Visibility and Digital Readiness Review** and the free **World
+Studio Finder** listing.
+
+### Landing page (`somatic-studios/index.html`)
+
+**Meta title:** Free digital support for somatic studios and embodied-practice teachers — AikiField
+**Meta description:** Get a free Studio Visibility Review or list your somatic practice in the World Studio Finder. Practical help with websites, discovery, AI visibility, and digital systems.
+
+- Hero (green): "Help the right people find your somatic practice." — free
+  visibility and digital-readiness review for somatic studios, coaches,
+  movement teachers, and embodied-practice organisations. CTAs: Request my
+  free review / List my studio for free (both → `#review-form`). Trust line:
+  "No sales pitch. No obligation. Just practical observations you can use."
+- Problem: "A good practice can still be hard to find." — seven common gaps
+  (search visibility, outcome vs. method messaging, unclear booking paths,
+  inconsistent listings, thin AI-search representation, repeated questions).
+- Free review: what the review examines (search visibility, website clarity,
+  mobile usability, contact/booking, directory consistency, AI
+  comprehension, trust signals) and the deliverable — a concise Studio
+  Visibility Snapshot with three ranked improvements. Explicitly not a
+  promise of rankings or leads.
+- Free services (three cards): Studio Visibility Review · World Studio
+  Finder listing (opt-in, editable, removable) · 20-minute digital office
+  hour.
+- Coaching offers (four cards): Studio clarity session · Practice growth
+  coaching · Digital systems coaching · Ethical AI and visibility coaching —
+  each tied to a stated outcome.
+- Scope boundary: digital/business/technology support only — not clinical,
+  therapeutic, or medical advice; listings are not endorsements; studios own
+  listing accuracy; no client data through the form.
+- Intake form (`#review-form`) → `studio-review-handler.php` →
+  `thanks.html` on success. Fields: name, email (required); studio name,
+  website, city/country, practice type, "what would you most like help
+  with", optional message; opt-in checkboxes for the World Studio Finder
+  listing and occasional resources. Honeypot (`fax`), Turnstile, per-IP rate
+  limit — same mechanics as `contact-handler.php`; staging hostnames no-op
+  the mail().
+
+### Thank-you page (`somatic-studios/thanks.html`)
+
+`noindex`. Confirms receipt, sets expectations (snapshot reply, listing
+confirmation), offers the contact page for a sooner conversation. Trimmed
+nav (Home / For Somatic Studios / Get Started).

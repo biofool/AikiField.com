@@ -300,6 +300,7 @@ $coachLoginUrl = $_SERVER['SCRIPT_NAME'] ?? '/login.php';
           <li class="af-nav__subsep"><a href="/digital-experience/unified-field-chat.html" class="af-nav__sublink af-nav__sublink--feature">Enter the Unified Field Chat</a></li>
         </ul>
       </div>
+      <a href="somatic-studios/" class="af-nav__link" data-i18n="nav.somatic_studios">For Somatic Studios</a>
       <a href="assessment.html" class="af-nav__link">Assessment</a>
       <a href="contact.html" class="af-nav__cta">Get Started</a>
     </nav>
