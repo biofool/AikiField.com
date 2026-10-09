@@ -186,9 +186,14 @@ Dojo Growth Services; aikido dojos are in scope. — APPROVED**
 
 ### 3. What World Studio Finder does now
 
-**Recommendation [provisional]: both — a consent-based public directory
-built on an internal research tool.**
+**Recommendation: both — a consent-based public directory built on an
+internal research tool. — APPROVED, with a refinement.**
 
+- Per Kenneth: a studio can be **removed from the public directory while
+  remaining in the private directory**. Public listing is a
+  visibility/publish flag on the record, not the record itself —
+  takedown from public view does not delete the underlying research
+  data.
 - Keep: discovery/mapping pipeline (Places/scrape for *finding* studios),
   the dataset, the directory concept.
 - Stop: Hunter.io/NeverBounce email harvesting for outreach, cold
@@ -196,6 +201,12 @@ built on an internal research tool.**
   is used for research and for identifying candidate studios for the
   *warm* pilot — contacted only where a lawful basis exists and only by
   personal note.
+- Privacy note for implementation: if a studio asks to be *fully* erased
+  (not just unpublished), that is a different request — the record should
+  collapse to a minimal suppression entry (identity + do-not-publish /
+  do-not-contact flag + date) rather than retain full detail. The
+  public/private split alone does not satisfy an erasure request under
+  NZ Privacy Act / GDPR. Flag for a qualified adviser.
 - Trade-off: the pipeline's automation value drops sharply; its value
   becomes the map itself. Honest cost: the most impressive engineering in
   the current description is the part that must stop.
@@ -392,4 +403,5 @@ The v1 nav link "For Somatic Studios" is replaced by "Community".
 7. Programme name preference ahead of Pass 2 (candidates: AikiField
    Community Return, Studio Fieldwork, The Somatic Studio Support
    Programme — recommendation and mark search in Pass 2).
-8. Decisions 3, 6 and 9 are still marked provisional — confirm or amend.
+8. ~~Decision 3~~ — APPROVED with the public/private removal refinement.
+   Decisions 6 and 9 are still marked provisional — confirm or amend.
