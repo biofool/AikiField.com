@@ -10,6 +10,11 @@ fetch lists as defects are already fixed in source.
 Nothing in this pass changes the site. Provisional recommendations are
 marked **[provisional]** and can be reversed in review.
 
+**Review outcome (Kenneth, 2026-10-09):** decisions 1, 2 and 5 approved as
+recommended; decision 4 rights question resolved — Kenneth holds all
+publication rights to the material; decision 8 resolved differently — see
+below. Decisions 3, 6, 7, 9 remain provisional pending review.
+
 ---
 
 ## 1. Site audit and page disposition map
@@ -146,7 +151,7 @@ search equity for no benefit.
 leaders who own security; (b) separate brand/subdomain (Enlightened
 Cybersecurity); (c) security primary, coaching as differentiator.
 
-**Recommendation [provisional]: (a) bounded track inside AikiField.**
+**Recommendation: (a) bounded track inside AikiField. — APPROVED**
 
 - (b) is the cleaner long-term architecture but doubles site maintenance,
   splits domain authority, strands the case-study proof, and delays the
@@ -165,8 +170,8 @@ rewritten.
 
 ### 2. Community programme vs Dojo Growth Services
 
-**Recommendation [provisional]: the community-return programme absorbs
-Dojo Growth Services; aikido dojos are in scope.**
+**Recommendation: the community-return programme absorbs
+Dojo Growth Services; aikido dojos are in scope. — APPROVED**
 
 - The Dojo Growth bundle (AEO, Dojo Cho coaching, SEO, facilitator guide,
   the game) was designed as a mass-customised paid offer. A
@@ -199,25 +204,23 @@ built on an internal research tool.**
 
 ### 4. How Richard and his material appear
 
-**Recommendation [provisional]:**
+**Recommendation:**
 
 - Rename "Moon — 20 Exclusive Practices" → "Twenty Practices" (nav label
   and page title), with a credit line "from the work of Richard Moon" and
   a link to quantumaikido.com. URL → `/digital-experience/practices.html`
   with a 301.
-- Confirm republication rights before Pass 2 ships: the exercises data
-  cites *Adventures in Aiki-land* (2010), class teaching, and possibly
-  *Quantum Aikido: The Power of Harmony* (Park Street Press, 2026).
-  Richard's blessing is likely given the relationship, but publisher
-  rights on the 2026 book are a separate question — flag for Kenneth to
-  confirm directly with Richard/publisher.
+- **Rights: RESOLVED.** Kenneth holds all publication rights to the
+  material (confirmed 2026-10-09). Credit and attribution lines still
+  apply — rights ownership is not a licence to imply AikiField authored
+  the work.
 - Public description: "Kenneth Kron, Richard's long-time student." Richard
   introduced as "one of the world's foremost teachers of Aikido's inner
   art" with Cyprus peace work as proof point. No Nadeau mentions.
 
 ### 5. Spelling
 
-**Recommendation [provisional]: New Zealand/British spelling site-wide.**
+**Recommendation: New Zealand/British spelling site-wide. — APPROVED**
 
 - The practice is Kenneth's voice; he works from NZ. "Centre" is also the
   method's own term in QA usage. Consistency matters more than dialect
@@ -264,18 +267,24 @@ invented.
 
 ### 8. Free exercises behind an account?
 
-**Recommendation [provisional]: open access; optional account to save
-progress.**
+**Decision — RESOLVED (differs from the recommendation):** complete
+access to the exercises requires an account. The gate stays.
 
-- A forced login on the first taste of the work is a lead-capture posture
-  that contradicts both the premium coaching position and the
-  community-return ethos. Open exercises are also crawlable —
-  answer-engine visibility for the method itself.
-- Cost: engineering on `games/exercises/auth-state.php` (make unlock
-  default-true; account optional for progress). Modest.
-- **Dependency:** hangs on decision 4 — if republication rights are
-  narrower than assumed, the gate may need to stay as a licensing
-  condition. Confirm before shipping.
+- Per Kenneth: full access to the twenty exercises sits behind the free
+  AikiField account. An unauthenticated visitor may still sample: the
+  balance/grounding exercise(s) and the breathing exercise built around
+  "breathe exactly like you want to" are to be available free, without
+  sign-in — a taster, not open access.
+- Implementation: `games/exercises/auth-state.php` currently unlocks all
+  practices for logged-in sessions only; extend it so a named free subset
+  (the balance and breathing exercises) is unlocked for everyone, with
+  the remaining exercises gated.
+- **Open detail for Kenneth:** no exercise is literally titled "Balance
+  and Breathe". Candidate free set: a grounding/balance exercise (e.g.
+  "Wrist Grab Grounding" or "Feel / Locate / Align / Unify") plus "The O2
+  Continuum" (the "breathe exactly the way you want" exercise) or "listen
+  to the impulse to breathe". Confirm the exact free exercise IDs before
+  the auth-state change ships.
 
 ### 9. Signal price or engagement shape?
 
@@ -371,15 +380,16 @@ The v1 nav link "For Somatic Studios" is replaced by "Community".
 
 ## Open items for Kenneth before Pass 2
 
-1. Confirm decision 4's rights question — may the exercises be
-   republished, with what credit, and does the Park Street Press book
-   change anything?
-2. Coaching evidence: do testimonials, talks or podcast appearances exist
-   that may be named?
-3. Confirm "Richard's long-time student" and the standing Richard
+1. ~~Confirm decision 4's rights question~~ — RESOLVED: Kenneth holds all
+   publication rights.
+2. Which exercise IDs form the free taster set under decision 8.
+3. Coaching evidence: do testimonials, talks or podcast appearances exist
+   that may be named? (decision 7 still provisional)
+4. Confirm "Richard's long-time student" and the standing Richard
    description still hold.
-4. How much location detail goes public (NZ–California)?
-5. Any objection to NZ/British spelling site-wide?
-6. Programme name preference ahead of Pass 2 (candidates: AikiField
+5. How much location detail goes public (NZ–California)?
+6. ~~NZ/British spelling~~ — APPROVED.
+7. Programme name preference ahead of Pass 2 (candidates: AikiField
    Community Return, Studio Fieldwork, The Somatic Studio Support
    Programme — recommendation and mark search in Pass 2).
+8. Decisions 3, 6 and 9 are still marked provisional — confirm or amend.
