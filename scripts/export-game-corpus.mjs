@@ -41,7 +41,7 @@ function scoreLine(scores) {
   return scores.map((s) => `${s.v} = "${s.label}"`).join(" · ");
 }
 
-function phaseSection(modeName, modeId, phase, index) {
+function phaseSection(modeName, phase, index) {
   const lines = [
     `## ${modeName} — phase ${index + 1}: ${phase.label} (id: ${phase.id})`,
     "",
@@ -65,7 +65,7 @@ generated: ${today}
 
 # Ride the Lucky Wave — Digital Experience game
 
-Ride the Lucky Wave is a short guided "Digital Experience" game on AikiField.com. It walks the player through four scored phases to build a peak state, then lets them send their lowest-scoring phases to the AI Chat for a recommendation ("${coach.ask.replace("{goal}", game.modes.rmoone ? "improve these" : "")}").
+Ride the Lucky Wave is a short guided "Digital Experience" game on AikiField.com. It walks the player through four scored phases to build a peak state, then lets them send their lowest-scoring phases to the AI Chat for a recommendation ("${coach.ask.replace("{goal}", coach.goals.improve)}").
 
 ## Accessing the game
 
@@ -84,8 +84,8 @@ Standard mode score labels: ${scoreLine(SCORES)}.
 
 A game report sent to the AI Chat names the mode, the phase label (not the phase id), and the score — e.g. "Take Musu — 2/5 (Stirring)" means the \`launch\` phase scored 2 out of 5, labelled "Stirring".
 
-${PHASES_RMOONE.map((p, i) => phaseSection("R. Moon mode", "rmoone", p, i)).join("\n")}
-${PHASES.map((p, i) => phaseSection("Standard mode", "standard", p, i)).join("\n")}
+${PHASES_RMOONE.map((p, i) => phaseSection("R. Moon mode", p, i)).join("\n")}
+${PHASES.map((p, i) => phaseSection("Standard mode", p, i)).join("\n")}
 `;
 
 mkdirSync(dirname(outPath), { recursive: true });
