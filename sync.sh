@@ -11,8 +11,8 @@ fi
 #  Pushes the site to public_html/aikifield.com/ on peec.biz
 #
 #  Two deploy targets share this script:
-#    ./sync.sh deploy          -> prod    (public_html/aikifield/)
-#    ./sync.sh staging deploy  -> staging (public_html/aikifield.peec.biz/)
+#    ./sync.sh deploy          -> prod    (public_html/aikifield.peec.biz/ — aikifield.com only)
+#    ./sync.sh staging deploy  -> staging (public_html/aikifield-staging/ — staging.peec.biz + aikifield.peec.biz)
 #  "staging"/"prod" are recognized anywhere in the argument list (see
 #  KNOWN_REMOTES below) — no separate flag needed. Omitting a remote name
 #  always defaults to prod, matching the script's historical behavior.
@@ -112,6 +112,9 @@ show_help() {
     echo "  -p PATH            - Override remote path"
     echo "  -y / --yes         - Skip confirmation prompts"
     echo "  --no-pull          - Skip auto-pull of staging branch (deploy local HEAD as-is)"
+    echo "  --skip-ci          - Skip the parallel local-CI run during staging deploys"
+    echo "  --skip-audit       - Skip the dependency-audit deploy gate (emergencies only; warns + logs)"
+    echo "                       (scripts/ci-local.sh; override steps via CI_LOCAL_ARGS)"
     echo ""
     echo "Environment:"
     echo "  SKIP_PHP_LINT=1 - Skip the pre-deploy PHP syntax check (emergencies only)"
@@ -132,7 +135,7 @@ die_usage() {
 LOCAL_PATH="$(cd "$(dirname "$0")" && pwd)/"
 REMOTE_HOST="peec.biz"
 REMOTE_USER="peecbiz"
-REMOTE_PATH="public_html/aikifield/"
+REMOTE_PATH="public_html/aikifield.peec.biz/"
 REMOTE_NAME="prod"
 SSH_KEY="$HOME/.ssh/quantumaikido_ed25519"
 
@@ -141,17 +144,22 @@ SSH_KEY="$HOME/.ssh/quantumaikido_ed25519"
 # and is also used to keep staging-only files out of the prod sync — see the
 # coach-config.staging.php exclude below.
 KNOWN_REMOTES=(
-    "prod|peec.biz|peecbiz|public_html/aikifield/|Production server (peec.biz)"
-    "staging|peec.biz|peecbiz|public_html/aikifield.peec.biz/|Staging server (aikifield.peec.biz)"
+    "prod|peec.biz|peecbiz|public_html/aikifield.peec.biz/|Production server (aikifield.com — docroot dir is still named aikifield.peec.biz/)"
+    "staging|peec.biz|peecbiz|public_html/aikifield-staging/|Staging server (aikifield.peec.biz + staging.peec.biz — issues #67, #81)"
 )
 DEFAULT_REMOTE_NAME="prod"
 
 SCP_KEY_ARGS=(-i "$SSH_KEY" -o LogLevel=ERROR)
 LOGS_DIR="${LOCAL_PATH}/logs/"
-# The cPanel log name is aikifield.peec.biz, NOT aikifield.com.peec.biz —
-# the wrong name made every log download fail silently into "archived data only".
-ACCESS_LOG_PATH="access-logs/aikifield.peec.biz-ssl_log"
-ARCHIVE_LOG_PATH="logs/aikifield.peec.biz-ssl_log"
+# cPanel names logs after the vhost servername. Since the 2026-10-06 vhost
+# split (issue #81) aikifield.com is an addon with servername
+# aikifield.com.peec.biz; aikifield.peec.biz is now the STAGING subdomain, so
+# its logs no longer hold production traffic. Archives up to and including
+# Oct-2026 were written under the old name and are fetched as legacy files.
+ACCESS_LOG_PATH="access-logs/aikifield.com.peec.biz-ssl_log"
+ARCHIVE_LOG_PATH="logs/aikifield.com.peec.biz-ssl_log"
+LEGACY_ARCHIVE_LOG_PATH="logs/aikifield.peec.biz-ssl_log"
+LEGACY_ARCHIVE_LAST_MONTH="202610"
 
 if [[ "$(uname -s)" == "Linux" ]]; then
     RSYNC_BIN="rsync"
@@ -185,14 +193,27 @@ EXCLUDES=(
     --exclude='.gitattributes'
     --exclude='*.dvc'
     --exclude='scripts/'
+    --exclude='ci-results/'
+    # marketing/ holds source material (e.g. the 180-post FB batch) — not
+    # part of the public site.
+    --exclude='marketing/'
     --exclude='data/audit/'
     --exclude='data/ratelimit/'
+    # data/private/ is .htaccess-denied runtime storage (for-review comments).
+    # The dir + .htaccess deploy; the JSON contents stay server-side and must
+    # not be removed by --delete.
+    --exclude='data/private/*.json'
     --exclude='.DS_Store'
     --exclude='Thumbs.db'
     --exclude='*.tmp'
     --exclude='sync.sh'
     --exclude='_*preview*.html'
     --exclude='SITE_CONTENT.md'
+    # The *.md ban below keeps README/SITE_CONTENT/etc. out of the webroot,
+    # but for-review/documents/ocr/*.md IS web content (the gated document
+    # library, issue #60). rsync takes the first matching pattern, so this
+    # include must sit before the *.md exclude.
+    --include='for-review/documents/ocr/*.md'
     --exclude='*.md'
     --exclude='*.py'
     --exclude='*.sh'
@@ -279,11 +300,54 @@ cloudflare_ip_check() {
     fi
 }
 
+# Local CI during staging deploys: scripts/ci-local.sh runs php-lint, the
+# unit tests, and the Playwright e2e suite against a detached worktree of
+# HEAD, so it can run in parallel with rsync without touching the working
+# tree. The deploy waits on it before exiting — staging content is already
+# up either way; a CI failure fails the sync command (gate at end).
+CI_LOCAL_PID=""
+CI_LOCAL_LOG=""
+start_ci_local() {
+    if [[ "${SKIP_CI:-0}" == "1" ]]; then
+        echo "  Local CI: SKIPPED (--skip-ci)"
+        return 0
+    fi
+    local script="${LOCAL_PATH}scripts/ci-local.sh"
+    if [[ ! -f "$script" ]]; then
+        echo "  Local CI: skipped (scripts/ci-local.sh not found)"
+        return 0
+    fi
+    mkdir -p "${LOCAL_PATH}ci-results"
+    CI_LOCAL_LOG="${LOCAL_PATH}ci-results/sync-$(date +%Y%m%d-%H%M%S).log"
+    # CI_LOCAL_ARGS overrides the default step set (php-lint + unit + e2e).
+    # shellcheck disable=SC2086
+    bash "$script" ${CI_LOCAL_ARGS:-all} >"$CI_LOCAL_LOG" 2>&1 &
+    CI_LOCAL_PID=$!
+    echo "  Local CI running in parallel (pid $CI_LOCAL_PID) — log: $CI_LOCAL_LOG"
+}
+wait_ci_local() {
+    [[ -z "$CI_LOCAL_PID" ]] && return 0
+    echo ""
+    echo "  Waiting for local CI to finish (pid $CI_LOCAL_PID) — log: $CI_LOCAL_LOG"
+    local rc=0
+    wait "$CI_LOCAL_PID" 2>/dev/null || rc=$?
+    CI_LOCAL_PID=""
+    if [[ $rc -ne 0 ]]; then
+        echo "  ✗ Local CI FAILED (exit $rc) — see $CI_LOCAL_LOG" >&2
+        tail -20 "$CI_LOCAL_LOG" >&2
+        return 1
+    fi
+    echo "  ✓ Local CI passed ($CI_LOCAL_LOG)"
+    return 0
+}
+
 # Pre-parse arguments
 CMD=""
 SCOPE=""
 YES=0
 NO_PULL=0
+SKIP_CI=${SKIP_CI:-0}
+SKIP_AUDIT=0
 REMOTE_PATH_FLAG=""
 REMOTE_HOST_ARG=""
 _next_p=0
@@ -302,6 +366,8 @@ for arg in "$@"; do
         --prod)    [ -z "$REMOTE_HOST_ARG" ] && REMOTE_HOST_ARG="prod" ;;
         --purge-all) PURGE_ALL=1 ;;
         --no-pull)   NO_PULL=1 ;;
+        --skip-ci)   SKIP_CI=1 ;;
+        --skip-audit) SKIP_AUDIT=1 ;;
         -y|--yes) YES=1 ;;
         upload|download|dryrun|deploy|deploy-all|sftp|ftp|logs|report|help)
             [ -z "$CMD" ] && CMD="$arg"
@@ -402,6 +468,13 @@ print('\\n'.join(months))
         scp "${SCP_KEY_ARGS[@]}" "${LOG_USER}@${LOG_HOST}:~/${ARCHIVE_LOG_PATH}-${MONTH}.gz" "${LOGS_DIR}archive-ssl-${MONTH}.gz" 2>/dev/null
         if [ -f "${LOGS_DIR}archive-ssl-${MONTH}.gz" ]; then
             gunzip -f "${LOGS_DIR}archive-ssl-${MONTH}.gz" 2>/dev/null
+        fi
+        # Pre-split months (prod traffic logged under aikifield.peec.biz).
+        if [[ "$(date -d "1-${MONTH}" +%Y%m)" -le "$LEGACY_ARCHIVE_LAST_MONTH" ]]; then
+            scp "${SCP_KEY_ARGS[@]}" "${LOG_USER}@${LOG_HOST}:~/${LEGACY_ARCHIVE_LOG_PATH}-${MONTH}.gz" "${LOGS_DIR}archive-ssl-legacy-${MONTH}.gz" 2>/dev/null
+            if [ -f "${LOGS_DIR}archive-ssl-legacy-${MONTH}.gz" ]; then
+                gunzip -f "${LOGS_DIR}archive-ssl-legacy-${MONTH}.gz" 2>/dev/null
+            fi
         fi
     done
 
@@ -546,6 +619,35 @@ print()
 " 2>/dev/null || echo "  (error generating report)"
 }
 
+# Dependency-audit deploy gate — SCA layer 3 (biofool/CloudManagement#88).
+# Refuses deploys while committed lockfiles carry high/critical findings.
+# --skip-audit bypasses with a loud warning and a log line — emergencies only.
+audit_preflight() {
+    local script_dir
+    script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    if [[ $SKIP_AUDIT -eq 1 ]]; then
+        echo "" >&2
+        echo "  ⚠⚠ DEPENDENCY AUDIT SKIPPED (--skip-audit) — deploying despite known/unchecked findings ⚠⚠" >&2
+        echo "$(date -u +%FT%TZ) skip-audit CMD=${CMD:-?} SCOPE=${SCOPE:-?} user=${USER:-?}" >> "$script_dir/.deploy-audit-skip.log"
+        return 0
+    fi
+    if [[ ! -f "$script_dir/scripts/audit-deps.sh" ]]; then
+        echo "  ✗ scripts/audit-deps.sh missing — deploy gate cannot run. Sync it from biofool/starter." >&2
+        return 1
+    fi
+    echo ""
+    echo "  Dependency audit (deploy gate)…"
+    bash "$script_dir/scripts/audit-deps.sh" || {
+        echo "  ✗ DEPLOY BLOCKED — dependency findings above. Fix them, add a dated vulnerability-allowlist.json entry, or use --skip-audit (emergency, logged)." >&2
+        return 1
+    }
+    echo "  ✓ Dependency audit passed"
+}
+case "$CMD" in
+    deploy|deploy-all)
+        audit_preflight || exit 1 ;;
+esac
+
 case "$CMD" in
     upload)
         log_v "Upload (dry-run preview then confirm) to ${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_PATH}"
@@ -633,12 +735,14 @@ case "$CMD" in
         _SCRIPT_DIR="$(dirname "$0")"
         _PURGE_FLAG=""
         [[ $PURGE_ALL -eq 1 ]] && _PURGE_FLAG="--purge-all"
+        _SKIP_CI_FLAG=""
+        [[ $SKIP_CI -eq 1 ]] && _SKIP_CI_FLAG="--skip-ci"
 
         for _target in staging prod; do
             echo "========================================"
             echo "  Deploying to ${_target}..."
             echo "========================================"
-            bash "$_SCRIPT_DIR/sync.sh" "$_target" deploy $_PURGE_FLAG
+            bash "$_SCRIPT_DIR/sync.sh" "$_target" deploy $_PURGE_FLAG $_SKIP_CI_FLAG
             if [ $? -ne 0 ]; then
                 echo "ERROR: deploy to ${_target} failed — aborting deploy-all." >&2
                 exit 1
@@ -662,6 +766,10 @@ case "$CMD" in
             require_git_branch "staging"
             echo ""
         fi
+        # Issue #67: local CI gates every deploy, not just staging — prod
+        # deploys ship the same content and deserve the same check. Kick it
+        # off in parallel; wait_ci_local (end of this case) gates the result.
+        start_ci_local
         php_lint
         echo ""
         cloudflare_ip_check
@@ -723,6 +831,9 @@ case "$CMD" in
         else
             echo "Deploy complete."
         fi
+        # Gate at end: staging deploys wait on the parallel local-CI run.
+        # No-op for prod deploys (no CI was started).
+        wait_ci_local || exit 1
         ;;
 
     sftp|ftp)
