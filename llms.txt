@@ -12,6 +12,9 @@
 - [AI DevSecOps Remediation](https://aikifield.com/ai-devsecops-vulnerability-remediation.html): 21 days → 3 days workflow
 - [Fractional CISO](https://aikifield.com/fractional-ciso.html): SaaS & industrial IoT security leadership
 - [Demonstration Technologies](https://aikifield.com/projects.php): sponsored projects
+- [Studies the Unified Field — Books](https://aikifield.com/books.html): Richard Moon's books (primary nav: Studies the Unified Field ▸ Books)
+- [Author's Insights blog](https://aikifield.com/blog/): essays and talks; social links at /blog/index.html#social
+- [Digital Experience](https://aikifield.com/digital-experience/): interactive practices — Ride the Lucky Wave, Verbal Aikido story mode, Moon practices, Unified Field Chat
 - [Ask AikiField](https://aikifield.com/ask/): sourced Q&A knowledge layer — questions, books, videos with visible citations
 
 ## Not for crawlers

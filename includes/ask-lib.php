@@ -611,6 +611,7 @@ function ask_chrome_header(): string
         . '<a href="/index.html" class="af-nav__link">Home</a>'
         . '<a href="/services.html" class="af-nav__link">Services</a>'
         . '<a href="/case-studies.html" class="af-nav__link">Case Studies</a>'
+        . '<a href="/books.html" class="af-nav__link">Books</a>'
         . '<a href="/somatic-studios/" class="af-nav__link">For Somatic Studios</a>'
         . '<a href="/assessment.html" class="af-nav__link">Assessment</a>'
         . '<a href="/contact.html" class="af-nav__cta">Get Started</a>'
@@ -622,6 +623,8 @@ function ask_chrome_footer(): string
 {
     return '<footer class="af-footer"><div class="af-footer__inner">'
         . '<ul class="af-footer__nav">'
+        . '<li><a href="/books.html">Books</a></li>'
+        . '<li><a href="/digital-experience/">Digital Experience</a></li>'
         . '<li><a href="/contact.html">Contact</a></li>'
         . '<li><a href="' . ask_h(ask_url()) . '">' . ask_h(ask_layer_name()) . '</a></li>'
         . '<li><a href="/members">Unified Field chat</a></li>'

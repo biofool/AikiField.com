@@ -286,22 +286,34 @@ $coachLoginUrl = $_SERVER['SCRIPT_NAME'] ?? '/login.php';
         <ul class="af-nav__submenu" id="af-nav-sub-services">
           <li><a href="process.html" class="af-nav__sublink">Process</a></li>
           <li><a href="approach.html" class="af-nav__sublink">Approach</a></li>
+          <li><a href="case-studies.html" class="af-nav__sublink" data-i18n="nav.case_studies">Case Studies</a></li>
+          <li><a href="assessment.html" class="af-nav__sublink" data-i18n="nav.assessment">Assessment</a></li>
         </ul>
       </div>
-      <a href="case-studies.html" class="af-nav__link">Case Studies</a>
       <a href="projects.php" class="af-nav__link">Projects</a>
       <div class="af-nav__group">
-        <button type="button" class="af-nav__link af-nav__menu-btn" aria-expanded="false" aria-controls="af-nav-sub-dx">Digital Experience</button>
-        <ul class="af-nav__submenu af-nav__submenu--end" id="af-nav-sub-dx">
-          <li><a href="/digital-experience/" class="af-nav__sublink">All experiences</a></li>
+        <button type="button" class="af-nav__link af-nav__menu-btn" aria-expanded="false" aria-controls="af-nav-sub-uf" data-i18n="nav.unified_field_studies">Studies the Unified Field</button>
+        <ul class="af-nav__submenu af-nav__submenu--end af-nav__submenu--mega" id="af-nav-sub-uf">
+          <li class="af-nav__megacol">
+            <a href="books.html" class="af-nav__colhead" data-i18n="nav.books">Books</a>
+            <ul class="af-nav__megalist">
+              <li><a href="books.html" class="af-nav__sublink" data-i18n="nav.all_books">All Books</a></li>
+              <li><a href="blog/" class="af-nav__sublink" data-i18n="nav.insights_blog">Author's Insights blog</a></li>
+            </ul>
+          </li>
+          <li class="af-nav__megacol">
+            <a href="/digital-experience/" class="af-nav__colhead" data-i18n="nav.digital_experience">Digital Experience</a>
+            <ul class="af-nav__megalist">
           <li><a href="/digital-experience/lucky-wave.html#v1" class="af-nav__sublink">Ride the Lucky Wave</a></li>
           <li><a href="/digital-experience/lucky-wave.html#v2" class="af-nav__sublink">Ride the Lucky Wave V2</a></li>
           <li><a href="/digital-experience/moon-practices.html" class="af-nav__sublink">Moon — 20 Exclusive Practices</a></li>
           <li class="af-nav__subsep"><a href="/digital-experience/unified-field-chat.html" class="af-nav__sublink af-nav__sublink--feature">Enter the Unified Field Chat</a></li>
+              <li class="af-nav__subsep"><a href="blog/index.html#social" class="af-nav__sublink" data-i18n="nav.social_media">Social Media</a></li>
+            </ul>
+          </li>
         </ul>
       </div>
       <a href="somatic-studios/" class="af-nav__link" data-i18n="nav.somatic_studios">For Somatic Studios</a>
-      <a href="assessment.html" class="af-nav__link">Assessment</a>
       <a href="contact.html" class="af-nav__cta">Get Started</a>
     </nav>
   </div>
@@ -586,6 +598,15 @@ $coachLoginUrl = $_SERVER['SCRIPT_NAME'] ?? '/login.php';
         <li><a href="ai-devsecops-vulnerability-remediation.html">AI DevSecOps Remediation</a></li>
         <li><a href="projects.php">Demonstration Technologies</a></li>
         <li><a href="assessment.html">Self-Assessment</a></li>
+      </ul>
+    </nav>
+    <nav aria-label="Studies">
+      <h3 class="af-footer__col-title" data-i18n="nav.unified_field_studies">Studies the Unified Field</h3>
+      <ul class="af-footer__nav">
+        <li><a href="books.html" data-i18n="nav.books">Books</a></li>
+        <li><a href="blog/" data-i18n="nav.insights_blog">Author's Insights blog</a></li>
+        <li><a href="digital-experience/" data-i18n="nav.digital_experience">Digital Experience</a></li>
+        <li><a href="blog/index.html#social" data-i18n="nav.social_media">Social Media</a></li>
       </ul>
     </nav>
     <nav aria-label="Connect">

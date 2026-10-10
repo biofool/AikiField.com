@@ -288,6 +288,34 @@ button.af-focus:focus-visible,
 }
 .af-nav__sublink--feature { color: var(--af-primary); }
 
+/* Two-column megamenu ("Studies the Unified Field" — Books | Digital Experience) */
+.af-nav__submenu--mega { min-width: 480px; }
+[aria-expanded="true"] ~ .af-nav__submenu--mega {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px 8px;
+}
+@media (hover: hover) and (min-width: 721px) {
+  .af-nav__group:hover:not(.af-nav__group--dismissed) > .af-nav__submenu--mega {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px 8px;
+  }
+}
+.af-nav__megacol { list-style: none; }
+.af-nav__megalist { margin: 0; padding: 0; list-style: none; }
+.af-nav__colhead {
+  display: block;
+  padding: 8px 12px 4px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--af-muted);
+  text-decoration: none;
+}
+a.af-nav__colhead:hover { color: var(--af-primary); }
+
 /* ---------- Typography helpers ---------- */
 .af-kicker, .af-eyebrow {
   color: var(--af-primary);
@@ -1386,7 +1414,8 @@ a.af-card:hover .af-card__arrow { text-decoration: underline; }
   .af-nav__menu-btn { flex: 1; text-align: left; }
   .af-nav__sub-toggle { min-width: 44px; margin-left: 0; }
   .af-nav__submenu,
-  .af-nav__submenu--end {
+  .af-nav__submenu--end,
+  .af-nav__submenu--mega {
     position: static;
     flex-basis: 100%;
     min-width: 0;
@@ -1396,6 +1425,7 @@ a.af-card:hover .af-card__arrow { text-decoration: underline; }
     border-radius: 0;
     box-shadow: none;
   }
+  .af-nav__submenu--mega { grid-template-columns: 1fr; }
   .af-nav__sublink { white-space: normal; }
   .af-svc__bullets { grid-template-columns: 1fr; }
 }
