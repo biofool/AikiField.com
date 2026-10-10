@@ -113,6 +113,7 @@ show_help() {
     echo "  -y / --yes         - Skip confirmation prompts"
     echo "  --no-pull          - Skip auto-pull of staging branch (deploy local HEAD as-is)"
     echo "  --skip-ci          - Skip the parallel local-CI run during staging deploys"
+    echo "  --skip-audit       - Skip the dependency-audit deploy gate (emergencies only; warns + logs)"
     echo "                       (scripts/ci-local.sh; override steps via CI_LOCAL_ARGS)"
     echo ""
     echo "Environment:"
@@ -346,6 +347,7 @@ SCOPE=""
 YES=0
 NO_PULL=0
 SKIP_CI=${SKIP_CI:-0}
+SKIP_AUDIT=0
 REMOTE_PATH_FLAG=""
 REMOTE_HOST_ARG=""
 _next_p=0
@@ -365,6 +367,7 @@ for arg in "$@"; do
         --purge-all) PURGE_ALL=1 ;;
         --no-pull)   NO_PULL=1 ;;
         --skip-ci)   SKIP_CI=1 ;;
+        --skip-audit) SKIP_AUDIT=1 ;;
         -y|--yes) YES=1 ;;
         upload|download|dryrun|deploy|deploy-all|sftp|ftp|logs|report|help)
             [ -z "$CMD" ] && CMD="$arg"
@@ -615,6 +618,35 @@ for code, count in sorted(status_codes.items(), key=lambda x: -x[1]):
 print()
 " 2>/dev/null || echo "  (error generating report)"
 }
+
+# Dependency-audit deploy gate — SCA layer 3 (biofool/CloudManagement#88).
+# Refuses deploys while committed lockfiles carry high/critical findings.
+# --skip-audit bypasses with a loud warning and a log line — emergencies only.
+audit_preflight() {
+    local script_dir
+    script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    if [[ $SKIP_AUDIT -eq 1 ]]; then
+        echo "" >&2
+        echo "  ⚠⚠ DEPENDENCY AUDIT SKIPPED (--skip-audit) — deploying despite known/unchecked findings ⚠⚠" >&2
+        echo "$(date -u +%FT%TZ) skip-audit CMD=${CMD:-?} SCOPE=${SCOPE:-?} user=${USER:-?}" >> "$script_dir/.deploy-audit-skip.log"
+        return 0
+    fi
+    if [[ ! -f "$script_dir/scripts/audit-deps.sh" ]]; then
+        echo "  ✗ scripts/audit-deps.sh missing — deploy gate cannot run. Sync it from biofool/starter." >&2
+        return 1
+    fi
+    echo ""
+    echo "  Dependency audit (deploy gate)…"
+    bash "$script_dir/scripts/audit-deps.sh" || {
+        echo "  ✗ DEPLOY BLOCKED — dependency findings above. Fix them, add a dated vulnerability-allowlist.json entry, or use --skip-audit (emergency, logged)." >&2
+        return 1
+    }
+    echo "  ✓ Dependency audit passed"
+}
+case "$CMD" in
+    deploy|deploy-all)
+        audit_preflight || exit 1 ;;
+esac
 
 case "$CMD" in
     upload)

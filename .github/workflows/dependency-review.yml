@@ -1,0 +1,32 @@
+# Dependency review — PR-time SCA gate (layer 1 of 3, see AGENTS.md
+# "Dependency vulnerability gating"). Diffs manifest/lockfile changes in a
+# PR against the GitHub Advisory Database (the same DB behind Dependabot)
+# and fails the check before merge on high/critical findings.
+#
+# Requirements:
+#   - Committed lockfiles (package-lock.json, composer.lock, uv.lock,
+#     Cargo.lock, …) — never gitignore them.
+#   - Dependency graph enabled (repo Settings → Code security → Dependency
+#     graph). Private repos additionally require GitHub Advanced Security;
+#     if unavailable, replace this workflow with a pull_request job that runs
+#     `bash scripts/audit-deps.sh` (full-tree audit — stricter than diff-only).
+name: Dependency Review
+
+on:
+  pull_request:
+    branches: [main, dev, staging]
+
+permissions:
+  contents: read
+
+jobs:
+  dependency-review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/dependency-review-action@v4
+        with:
+          fail-on-severity: high
+          comment-summary-in-pr: on-failure
