@@ -40,7 +40,7 @@
       </div>
       <a href="../projects.php" class="af-nav__link">Demonstration Technologies</a>
       <div class="af-nav__group">
-        <button type="button" class="af-nav__link af-nav__menu-btn" aria-expanded="false" aria-controls="af-nav-sub-uf">Studies the Unified Field</button>
+        <button type="button" class="af-nav__link af-nav__menu-btn" aria-expanded="false" aria-controls="af-nav-sub-uf">Studies in the Unified Field</button>
         <ul class="af-nav__submenu af-nav__submenu--end af-nav__submenu--mega" id="af-nav-sub-uf">
           <li class="af-nav__megacol">
             <a href="../books.html" class="af-nav__colhead">Books</a>
@@ -219,7 +219,7 @@
       </ul>
     </nav>
     <nav aria-label="Studies">
-      <h3 class="af-footer__col-title" data-i18n="nav.unified_field_studies">Studies the Unified Field</h3>
+      <h3 class="af-footer__col-title" data-i18n="nav.unified_field_studies">Studies in the Unified Field</h3>
       <ul class="af-footer__nav">
         <li><a href="../books.html" data-i18n="nav.books">Books</a></li>
         <li><a href="../blog/" data-i18n="nav.insights_blog">Author's Insights blog</a></li>

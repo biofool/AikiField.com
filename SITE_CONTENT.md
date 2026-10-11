@@ -23,7 +23,7 @@
   - Twenty Practices (`/digital-experience/practices.html` → gated `/games/exercises/`)
   - Enter the Unified Field Chat (`/digital-experience/unified-field-chat.html` → gated `/members` — AI chat, sign-in required)
 - Verbal Aikido — Story Mode is not listed in the Digital Experience menu. Its review build is gated at `/for-review/games/verbal-aikido/`; the former `/games/verbal-aikido/` URL redirects there.
-- For Somatic Studios (`/somatic-studios/`) — audience pathway for somatic
+- Free Services For Studios (`/somatic-studios/`) — audience pathway for somatic
   practitioners and studios (see "Somatic Studios" section below)
 - Assessment (`assessment.html`)
 - Get Started (`contact.html`)
@@ -78,7 +78,7 @@ Four cards, each with a short description and a ghost button:
 
 - **I want leadership coaching** — Aikido-based coaching for leaders who want to meet conflict with calm, decisive presence. → `#coaching` (How it works)
 - **I need security leadership** — Fractional CISO, DevSecOps remediation, and AI-assisted security engineering for product companies. → `services.html` (See services)
-- **I run a somatic or movement studio** — Free practical help for somatic practitioners and studios — a visibility review and a World Studio Finder listing. → `somatic-studios/` (For Somatic Studios)
+- **I run a somatic or movement studio** — Free practical help for somatic practitioners and studios — a visibility review and a World Studio Finder listing. → `somatic-studios/` (Free Services For Studios)
 - **I want to try the practices** — Twenty free Aikido-based exercises and two games, with a free AikiField account. → `#exercises` (Start with the exercises)
 
 ### Your coach (`#coach`, white)
@@ -1267,4 +1267,4 @@ Studio Finder** listing.
 
 `noindex`. Confirms receipt, sets expectations (snapshot reply, listing
 confirmation), offers the contact page for a sooner conversation. Trimmed
-nav (Home / For Somatic Studios / Get Started).
+nav (Home / Free Services For Studios / Get Started).

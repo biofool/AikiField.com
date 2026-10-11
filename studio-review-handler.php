@@ -123,7 +123,7 @@ if (studio_rate_limited(studio_client_ip())) {
     echo '<title>429 Too Many Requests</title></head><body>';
     echo '<h1>Too Many Requests</h1>';
     echo '<p>You have submitted this form too many times. Please wait a few minutes and try again.</p>';
-    echo '<p><a href="/somatic-studios/">Back to For Somatic Studios</a></p>';
+    echo '<p><a href="/somatic-studios/">Back to Free Services For Studios</a></p>';
     echo '</body></html>';
     exit;
 }

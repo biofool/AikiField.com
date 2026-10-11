@@ -612,7 +612,7 @@ function ask_chrome_header(): string
         . '<a href="/services.html" class="af-nav__link">Services</a>'
         . '<a href="/case-studies.html" class="af-nav__link">Case Studies</a>'
         . '<a href="/books.html" class="af-nav__link">Books</a>'
-        . '<a href="/somatic-studios/" class="af-nav__link">For Somatic Studios</a>'
+        . '<a href="/somatic-studios/" class="af-nav__link">Free Services For Studios</a>'
         . '<a href="/assessment.html" class="af-nav__link">Assessment</a>'
         . '<a href="/contact.html" class="af-nav__cta">Get Started</a>'
         . '</nav>'

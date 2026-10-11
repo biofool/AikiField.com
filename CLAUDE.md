@@ -50,7 +50,7 @@ site. Validate changes by visual review and accessibility checks.
 - **Somatic-studios pathway:** `somatic-studios/` (landing page +
   `thanks.html`, English-only) and `studio-review-handler.php` (intake form
   → email, same honeypot/Turnstile/rate-limit/staging mechanics as
-  `contact-handler.php`). Linked as "For Somatic Studios" in the primary nav
+  `contact-handler.php`). Linked as "Free Services For Studios" in the primary nav
   and via the homepage audience gateway (`#paths`).
 - **Styles:** `css/` (e.g. `css/redesign.css`) + `coach-auth.css` (login
   form, loaded only by `login.php`).
