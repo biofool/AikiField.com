@@ -9,7 +9,7 @@ const { test, expect } = require('@playwright/test');
 const { establishSession, TEST_EMAIL } = require('../helpers');
 
 const DX_LINKS = [
-  ['All experiences', '/digital-experience/'],
+  ['Digital Experience', '/digital-experience/'],
   ['Ride the Lucky Wave', '/digital-experience/lucky-wave.html#v1'],
   ['Ride the Lucky Wave V2', '/digital-experience/lucky-wave.html#v2'],
   ['Twenty Practices', '/digital-experience/practices.html'],
@@ -44,11 +44,11 @@ test.describe('primary nav submenus', () => {
     await expect(page.locator('#af-nav-sub-services a[aria-current="page"]')).toHaveAttribute('href', 'process.html');
   });
 
-  test('Digital Experience lists the released games and the Unified Field Chat', async ({ page }) => {
+  test('Digital Experience column lists the released games and the Unified Field Chat', async ({ page }) => {
     await page.goto('/index.html');
-    const btn = page.getByRole('button', { name: 'Digital Experience' });
+    const btn = page.locator('button[aria-controls="af-nav-sub-uf"]');
     await btn.click();
-    const menu = page.locator('#af-nav-sub-dx');
+    const menu = page.locator('#af-nav-sub-uf');
     for (const [name, href] of DX_LINKS) {
       await expect(menu.getByRole('link', { name, exact: true })).toHaveAttribute('href', href);
     }
@@ -63,8 +63,8 @@ test.describe('primary nav submenus', () => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto('/index.html');
     await page.locator('label[for="af-nav-check"]').click();
-    await page.getByRole('button', { name: 'Digital Experience' }).click();
-    await expect(page.locator('#af-nav-sub-dx').getByRole('link', { name: 'Enter the Unified Field Chat' })).toBeVisible();
+    await page.locator('button[aria-controls="af-nav-sub-uf"]').click();
+    await expect(page.locator('#af-nav-sub-uf').getByRole('link', { name: 'Enter the Unified Field Chat' })).toBeVisible();
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
     expect(overflow).toBeLessThanOrEqual(0);
   });
