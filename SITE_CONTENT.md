@@ -87,7 +87,8 @@ Four cards, each with a short description and a ghost button:
 - Heading: Security accountability and a lifetime of practice.
 - Para 1: Kenneth Kron is a virtual CISO with more than twenty years in cybersecurity, most recently in the IoT space, where leaders answer for products that live in the physical world.
 - Para 2: He has also practised Quantum Aikido for over forty years. Coaching here joins the two: the calm, decisive posture of Aikido applied to board rooms, incidents and hard conversations.
-- TODO (from the design): one sentence on lineage and teachers, and one on the clients served.
+- Para 3: His practice comes through the lineage of Quantum Aikido founder Richard Moon.
+- Para 4: His clients are founders, security leads and product teams at Series A–C startups and SaaS companies who carry enterprise security expectations.
 
 ### How the coaching works (`#coaching`)
 
