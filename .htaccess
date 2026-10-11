@@ -28,6 +28,10 @@
 # ── Canonical redirects ────────────────────────────────────────────────────
 RewriteEngine On
 
+# Issue #89: renamed product page — 'Moon — 20 Exclusive Practices' is now
+# 'Twenty Practices' at practices.html (author's name is not a product label).
+RewriteRule ^digital-experience/moon-practices\.html$ /digital-experience/practices.html [R=301,L]
+
 # ── Origin lock: only accept HTTP(S) from Cloudflare edge IPs (issue #46) ──
 # Without this, anyone who discovers the origin IP (e.g. via dig mail.aikifield.com)
 # can bypass Cloudflare's WAF, rate limiting, and SSL by hitting the origin directly.

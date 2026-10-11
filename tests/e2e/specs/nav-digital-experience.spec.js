@@ -12,7 +12,7 @@ const DX_LINKS = [
   ['All experiences', '/digital-experience/'],
   ['Ride the Lucky Wave', '/digital-experience/lucky-wave.html#v1'],
   ['Ride the Lucky Wave V2', '/digital-experience/lucky-wave.html#v2'],
-  ['Moon — 20 Exclusive Practices', '/digital-experience/moon-practices.html'],
+  ['Twenty Practices', '/digital-experience/practices.html'],
   ['Enter the Unified Field Chat', '/digital-experience/unified-field-chat.html'],
 ];
 

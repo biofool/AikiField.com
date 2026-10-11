@@ -8,8 +8,8 @@ require dirname(__DIR__, 2) . '/includes/beta-gate.load.php';
 ?>
 <!DOCTYPE html>
 <html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>MOON — 20 Exclusive Practices — AikiField Games</title>
-<meta name="description" content="20 exclusive movement practices by Richard Moon 6th Dan, unavailable anywhere else. Free: DBSO, Wrist Grab Grounding, Ten to the Tenth.">
+<title>Twenty Practices — AikiField Games</title>
+<meta name="description" content="Twenty movement practices from the work of Richard Moon 6th Dan. Free: DBSO, Wrist Grab Grounding, Ten to the Tenth.">
 <style>
 *{box-sizing:border-box;margin:0;padding:0} body{font-family:-apple-system,Inter,Helvetica,sans-serif;background:#FAF6EF;color:#1A1A1A;line-height:1.65}
 header{padding:20px 28px;border-bottom:1px solid #E8E0D0;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:#FAF6EF;z-index:10}
@@ -35,7 +35,7 @@ img.hero{width:100%;max-width:300px;display:block;margin:10px auto;border:1px so
 .deploy{font-size:11px;background:#fff;border:1px solid #E8E0D0;padding:14px}
 @media(max-width:1050px){.wrap{grid-template-columns:1fr} .sidebar,.right{position:relative;max-height:none}}
 </style></head><body>
-<header><h1>MOON <span>Quantum Aikido — Book of Exercises & Practices — 20 Exclusive Practices by Richard Moon 6th Dan · Unavailable Anywhere Else · Student of Robert Nadeau since '71</span></h1><a href="/games/" style="padding:7px 14px;border:1px solid #1A1A1A;background:#fff;color:#1A1A1A;text-decoration:none;font-size:12px">All games</a></header>
+<header><h1>TWENTY PRACTICES <span>Quantum Aikido — Book of Exercises & Practices — from the work of Richard Moon 6th Dan · Student of Robert Nadeau since '71</span></h1><a href="/games/" style="padding:7px 14px;border:1px solid #1A1A1A;background:#fff;color:#1A1A1A;text-decoration:none;font-size:12px">All games</a></header>
 <div class="wrap">
 <div class="sidebar">
 <h3 style="font-size:11px;letter-spacing:0.12em">60 STUDIOS · PERSONALIZATION</h3>
@@ -114,7 +114,7 @@ function showLockedModal(ex){
  overlay.innerHTML=`<div style="background:#FAF6EF;border:2px solid #1A1A1A;padding:32px;max-width:420px;text-align:center">
    <div style="font-size:11px;letter-spacing:0.12em;margin-bottom:10px">LOCKED PRACTICE</div>
    <h2 style="font-size:20px;margin-bottom:10px">${ex.title}</h2>
-   <p style="font-size:14px;font-style:italic">20 exclusive practices unavailable anywhere else — By Richard Moon 6th Dan</p>
+   <p style="font-size:14px;font-style:italic">Twenty practices from the work of Richard Moon 6th Dan</p>
    <p style="font-size:12px;opacity:0.7;margin:14px 0">Free practices: DBSO, Wrist Grab Grounding, Ten to the Tenth. Unlock all 15+5 with Creator membership.</p>
    <button class="btn" id="lockClose">Back to free practices</button>
  </div>`;
@@ -136,7 +136,7 @@ function renderStudios(f=""){
 }
 function showStudioBanner(st){
  const b=document.getElementById('banner'); b.style.display='block';
- b.innerHTML=`Practicing for <strong>${st.name}</strong> students — ${st.about} — 20 exclusive practices by Richard Moon unavailable anywhere else improve physical performance + creativity.`;
+ b.innerHTML=`Practicing for <strong>${st.name}</strong> students — ${st.about} — Twenty practices from the work of Richard Moon to improve physical performance + creativity.`;
 }
 function selectStudioBySlug(slug){
  const st=studios.find(x=>studioSlug(x.name)===slug.toLowerCase());

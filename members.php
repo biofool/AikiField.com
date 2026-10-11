@@ -77,7 +77,7 @@ $qaIsAdmin   = $_SESSION['qa_is_admin'] ?? false;
             <ul class="af-nav__megalist">
           <li><a href="/digital-experience/lucky-wave.html#v1" class="af-nav__sublink">Ride the Lucky Wave</a></li>
           <li><a href="/digital-experience/lucky-wave.html#v2" class="af-nav__sublink">Ride the Lucky Wave V2</a></li>
-          <li><a href="/digital-experience/moon-practices.html" class="af-nav__sublink">Moon — 20 Exclusive Practices</a></li>
+          <li><a href="/digital-experience/practices.html" class="af-nav__sublink">Twenty Practices</a></li>
           <li class="af-nav__subsep"><a href="/digital-experience/unified-field-chat.html" class="af-nav__sublink af-nav__sublink--feature">Enter the Unified Field Chat</a></li>
               <li class="af-nav__subsep"><a href="/blog/index.html#social" class="af-nav__sublink" data-i18n="nav.social_media">Social Media</a></li>
             </ul>
