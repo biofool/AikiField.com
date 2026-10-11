@@ -1,12 +1,8 @@
-<!-- AI coding config version: 2026-10-11 — sourced from biofool/starter template.
-     Shared settings across all biofool projects; see ~/.codeium/windsurf/memories/shared_template_config.md -->
-
 # AGENTS.md — Global Rules for AI Agents
 
 These rules apply to **every** project cloned from this template. They are
 cross-project conventions distilled from the biofool project portfolio.
-Project-specific guidance belongs in `CLAUDE.md` (or a project-specific
-`AGENTS.md` section) — keep this file for rules that should hold everywhere.
+Project-specific knowledge lives in `.devin/wiki/` — keep this file for rules that should hold everywhere.
 
 Devin reads `AGENTS.md` as its native rules file. Claude Code reads
 `CLAUDE.md`; the `Global conventions` section of `CLAUDE.md` mirrors the
@@ -158,89 +154,6 @@ local-descriptions, llm-context, answers, bx, search). They require a
 `BRAVE_SEARCH_API_KEY` environment variable to make live calls. See
 `.devin/skills/web-search/SKILL.md` for setup.
 
-## Project-specific
-
-**AikiField.com** is the marketing website for AikiField, a fractional CISO
-and security-leadership consultancy serving product companies (Series A-C
-startups, SaaS, AI-powered product teams). The site is a static multi-page
-HTML/CSS/JS site -- no build step, no framework. Pages: `index.html` (home),
-`approach.html`, `services.html`, `process.html`, `projects.php`,
-`assessment.html`, `contact.html`. Styles live in `css/`, scripts in `js/`.
-Note: `projects.html` 301-redirects to `projects.php` via `.htaccess`.
-`projects.php` is kept as `.php` for that redirect and because the `/beta/`
-pages link to it; it is a fully public marketing page (no auth).
-
-`SITE_CONTENT.md` is the source of truth for all site copy -- update it
-alongside the HTML when text changes. `sync.sh` handles deploy/dry-run
-(`./sync.sh dryrun`, `./sync.sh deploy`). Use `--staging` or `--prod` to
-select the target explicitly: `./sync.sh --staging deploy`,
-`./sync.sh --prod dryrun`. Staging deploys run `scripts/ci-local.sh`
-(php-lint + unit + Playwright e2e against a detached HEAD worktree) in
-parallel and gate on it before exiting — skip with `--skip-ci`, override
-steps via `CI_LOCAL_ARGS`. Large binary assets (e.g.
-`AikiField.pdf`, redesign zips) are tracked via DVC, not git directly
-(remote `r2` → Cloudflare R2 `s3://biofool-dvc/aikifield`; keys in
-gitignored `.dvc/config.local`). The
-`input/` directory holds source materials and is gitignored.
-
-### Coaching auth (shared flow — triple-PRD rule)
-
-The coaching login authenticates against the Quantum Aikido coaching
-backend (`AIRichardMoon`, FastAPI on Cloud Run) via `coach-proxy.php`. The
-auth surface is a **blind `/login.php`** page that gates
-the pre-release `/beta/` assessment pages and the `/for-review/` games area. It is NOT linked from the public
-nav. `projects.php` no longer hosts any login or chat — it shows an
-invitation card pointing visitors to `contact.html` to request a live demo.
-The inline AI Chat was removed from `projects.php`. Since 2026-10-02 the
-QA members chat is replicated at `/members` (`members.php` + `coach-chat.js`
-+ `css/coach-chat.css`), gated by `beta-gate.load.php` and linked from the
-public nav's **Digital Experience** menu as "Enter the Unified Field Chat";
-`quantumaikido.com/members` stays live too. Keep `coach-chat.js` in sync with
-the QA copy (AikiField-only edits are listed in its header). Since 2026-10-04
-(issue #71) all `/games/` experiences are gated by `beta-gate.load.php` too —
-the nav's Digital Experience menu links to public preview pages under
-`/digital-experience/` instead of the gated game URLs.
-
-AikiField.com remains a **third frontend surface** for the shared coaching
-auth flow (same backend user store, same session contract), alongside
-`quantumaikido.com` and `AIRichardMoon/frontend` — but the surface is
-now beta gating plus the gated `/members` chat replica.
-
-Files: `login.php` (blind login + PHP session POST handlers + `?next=`
-redirect), `coach-proxy.php`, `coach-login.js` (loaded by `login.php`),
-`coach-auth.css`, `includes/coach-config.load.php`,
-`coach-config.php` (non-secret template), `coach-config.local.php`
-(gitignored — holds `COACH_PROXY_SECRET` / `TURNSTILE_SITE_KEY`), `.htaccess`
-(`/coach-api/*` → proxy; `projects.html` → `projects.php` 301;
-`/beta/*.html` → `/beta/*.php` 301s), `includes/beta-gate.load.php`
-(redirects unauthed `/beta/` requests to `/login.php?next=…`; also usable in
-`AF_GATE_NO_REDIRECT` mode for status endpoints),
-`games/exercises/auth-state.php` (`{"authed":bool}` — unlocks all practices
-for signed-in members in the public exercises app). Full design:
-`docs/coach-auth-prd.md`.
-
-**Sister repos:**
-- `~/projects/quantumaikido.com` — canonical PHP frontend (`login.php`,
-  `members.php`, `coach-proxy.php`, `coach-login.js`, `coach-chat.js`,
-  `coach-auth.css`). PRD: `docs/coach-dashboard-prd.md`.
-- `~/projects/AIRichardMoon` — backend (FastAPI auth + chat, Cloud Run). PRD:
-  `backend/PRD.md`.
-
-**Triple-PRD rule:** any change to the login/registration/auth/session/
-invitation/proxy flow MUST update all three PRDs
-(`docs/coach-auth-prd.md` here, `docs/coach-dashboard-prd.md` in QA,
-`backend/PRD.md` in AIRichardMoon) and deploy all affected repos together.
-
-### Contact page — direct booking is post-submit only
-
-The direct Outlook booking URL (`outlook.office.com/bookwithme/...`) must
-NOT appear as a standalone CTA on the contact page. It is only exposed
-inside the success and error banners that appear AFTER the contact form
-is submitted (`#form-success` / `#form-error`). The form is the sole
-primary conversion path; direct booking is a follow-up option, not a
-competing CTA. Do not add a "Book a Discovery Call" button to the main
-page layout, hero, or left column — keep it hidden until form submission.
-
 ### Cloud strategy — CloudManagement coordination
 
 **CloudManagement** (`biofool/CloudManagement`, formerly `biofool/CloudBilling`) is the
@@ -299,3 +212,8 @@ or the next run reports drift.
 a CNAME inherits the apex's proxied IPs. SPF must not use `+a`/`+mx` for the
 same reason: post-migration both resolve to Cloudflare's edge and would
 authorize their entire range to send as this domain.
+
+## Project wiki
+
+Project knowledge (architecture, coaching-auth coordination) lives in
+`.devin/wiki/` — read `INDEX.md`, load only the page you need.
