@@ -37,8 +37,14 @@
     var avatarEl = document.getElementById(ids.avatar);
     if (quoteEl) quoteEl.textContent = '"' + item.quote + '"';
     if (nameEl) {
+      nameEl.textContent = '';
       if (item.link) {
-        nameEl.innerHTML = '<a href="' + item.link + '" target="_blank" rel="noopener noreferrer">' + item.name + '</a>';
+        var a = document.createElement('a');
+        a.href = item.link;
+        a.target = '_blank';
+        a.rel = 'noopener noreferrer';
+        a.textContent = item.name;
+        nameEl.appendChild(a);
       } else {
         nameEl.textContent = item.name;
       }

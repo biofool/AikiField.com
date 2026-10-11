@@ -25,6 +25,8 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false  # no git push in this workflow
 
       - uses: actions/dependency-review-action@v4
         with:

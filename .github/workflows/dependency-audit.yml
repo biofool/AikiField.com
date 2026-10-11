@@ -24,6 +24,8 @@ jobs:
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false  # no git push in this workflow
 
       # ubuntu-latest ships Node + Python + pipx. Install auditors that are
       # not preinstalled; extend this list when adding ecosystems.

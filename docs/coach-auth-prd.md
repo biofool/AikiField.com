@@ -266,6 +266,12 @@ update or deploy:
   only to the Cloud Run–served `login.html`, not to this repo's `login.php`.
 - **Invite a Friend** (AIRichardMoon issue #656): `POST /v1/invite-friend` is
   reached only from the backend's `members.html`; AikiField has no members page.
+- **SPA dashboard hardening** (quantumaikido.com issue #377, 2026-10-10):
+  `dashboard-spa.js` gained an http/https allowlist in `goToLogin()` and
+  dropped inline `onclick` handlers for `data-act`/`data-code` +
+  `addEventListener` in `renderInvitations()`. N/A here — that file is a
+  QA-only Pages surface; AikiField's auth surface is `login.php` plus
+  `beta-gate.load.php`, neither of which hosts the SPA dashboard.
 
 **Feature flags (AIRichardMoon issue #657).** New backend features now ship
 behind a per-environment flag toggled from the backend dashboard. This repo is
