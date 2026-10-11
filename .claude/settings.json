@@ -16,5 +16,19 @@
       "Bash(docker info *)",
       "Bash(gh repo list *)"
     ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit|NotebookEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/post_edit_lint.py",
+            "timeout": 30
+          }
+        ]
+      }
+    ]
   }
 }
