@@ -1,4 +1,4 @@
-<!-- AI coding config version: 2026-10-06 — sourced from biofool/starter template.
+<!-- AI coding config version: 2026-10-11 — sourced from biofool/starter template.
      Shared settings across all biofool projects; see ~/.codeium/windsurf/memories/shared_template_config.md -->
 
 # CLAUDE.md
@@ -140,6 +140,17 @@ edit one, edit both.
   official sources, distinguish per-call vs. subscription vs. tiered, compute
   break-even volume, separate marginal from total cost, account for free
   tiers, double-check arithmetic, state all assumptions.
+- **Don't trust, verify.** Post-edit lint hooks run automatically
+  (`.claude/hooks/post_edit_lint.py` for Claude Code, `magic-compact-devin`
+  plugin hook for Devin): ruff/py_compile, `php -l`, `node --check`,
+  `bash -n`/shellcheck, `json.tool`, gofmt, pyyaml — findings are defects,
+  fix them. Before reporting done: run the repo's own gates, adversarially
+  review the diff (callers, edge cases, leftovers, secrets, silent
+  catches), and name the command that proves the claim. The
+  `verify-change` skill encodes this gate.
+- **Automate the annoying stuff.** A process explained more than once
+  becomes a hook, a `scripts/` tool, or a `.devin/skills/<name>/SKILL.md`
+  — not repeated prompt text.
 - **Never fail silently.** Every exception or unavailable dependency must be
   logged at WARNING or ERROR with a specific message. No bare
   `except: pass` / `except: return`.
