@@ -190,7 +190,15 @@ def load_token():
         elif line.startswith("CFT="):
             cft = line[4:].strip().strip('"').strip("'")
     tok = cfat or cft
+    if cfat and cft and cfat != cft:
+        print("[ WARN ] .env.secrets: CFT and CLOUDFLARE_API_TOKEN hold different tokens; "
+              "using CLOUDFLARE_API_TOKEN (CFT is a deprecated alias)", file=sys.stderr)
+    if tok and any(c.isspace() for c in tok):
+        print("[ WARN ] .env.secrets: Cloudflare token contains whitespace - the "
+              "Authorization header will be malformed (6003/6111)", file=sys.stderr)
     if tok:
+        print(f"[      ] token source: .env.secrets {'CLOUDFLARE_API_TOKEN' if cfat else 'CFT'}",
+              file=sys.stderr)
         return tok
     sys.exit("ERROR: no CFT= or CLOUDFLARE_API_TOKEN= entry in .env.secrets")
 
@@ -216,12 +224,41 @@ def cf(path, method="GET", body=None, token=None):
     return bool(payload.get("success")), payload
 
 
+def diagnose(payload):
+    """Classify a failed Cloudflare payload (issue CloudManagement#111).
+
+    Returns (category, hint). Uses the error code plus message, never the
+    HTTP status alone: 9109 covers three different problems.
+    """
+    errors = payload.get("errors") or []
+    first = errors[0] if errors and isinstance(errors[0], dict) else {}
+    code, msg = first.get("code"), str(first.get("message", ""))
+    low = msg.lower()
+    if code == 9109 and "location" in low:
+        return "ip_blocked", ("the token's Client IP Address Filtering rejects this host (" +
+                              msg.split(":", 1)[-1].strip() + "); widen the filter or run from an allowed IP")
+    if code == 9109 and "user-level authentication" in low:
+        return "wrong_token_type", "account-owned token used on a /user/... endpoint"
+    if code in (9109, 10000):
+        return "missing_scope", ("token lacks the required permission, or its zone resources exclude "
+                                 "aikifield.com (needs Zone Settings Edit / Cache Rules Edit / "
+                                 "Cache Purge / DNS Edit)")
+    if code in (1000, 6003, 6111):
+        return "invalid_token", ("token rejected - revoked, wrong value, or stray whitespace in "
+                                 ".env.secrets; an account-owned token also fails /user/tokens/verify")
+    if code == 0:
+        return "network_error", "no response from Cloudflare"
+    if code == 429:
+        return "rate_limited", "rate limited; retry later"
+    return "unknown", "unexpected Cloudflare error"
+
+
 def err(payload):
     errors = payload.get("errors") or []
-    if any(e.get("code") in (9109, 10000) for e in errors):
-        return ("token lacks the required permission (add Zone Settings Edit / "
-                "Cache Rules Edit / Cache Purge to the token) - " + str(errors))
-    return str(errors)
+    category, hint = diagnose(payload)
+    if category == "unknown":
+        return str(errors)
+    return f"[{category}] {hint} - {errors}"
 
 
 # ── Step: DNS reconciliation ────────────────────────────────────────────────

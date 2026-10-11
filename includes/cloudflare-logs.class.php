@@ -28,8 +28,71 @@ class CloudflareLogsScanner
 
     public function __construct(string $apiToken, string $zoneId)
     {
-        $this->apiToken = $apiToken;
+        $trimmed = trim($apiToken);
+        if ($trimmed !== $apiToken) {
+            // A trailing newline yields a malformed Authorization header (6003/6111).
+            error_log('cloudflare_logs_token_whitespace source=CLOUDFLARE_API_TOKEN stripped_chars='
+                . (strlen($apiToken) - strlen($trimmed)));
+        }
+        $this->apiToken = $trimmed;
         $this->zoneId   = $zoneId;
+    }
+
+    /**
+     * Classify a failed Cloudflare response (CloudManagement#111).
+     *
+     * Uses the error code plus message, never the HTTP status alone:
+     * 9109 covers IP filtering, wrong token type and missing scope.
+     *
+     * @return array{category: string, hint: string, code: int|null}
+     */
+    public static function classifyError(int $status, ?array $body): array
+    {
+        $first = $body['errors'][0] ?? [];
+        $code  = isset($first['code']) ? (int)$first['code'] : null;
+        $msg   = (string)($first['message'] ?? '');
+        $low   = strtolower($msg);
+        if ($status === 0) {
+            return ['category' => 'network_error', 'hint' => 'no response from Cloudflare: ' . $msg, 'code' => $code];
+        }
+        if ($code === 9109 && str_contains($low, 'location')) {
+            $where = trim((string)substr($msg, (int)strpos($msg, ':') + 1));
+            return ['category' => 'ip_blocked', 'code' => $code,
+                    'hint' => "the token's Client IP Address Filtering rejects this server ($where); widen the filter on the token"];
+        }
+        if ($code === 9109 && str_contains($low, 'user-level authentication')) {
+            return ['category' => 'wrong_token_type', 'code' => $code,
+                    'hint' => 'account-owned token used on a /user/... endpoint'];
+        }
+        if ($code === 9109 || $code === 10000 || $status === 403) {
+            return ['category' => 'missing_scope', 'code' => $code,
+                    'hint' => 'token lacks Zone > Analytics:Read for this zone (or its zone resources exclude it)'];
+        }
+        if (in_array($code, [1000, 6003, 6111], true) || $status === 401) {
+            return ['category' => 'invalid_token', 'code' => $code,
+                    'hint' => 'token rejected - revoked, wrong value, or stray whitespace in CLOUDFLARE_API_TOKEN'];
+        }
+        if ($status === 200 && !empty($body['errors'])) {
+            return ['category' => 'graphql_error', 'code' => $code, 'hint' => 'GraphQL error: ' . substr($msg, 0, 200)];
+        }
+        if ($status === 429) {
+            return ['category' => 'rate_limited', 'code' => $code, 'hint' => 'rate limited; retry later'];
+        }
+        if ($status >= 500) {
+            return ['category' => 'server_error', 'code' => $code, 'hint' => "Cloudflare server error ($status)"];
+        }
+        return ['category' => 'unknown', 'code' => $code, 'hint' => "unexpected Cloudflare response ($status)"];
+    }
+
+    /** Log one failure and return it as a dashboard error entry. */
+    private function failure(int $status, ?array $body): array
+    {
+        $d = self::classifyError($status, $body);
+        error_log(sprintf(
+            'cloudflare_logs_api_failed zone=%s category=%s status=%d code=%s hint=%s',
+            $this->zoneId, $d['category'], $status, $d['code'] ?? '-', $d['hint']
+        ));
+        return ['errors' => [['message' => '[' . $d['category'] . '] ' . $d['hint']]], 'data' => null];
     }
 
     /**
@@ -59,12 +122,28 @@ class CloudflareLogsScanner
         curl_close($ch);
 
         if ($err) {
-            return ['errors' => [['message' => 'cURL error: ' . $err]], 'data' => null];
+            return $this->failure(0, ['errors' => [['message' => 'cURL error: ' . $err]]]);
         }
+        $decoded = is_string($body) ? json_decode($body, true) : null;
         if ($code !== 200) {
-            return ['errors' => [['message' => "HTTP $code from Cloudflare API"]], 'data' => null];
+            return $this->failure((int)$code, is_array($decoded) ? $decoded : null);
         }
-        return json_decode($body, true) ?: ['errors' => [['message' => 'Invalid JSON response']], 'data' => null];
+        if (!is_array($decoded)) {
+            error_log('cloudflare_logs_api_failed zone=' . $this->zoneId . ' category=unknown status=200 hint=invalid JSON');
+            return ['errors' => [['message' => 'Invalid JSON response']], 'data' => null];
+        }
+        if (!empty($decoded['errors'])) {
+            return $this->failure(200, $decoded);
+        }
+        // A zone outside the token's zone resources returns zones: [] with
+        // NO error - the tables would silently render empty.
+        if (($decoded['data']['viewer']['zones'] ?? null) === []) {
+            error_log('cloudflare_logs_api_failed zone=' . $this->zoneId
+                . ' category=zone_not_visible hint=zone not visible to this token or does not exist');
+            return ['errors' => [['message' => '[zone_not_visible] zone ' . $this->zoneId
+                . ' is not visible to this token (zone resources exclude it) or does not exist']], 'data' => null];
+        }
+        return $decoded;
     }
 
     /**
@@ -155,6 +234,8 @@ GRAPHQL;
                 }
             }
         }
+        // The three queries usually fail for the same credential reason.
+        $apiErrors = array_values(array_unique($apiErrors));
 
         return [
             'zone_id'        => $this->zoneId,
