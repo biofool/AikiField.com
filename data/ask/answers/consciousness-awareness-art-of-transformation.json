@@ -1,0 +1,27 @@
+{
+  "kind": "video",
+  "question": "What is the Life Hypnosis conversation with Richard Moon?",
+  "canonical_slug": "consciousness-awareness-art-of-transformation",
+  "short_answer": "A 15 April 2026 Life Hypnosis interview with Ana Felice, published on this site's podcasts page with a public YouTube URL, exploring Aikido as a consciousness study.",
+  "answer_markdown": "The podcasts page lists *Consciousness, Awareness, and the Art of Transformation* (Life Hypnosis, host Ana Felice, 15 April 2026). Public chapter markers include redefining the warrior, Aikido as a consciousness study, and the line \"The force of disturbance is creativity itself.\"\n\nWatch on YouTube using the URL already published on /podcasts. Timestamped links below use those public chapter times.",
+  "claims": [
+    {
+      "claim": "The podcasts page publishes this interview title, host, and YouTube link.",
+      "source_id": "page-podcasts",
+      "quote": "Consciousness, Awareness, and the Art of Transformation"
+    },
+    {
+      "claim": "The page quotes: The force of disturbance is creativity itself.",
+      "source_id": "page-podcasts",
+      "quote": "The force of disturbance is creativity itself."
+    }
+  ],
+  "related_questions": [
+    "what-is-quantum-aikido",
+    "who-is-richard-moon"
+  ],
+  "review_status": "published",
+  "last_reviewed": "2026-08-18",
+  "youtube_id": "jf5bfv5gSew",
+  "attribution": "richard-moon"
+}

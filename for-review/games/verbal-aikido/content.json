@@ -1,0 +1,1179 @@
+{
+  "title": "Verbal Aikido: Story Mode",
+  "subtitle": "Level 1 (Rookie) prototype — Chapters 1 & 2",
+  "levels": [
+    "Rookie"
+  ],
+  "responseTypes": {
+    "J": "Justify",
+    "C": "Counter-attack",
+    "A": "Aikido",
+    "F": "Flight / avoidance",
+    "S": "Submissive",
+    "V": "Victim play",
+    "N": "Negating emotion"
+  },
+  "chapters": [
+    {
+      "id": "ch1",
+      "title": "Chapter 1: A different way to respond",
+      "intro": "You've recognized that when certain remarks are directed at you, you feel tension in your body. This causes you to react by either freezing, wanting to run away or counter-attacking the person who expressed these remarks. You take a test to see if you can determine what you could have done differently to handle the exchange more confidently and serenely.",
+      "startNode": "ch1_start",
+      "nodes": {
+        "ch1_start": {
+          "type": "attack",
+          "speaker": "Partner",
+          "text": "You always think you're right about everything!",
+          "meter": 1,
+          "choices": [
+            {
+              "id": "ch1_reply_j",
+              "text": "No, I don't… I agreed with your point of view just a minute ago!",
+              "type": "J",
+              "meterDelta": 0,
+              "nextNode": "ch1_retry_1",
+              "outcome": "retry"
+            },
+            {
+              "id": "ch1_reply_c",
+              "text": "Well, if you didn't make so many mistakes, I wouldn't have to correct you so much!",
+              "type": "C",
+              "meterDelta": 1,
+              "nextNode": "ch1_retry_2",
+              "outcome": "retry"
+            },
+            {
+              "id": "ch1_reply_a",
+              "text": "I do often think I'm right, yes. Tell me more about what's going on with you though.",
+              "type": "A",
+              "meterDelta": -1,
+              "nextNode": "ch1_success",
+              "outcome": "success"
+            },
+            {
+              "id": "ch1_reply_f",
+              "text": "Look, I have a lot to deal with right now. I really don't need this. Maybe I should just go.",
+              "type": "F",
+              "meterDelta": 0,
+              "nextNode": "ch1_retry_3",
+              "outcome": "retry"
+            }
+          ]
+        },
+        "ch1_retry_1": {
+          "type": "attack",
+          "speaker": "Partner",
+          "text": "You always have to be right, don't you?",
+          "meter": 1,
+          "choices": [
+            {
+              "id": "ch1_r1_reply_j",
+              "text": "No, I don't… I agreed with your point of view just a minute ago!",
+              "type": "J",
+              "meterDelta": 0,
+              "nextNode": "ch1_retry_2",
+              "outcome": "retry"
+            },
+            {
+              "id": "ch1_r1_reply_c",
+              "text": "Well, if you didn't make so many mistakes, I wouldn't have to correct you so much!",
+              "type": "C",
+              "meterDelta": 1,
+              "nextNode": "ch1_retry_3",
+              "outcome": "retry"
+            },
+            {
+              "id": "ch1_r1_reply_a",
+              "text": "I do often think I'm right, yes. Tell me more about what's going on with you though.",
+              "type": "A",
+              "meterDelta": -1,
+              "nextNode": "ch1_success",
+              "outcome": "success"
+            },
+            {
+              "id": "ch1_r1_reply_f",
+              "text": "Look, I have a lot to deal with right now. I really don't need this. Maybe I should just go.",
+              "type": "F",
+              "meterDelta": 0,
+              "nextNode": "ch1_retry_1",
+              "outcome": "retry"
+            }
+          ]
+        },
+        "ch1_retry_2": {
+          "type": "attack",
+          "speaker": "Partner",
+          "text": "Why do you always act like you know best?",
+          "meter": 2,
+          "choices": [
+            {
+              "id": "ch1_r2_reply_j",
+              "text": "No, I don't… I agreed with your point of view just a minute ago!",
+              "type": "J",
+              "meterDelta": 0,
+              "nextNode": "ch1_retry_3",
+              "outcome": "retry"
+            },
+            {
+              "id": "ch1_r2_reply_c",
+              "text": "Well, if you didn't make so many mistakes, I wouldn't have to correct you so much!",
+              "type": "C",
+              "meterDelta": 1,
+              "nextNode": "ch1_retry_1",
+              "outcome": "retry"
+            },
+            {
+              "id": "ch1_r2_reply_a",
+              "text": "I do often think I'm right, yes. Tell me more about what's going on with you though.",
+              "type": "A",
+              "meterDelta": -1,
+              "nextNode": "ch1_success",
+              "outcome": "success"
+            },
+            {
+              "id": "ch1_r2_reply_f",
+              "text": "Look, I have a lot to deal with right now. I really don't need this. Maybe I should just go.",
+              "type": "F",
+              "meterDelta": 0,
+              "nextNode": "ch1_retry_2",
+              "outcome": "retry"
+            }
+          ]
+        },
+        "ch1_retry_3": {
+          "type": "attack",
+          "speaker": "Partner",
+          "text": "You think you're right about everything, as usual!",
+          "meter": 1,
+          "choices": [
+            {
+              "id": "ch1_r3_reply_j",
+              "text": "No, I don't… I agreed with your point of view just a minute ago!",
+              "type": "J",
+              "meterDelta": 0,
+              "nextNode": "ch1_retry_1",
+              "outcome": "retry"
+            },
+            {
+              "id": "ch1_r3_reply_c",
+              "text": "Well, if you didn't make so many mistakes, I wouldn't have to correct you so much!",
+              "type": "C",
+              "meterDelta": 1,
+              "nextNode": "ch1_retry_2",
+              "outcome": "retry"
+            },
+            {
+              "id": "ch1_r3_reply_a",
+              "text": "I do often think I'm right, yes. Tell me more about what's going on with you though.",
+              "type": "A",
+              "meterDelta": -1,
+              "nextNode": "ch1_success",
+              "outcome": "success"
+            },
+            {
+              "id": "ch1_r3_reply_f",
+              "text": "Look, I have a lot to deal with right now. I really don't need this. Maybe I should just go.",
+              "type": "F",
+              "meterDelta": 0,
+              "nextNode": "ch1_retry_3",
+              "outcome": "retry"
+            }
+          ]
+        },
+        "ch1_success": {
+          "type": "success",
+          "speaker": "Partner",
+          "text": "Emmm…",
+          "meter": 0,
+          "message": "Congratulations, you created an energy shift in the exchange. That's the first step to bringing this exchange towards a conversation rather than a dispute!",
+          "choices": [
+            {
+              "id": "ch1_to_discovery",
+              "text": "Check out Discovery mode",
+              "type": "A",
+              "meterDelta": 0,
+              "nextNode": "placeholder_discovery",
+              "outcome": "success"
+            },
+            {
+              "id": "ch1_next_chapter",
+              "text": "Try Chapter 2",
+              "type": "A",
+              "meterDelta": 0,
+              "nextNode": "chapter_select_ch2",
+              "outcome": "success"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "ch2",
+      "title": "Chapter 2: My first Dojo",
+      "intro": "You've drummed up the courage to go to the VA dojo, where practitioners of all ages and styles welcome you warmly. After various warm-up activities including a salutation, a centering and a 'Verbal Stretching' you feel ready to go on the 'Verbal Mat' and test your reflexes. The attack for today is 'You're so selfish'.",
+      "startNode": "ch2_start",
+      "nodes": {
+        "ch2_start": {
+          "type": "attack",
+          "speaker": "Partner",
+          "text": "You're so selfish!",
+          "meter": 2,
+          "choices": [
+            {
+              "id": "ch2_reply1_c",
+              "text": "No I'm not, you're the selfish one!",
+              "type": "C",
+              "meterDelta": 1,
+              "nextNode": "ch2_counter_attack",
+              "outcome": "continue"
+            },
+            {
+              "id": "ch2_reply1_s",
+              "text": "Really? Wow, I'm sorry, I didn't mean to be.",
+              "type": "S",
+              "meterDelta": 0,
+              "nextNode": "ch2_submissive_attack",
+              "outcome": "continue"
+            },
+            {
+              "id": "ch2_reply1_a",
+              "text": "What do you mean?",
+              "type": "A",
+              "meterDelta": -1,
+              "nextNode": "ch2_x1",
+              "outcome": "continue"
+            }
+          ]
+        },
+        "ch2_counter_attack": {
+          "type": "attack",
+          "speaker": "Partner",
+          "text": "Shut up! I don't see the point in talking to you!",
+          "meter": 3,
+          "choices": [
+            {
+              "id": "ch2_reply2_a",
+              "text": "I think I see what you mean. Let me listen to what you have to say.",
+              "type": "A",
+              "meterDelta": -2,
+              "nextNode": "ch2_x1",
+              "outcome": "continue"
+            },
+            {
+              "id": "ch2_reply2_c",
+              "text": "You're the one who needs to shut up!",
+              "type": "C",
+              "meterDelta": 1,
+              "nextNode": "ch2_retry",
+              "outcome": "retry"
+            },
+            {
+              "id": "ch2_reply2_j",
+              "text": "That's because you're always saying mean things to me!",
+              "type": "J",
+              "meterDelta": 1,
+              "nextNode": "ch2_retry",
+              "outcome": "retry"
+            }
+          ]
+        },
+        "ch2_submissive_attack": {
+          "type": "attack",
+          "speaker": "Partner",
+          "text": "Yeah well that's not good enough, I'm sick of you always doing this!",
+          "meter": 2,
+          "choices": [
+            {
+              "id": "ch2_reply8_v",
+              "text": "Well, nothing ever seems good enough for you, why do I even bother to try?!",
+              "type": "V",
+              "meterDelta": 1,
+              "nextNode": "ch2_victim_attack",
+              "outcome": "continue"
+            },
+            {
+              "id": "ch2_reply8_a",
+              "text": "When did you first start to feel that way?",
+              "type": "A",
+              "meterDelta": -1,
+              "nextNode": "ch2_x2",
+              "outcome": "continue"
+            },
+            {
+              "id": "ch2_reply8_s",
+              "text": "I'm sorry, I'm sorry! Please don't be mad with me.",
+              "type": "S",
+              "meterDelta": 1,
+              "nextNode": "ch2_disgust_attack",
+              "outcome": "continue"
+            }
+          ]
+        },
+        "ch2_victim_attack": {
+          "type": "attack",
+          "speaker": "Partner",
+          "text": "Oh here we go again, it's always about you!",
+          "meter": 3,
+          "choices": [
+            {
+              "id": "ch2_reply3_j",
+              "text": "That's because you never let me do what I want to do!",
+              "type": "J",
+              "meterDelta": 1,
+              "nextNode": "ch2_retry",
+              "outcome": "retry"
+            },
+            {
+              "id": "ch2_reply3_v",
+              "text": "OK so everything is always my fault… I'm the only one to blame now!",
+              "type": "V",
+              "meterDelta": 1,
+              "nextNode": "ch2_retry",
+              "outcome": "retry"
+            },
+            {
+              "id": "ch2_reply3_a",
+              "text": "You know what? Yes. Let's go in a different direction. When did you first start to feel that way?",
+              "type": "A",
+              "meterDelta": -2,
+              "nextNode": "ch2_x2",
+              "outcome": "continue"
+            }
+          ]
+        },
+        "ch2_disgust_attack": {
+          "type": "attack",
+          "speaker": "Partner",
+          "text": "I can't even look at you right now you disgust me so much!",
+          "meter": 3,
+          "choices": [
+            {
+              "id": "ch2_reply7_s",
+              "text": "OK, I'll do anything. Just tell me what you want me to do!",
+              "type": "S",
+              "meterDelta": 1,
+              "nextNode": "ch2_retry",
+              "outcome": "retry"
+            },
+            {
+              "id": "ch2_reply7_a",
+              "text": "You know what? I'd find it hard to look at myself too right now. How about you tell me more about where this is all coming from?",
+              "type": "A",
+              "meterDelta": -2,
+              "nextNode": "ch2_x2",
+              "outcome": "continue"
+            },
+            {
+              "id": "ch2_reply7_n",
+              "text": "Oh come on, 'disgust' seems a little harsh. Don't you think you're exaggerating?",
+              "type": "N",
+              "meterDelta": null,
+              "nextNode": "ch2_retry",
+              "outcome": "retry"
+            }
+          ]
+        },
+        "ch2_x1": {
+          "type": "attack",
+          "speaker": "Partner",
+          "text": "I mean… you only seem to think about what you want to do!",
+          "meter": 1,
+          "choices": [
+            {
+              "id": "ch2_reply4_a",
+              "text": "And, what would you prefer?",
+              "type": "A",
+              "meterDelta": -1,
+              "nextNode": "ch2_y2",
+              "outcome": "partial"
+            },
+            {
+              "id": "ch2_reply4_j_lying",
+              "text": "Hold on, it's not all I ever think about, there's many times I think about you!",
+              "type": "J",
+              "meterDelta": 1,
+              "nextNode": "ch2_lying_attack",
+              "outcome": "continue"
+            },
+            {
+              "id": "ch2_reply4_j_longtime",
+              "text": "Hold on, it's not all I ever think about, there's many times I think about you!",
+              "type": "J",
+              "meterDelta": 1,
+              "nextNode": "ch2_longtime_attack",
+              "outcome": "continue",
+              "pdfAlternativeNextNode": "ch2_longtime_attack"
+            },
+            {
+              "id": "ch2_reply4_n",
+              "text": "Well it seems to me like you're over-reacting. I'm sure there's a logical explanation for this.",
+              "type": "N",
+              "meterDelta": 2,
+              "nextNode": "ch2_self_centered_attack",
+              "outcome": "continue"
+            }
+          ]
+        },
+        "ch2_lying_attack": {
+          "type": "attack",
+          "speaker": "Partner",
+          "text": "So now I'm lying, is that what you're saying?",
+          "meter": 2,
+          "choices": [
+            {
+              "id": "ch2_reply9_v",
+              "text": "Why is everything I do and everything I say just wrong?",
+              "type": "V",
+              "meterDelta": 1,
+              "nextNode": "ch2_retry",
+              "outcome": "retry"
+            },
+            {
+              "id": "ch2_reply9_j",
+              "text": "No, I never said you were lying. I just trying to get you to see that I'm not completely selfish.",
+              "type": "J",
+              "meterDelta": 1,
+              "nextNode": "ch2_retry",
+              "outcome": "retry"
+            },
+            {
+              "id": "ch2_reply9_a",
+              "text": "OK look, how about we get back to what you want to talk about. How long have you been feeling like this?",
+              "type": "A",
+              "meterDelta": -1,
+              "nextNode": "ch2_x2",
+              "outcome": "continue"
+            }
+          ]
+        },
+        "ch2_self_centered_attack": {
+          "type": "attack",
+          "speaker": "Partner",
+          "text": "Are you serious? Not only are you selfish, but you are completely self-centered too!",
+          "meter": 3,
+          "choices": [
+            {
+              "id": "ch2_reply4n_a",
+              "text": "Look… I'm serious about us sorting this out. How about we take 5 and talk about this more.",
+              "type": "A",
+              "meterDelta": null,
+              "nextNode": "ch2_x2",
+              "outcome": "continue"
+            },
+            {
+              "id": "ch2_reply4n_j",
+              "text": "Again with the insults! I'm trying to do my best here!",
+              "type": "J",
+              "meterDelta": null,
+              "nextNode": "ch2_retry",
+              "outcome": "retry"
+            },
+            {
+              "id": "ch2_reply4n_c",
+              "text": "Well that's ironic… don't you think you're projecting a bit?",
+              "type": "C",
+              "meterDelta": null,
+              "nextNode": "ch2_retry",
+              "outcome": "retry"
+            }
+          ]
+        },
+        "ch2_x2": {
+          "type": "attack",
+          "speaker": "Partner",
+          "text": "Well it's been like this for quite some time now, and to be honest it gets on my nerves!",
+          "meter": 1,
+          "choices": [
+            {
+              "id": "ch2_reply5_n",
+              "text": "Well there's no point getting angry about it, just chill out!",
+              "type": "N",
+              "meterDelta": 1,
+              "nextNode": "ch2_retry",
+              "outcome": "retry"
+            },
+            {
+              "id": "ch2_reply5_a",
+              "text": "OK, well what would you prefer to happen?",
+              "type": "A",
+              "meterDelta": -1,
+              "nextNode": "ch2_y1",
+              "outcome": "success"
+            },
+            {
+              "id": "ch2_reply5_c",
+              "text": "Well, you really get on my nerves every time you're in a mood like this!",
+              "type": "C",
+              "meterDelta": 2,
+              "nextNode": "ch2_retry",
+              "outcome": "retry"
+            }
+          ]
+        },
+        "ch2_longtime_attack": {
+          "type": "attack",
+          "speaker": "Partner",
+          "text": "Well, it definitely seems like a long time since you've thought about anyone else but yourself!",
+          "meter": 2,
+          "choices": [
+            {
+              "id": "ch2_reply6_c",
+              "text": "Oh you can talk! Do you ever get the impression you're being a little hypocritical?",
+              "type": "C",
+              "meterDelta": 2,
+              "nextNode": "ch2_retry",
+              "outcome": "retry"
+            },
+            {
+              "id": "ch2_reply6_v",
+              "text": "So now you want me to drop everything and do exactly what you demand?",
+              "type": "V",
+              "meterDelta": 1,
+              "nextNode": "ch2_retry",
+              "outcome": "retry"
+            },
+            {
+              "id": "ch2_reply6_a",
+              "text": "I think I can see why it might seem like that. So, what would you like to see happening instead?",
+              "type": "A",
+              "meterDelta": -2,
+              "nextNode": "ch2_y1",
+              "outcome": "success"
+            }
+          ]
+        },
+        "ch2_y1": {
+          "type": "success",
+          "speaker": "Partner",
+          "text": "Emmm…",
+          "meter": 0,
+          "message": "Congratulations, you created an energy shift in the exchange. That's the first step to bringing this exchange towards a conversation rather than a dispute!",
+          "choices": [
+            {
+              "id": "ch2_y1_discovery",
+              "text": "Check out Discovery mode",
+              "type": "A",
+              "meterDelta": 0,
+              "nextNode": "placeholder_discovery",
+              "outcome": "success"
+            },
+            {
+              "id": "ch2_y1_extras",
+              "text": "Browse Extras",
+              "type": "A",
+              "meterDelta": 0,
+              "nextNode": "placeholder_extras",
+              "outcome": "success"
+            }
+          ]
+        },
+        "ch2_y2": {
+          "type": "partial",
+          "speaker": "Partner",
+          "text": "Hmm. OK… let's pick this up later.",
+          "meter": 0,
+          "message": "Not bad… you did manage to create an energy shift but it was tough and you only postponed the conversation. Worth doing again (repeat).",
+          "choices": [
+            {
+              "id": "ch2_y2_retry",
+              "text": "Try this chapter again",
+              "type": "A",
+              "meterDelta": 0,
+              "nextNode": "ch2_start",
+              "outcome": "partial"
+            },
+            {
+              "id": "ch2_y2_discovery",
+              "text": "Check out Discovery mode",
+              "type": "A",
+              "meterDelta": 0,
+              "nextNode": "placeholder_discovery",
+              "outcome": "partial"
+            },
+            {
+              "id": "ch2_y2_extras",
+              "text": "Browse Extras",
+              "type": "A",
+              "meterDelta": 0,
+              "nextNode": "placeholder_extras",
+              "outcome": "partial"
+            }
+          ]
+        },
+        "ch2_retry": {
+          "type": "retry",
+          "speaker": "Narrator",
+          "text": "Try again / recommend lessons",
+          "meter": 3,
+          "choices": [
+            {
+              "id": "ch2_retry_again",
+              "text": "Try again",
+              "type": "A",
+              "meterDelta": 0,
+              "nextNode": "ch2_start",
+              "outcome": "retry"
+            },
+            {
+              "id": "ch2_retry_lesson",
+              "text": "Recommended lessons",
+              "type": "A",
+              "meterDelta": 0,
+              "nextNode": "placeholder_lesson",
+              "outcome": "lesson"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "placeholders": {
+    "placeholder_discovery": {
+      "type": "lesson",
+      "title": "Discovery mode",
+      "text": "Discovery mode: lessons, videos and articles about Verbal Aikido techniques. New lessons unlock as you complete Story-mode chapters.",
+      "choices": [
+        {
+          "id": "placeholder_back",
+          "text": "Back to Story",
+          "type": "A",
+          "meterDelta": 0,
+          "nextNode": "chapter_select",
+          "outcome": "lesson"
+        }
+      ]
+    },
+    "placeholder_extras": {
+      "type": "lesson",
+      "title": "Extras",
+      "text": "(Placeholder) Multimedia library, Practical Tips & Activities, and the VA Store.",
+      "choices": [
+        {
+          "id": "placeholder_extras_back",
+          "text": "Back to Story",
+          "type": "A",
+          "meterDelta": 0,
+          "nextNode": "chapter_select",
+          "outcome": "lesson"
+        }
+      ]
+    },
+    "placeholder_lesson": {
+      "type": "lesson",
+      "title": "Recommended lessons",
+      "text": "(Placeholder) Learn the Aikido moves that help de-escalate verbal attacks: centered listening, open questions, and reflecting back.",
+      "choices": [
+        {
+          "id": "placeholder_lesson_back",
+          "text": "Back to Story",
+          "type": "A",
+          "meterDelta": 0,
+          "nextNode": "chapter_select",
+          "outcome": "lesson"
+        }
+      ]
+    }
+  },
+  "discovery": {
+    "passThreshold": 0.66,
+    "lessons": [
+      {
+        "id": "disc_reactive_responses",
+        "title": "Spotting the Four Reactive Responses",
+        "summary": "Learn to recognize Justify, Counter-attack, Flight and Submissive/Victim/Negating reactions — the reflexes that escalate an exchange like \"You always think you're right about everything!\".",
+        "unlockRequirement": "chapter:ch1",
+        "status": "locked",
+        "media": [
+          {
+            "type": "video",
+            "label": "Video: The four reactive responses (placeholder)",
+            "url": ""
+          },
+          {
+            "type": "article",
+            "label": "Article: Why we justify, counter-attack or flee (placeholder)",
+            "url": ""
+          }
+        ],
+        "body": [
+          "When someone says \"You always think you're right about everything!\", most of us don't reply — we react. In Verbal Aikido these reflexes are called the reactive responses: Justify (defending your position), Counter-attack (returning the aggression), and Flight (escaping the exchange).",
+          "There are also quieter forms of the same reflex: Submissive (giving in to stop the discomfort), Victim play (making yourself the injured party), and Negating emotion (denying or minimizing what the other person feels).",
+          "None of these are 'bad' — they are protection mechanisms. But each one either escalates the attacker's energy or abandons your own position. The Aikido response is different: it accepts the incoming energy and redirects it toward a real conversation.",
+          "In Chapter 1 you saw this in action: every non-Aikido reply kept the loop going, while the Aikido reply — acknowledging the grain of truth and inviting the other person to say more — created an energy shift."
+        ],
+        "quiz": [
+          {
+            "question": "Your partner says \"You always think you're right!\" and you reply \"No I don't, I agreed with you a minute ago!\" Which reactive response is this?",
+            "choices": [
+              "Counter-attack",
+              "Justify",
+              "Flight",
+              "Aikido"
+            ],
+            "correctIndex": 1,
+            "explanation": "Defending your position with evidence is Justify — it keeps the dispute about who is right."
+          },
+          {
+            "question": "Replying \"Well, if you didn't make so many mistakes, I wouldn't have to correct you!\" is an example of…",
+            "choices": [
+              "Flight",
+              "Submissive",
+              "Counter-attack",
+              "Negating emotion"
+            ],
+            "correctIndex": 2,
+            "explanation": "Returning the aggression is Counter-attack — it raises the anger meter."
+          },
+          {
+            "question": "What makes the reply \"I do often think I'm right, yes. Tell me more about what's going on with you though.\" an Aikido response?",
+            "choices": [
+              "It proves the attacker wrong",
+              "It accepts part of the attack and redirects toward dialogue",
+              "It avoids the conflict entirely",
+              "It apologizes so the attack stops"
+            ],
+            "correctIndex": 1,
+            "explanation": "Aikido accepts the incoming energy (the grain of truth) and redirects it into a conversation instead of resisting or escalating."
+          }
+        ]
+      },
+      {
+        "id": "disc_verbal_mat",
+        "title": "The Verbal Mat: De-escalating \"You're so selfish\"",
+        "summary": "Practice reading the exchange on the Verbal Mat: how centered listening, open questions and reflecting back turn \"You're so selfish!\" into a conversation.",
+        "unlockRequirement": "chapter:ch2",
+        "status": "locked",
+        "media": [
+          {
+            "type": "video",
+            "label": "Video: A round on the Verbal Mat (placeholder)",
+            "url": ""
+          },
+          {
+            "type": "article",
+            "label": "Article: Open questions as a de-escalation move (placeholder)",
+            "url": ""
+          }
+        ],
+        "body": [
+          "In the dojo, the 'Verbal Mat' is where you spar with words. The attack \"You're so selfish!\" is a classic opener: it is a judgment about your character, not a request.",
+          "Reactive replies make it worse. Counter-attacking (\"You're the selfish one!\") spikes the anger to breaking point. Submitting (\"I'm sorry, I didn't mean to be\") abandons your ground and invites a harder follow-up.",
+          "The Aikido move is an open question — \"What do you mean?\", \"When did you first start to feel that way?\", \"What would you prefer to happen?\". Each one moves the exchange from accusation toward information.",
+          "Notice the rhythm in Chapter 2: even a partial success (\"Hmm. OK… let's pick this up later.\") counts as an energy shift. De-escalation is a practice, not a perfect score."
+        ],
+        "quiz": [
+          {
+            "question": "Why is \"What do you mean?\" an effective first reply to \"You're so selfish!\"?",
+            "choices": [
+              "It challenges the attacker to prove their claim",
+              "It is an open question that invites the attacker to explain instead of escalate",
+              "It agrees that you are selfish",
+              "It changes the subject"
+            ],
+            "correctIndex": 1,
+            "explanation": "Open questions are the core Aikido move: they accept the energy of the attack and redirect it into useful information."
+          },
+          {
+            "question": "\"Really? Wow, I'm sorry, I didn't mean to be.\" is which response type?",
+            "choices": [
+              "Aikido",
+              "Negating emotion",
+              "Submissive",
+              "Justify"
+            ],
+            "correctIndex": 2,
+            "explanation": "Apologizing to stop the discomfort is Submissive — it abandons your position and usually invites another attack."
+          },
+          {
+            "question": "On the Verbal Mat, a reply that ends with \"Hmm. OK… let's pick this up later.\" is scored as…",
+            "choices": [
+              "A failure",
+              "A retry",
+              "A partial success — an energy shift worth repeating",
+              "A full success"
+            ],
+            "correctIndex": 2,
+            "explanation": "Partial success still shifts the energy of the exchange; the PDF says it's 'worth doing again (repeat)'."
+          }
+        ]
+      }
+    ]
+  },
+  "globalNodes": {
+    "chapter_select": {
+      "type": "chapter_select",
+      "title": "Story Mode",
+      "text": "Select a chapter to play.",
+      "choices": []
+    },
+    "chapter_select_ch2": {
+      "type": "chapter_select",
+      "title": "Story Mode",
+      "text": "Chapter 1 complete! Select Chapter 2 to continue.",
+      "choices": []
+    }
+  },
+  "practice": {
+    "centering": {
+      "intro": "Guided centering recordings from VA practitioners. Filter by style or length; rate with stars, mark favorites with the heart.",
+      "activities": [
+        {
+          "id": "ctr_breath",
+          "title": "Breath Centering",
+          "style": "breath",
+          "lengthSec": 180,
+          "label": "Guided breathing to settle the body before responding."
+        },
+        {
+          "id": "ctr_body",
+          "title": "Body Scan Center",
+          "style": "body",
+          "lengthSec": 300,
+          "label": "A slow scan from feet to crown to recover center under pressure."
+        },
+        {
+          "id": "ctr_voice",
+          "title": "Grounding Voice",
+          "style": "voice",
+          "lengthSec": 120,
+          "label": "Hum and tone work to steady your voice before the verbal mat."
+        },
+        {
+          "id": "ctr_move",
+          "title": "Centering Walk",
+          "style": "movement",
+          "lengthSec": 240,
+          "label": "Walking practice — feel the line from earth through hara."
+        },
+        {
+          "id": "ctr_pause",
+          "title": "The Quantum Pause",
+          "style": "breath",
+          "lengthSec": 90,
+          "label": "A ninety-second pause ritual to insert space between attack and reply."
+        }
+      ]
+    },
+    "stretching": {
+      "intro": "Stretching exercises train the listening muscle. Posture 1 (expression) is guided by the bot; Posture 2 (listening) is for practice with a partner.",
+      "posture1": {
+        "title": "Posture 1 — Expression (guided by bot)",
+        "questions": [
+          "What is the attack or criticism you heard most recently?",
+          "What did you feel in your body when you heard it?",
+          "What did you want to say back in the moment?",
+          "What might the other person actually need underneath the attack?",
+          "What would an Aikido-style reply sound like for you?"
+        ]
+      },
+      "posture2": {
+        "title": "Posture 2 — Listening (with a partner)",
+        "questions": [
+          "Repeat back what you heard without correcting it.",
+          "Name the emotion you hear underneath the words.",
+          "Ask one open question about what they need.",
+          "Summarize their position so they say \"yes, that's it.\""
+        ],
+        "note": "Practice live with a partner. Write notes below about what you observed."
+      }
+    },
+    "sparring": {
+      "intro": "The sparring bot throws random attacks at you. Self-assess each reply type to build reflexes. Requires completing a Discovery lesson first (knowledge gate).",
+      "gateLessonId": "disc_reactive_responses",
+      "attacks": [
+        "You never listen to anyone but yourself!",
+        "Why do you always have to be so dramatic?",
+        "Everyone thinks you messed this up, you know.",
+        "You call that an apology? Pathetic.",
+        "Nobody asked for your opinion.",
+        "You always ruin everything you touch.",
+        "Stop pretending you care about this project.",
+        "You think you are better than everyone else."
+      ],
+      "tip": "An Aikido response acknowledges the attack, then redirects toward what the attacker needs — e.g. \"Sounds like this really matters to you. What would you want to see happen?\""
+    }
+  },
+  "extras": {
+    "multimedia": [
+      {
+        "id": "mm_podcast",
+        "title": "Verbal Aikido podcast",
+        "type": "podcast",
+        "note": "Interviews and dojo conversations (placeholder link)."
+      },
+      {
+        "id": "mm_interviews",
+        "title": "Founder interviews",
+        "type": "interview",
+        "note": "Video interviews on the origins of VA practice (placeholder link)."
+      },
+      {
+        "id": "mm_faq",
+        "title": "VA FAQ",
+        "type": "faq",
+        "note": "Common questions about belts, dojos and practice (placeholder link)."
+      },
+      {
+        "id": "mm_belts",
+        "title": "About the belts",
+        "type": "article",
+        "note": "What each belt level means in VA (placeholder link)."
+      }
+    ],
+    "tips": [
+      {
+        "id": "tip_wotd",
+        "title": "Word of the Day",
+        "note": "Get a daily VA word/reminder.",
+        "reminder": true
+      },
+      {
+        "id": "tip_doc",
+        "title": "Day of Center",
+        "note": "A day of scheduled centering reminders throughout the day.",
+        "reminder": true
+      },
+      {
+        "id": "tip_firstaid",
+        "title": "VA first-aid kit",
+        "note": "Quick phrases to use when an attack catches you off guard: \"Tell me more\", \"What would you prefer?\", \"Help me understand.\"",
+        "reminder": false
+      }
+    ],
+    "store": [
+      {
+        "id": "st_book",
+        "title": "Verbal Aikido book",
+        "price": 19.99,
+        "note": "The foundational VA text (placeholder purchase link)."
+      },
+      {
+        "id": "st_dojo",
+        "title": "Online VA Dojo ticket",
+        "price": 15,
+        "note": "Single-session ticket to the online dojo (placeholder purchase link)."
+      },
+      {
+        "id": "st_tee",
+        "title": "VA dojo t-shirt",
+        "price": 29.5,
+        "note": "Merch (placeholder purchase link)."
+      },
+      {
+        "id": "st_event",
+        "title": "VA workshop registration",
+        "price": 120,
+        "note": "In-person workshop ticket (placeholder purchase link)."
+      }
+    ]
+  },
+  "profile": {
+    "belts": [
+      {
+        "name": "White",
+        "color": "#e5e5e5",
+        "requires": {}
+      },
+      {
+        "name": "Yellow",
+        "color": "#e8c93c",
+        "requires": {
+          "chapters": 1
+        }
+      },
+      {
+        "name": "Orange",
+        "color": "#e08a2e",
+        "requires": {
+          "chapters": 2
+        }
+      },
+      {
+        "name": "Green",
+        "color": "#3f9e4d",
+        "requires": {
+          "chapters": 2,
+          "lessons": 1
+        }
+      },
+      {
+        "name": "Blue",
+        "color": "#3a7bd5",
+        "requires": {
+          "chapters": 2,
+          "lessons": 2
+        }
+      },
+      {
+        "name": "Brown",
+        "color": "#8a5a33",
+        "requires": {
+          "chapters": 2,
+          "lessons": 2,
+          "sparring": 3
+        }
+      },
+      {
+        "name": "Black",
+        "color": "#222222",
+        "requires": {
+          "chapters": 2,
+          "lessons": 2,
+          "sparring": 5,
+          "stretching": 2
+        }
+      }
+    ],
+    "avatars": [
+      "🥋",
+      "🌊",
+      "🕊️",
+      "🌿",
+      "🔥",
+      "🌑",
+      "🐉",
+      "🎯"
+    ],
+    "languages": [
+      {
+        "code": "en",
+        "label": "English"
+      },
+      {
+        "code": "fr",
+        "label": "French"
+      },
+      {
+        "code": "es",
+        "label": "Spanish"
+      },
+      {
+        "code": "de",
+        "label": "German"
+      },
+      {
+        "code": "ja",
+        "label": "Japanese"
+      }
+    ]
+  },
+  "community": {
+    "intro": "Forums, events and Find a Practitioner. Your avatar, belt and practice language appear alongside your activity.",
+    "safety": {
+      "minorAge": 18
+    },
+    "forum": {
+      "note": "Forums are read-only in this prototype — posting requires member accounts.",
+      "threads": [
+        {
+          "id": "thread_fall",
+          "title": "What happens when you fall",
+          "pinned": true,
+          "replies": 12,
+          "excerpt": "A support thread for when an exchange goes wrong — share what happened and how you got back up."
+        },
+        {
+          "id": "thread_attack_1",
+          "title": "Attack: \"You never help around here\"",
+          "pinned": false,
+          "replies": 5,
+          "excerpt": "My partner opened with this at breakfast. I froze. What would an Aikido response look like?"
+        },
+        {
+          "id": "thread_advice_1",
+          "title": "Advice wanted: staying centered at work",
+          "pinned": false,
+          "replies": 8,
+          "excerpt": "Weekly status meetings keep turning into blame sessions. How do you practice Posture 2 listening under pressure?"
+        },
+        {
+          "id": "thread_insight_1",
+          "title": "Insight: the pause before replying",
+          "pinned": false,
+          "replies": 3,
+          "excerpt": "Noticed that just breathing once before answering changed the whole exchange today."
+        }
+      ]
+    },
+    "events": [
+      {
+        "id": "evt_dojo_zoom",
+        "title": "Online VA Dojo — weekly practice",
+        "format": "online",
+        "location": "Zoom",
+        "price": 0,
+        "beltLevel": "all",
+        "theme": "Open practice",
+        "note": "Weekly online dojo session (Zoom link placeholder)."
+      },
+      {
+        "id": "evt_green_stretch",
+        "title": "Stretching intensive — Posture 2",
+        "format": "online",
+        "location": "Zoom",
+        "price": 15,
+        "beltLevel": "green",
+        "theme": "Listening",
+        "note": "Guided partner listening practice (inscription placeholder)."
+      },
+      {
+        "id": "evt_paris_workshop",
+        "title": "Weekend VA workshop — Paris",
+        "format": "in-person",
+        "location": "Paris, FR",
+        "price": 120,
+        "beltLevel": "all",
+        "theme": "Sparring fundamentals",
+        "note": "Two-day in-person workshop (registration placeholder)."
+      },
+      {
+        "id": "evt_rookie_meetup",
+        "title": "Rookie meetup — first steps on the mat",
+        "format": "in-person",
+        "location": "Local dojos",
+        "price": 0,
+        "beltLevel": "white",
+        "theme": "Introduction",
+        "note": "Free intro session for new practitioners (placeholder)."
+      }
+    ],
+    "practitioners": [
+      {
+        "id": "prac_aoife",
+        "name": "Aoife",
+        "avatar": "🌊",
+        "belt": "Green",
+        "languages": ["en"],
+        "modes": ["centering", "stretch"],
+        "availability": "Weekday evenings (GMT)"
+      },
+      {
+        "id": "prac_marc",
+        "name": "Marc",
+        "avatar": "🥋",
+        "belt": "Brown",
+        "languages": ["fr", "en"],
+        "modes": ["stretch", "spar"],
+        "availability": "Weekend mornings (CET)"
+      },
+      {
+        "id": "prac_sofia",
+        "name": "Sofía",
+        "avatar": "🕊️",
+        "belt": "Blue",
+        "languages": ["es", "en"],
+        "modes": ["centering", "spar"],
+        "availability": "Flexible — request a slot"
+      },
+      {
+        "id": "prac_kenji",
+        "name": "Kenji",
+        "avatar": "🌑",
+        "belt": "Black",
+        "languages": ["ja", "en"],
+        "modes": ["spar"],
+        "availability": "Monthly open mat (JST)"
+      }
+    ]
+  }
+}

@@ -26,6 +26,12 @@
   var CONFIG_URL = '/data/i18n-config.json';
   var STRINGS_URL = '/data/i18n-strings/';
   var DEFAULT_LOCALE = 'en';
+  // Cache-busting version applied to every /data/ JSON fetch. These files are
+  // mutable render-critical content (issue #73): a stale-cached strings file
+  // would overwrite freshly-deployed data-i18n text after first paint. Bump
+  // this whenever the shipped strings/config change — the .htaccess 5-minute
+  // must-revalidate rule bounds staleness, this guarantees a clean break.
+  var DATA_V = 'v=20261004-2';
 
   var config = null;
   var currentLocale = DEFAULT_LOCALE;
@@ -37,7 +43,7 @@
   function loadConfig() {
     if (config) return Promise.resolve(config);
     if (global.fetch) {
-      return global.fetch(CONFIG_URL)
+      return global.fetch(CONFIG_URL + '?' + DATA_V)
         .then(function (r) { return r.ok ? r.json() : null; })
         .then(function (c) {
           config = c || { supportedLocales: [DEFAULT_LOCALE], rtlLocales: [], localeNames: {}, defaultCurrency: 'USD', defaultTimeZone: 'UTC', defaultMeasurementSystem: 'metric', measurementSystemOverrides: {}, colorSemantics: { overrides: {} } };
@@ -105,42 +111,15 @@
   }
 
   // ── Locale detection & persistence ────────────────────────────────
-  // Priority: URL path prefix > ?lang= query param > stored preference >
-  // navigator.language > default.
-  // Issue #84: allow stakeholders to explicitly choose their locale rather
-  // than relying solely on IP inference. We use browser-language as the
-  // *initial* guess but always respect an explicit user choice thereafter.
+  // Priority: URL path prefix only (e.g. /es/approach.html → es).
+  // The site defaults to English (the default locale) unless the URL has
+  // a 2-letter locale path prefix. Browser language, localStorage, and
+  // ?lang= query params are intentionally NOT used — language is chosen
+  // explicitly by navigating to a localized path (e.g. /es/projects.php).
   function detectLocale() {
-    // 1. URL path prefix takes priority (e.g. /es/approach.html → es).
+    // URL path prefix is the only detection mechanism.
     var pathLocale = localeFromPath();
     if (pathLocale) return pathLocale;
-
-    // 2. ?lang= query param (used by the EN/ES toggle links on the home page).
-    if (global.location && global.location.search) {
-      try {
-        var qp = new URLSearchParams(global.location.search);
-        var langParam = qp.get('lang');
-        if (langParam && isSupported(langParam)) {
-          // Persist it so it sticks across navigation.
-          try { global.localStorage && global.localStorage.setItem(STORAGE_KEY, langParam); } catch (e) { /* private mode */ }
-          return langParam;
-        }
-      } catch (e) { /* URLSearchParams not available */ }
-    }
-
-    // 3. Stored preference (localStorage).
-    var stored = null;
-    try { stored = global.localStorage && global.localStorage.getItem(STORAGE_KEY); } catch (e) { /* private mode */ }
-    if (stored && isSupported(stored)) return stored;
-
-    // 4. Browser language.
-    if (global.navigator && global.navigator.language) {
-      var nav = global.navigator.language.toLowerCase();
-      // Match exact (e.g. "pt-BR") then base (e.g. "pt")
-      if (isSupported(nav)) return nav;
-      var base = nav.split('-')[0];
-      if (isSupported(base)) return base;
-    }
 
     return DEFAULT_LOCALE;
   }
@@ -157,16 +136,20 @@
       return;
     }
     if (global.console && console.info) console.info('[AFLocale] setLocale("' + locale + '") called');
-    currentLocale = locale;
-    try { global.localStorage && global.localStorage.setItem(STORAGE_KEY, locale); } catch (e) { /* private mode */ }
-    applyDocumentLocale(locale);
-    // Notify any listeners that the locale changed (e.g. language-selector).
-    global.dispatchEvent && global.dispatchEvent(new CustomEvent('af:localechange', { detail: { locale: locale } }));
-    // Load strings for the new locale, then localize all data-i18n elements.
-    loadStrings(locale).then(function (strings) {
-      if (global.console && console.info) console.info('[AFLocale] Strings loaded for "' + locale + '": ' + Object.keys(strings || {}).length + ' keys');
-      localizeElements();
-    });
+    // Navigate to the path-based URL for the target locale (e.g. /es/projects.php).
+    // The page reloads at the new URL and detectLocale() picks up the locale
+    // from the path prefix. This ensures the full page is served in the target
+    // locale rather than partially translating in-place.
+    var url = buildLocaleUrl(locale);
+    if (url) {
+      global.location.href = url;
+    } else {
+      // Same locale already active — just update in-place.
+      currentLocale = locale;
+      applyDocumentLocale(locale);
+      global.dispatchEvent && global.dispatchEvent(new CustomEvent('af:localechange', { detail: { locale: locale } }));
+      loadStrings(locale).then(function () { localizeElements(); });
+    }
   }
 
   function getLocale() { return currentLocale; }
@@ -306,7 +289,7 @@
       stringsCache[loc] = {};
       return Promise.resolve(stringsCache[loc]);
     }
-    stringsLoading[loc] = global.fetch(STRINGS_URL + loc + '.json?v=2')
+    stringsLoading[loc] = global.fetch(STRINGS_URL + loc + '.json?' + DATA_V)
       .then(function (r) { return r.ok ? r.json() : null; })
       .then(function (s) {
         stringsCache[loc] = s || {};
@@ -358,7 +341,7 @@
   function loadCategoryTerms() {
     if (categoryTerms) return Promise.resolve(categoryTerms);
     if (!global.fetch) { categoryTerms = {}; return Promise.resolve(categoryTerms); }
-    return global.fetch('/data/category-terminology.json')
+    return global.fetch('/data/category-terminology.json?' + DATA_V)
       .then(function (r) { return r.ok ? r.json() : null; })
       .then(function (d) { categoryTerms = d || {}; return categoryTerms; })
       .catch(function (err) {
@@ -371,7 +354,7 @@
   function loadGranularityLabels() {
     if (granularityLabels) return Promise.resolve(granularityLabels);
     if (!global.fetch) { granularityLabels = {}; return Promise.resolve(granularityLabels); }
-    return global.fetch('/data/granularity-labels.json')
+    return global.fetch('/data/granularity-labels.json?' + DATA_V)
       .then(function (r) { return r.ok ? r.json() : null; })
       .then(function (d) { granularityLabels = d || {}; return granularityLabels; })
       .catch(function (err) {
@@ -489,12 +472,19 @@
     }
     // Translatable text: data-i18n="key" replaces textContent with t(key).
     // data-i18n-params='{"name":"value"}' for {placeholder} interpolation.
+    // Guard (issue #74): data-i18n must only live on leaf elements. Setting
+    // textContent on a container deletes all its descendant markup, so
+    // elements with element children are skipped and warned about instead.
     var i18nEls = document.querySelectorAll('[data-i18n]');
     if (global.console && console.info) console.info('[AFLocale] Localizing ' + i18nEls.length + ' data-i18n elements for locale "' + currentLocale + '"');
     for (var m = 0; m < i18nEls.length; m++) {
       var tel = i18nEls[m];
       var key = tel.getAttribute('data-i18n');
       if (!key) continue;
+      if (tel.firstElementChild) {
+        if (global.console && console.warn) console.warn('[AFLocale] data-i18n on container "' + key + '" skipped — move the attribute to a leaf element.');
+        continue;
+      }
       var paramsRaw = tel.getAttribute('data-i18n-params');
       var params = paramsRaw ? JSON.parse(paramsRaw) : undefined;
       var translated = t(key, params);

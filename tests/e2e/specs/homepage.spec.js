@@ -17,7 +17,7 @@ test.describe('homepage', () => {
 
   test('page has the expected title', async ({ page }) => {
     await page.goto('/');
-    await expect(page).toHaveTitle(/AikiField.*Security Leadership/);
+    await expect(page).toHaveTitle(/AikiField.*Aikido Leadership Coaching/);
   });
 
   test('page has the AikiField brand', async ({ page }) => {

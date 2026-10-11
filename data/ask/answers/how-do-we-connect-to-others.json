@@ -1,0 +1,33 @@
+{
+  "kind": "question",
+  "question": "How do we connect to others?",
+  "canonical_slug": "how-do-we-connect-to-others",
+  "short_answer": "Connection begins inside: come present, grounded, and coherent in body, mind, and spirit — that inner harmony shapes the tone of any relationship. From there, practice harmonious relationship through adaptability and blending: non-resistance to what is, accepting and receiving rather than opposing.",
+  "answer_markdown": "Harmony with another begins with the first lesson. Feeling where you are means being present and grounded, aware of and in harmony with your own experience. Coming into an inner coherence, unified in body, mind, and spirit, affects the tone and quality of any relationship. Harmony within creates a reciprocating echo producing harmony in the external world as a natural outcome. When you live in a state of dynamic presence, the second principle of harmonious relationship emerges.\n\nHarmonious relationship is developed through the principles of adaptability and blending. It implies fluidity with the ceaseless change that is life. Harmonious relationship means non-resistance to the unfolding universe, accepting and receiving what is, rather than opposing it.",
+  "claims": [
+    {
+      "claim": "Connection to others begins with inner harmony — being present, grounded, and coherent in body, mind, and spirit.",
+      "source_id": "pdf-life-in-3-easy-lessons",
+      "quote": "Harmony with another begins with the first lesson. Feeling where you are means being present and grounded"
+    },
+    {
+      "claim": "Inner harmony produces outer harmony as a natural, reciprocating outcome.",
+      "source_id": "pdf-life-in-3-easy-lessons",
+      "quote": "Harmony within creates a reciprocating echo producing harmony in the external world as a natural outcome"
+    },
+    {
+      "claim": "The practice of connecting is adaptability and blending — non-resistance, accepting and receiving rather than opposing.",
+      "source_id": "pdf-life-in-3-easy-lessons",
+      "quote": "Harmonious relationship is developed through the principles of adaptability and blending"
+    }
+  ],
+  "related_questions": [
+    "life-in-3-easy-lessons",
+    "what-is-extraordinary-listening",
+    "how-does-aikido-transform-conflict"
+  ],
+  "review_status": "needs_editorial_review",
+  "lineage_note": "Drafted 2026-10-02 as a priority-0 canonical answer (AIRichardMoon backend data/priority_answers.json, id 'connect-to-others') after the live coach served a mismatched 'control, avoidance or overwhelm' passage for this question. Wording is verbatim from Life in 3 Easy Lessons, '2. Harmonious Relationship' (pp. 33-34, public PDF). Also answers: 'how do I connect with others', 'how to connect with others', 'how do we connect to each other'.",
+  "last_reviewed": "2026-10-02",
+  "attribution": "richard-moon"
+}

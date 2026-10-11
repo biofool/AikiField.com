@@ -1,0 +1,26 @@
+{
+  "kind": "question",
+  "attribution": "aikifield",
+  "question": "What is the AikiField Security Leadership Assessment?",
+  "canonical_slug": "what-is-the-security-leadership-assessment",
+  "short_answer": "Two assessments in one: a security-maturity measure across five categories, and a leadership-presence measure — self-scored 1–6, designed for honest self-inquiry.",
+  "answer_markdown": "The assessment measures **security maturity** in five categories (Governance & Strategy, Product & Engineering Security, DevSecOps & Vulnerability Remediation, and more) alongside the **leadership presence capabilities** that determine whether a program holds up under pressure.\n\nIt is self-scored on a 1–6 scale with no right answers — the stated purpose is honest self-inquiry to diagnose where you are, envision where you want to go, and design a practice that gets you there.",
+  "claims": [
+    {
+      "claim": "The assessment combines a security-maturity measure with a leadership-presence measure.",
+      "source_id": "af-page-assessment",
+      "quote": "The first measures your organization's security maturity. The second measures the leadership presence capabilities that determine whether your program holds up under pressure."
+    },
+    {
+      "claim": "It is scored 1–6 and framed as honest self-inquiry, not a test.",
+      "source_id": "af-page-assessment",
+      "quote": "There are no right answers. The purpose is honest self-inquiry — to diagnose where you are, envision where you want to go, and design a practice that gets you there."
+    }
+  ],
+  "related_questions": [
+    "what-is-aikifields-security-leadership-approach",
+    "what-is-aikifield"
+  ],
+  "review_status": "published",
+  "last_reviewed": "2026-10-02"
+}

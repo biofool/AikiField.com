@@ -1,7 +1,7 @@
 <?php
 /**
  * Coach API Proxy for AikiField — forwards /coach-api/* requests to the
- * AI Ki Questions Fielded backend (AIRichardMoon on Cloud Run).
+ * Quantum Aikido Wisdom backend (AIRichardMoon on Cloud Run).
  *
  * Ported from quantumaikido.com/web/coach-proxy.php, trimmed for AikiField:
  *   - No staging folder (AikiField has no /staging/ wrapper).

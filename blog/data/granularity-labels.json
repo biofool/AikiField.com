@@ -1,0 +1,64 @@
+{
+  "_meta": {
+    "version": 1,
+    "comment": "Locale-specific labels for data granularity metrics (issue #84). Distinguishes 'verified studios' from 'web mentions' with clear, locale-specific labels so users understand what the numbers represent."
+  },
+  "metrics": {
+    "verified_studios": {
+      "en": "verified studios",
+      "es": "estudios verificados",
+      "fr": "studios vérifiés",
+      "de": "verifizierte Studios",
+      "pt": "estúdios verificados",
+      "ja": "確認済みスタジオ",
+      "zh": "已验证工作室",
+      "ko": "확인된 스튜디오",
+      "ar": "استوديوهات موثقة",
+      "he": "סטודיו מאומתים",
+      "fa": "استودیوهای تأیید شده",
+      "hi": "सत्यापित स्टूडियो"
+    },
+    "web_mentions": {
+      "en": "web mentions",
+      "es": "menciones web",
+      "fr": "mentions web",
+      "de": "Web-Erwähnungen",
+      "pt": "menções na web",
+      "ja": "ウェブ言及",
+      "zh": "网络提及",
+      "ko": "웹 언급",
+      "ar": "إشارات على الويب",
+      "he": "אזכורי אינטרנט",
+      "fa": "اشاره‌های وب",
+      "hi": "वेब उल्लेख"
+    },
+    "verified_dojo": {
+      "en": "verified dojo",
+      "es": "dojo verificado",
+      "fr": "dojo vérifié",
+      "de": "verifiziertes Dōjō",
+      "pt": "dojo verificado",
+      "ja": "確認済み道場",
+      "zh": "已验证道场",
+      "ko": "확인된 도장",
+      "ar": "دوجو موثق",
+      "he": "דוג'ו מאומת",
+      "fa": "دوجوی تأیید شده",
+      "hi": "सत्यापित दोजो"
+    },
+    "total_studios": {
+      "en": "total studios",
+      "es": "estudios totales",
+      "fr": "studios au total",
+      "de": "Studio-Gesamtzahl",
+      "pt": "estúdios totais",
+      "ja": "スタジオ総数",
+      "zh": "工作室总数",
+      "ko": "스튜디오 총계",
+      "ar": "إجمالي الاستوديوهات",
+      "he": "סה\"כ סטודיו",
+      "fa": "کل استودیوها",
+      "hi": "कुल स्टूडियो"
+    }
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "kind": "book",
+  "question": "What is Quantum Aikido: The Power of Harmony?",
+  "canonical_slug": "quantum-aikido-the-power-of-harmony",
+  "short_answer": "The 2026 Inner Traditions / Park Street Press book by Richard Moon (ISBN 9781644119785, 207 pages) is the public flagship statement of Quantum Aikido.",
+  "answer_markdown": " *Quantum Aikido: The Power of Harmony* is listed on this site with Inner Traditions / Park Street Press, 2026, 207 pages, ISBN 9781644119785. Public copy asks: what if conflict isn't something to win or lose, but energy waiting to be transformed?\n\nThis knowledge record uses only that public bibliographic description. The flagship book is **not** claimed to be inside the private coaching search index.",
+  "claims": [
+    {
+      "claim": "Public book metadata lists Inner Traditions, 2026, 207 pages.",
+      "source_id": "page-books-index",
+      "quote": "Inner Traditions / Park Street Press, 2026 · 207 pages"
+    },
+    {
+      "claim": "The book page describes transforming conflict into creative harmony.",
+      "source_id": "page-book",
+      "quote": "teaching readers to transform conflict into creative harmony"
+    }
+  ],
+  "related_questions": [
+    "what-is-quantum-aikido",
+    "what-does-richard-moon-teach-about-harmony"
+  ],
+  "review_status": "published",
+  "last_reviewed": "2026-08-18",
+  "isbn": "9781644119785",
+  "attribution": "richard-moon"
+}

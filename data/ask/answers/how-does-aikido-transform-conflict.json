@@ -1,0 +1,32 @@
+{
+  "kind": "question",
+  "question": "How does Aikido transform conflict?",
+  "canonical_slug": "how-does-aikido-transform-conflict",
+  "short_answer": "Public accounts of Cyprus and Bosnia present Aikido as training the facilitators' presence so that dialogue can hold fear, grief, and opposition without collapsing into force versus force.",
+  "answer_markdown": "The about page's Cyprus story is the public case study: Track II diplomacy between Greek and Turkish Cypriot community leaders, where official channels had failed for decades. The claim published there is that the quality of the facilitators' presence — centered or contracted — determined what became possible in the room. State is contagious.\n\nBosnia is presented as a harder test: not frozen conflict but fresh grief after war. Witness, not a rush to settlement, is named as the first act of peace.\n\nThose stories are already on this site. This page does not add unpublished negotiation detail from the private coaching archive.",
+  "claims": [
+    {
+      "claim": "Cyprus work was Track II diplomacy across the Green Line in the mid-1990s.",
+      "source_id": "page-about",
+      "quote": "track-two diplomacy between Greek Cypriot and Turkish Cypriot community leaders"
+    },
+    {
+      "claim": "Book copy lists Cyprus peace negotiations as a real-world application.",
+      "source_id": "page-book",
+      "quote": "Cyprus peace negotiations"
+    },
+    {
+      "claim": "Biography copy frames the mat lesson as transforming the relationship rather than winning.",
+      "source_id": "page-richard-moon",
+      "quote": "It's energy waiting to be transformed."
+    }
+  ],
+  "related_questions": [
+    "what-is-wigo",
+    "what-is-the-quantum-pause",
+    "who-is-richard-moon"
+  ],
+  "review_status": "published",
+  "last_reviewed": "2026-08-18",
+  "attribution": "richard-moon"
+}

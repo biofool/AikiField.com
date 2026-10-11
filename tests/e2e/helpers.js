@@ -65,7 +65,28 @@ async function browserLogin(page, { email = TEST_EMAIL, password = PASSWORD, nex
   return new URL(page.url()).pathname;
 }
 
+/**
+ * Reset the stub backend's /v1/game-results/sync store (and its "endpoint
+ * missing" switch) so a test starts from empty accounts on a deployed backend.
+ */
+async function resetStubGameResults(request) {
+  await request.delete(`${STUB_URL}/__stub/game-results`);
+}
+
+/** Make the stub answer /v1/game-results/sync with 404, like a backend that predates it. */
+async function stubGameResultsMissing(request, missing = true) {
+  await request.post(`${STUB_URL}/__stub/game-results/missing`, { data: { missing } });
+}
+
+/** The last body AikiField forwarded to the stub's /v1/game-results/sync. */
+async function stubGameResultsLastRequest(request) {
+  return (await (await request.get(`${STUB_URL}/__stub/game-results/last-request`)).json()).body;
+}
+
 module.exports = {
+  stubGameResultsLastRequest,
+  resetStubGameResults,
+  stubGameResultsMissing,
   BASE_URL,
   STUB_URL,
   TEST_EMAIL,

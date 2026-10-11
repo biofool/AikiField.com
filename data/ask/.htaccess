@@ -1,0 +1,3 @@
+# Ask AikiField records are build-time data — rendered by ask/index.php.
+# Not a public asset directory (unpublished drafts must not leak).
+Require all denied

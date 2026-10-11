@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preload" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Public+Sans:wght@400;600;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <noscript><link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Public+Sans:wght@400;600;700&display=swap" rel="stylesheet"></noscript>
-  <link rel="stylesheet" href="../css/redesign.css">
+  <link rel="stylesheet" href="../css/redesign.css?v=20261003">
   <link rel="stylesheet" href="css/assessment.css">
 </head>
 <body data-bta-page="organisation">
@@ -28,11 +28,39 @@
     <label for="af-nav-check" class="af-nav__toggle" aria-label="Menu">&#9776;</label>
     <nav aria-label="Primary" class="af-nav">
       <a href="../index.html" class="af-nav__link">Home</a>
-      <a href="../process.html" class="af-nav__link">Process</a>
-      <a href="../approach.html" class="af-nav__link">Approach</a>
-      <a href="../services.html" class="af-nav__link">Services</a>
-      <a href="../case-studies.html" class="af-nav__link">Case Studies</a>
+      <div class="af-nav__group">
+        <a href="../services.html" class="af-nav__link">Services</a>
+        <button type="button" class="af-nav__sub-toggle" aria-expanded="false" aria-controls="af-nav-sub-services" aria-label="Services pages"><span aria-hidden="true">&#9662;</span></button>
+        <ul class="af-nav__submenu" id="af-nav-sub-services">
+          <li><a href="../process.html" class="af-nav__sublink">Process</a></li>
+          <li><a href="../approach.html" class="af-nav__sublink">Approach</a></li>
+          <li><a href="../case-studies.html" class="af-nav__sublink">Case Studies</a></li>
+          <li><a href="../assessment.html" class="af-nav__sublink">Assessment</a></li>
+        </ul>
+      </div>
       <a href="../projects.php" class="af-nav__link">Demonstration Technologies</a>
+      <div class="af-nav__group">
+        <button type="button" class="af-nav__link af-nav__menu-btn" aria-expanded="false" aria-controls="af-nav-sub-uf">Studies in the Unified Field</button>
+        <ul class="af-nav__submenu af-nav__submenu--end af-nav__submenu--mega" id="af-nav-sub-uf">
+          <li class="af-nav__megacol">
+            <a href="../books.html" class="af-nav__colhead">Books</a>
+            <ul class="af-nav__megalist">
+              <li><a href="../books.html" class="af-nav__sublink" data-i18n="nav.all_books">All Books</a></li>
+              <li><a href="../blog/" class="af-nav__sublink" data-i18n="nav.insights_blog">Author's Insights blog</a></li>
+            </ul>
+          </li>
+          <li class="af-nav__megacol">
+            <a href="/digital-experience/" class="af-nav__colhead">Digital Experience</a>
+            <ul class="af-nav__megalist">
+          <li><a href="/digital-experience/lucky-wave.html#v1" class="af-nav__sublink">Ride the Lucky Wave</a></li>
+          <li><a href="/digital-experience/lucky-wave.html#v2" class="af-nav__sublink">Ride the Lucky Wave V2</a></li>
+          <li><a href="/digital-experience/practices.html" class="af-nav__sublink">Twenty Practices</a></li>
+          <li class="af-nav__subsep"><a href="/digital-experience/unified-field-chat.html" class="af-nav__sublink af-nav__sublink--feature">Enter the Unified Field Chat</a></li>
+              <li class="af-nav__subsep"><a href="../blog/index.html#social" class="af-nav__sublink">Social Media</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
       <a href="assessment.php" class="af-nav__link af-nav__link--active" aria-current="page">Assessment</a>
       <a href="../contact.html" class="af-nav__cta">Get Started</a>
     </nav>
@@ -179,6 +207,15 @@
         <li><a href="assessment.php">Self-Assessment (beta)</a></li>
       </ul>
     </nav>
+    <nav aria-label="Studies">
+      <h3 class="af-footer__col-title" data-i18n="nav.unified_field_studies">Studies in the Unified Field</h3>
+      <ul class="af-footer__nav">
+        <li><a href="../books.html" data-i18n="nav.books">Books</a></li>
+        <li><a href="../blog/" data-i18n="nav.insights_blog">Author's Insights blog</a></li>
+        <li><a href="../digital-experience/" data-i18n="nav.digital_experience">Digital Experience</a></li>
+        <li><a href="../blog/index.html#social" data-i18n="nav.social_media">Social Media</a></li>
+      </ul>
+    </nav>
     <nav aria-label="Connect">
       <h2 class="af-footer__col-title">Connect</h2>
       <ul class="af-footer__nav">
@@ -191,5 +228,6 @@
 </footer>
 
 <script src="js/assessment.js"></script>
+<script src="/js/nav-menu.js?v=20261002" defer></script>
 </body>
 </html>

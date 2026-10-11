@@ -3,15 +3,17 @@
 ## Summary
 
 AikiField.com (a static marketing site for a fractional-CISO consultancy)
-authenticates against the **AI Ki Questions Fielded backend**
+authenticates against the **Quantum Aikido Wisdom backend**
 (`AIRichardMoon`, FastAPI on Google Cloud Run) — the same backend that
 powers `quantumaikido.com/members.php`. The auth surface is now a **blind
-`/login.php` page** that exists solely to gate the pre-release `/beta/`
+`/login.php` page** that gates the pre-release `/beta/`
 assessment pages. It is NOT linked from the public navigation.
 
-> **Product name:** The chatbot is branded **"AI Ki Questions Fielded"** across
+> **Product name:** The chatbot is branded **"Quantum Aikido Wisdom"** across
 > all three repos (QA frontend, AIRichardMoon backend, AikiField marketing).
-> Previously branded "Aikifield AI Chat" / "Quantum Aikido Coach" — renamed
+> Renamed 2026-09-03; the two immediately preceding product names are
+> recorded in git history rather than quoted here. Earlier still it was
+> branded "Aikifield AI Chat" / "Quantum Aikido Coach" — renamed
 > 2026-08-29. Infrastructure identifiers (Cloud Run service names, Worker
 > names) were `quantum-aikido-coach*` for continuity at the time of that
 > rename. **Superseded 2026-09-02:** the AIQA/krishnafats GCP project
@@ -28,16 +30,69 @@ demo. The login form + PHP session handler were extracted to the blind
 marketing site. The inline AI Chat (`coach-chat.js`) was removed entirely;
 the live chat lives on `quantumaikido.com`.
 
+**2026-10-02 — AI Chat replicated at `aikifield.com/members`.** The QA
+members chat (`members.html` + `coach-chat.js`) is replicated as
+`members.php`, linked from the public nav's **Digital Experience** menu as
+"Enter the Unified Field Chat". `quantumaikido.com/members` stays live
+unchanged (replicate first; no redirect between them). `/members` is gated
+by `includes/beta-gate.load.php`, so signed-out visitors land on the blind
+`/login.php?next=/members` — `login.php` itself is still not linked from
+the nav and needed no changes. Same backend, same session contract, same
+`/coach-api/*` proxy. In the same change the Lucky Wave (V1, V2) and Verbal
+Aikido games were promoted out of the gated `/for-review/` area to the
+public `/games/` tree (old URLs 301); the review hub and its feedback
+comments stay gated. The games' AI help calls the member's AI Chat through
+`games/ai-coach.php` (members only — signed-out players are sent to sign
+up/sign in). **Triple-PRD note:** this is a new caller of `/v1/chat-secure`
+(game-originated messages, `game_*` session ids) — recorded in QA's
+`docs/coach-dashboard-prd.md` and AIRichardMoon's `backend/PRD.md`, together
+with the new backend `POST /v1/game-results/sync` and the `login.php`
+GET-only fast-path fix (QA's login was not affected).
+
+**2026-10-04 — Digital Experience previews; all games re-gated (issue #71).**
+The `/games/` experiences are members-only again: the four public entry
+points became session-gated PHP behind `includes/beta-gate.load.php`
+(`games/lucky-wave/RideTheLuckyWaveV1-legacy.php`,
+`games/lucky-wave/RideTheLuckyWaveV2.php`,
+`games/verbal-aikido/index.php`, `games/exercises/index.php`; the old
+`.html` URLs 301 to the gated paths, and `/games/exercises/:slug` deep
+links still work — the gate preserves `REQUEST_URI` in `?next=`). In their
+place the nav's **Digital Experience** menu now links to a public preview
+surface at `/digital-experience/` (hub + one preview page per experience:
+`lucky-wave.html` covering V1 `#v1` and V2 `#v2`, `verbal-aikido.html`,
+`moon-practices.html`, `unified-field-chat.html`). Each preview describes
+the experience and points to the gated URL; unauthenticated clicks land on
+`/login.php?next=<experience>` and return to the game after sign-in.
+`/members` was already gated — its menu item now links to the chat preview
+instead. Supporting pages stay public: `games/lucky-wave/about.html`,
+`games/index.html` hub, `games/404.html`. The `games/exercises/` "unlock
+all practices for members" model is superseded — anonymous visitors no
+longer reach the app at all. **Triple-PRD note:** no change to the shared
+session contract, endpoints, or login flow — this is AikiField-local
+access-control surface only; QA and AIRichardMoon PRDs unaffected.
+
+**Later AikiField update:** Verbal Aikido is no longer listed in the Digital
+Experience menu and its game moved from `/games/verbal-aikido/` back to the
+gated review area at `/for-review/games/verbal-aikido/`. The old game URL
+redirects to the review path. Its public preview page remains available but
+is not linked from the menu. The shared auth contract is unchanged.
+
 ### AIQA / krishnafats cutover (#318) — COMPLETE 2026-09-02
 
 **Status: DONE, not pending.** The AIQA production cutover (AIRichardMoon
 backend + quantumaikido.com frontend) completed 2026-09-02; live
 `quantumaikido.com` traffic now runs on the `aiqa-coaching` GCP project's
-Cloud Run services. AikiField's own `coach-config.php` `COACH_BACKEND_URL`
-should be updated to the new host,
-`https://aiqa-coach-uj5nyskptq-uc.a.run.app` (was
+Cloud Run services. AikiField's `coach-config.php` `COACH_BACKEND_URL`
+was updated to the new host,
+`https://aiqa-coach-uj5nyskptq-uc.a.run.app`, on 2026-10-04 under
+AIRichardMoon issue #814 (was
 `https://quantum-aikido-coach-6bfpsd3kkq-uc.a.run.app`, now legacy —
-pending decommission, not yet torn down). Cutover state file (historical):
+pending decommission, not yet torn down). `COACH_STAGING_URL`
+(`https://aiqa-coach-staging-uj5nyskptq-uc.a.run.app`) was added at the
+same time so the `/staging/` wrappers route to the aiqa staging service.
+User-data reconciliation between the two Firestore projects was done in
+the same change (audit: `AIRichardMoon/backend/data/audit/`). Cutover
+state file (historical):
 `~/projects/AIRichardMoon/backend/data/migration/aiqa_frontend_cutover.json`.
 
 **Note — this is a separate config surface.** AikiField's
@@ -68,21 +123,41 @@ access all beta pages for 7 days. The login page is blind (not in the nav,
 
 ## UI layout (login.php — blind, beta-gating only)
 
+**Parity with the canonical frontend (ported under issue #57, 2026-10):**
+AikiField's sign-in, create-account, and password-reset surfaces now use the
+canonical quantumaikido.com presentation — an approximately 30% smaller
+desktop visual footprint (scoped `.coach-login-forms` rules in
+`coach-auth.css`) preserving 44px interaction targets and 16px input text;
+the six confirmation-code boxes stay in one horizontal row at every
+supported viewport width (`.coach-otp-digits` is a 6-column grid), and the
+registration OTP field sits in the `.coach-reg-bottom-row` beside the
+invitation code, hidden until a validation code is actually sent. The
+registration resend timer starts at 10 seconds, doubles after each
+successful send in the current page session, and caps at 10 minutes;
+login-time activation resend keeps its flat 60-second cooldown.
+`coach-login.js` also matches the canonical file on: `friendlyErrorMessage`
+(SyntaxError → generic retry message), a 35s default fetch timeout,
+`role=alert`/`role=status` on status lines, arrow-key tab navigation with
+roving tabindex, the explicit `getCaptchaToken(which)` context, and the
+`site_reviewer_required` error code. The outdated registration language
+selector is not shown; language auto-detection remains the default.
+
 The login page uses a **two-column layout** (`.coach-login-layout`):
 - **Left column** (`.coach-login-forms`): sign-in form, registration form,
-  password reset, email confirmation — all the interactive auth steps.
+  password reset, email confirmation — all the interactive auth steps,
+  under the shared tab bar (`#coach-auth-tab-bar`, one form at a time).
 - **Right column** (`.coach-login-caveats`, a `<details>` element): an intro
   panel ("Beta Access") and a privacy notice. On desktop (≥768px) the
   caveats are always visible and sticky. On mobile (<768px) the caveats
   appear first as a collapsible section with a toggle.
 
-**Not yet ported:** quantumaikido.com changed the *inner* `.coach-login-forms`
-layout so sign-in and registration render side by side (≥900px) instead of
-toggling between them — see `docs/coach-dashboard-prd.md` §4.1.1 "Layout
-(updated)" in that repo. AikiField's `coach-login.js`/`login.php`/
-`coach-auth.css` are a ported copy and have **not** received this change yet;
-they still use the old toggle-based single-form view. Port before relying on
-side-by-side behavior here.
+**Side-by-side note (superseded):** quantumaikido.com briefly rendered
+sign-in and registration side by side inside `.coach-login-forms` (≥900px,
+issue #213 in that repo). That experiment was reverted upstream — the
+canonical frontend is back to the tab-bar one-form-at-a-time model this
+repo already uses, so there is nothing left to port. The
+`docs/coach-dashboard-prd.md` §4.1.1 "Layout (updated)" text in that repo
+still describes the side-by-side experiment and is stale as of 2026-10.
 
 ### Copy (login.php)
 
@@ -98,8 +173,8 @@ side-by-side behavior here.
   that you have read the privacy notice and agree to the processing
   described in the Privacy Policy."
 - Intro panel: "Beta Access [Members]" — explains the session lasts 7 days
-  and covers the whole `aikifield.com` origin, and that the same account
-  works on quantumaikido.com.
+  and covers the whole `aikifield.com` origin. It does not advertise
+  cross-site credential reuse.
 - Privacy notice: 3-bullet summary (session cookie, backend on Cloud Run,
   don't enter sensitive info) + links to the Privacy Policy and AI Security
   & Safety Notice.
@@ -170,15 +245,66 @@ update or deploy:
 
 - **Durable chat preferences** (`POST /v1/auth/preferences` —
   `preferredTone` / `preferredMode` / `preferredGrounding` /
-  `preferredLanguage`): no chat, no preferences UI.
+  `preferredLanguage` / `preferredSpecificity` / `preferredModality` /
+  `chatPreferencesSet`): no chat, no preferences UI.
+- **Action-selector chat settings (AIRichardMoon issue #784)**: the new
+  `specificity` (`brief`/`standard`/`detailed`) and `modality`
+  (`chat`/`exercises`/`video`/`blended`) fields on `POST /v1/chat`, plus the
+  matching durable profile fields and the `/v1/auth/me`
+  `chatPreferencesSet` flag, are N/A here — AikiField calls neither the
+  chat endpoint nor the preferences endpoint.
 - **`aeoAccess`**: AikiField ignores it (already recorded in
   `AIRichardMoon/backend/PRD.md` under `/v1/auth/check-session`).
 - **The `monitor` flag**: not returned by `/v1/auth/check-session`, the only
   profile-bearing call this repo makes; monitoring accounts call Cloud Run
   directly.
+- **The public demo chat** (AIRichardMoon issue #656): `GET /v1/demo-questions`
+  and `POST /v1/demo-chat`, the `demo.html` / `demo.js` / `demo.css` page, and
+  the demo panel now embedded at the top of the backend's `login.html`.
+  AikiField's `login.php` is a blind login form with no demo surface and calls
+  neither endpoint. The backend's login-page restructure (ticket #648) applies
+  only to the Cloud Run–served `login.html`, not to this repo's `login.php`.
+- **Invite a Friend** (AIRichardMoon issue #656): `POST /v1/invite-friend` is
+  reached only from the backend's `members.html`; AikiField has no members page.
+- **SPA dashboard hardening** (quantumaikido.com issue #377, 2026-10-10):
+  `dashboard-spa.js` gained an http/https allowlist in `goToLogin()` and
+  dropped inline `onclick` handlers for `data-act`/`data-code` +
+  `addEventListener` in `renderInvitations()`. N/A here — that file is a
+  QA-only Pages surface; AikiField's auth surface is `login.php` plus
+  `beta-gate.load.php`, neither of which hosts the SPA dashboard.
+
+**Feature flags (AIRichardMoon issue #657).** New backend features now ship
+behind a per-environment flag toggled from the backend dashboard. This repo is
+**in scope** for one of them: `coach-login.js` calls the public
+`GET /v1/feature-flags` through the proxy and reveals the passkey button only
+when `passkey_login` is true. The call fails closed — a non-OK response, a
+timeout or a parse error leaves the button hidden — so a backend outage cannot
+surface a control whose endpoints are unreachable. `/v1/feature-flags` is
+exempt from `X-Proxy-Secret` because the login page must decide before a
+session exists; it returns only `{key: bool}`.
+
+Because flags are keyed by `DEPLOYMENT_ENV`, AikiField's staging and production
+gates are independent: passkey sign-in can be live on staging here while
+production keeps it hidden, with no redeploy either way.
+- **Conversation resume (issue #730)**: owner-only
+  `GET /v1/sessions/{session_id}/messages`, the recent-session lookup, and the
+  `qa_chat_session_id` auto-resume behavior are N/A. AikiField has no chat
+  surface or `coach-chat.js`; its session exists only to gate `/beta/` pages.
+- **Conversation labels (issue #731)**: N/A for the same reason. The backend
+  generates a `label` from the first chat message for `quantumaikido.com` to
+  display in its session picker; AikiField has no chat UI and no session list.
 
 Recorded so the N/A is explicit rather than silent. Anything touching login,
 registration, the session model, or the proxy remains in scope.
+
+**AikiField-specific note (coach contact flow):** AikiField's surface is
+beta-gating only — it does not host the chat UI. The chat features it consumes
+from the backend (chat, handoff, email-coach) are available via the same backend
+endpoints documented in `AIRichardMoon/backend/PRD.md`. If AikiField ports the
+chat UI in the future, it should use the **"Email a Coach" button + email
+composition modal** pattern (see [Coach contact flow (email coach, no
+video)](#coach-contact-flow-email-coach-no-video) below), NOT the old "Request
+human coach" video handoff that has been removed.
 
 **QA file wrap (2026-08-17):** On quantumaikido.com, form-processor pages
 (`login`, `profile`, `dashboard`, and others) are `.html` files that still
@@ -199,12 +325,21 @@ aikifield.com/coach-api/*  ──▶  coach-proxy.php  ──▶  AIRichardMoon 
                                                   /v1/auth/verify
                                                   /v1/auth/register-with-password
                                                   /v1/auth/send-validation-code
+                                                  /v1/auth/verify-validation-code
+                                                  /v1/auth/verify-validation-token
                                                   /v1/auth/activate-with-code
                                                   /v1/auth/check-session
                                                   /v1/auth/request-reset
                                                   /v1/auth/reset-password
                                                   /v1/auth/confirm-email
+                                                  /v1/email-coach (POST — send message to human coach)
 ```
+
+**Admin-only endpoints (issue #729):** `/v1/admin/users/{email}/reset-password`
+is an admin-dashboard-only endpoint used by the AIRichardMoon operations
+dashboard to send a user a token-based password-reset email. It is gated by
+admin session and is not consumed by AikiField's blind `login.php` / `/beta/`
+surface, so no frontend change is required here.
 
 `projects.php` is no longer in this diagram — it is a static marketing page
 with no auth surface. The invitation card on `projects.php` links to
@@ -230,18 +365,51 @@ IP-based rate limiting. When a request is rate-limited, the backend returns
 `httpErrorMessage(429)` and ignores any raw backend limit details. The
 concrete thresholds remain in server logs and admin alerts only.
 AikiField's `coach-proxy.php` forwards `CF-Connecting-IP` and
-`X-Forwarded-For` so the backend rate-limits per real visitor IP rather than
+X-Forwarded-For so the backend rate-limits per real visitor IP rather than
 the shared proxy IP.
 
-### Registration + login-time activation flow (issue #228)
+### Cold-start notice (biofool/AIRichardMoon#817)
 
-The registration form on `login.php` includes an email validation code step
-(always visible — no runtime toggle):
+The backend scales to zero, so the first request after a quiet period can
+wait 10-30s for a Cloud Run cold start. `coach-login.js` and `coach-chat.js`
+share the same `fetchWithTimeout` helper as quantumaikido.com (keep the two
+copies identical): when a request is still pending after 4s it shows a polite
+top-of-page `.coach-coldstart-notice` ("The coach is starting up, so there is
+a slight delay. This usually takes 10 to 20 seconds.") with a time-based
+`role="progressbar"` that eases toward 95% and fills to 100% when the request
+settles, and hides it when the last pending request settles. The backend has
+no keep-warm job (paused by owner decision, 2026-10-04), so this notice is the
+only cold-start mitigation. Background calls with short timeouts pass
+`{ slowNotice: false }`. Styles: `coach-auth.css` (login) and
+`css/coach-chat.css` (members). Not covered: `login.php`'s server-side
+`check-session` curl (10s timeout) — no client notice can run there; the
+preceding `/v1/auth/verify` call normally wakes the instance first.
 
-1. User enters email → clicks "Send validation code" → `POST /v1/auth/send-validation-code` generates + emails a 6-digit OTP (captcha-gated, rate-limited, anti-enumeration).
-2. User enters the 6-digit code + password + invitation code (optional) → `POST /v1/auth/register-with-password` verifies the code and **activates the account immediately** (`active=true, email_confirmed=true`) → issues a session token → user is signed in. No confirmation link email is sent.
+### Passkey (WebAuthn) login — issue #650
 
-**Login-time activation:** When a user with an inactive/unconfirmed account tries to log in, `POST /v1/auth/verify` returns `needsValidation: true` and the backend auto-sends a validation code. The login form shows a validation code input (below the password field). The user enters the code and clicks "Sign in" again → `POST /v1/auth/activate-with-code` verifies the code + password, activates the account, and issues a session token. A "Resend validation code" link is provided.
+A "Sign in with passkey" button (`#coach-passkey-btn`) appears below the login status region on `login.php`, shown only when `window.PublicKeyCredential` is available (graceful degradation on unsupported browsers). On click:
+1. `coach-login.js` calls `POST /v1/auth/passkey/login/begin` (via `coach-proxy.php`) with the optional identifier (email from the login form) → returns WebAuthn options
+2. `navigator.credentials.get({publicKey: options})` prompts the user for their passkey (Touch ID, Face ID, security key, etc.)
+3. The assertion is sent to `POST /v1/auth/passkey/login/finish` → verified by the backend via `py_webauthn` → session token issued (same shape as password login)
+4. `establishServerSession()` is called with the result, identical to password login — the PHP session cookie is set and the user is redirected
+
+Passkeys complement (not replace) password and OAuth login. A user must first register a passkey via an authenticated session (passkey registration endpoints are session-required on the backend). Cancellation (`NotAllowedError`) shows a friendly "cancelled" message; other errors surface visibly. The passkey endpoints are exempt from `X-Proxy-Secret` via the `/v1/auth/` prefix, so `coach-proxy.php` forwards them without special handling. See `AIRichardMoon/backend/PRD.md` § Authentication endpoints for the full endpoint contract.
+
+### Registration + login-time activation flow (issue #228, ticket #535)
+
+The registration form on `login.php` is a single-screen layout with persistent input fields (no 3-step wizard), auth navigation tab switcher, password reveal eye toggles with real-time length feedback (min 12 chars), and segmented 6-digit OTP boxes:
+
+1. User enters email → optionally clicks "Send validation code" → `POST /v1/auth/send-validation-code` generates + emails a 6-digit OTP and clickable link (captcha-gated, rate-limited, anti-enumeration). All form fields remain visible and editable.
+2. User enters the 6-digit code in the OTP boxes (optional) + password (with live requirements feedback and eye toggle) + optional invitation code → `POST /v1/auth/register-with-password`:
+   - **With valid validation code & invitation code:** Verifies the code, redeems it, and **activates the account immediately** (`active=true, email_confirmed=true`) → issues a session token → user is signed in.
+   - **Without validation code or invitation code:** Creates account in `active=false, email_confirmed=false, pending=true` state, sends confirmation email with clickable link (`?confirm=<token>&email=<email>`) and optional 6-digit code. Account can be confirmed via email link or approved directly by an administrator (`update_access` sets `active=true` and `email_confirmed=true`).
+3. **Login-time activation & pending approval:**
+   - When a user with an unconfirmed email attempts login, `POST /v1/auth/verify` returns `ok: false, pending: true, needsValidation: true` and auto-sends a code. The user enters the OTP code → `POST /v1/auth/activate-with-code` activates the account and signs them in.
+   - When a user with a verified email awaiting admin approval attempts login, `POST /v1/auth/verify` returns `ok: false, pending: true, needsValidation: false` displaying "Your account is pending administrator approval."
+4. **Password Reset Flow (Ticket #535):**
+   - Reset email includes `?reset=<token>&email=<email>`.
+   - `login.php` bypasses authenticated session redirect when `?reset=`, `?confirm=`, or `?validate=` is present.
+   - Reset form explicitly displays target email ("Resetting password for: <email>") and validates new password length in real time.
 
 See `backend/PRD.md` in AIRichardMoon for full endpoint details.
 
@@ -249,10 +417,10 @@ See `backend/PRD.md` in AIRichardMoon for full endpoint details.
 
 | File | Purpose | Source |
 |---|---|---|
-| `login.php` | **Blind** standalone login page (gates `/beta/` only). PHP session POST handlers (`backend-login`, `logout`), `?next=` redirect support, already-authed fast path. Not linked from nav. | extracted from the former `projects.php` auth block (issue #51 lineage) |
+| `login.php` | **Blind** standalone login page (gates `/beta/` only). PHP session POST handlers (`backend-login`, `logout`), `?next=` redirect support, already-authed fast path (**GET only** since 2026-10-02 — it used to run before the POST handlers, so the `/members` chat's Sign Out POST was redirected and never logged out). Not linked from nav. | extracted from the former `projects.php` auth block (issue #51 lineage) |
 | `projects.php` | Demonstration Technologies marketing page — **fully public**, no auth. Shows the invitation card (`#see-it-live`) instead of the login/chat. Kept as `.php` for the `projects.html` → `projects.php` 301 and because `/beta/` pages link to it. | was the auth host; auth removed |
 | `coach-proxy.php` | PHP reverse proxy `/coach-api/*` → backend | ported from QA `coach-proxy.php` (trimmed) |
-| `coach-login.js` | Login/register/reset/confirm JS (loaded by `login.php`) | ported from QA `coach-login.js` |
+| `coach-login.js` | Login/register/reset/confirm JS (loaded by `login.php`). Supports `?invite=`/`?code=` URL params — the register tab auto-opens with the registration-code field pre-filled; also read nested inside the resolved post-login target (beta-gate `?next=` → `COACH_LOGIN_REDIRECT`). | ported from QA `coach-login.js`; invite-param support added for parity |
 | `coach-auth.css` | Login styling (loaded by `login.php`) | copied verbatim from QA |
 | `dashboard.php` | **Blind** operations dashboard — pulls HTTP errors (4xx/5xx), firewall/WAF events, and traffic summaries from the Cloudflare GraphQL Analytics API. Not linked from nav. Access via `?key=<DASHBOARD_ADMIN_KEY>`. | new |
 | `includes/cloudflare-logs.class.php` | `CloudflareLogsScanner` class — queries the Cloudflare GraphQL API for zone analytics, returns structured report, renders HTML. Used by `dashboard.php`. | new |
@@ -260,13 +428,24 @@ See `backend/PRD.md` in AIRichardMoon for full endpoint details.
 | `coach-config.php` | Non-secret production config (backend URL, empty secret placeholders, `COACH_LOGIN_REDIRECT` default `/beta/`) | new template |
 | `coach-config.local.php` | **gitignored** — holds the real `COACH_PROXY_SECRET` / Turnstile key | operator-provided |
 | `.htaccess` | Routes `/coach-api/*` → `coach-proxy.php`; 301 `projects.html` → `projects.php`; 301s for the old `/beta/*.html` URLs → `/beta/*.php` | new |
-| `includes/beta-gate.load.php` | Page gate for `/beta/*.php` — re-establishes the same `qa_email` / `qa_session_token` session as `login.php` (identical `session_set_cookie_params`) and redirects to `/login.php?next=<original path>` if absent. No new auth endpoint, session model, or proxy route — reuses the session `login.php` sets. Includes periodic re-validation against the backend's `/v1/auth/check-session` (every 6h via `qa_session_checked_at`) — if the backend explicitly rejects the session, the local session is destroyed and the user is redirected to login. **Issue #55**: on backend unreachable (network/timeout/non-200), the gate now uses a 5-minute cached-validity window (`BETA_CACHED_VALIDITY_SECONDS = 300`): if the session was successfully validated within the last 5 minutes (`$_SESSION['beta_last_validated']`), the request is allowed; otherwise the gate fails closed (session destroyed, redirect to `/login.php?next=…&error=session_expired`). This bounds the revocation window during outages while preserving availability for recently-authenticated users. **Note (issue #265)**: the sister repo `quantumaikido.com` now verifies sessions on **every request** in its `coach-auth-check.php` (not just every 6h); AikiField's 6h cadence is sufficient here because `/beta/` pages don't have the `coach-auth.js` crash-on-null-elements issue that motivated the per-request check in QA. | updated (was redirecting to `/projects.php#coach-login`) |
+| `includes/beta-gate.load.php` | Page gate for `/beta/*.php` — re-establishes the same `qa_email` / `qa_session_token` session as `login.php` (identical `session_set_cookie_params`) and redirects to `/login.php?next=<original path>` if absent. No new auth endpoint, session model, or proxy route — reuses the session `login.php` sets. Includes periodic re-validation against the backend's `/v1/auth/check-session` (every 6h via `qa_session_checked_at`) — if the backend explicitly rejects the session, the local session is destroyed and the user is redirected to login. **Issue #55**: on backend unreachable (network/timeout/non-200), the gate now uses a 5-minute cached-validity window (`BETA_CACHED_VALIDITY_SECONDS = 300`): if the session was successfully validated within the last 5 minutes (`$_SESSION['beta_last_validated']`), the request is allowed; otherwise the gate fails closed (session destroyed, redirect to `/login.php?next=…&error=session_expired`). This bounds the revocation window during outages while preserving availability for recently-authenticated users. **Note (issue #516)**: backend now supports concurrent multi-device sessions (up to 10 active tokens per user) so signing in on multiple devices or browsers does not invalidate existing sessions. **Note (issue #265)**: the sister repo `quantumaikido.com` now verifies sessions on **every request** in its `coach-auth-check.php` (not just every 6h); AikiField's 6h cadence is sufficient here because `/beta/` pages don't have the `coach-auth.js` crash-on-null-elements issue that motivated the per-request check in QA. **Note (ticket #430)**: QA's Cloudflare Pages Functions (`dashboard-spa.js`, `login.js`) now call `verifySession` BEFORE the admin check and re-issue the JWT when admin status changes — see `docs/coach-dashboard-prd.md` §4.1.2. AikiField is unaffected: it uses PHP sessions (not JWT cookies), has no admin-gated dashboard surface, and `beta-gate.load.php` already re-validates against `check-session` every 6h (which returns the current `admin` flag). | updated (was redirecting to `/projects.php#coach-login`) |
 | `beta/data.php` | Session-gated JSON delivery for the beta assessment pages (`beta/js/assessment.js` fetches `data.php?f=<name>` instead of `data/<name>.json` directly); `beta/data/.htaccess` denies direct access to the raw JSON so the gate can't be bypassed by fetching the file straight | new |
+| `includes/for-review-serve.php` | Gate + file server for `/for-review/*` — the games review area moved here from `quantumaikido.com/for-review/games*`. `.htaccess` rewrites every `/for-review/*` request to this dispatcher, which runs `beta-gate.load.php` (same session, same `?next=` login redirect — existing Quantum Aikido accounts work) then serves the file: `.html` and `.php` are `include`d so embedded PHP still executes; directory requests prefer `index.php`, then `index.html`; other extensions are `readfile`d with an explicit Content-Type and an extension whitelist. Unlike `/beta/` (entry-page gating only), this gates *every* asset under the path. | updated |
+| `for-review/games.html`, `for-review/games-comments.php`, `for-review/subscribe.html` | The games review hub (Lucky Wave cards open `/games/…`; Verbal Aikido opens its gated `/for-review/games/verbal-aikido/` build in the iframe modal), the feedback-comments endpoint (stores to `data/private/games-comments.json`, `.htaccess`-denied and excluded from `sync.sh --delete`), and the subscribe stub | moved from quantumaikido.com |
+| `for-review/documents/` | Gated document library (issue #60): `index.html` is `include`d by the dispatcher and builds the index by scanning `pdf/` + `ocr/` at request time, pairing files by basename and flagging unpaired ones. `pdf/` holds the legacy PDF corpus (`Magazine.pdf` is DVC-tracked — commit the `.dvc` pointer, the binary deploys via rsync from the working tree); `ocr/` holds OCR'd markdown, served as `text/plain`. `includes/for-review-serve.php` whitelists `pdf` (`application/pdf`) and `md` (`text/plain`); `sync.sh` carries an `--include='for-review/documents/ocr/*.md'` exception ahead of the blanket `*.md` exclude so the OCR corpus deploys. | new |
+| `members.php` | `/members` AI Chat ("Enter the Unified Field Chat", Digital Experience menu). Replica of QA `members.html`: same chat markup, AikiField header/nav. Gated by `includes/beta-gate.load.php` (redirect to `/login.php?next=/members`); injects `window.QA_SESSION` from the PHP session (`qa_email`, `qa_session_token`, `qa_is_admin`; `premium`/`aeoAccess` are always false — AikiField's login does not store them; `targetEnv` is pinned to `"production"` because `coach-proxy.php` has no staging route, which hides the chat's Prod/Staging switch). Profile/Privacy/Terms menu items link to quantumaikido.com. `.htaccess` rewrites `/members` → `members.php`; `scripts/cloudflare_migrate.py` bypasses the edge cache for `/members*` (the page embeds the session token). | replicated from QA (2026-10-02) |
+| `coach-chat.js` | Chat UI JS for `members.php`. Copy of QA `coach-chat.js` with AikiField-only edits: logout POSTs to `/login.php`; session-expired / sign-out redirects go to `/login.php?…&next=<path>` (AikiField's param, not QA's `?redirect=`); contact links → `/contact.html`. Keep the rest in sync with QA. Loads `/data/welcome-messages.json` (copied from QA). | re-added, replicated from QA |
+| `css/coach-chat.css` | Chat styles, loaded only by `members.php` (so `login.php` and its visual baselines are untouched). Bridges QA's legacy + epic #321 tokens onto AikiField's `--af-*` tokens, then carries QA `coach-auth.css`'s chat sections verbatim. | replicated from QA |
+| `games/lucky-wave/`, `for-review/games/verbal-aikido/` | Lucky Wave remains under `/games/`. Verbal Aikido moved back to the gated review area and was removed from the Digital Experience menu; `.htaccess` redirects its former `/games/verbal-aikido/*` URLs to `/for-review/games/verbal-aikido/*`. | updated |
+| `games/ai-coach.php` + `games/ai-coach.json` | "Ask the AI Chat" button in the Digital Experience games (Lucky Wave V1/V2 results, Verbal Aikido chapter endings + Discovery quiz results). **Members only**: requires `beta-gate.load.php` in `AF_GATE_NO_REDIRECT` mode; signed-out players get 401 + `/login.php?next=<game>` (allow-listed return paths). For members it composes ONE message server-side from ids/integers the game sends — the lowest Lucky Wave phases (all ties), or Verbal Aikido's reactive responses / quiz score — asking for exactly 1 video and 1 exercise, and POSTs it to `/v1/chat-secure` as that member (`X-Auth-Email`/`X-Auth-Session` from the PHP session, `X-Proxy-Secret`, Cloudflare-verified client IP; `modality: "blended"`, `specificity: "brief"`, a fresh `game_<id>_<ts>` session id so it doesn't interleave with `/members` history). Returns the answer, the first cited YouTube source (with `&t=` offset) as the video, and `/members` to keep chatting. Backend 401/403 → 401 + `login.php?error=session_expired`. The session token never reaches the page. Replaces the games' old paste-your-own-Anthropic-key flow (and an interim server-side Gemini call, never deployed). | new (2026-10-02) |
+| `games/results.php` | Ride the Lucky Wave results follow the player's AI Chat account. Thin proxy to the **AI Chat backend** `POST /v1/game-results/sync` (Firestore — see `AIRichardMoon/backend/PRD.md`), called as the signed-in member. Forwards only `at`/`mode`/`scores` (AI fields from the browser are stripped). Signed out → `{signedIn:false}` without a backend call; backend 401/403/404/5xx/unreachable → WARNING logged and `{signedIn:false, unavailable:true}`, so the game falls back to browser-only storage (`localStorage` `waveLuck_results`). The game sends only rounds not yet saved to an account (`synced` flag), so a later account on the same browser doesn't inherit them. | new (2026-10-02) |
+| `includes/coach-backend.php` | `af_backend_post()` — server-side POST to the backend as the member (X-Auth-Email/X-Auth-Session from the PHP session, X-Proxy-Secret, Cloudflare-verified IP headers). Used by `games/ai-coach.php` (chat + saving the answer on the round) and `games/results.php`. | new (2026-10-02) |
+| `games/exercises/auth-state.php` | JSON `{"authed": bool}` status endpoint for the public `/games/exercises/` app — defines `AF_GATE_NO_REDIRECT` and requires `beta-gate.load.php`, so it reuses the identical session check + 6h revalidation cadence without the login redirect. The app unlocks all practices for signed-in members; anonymous keeps the 3-practice freemium. Emits `no-store` via the PHP session. | new |
 
 ### Removed in this revision
 
-- `coach-chat.js` — **deleted**. The inline AI Chat no longer runs on
-  `aikifield.com`; the live chat lives on `quantumaikido.com/members.php`.
+- `coach-chat.js` — **deleted** from `projects.php`. (Re-added 2026-10-02
+  for the separate, gated `/members` chat page — see the file inventory.)
 - The authed/unauthed branch in `projects.php` — removed. The page is now a
   single static render for all visitors.
 - The PHP session/login/logout handlers, Turnstile script block,
@@ -281,13 +460,55 @@ See `backend/PRD.md` in AIRichardMoon for full endpoint details.
 - `dashboard-env.php` — AikiField has no dashboard. Staging wrappers ARE
   ported (see [Staging folder](#staging-folder-stagingloginphp) below).
 - The environment-toggle UI (`#coach-env-controls`) and the profile link
-  (`/profile.php`) — AikiField has no profile page.
+  (`/profile.php`) — AikiField has no profile page. (`members.php` keeps the
+  chat's markup for both; the env toggle stays hidden because `targetEnv` is
+  pinned to production, and the Profile menu item links to
+  `quantumaikido.com/profile`.) (On QA, `/profile` runs
+  `coach-auth-check.php` and `coach-profile.js` reads `window.QA_SESSION`
+  instead of `sessionStorage` — issue #328. N/A here: no profile surface.)
 
 ## Session model
 
+- **Silent field-rejection fix (2026-09-02)**: `login.php`'s three coach forms
+  relied on native HTML5 validation, which blocks submit before `coach-login.js`
+  runs and shows only a browser tooltip — reading as a dead button. The forms now
+  carry `novalidate`; `minlength` is removed from all password inputs and
+  `maxlength` from the validation-code and alias inputs (silent truncation).
+  `coach-login.js` validates explicitly with visible status messages, enforcing
+  the backend's real rule of **12-128 characters** when a password is *set* (the
+  markup previously said "min 8 chars"), and **no length rule on sign-in**, where
+  the backend applies none. Mirrored in `quantumaikido.com`.
+
+- **Silent-login fix (2026-09-02)**: `coach-login.js`'s `establishServerSession()`
+  ignored the response from the `action=backend-login` POST and redirected
+  unconditionally. `login.php` always replies **HTTP 200 with
+  `{"ok":true|false}`** (false when its `check-session` curl call fails — note
+  `CURLOPT_TIMEOUT => 10`, which a cold Cloud Run start can exceed), so a failed
+  establishment set no PHP session cookie, showed no error, and redirected — the
+  beta gate then bounced the user straight back to `/login.php`. The function now
+  reads the body, treats only `ok:true` as success, and surfaces an error instead
+  of navigating away. No sessionStorage fallback was added (deliberate on this
+  site). Backend unchanged; mirrored in `quantumaikido.com/coach-login.js`.
+
 - PHP session cookie on `aikifield.com` (HttpOnly, Secure on HTTPS,
   SameSite=Lax, 7-day lifetime). Session keys: `qa_email`,
-  `qa_session_token`, `qa_target_env`, `qa_is_admin` — identical to QA.
+  `qa_session_token`, `qa_target_env`, `qa_is_admin`, `qa_premium` — identical to QA.
+  The same session also unlocks all practices in the public
+  `/games/exercises/` app: it fetches `games/exercises/auth-state.php`
+  (same-origin, `no-store`), which returns `{"authed":bool}` via
+  `beta-gate.load.php` in `AF_GATE_NO_REDIRECT` mode — identical session
+  semantics and revalidation cadence, no redirect. Signed-in members see
+  all 15 exercises; anonymous visitors keep the freemium split (IDs 1, 6,
+  12 free) with a lock modal that links to
+  `/login.php?next=/games/exercises/`.
+  The `qa_premium` key reflects the backend `premium` flag (Phase 20). **Premium
+  gating has been removed for coach handoffs / email-coach** — these features are
+  available to ALL users, not just premium. The old "Video with a Coach is
+  available on premium accounts" message is gone. No live handoff or email-coach
+  UI exists on AikiField — the chat surface lives on
+  `quantumaikido.com/members.php`. See [Coach contact flow (email coach, no
+  video)](#coach-contact-flow-email-coach-no-video) below for the current
+  handoff/coach-contact contract.
 - `coach-login.js` posts `email` + `sessionToken` to `login.php`
   (`action=backend-login`), which verifies against
   `/v1/auth/check-session` and stores the session. The backend also
@@ -336,6 +557,72 @@ to `quantumaikido.com` and no cross-domain SSO needed. The account itself is
 shared (same backend user store), so a user who also visits
 `quantumaikido.com/members.php` uses the same credentials — but that's a
 separate session on a separate domain, independent of this integration.
+
+### Coach contact flow (email coach, no video)
+
+The coaching system's coach-contact flow has changed. The old real-time
+video handoff (Jitsi room URL) has been replaced by an **email-based coach
+contact** flow. This section documents the current contract; AikiField does
+not host the chat UI, but the backend endpoints it proxies are affected, and
+any future port of the chat UI must follow this pattern.
+
+**What changed:**
+
+1. **"Request human coach" → "Email a Coach".** The old button triggered a
+   real-time video handoff (the backend created a Jitsi room and returned a
+   `roomUrl` in the ChatResponse). The new button opens an **email
+   composition modal** where the member writes a message (subject + body) to
+   a human coach. The modal submits to `POST /v1/email-coach` (below).
+
+2. **No more video calls.** The handoff system no longer creates Jitsi video
+   call rooms. `roomUrl` in the ChatResponse is now **always `null`**. The
+   "Join video call" link has been removed from the chat UI.
+
+3. **Premium gating removed for handoffs.** Handoffs and the email-coach
+   feature are available to **ALL users**, not just premium. The "Video with
+   a Coach is available on premium accounts" message has been removed from
+   the UI. (The `qa_premium` session key / backend `premium` flag still
+   exists for other purposes, but no longer gates coach contact.)
+
+**New endpoint — `POST /v1/email-coach`:**
+
+Authenticated endpoint (requires a valid session token). Sends a message to
+a human coach by email.
+
+- **Request body:**
+  ```json
+  { "sessionId": "<string>", "subject": "<string>", "message": "<string>", "includeContext": <boolean> }
+  ```
+  - `sessionId` — the active chat session ID.
+  - `subject` — email subject line.
+  - `message` — the member's message body.
+  - `includeContext` — when true, the recent chat transcript is appended to
+    the email so the coach has context.
+- **Response:**
+  ```json
+  { "ok": <boolean>, "message": "<string>" }
+  ```
+- Routed through `coach-proxy.php` as `/coach-api/v1/email-coach` (same proxy
+  path as the auth endpoints; no new proxy route needed).
+
+**New ChatResponse field — `coachEmailSuggestion`:**
+
+`coachEmailSuggestion` is a **boolean** field on the ChatResponse. When
+`true`, the frontend shows a gentle inline suggestion banner prompting the
+member to email a coach. Triggered by an **arithmetic backoff schedule** on
+the message count within a session: first shown at message **3**, then at
+**9, 18, 30, 45, …** (the gaps increase by 6 each step: 3, then +6, +9, +12,
++15, …). The banner is dismissible and non-blocking.
+
+**AikiField note:** AikiField's surface is beta-gating only and does not
+render the chat UI, so neither the "Email a Coach" button/modal nor the
+`coachEmailSuggestion` banner is shown here. These live on
+`quantumaikido.com/members.php`. If AikiField ports the chat UI, it must use
+the "Email a Coach" button + modal pattern and honor the
+`coachEmailSuggestion` banner — not the removed "Request human coach" video
+handoff. The backend endpoints (`/v1/email-coach`, chat, handoff) are
+available via the same `coach-proxy.php` → Cloud Run path; no AikiField-specific
+backend changes are required.
 
 ## Configuration & secrets
 
@@ -426,7 +713,9 @@ Completed optimizations deployed to production:
 
 ## Deploy
 
-1. `./sync.sh dryrun` — preview the rsync to `peec.biz:public_html/aikifield/`.
+1. `./sync.sh dryrun` — preview the rsync to
+   `peec.biz:public_html/aikifield.peec.biz/` (the shared `aikifield.com` +
+   `aikifield.peec.biz` vhost docroot).
 2. Fill in `coach-config.local.php` locally with `COACH_PROXY_SECRET` (and
    `TURNSTILE_SITE_KEY` if using captcha) and deploy it out-of-band (it is
    gitignored). **Never commit it.**
@@ -441,30 +730,36 @@ Completed optimizations deployed to production:
 8. Confirm `https://aikifield.com/projects.html` 301-redirects to
    `projects.php`.
 
-**Staging deploy** (`./sync.sh staging deploy` or `./sync.sh --staging deploy` → `aikifield.peec.biz`):
+**Staging deploy** (`./sync.sh staging deploy` or `./sync.sh --staging deploy` → `staging.peec.biz` + `aikifield.peec.biz` — issues #80, #81):
 
 1. `./sync.sh staging dryrun` (or `./sync.sh --staging dryrun`) — preview the rsync to
-   `peec.biz:public_html/aikifield.peec.biz/`.
+   `peec.biz:public_html/aikifield-staging/` (the docroot of both the
+   `staging.peec.biz` and `aikifield.peec.biz` vhosts — see
+   `docs/STAGING.md` for the full staging URL map).
 2. Ensure `coach-config.staging.php` defines `COACH_STAGING_URL` pointing
    to the staging Cloud Run backend
    (`https://aiqa-coach-staging-uj5nyskptq-uc.a.run.app` — legacy host
    `https://quantum-aikido-coach-staging-6bfpsd3kkq-uc.a.run.app` pending
    decommission).
 3. `./sync.sh staging deploy` (or `./sync.sh --staging deploy`) — push to staging.
-4. Confirm `https://aikifield.peec.biz/staging/login.php` loads the login
-   form with `window.COACH_API_BASE = "/staging/coach-api"` and
-   `window.COACH_FORCE_STAGING = true`.
-5. Confirm `https://aikifield.peec.biz/staging/coach-api/v1/auth/providers`
-   returns JSON from the staging backend.
-6. Test a full register → login → beta-access round-trip on staging.
+4. Confirm `https://staging.peec.biz/login.php` and
+   `https://aikifield.peec.biz/login.php` both load the login form (same
+   docroot, different hosts — session cookies do not carry between them).
+5. Confirm `https://staging.peec.biz/coach-api/v1/auth/providers` and
+   `https://aikifield.peec.biz/coach-api/v1/auth/providers` return JSON
+   from the backend the effective config points at (the `.invalid`
+   placeholder yields a clean 502 "Coach backend unavailable").
+6. Confirm `https://aikifield.com/` is unchanged.
+7. Test a full register → login → beta-access round-trip on staging.
 
-### Staging folder (`/staging/*`)
+### Staging folder (`/staging/*`) — design only, never deployed
 
-A dedicated staging entry point is available at
-`https://aikifield.peec.biz/staging/login.php` so operators can test
-login/registration changes in staging before promoting to production.
-This mirrors the quantumaikido.com `/staging/` pattern — see
-[§Staging folder in the QA PRD](https://github.com/biofool/quantumaikido.com/blob/main/docs/coach-dashboard-prd.md#staging-folder-stagingmembersphp).
+The `/staging/` wrapper folder described below was designed but never
+committed or deployed — `ls staging/` is empty. The live staging mechanism
+is the dedicated docroot described above (`public_html/aikifield-staging/`
+→ `staging.peec.biz`, mirrored on `aikifield.peec.biz`; issue #80). The
+wrapper design is retained here in case an in-path staging surface is ever
+needed again.
 
 Every file in `/staging/` is a thin wrapper: it defines `COACH_FORCE_STAGING`
 and `require`s its parent. There is no staging-specific markup, JS or CSS
@@ -643,6 +938,16 @@ maintain a three-branch workflow: `dev` → `staging` → `main`:
   `firewall_events` fields.
 - Dashboard: `dashboard.php?key=<key>&hours=168`: returns 7-day window
   (may show more error groups than the default 24h).
+- Playwright e2e (`bash tests/e2e/run.sh`): full suite against the local
+  stub backend — login flow, proxy forwarding, beta-gate redirects.
+- Visual regression (`bash tests/e2e/run.sh visual`, issue #57):
+  screenshots of `/`, `/login.php`, `/projects.php`, and every gated
+  `/beta/` page at 320/768/1024/1440px compared against committed
+  baselines in `tests/e2e/visual-baselines/chromium/` (5% pixel-diff
+  threshold), plus an axe-core pass per page (critical violations fail).
+  Regenerate baselines after intentional UI changes with
+  `bash tests/e2e/run.sh visual --update-snapshots`. Per-run copies land in
+  `docs/ui-review/<date>-<sha>/` (gitignored).
 
 ## Future considerations
 
@@ -654,5 +959,9 @@ maintain a three-branch workflow: `dev` → `staging` → `main`:
 - Bring the inline chat back to `aikifield.com` (would require restoring
   `coach-chat.js` and a chat host page; currently out of scope — the
   invitation card routes demo requests through the contact form instead).
+  If pursued, the chat UI must use the **"Email a Coach" button + email
+  composition modal** pattern and honor the `coachEmailSuggestion` banner —
+  NOT the removed "Request human coach" video handoff. See [Coach contact
+  flow (email coach, no video)](#coach-contact-flow-email-coach-no-video).
 - AikiField profile page (`/profile.php`) if profile management is wanted
   here (currently profile management is only on `quantumaikido.com`).

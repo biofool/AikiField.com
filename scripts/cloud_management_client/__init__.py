@@ -122,9 +122,11 @@ import logging
 import os
 import queue
 import random
+import re
 import threading
 import time
 import urllib.error
+import urllib.parse
 import urllib.request
 from dataclasses import dataclass, field
 from typing import Any
@@ -142,9 +144,31 @@ __all__ = [
     "KillOrder",
     "LocalCostHistory",
     "PriceChange",
+    "expected_cost_from_list",
+    "INTENT_HEADROOM",
 ]
 
-__version__ = "0.13.0"
+__version__ = "0.15.2"
+
+# Match hub INTENT_VARIANCE_THRESHOLD (issue #60). Declare
+# list_unit * calls * INTENT_HEADROOM so kill still fires at 1.2× declared.
+INTENT_HEADROOM = 1.20
+
+
+def expected_cost_from_list(
+    list_unit_usd: float,
+    calls: int,
+    headroom: float = INTENT_HEADROOM,
+) -> float:
+    """Expected intent cost: list SKU × calls × headroom, 4 decimal USD.
+
+    Use this instead of a round number (e.g. $0.01 for a $0.005 geocode).
+    ``actual_cost_usd`` should still be the list price (not $0 inside a
+    free cap) so remaining budget and overrun math stay conservative.
+    """
+    if calls <= 0 or list_unit_usd < 0:
+        return 0.0
+    return round(float(list_unit_usd) * int(calls) * float(headroom), 4)
 
 
 class CloudManagementError(Exception):
@@ -188,6 +212,45 @@ def _fail(msg: str, exc: Exception | None = None, strict: bool = False) -> None:
     log.warning("cloud_management: %s", detail)
     if strict:
         raise CloudManagementError(detail) from exc
+
+
+def _is_http_url(url: str) -> bool:
+    """True if the URL uses http/https — urllib.request also accepts
+    file:// and other schemes, which this client must never fetch."""
+    return urllib.parse.urlsplit(url).scheme in ("http", "https")
+
+
+def _env_int(name: str, default: int) -> int:
+    """Parse an integer env var, returning ``default`` on missing/invalid
+    values. A non-numeric value is logged at WARNING (best-effort telemetry
+    must never crash the host app at startup)."""
+    raw = os.environ.get(name)
+    if raw is None or raw == "":
+        return default
+    try:
+        return int(raw)
+    except (TypeError, ValueError):
+        log.warning(
+            "cloud_management: env var %s=%r is not a valid int; using default %d",
+            name, raw, default,
+        )
+        return default
+
+
+def _env_float(name: str, default: float) -> float:
+    """Parse a float env var, returning ``default`` on missing/invalid
+    values. A non-numeric value is logged at WARNING."""
+    raw = os.environ.get(name)
+    if raw is None or raw == "":
+        return default
+    try:
+        return float(raw)
+    except (TypeError, ValueError):
+        log.warning(
+            "cloud_management: env var %s=%r is not a valid float; using default %g",
+            name, raw, default,
+        )
+        return default
 
 
 # ---------------------------------------------------------------------------
@@ -248,6 +311,16 @@ class _Spool:
             self._counter += 1
             return f"{time.time():.6f}_{os.getpid()}_{self._counter}"
 
+    _ENTRY_ID_RE = re.compile(r"[A-Za-z0-9_.\-]+")
+
+    def _entry_path(self, entry_id: str) -> str | None:
+        """Resolve an entry ID to a path inside the spool dir. Returns None
+        if the ID is not a plain basename (path traversal guard)."""
+        if not entry_id or entry_id.startswith(".") or not self._ENTRY_ID_RE.fullmatch(entry_id):
+            log.warning("cloud_management: refusing invalid spool entry id")
+            return None
+        return os.path.join(self.dir, f"{entry_id}.json")
+
     def write(self, path: str, payload: dict[str, Any], client_seq: int = 0) -> str | None:
         """Persist a report to the spool. Returns the entry ID, or None if
         the spool is disabled or unwritable. Enforces the cap by dropping
@@ -266,7 +339,9 @@ class _Spool:
         }
         try:
             with self._lock:
-                filepath = os.path.join(self.dir, f"{entry_id}.json")
+                filepath = self._entry_path(entry_id)
+                if filepath is None:
+                    return None
                 # Atomic write: write to temp then rename
                 tmp = filepath + ".tmp"
                 with open(tmp, "w", encoding="utf-8") as f:
@@ -302,7 +377,9 @@ class _Spool:
         if not self._enabled:
             return None
         try:
-            filepath = os.path.join(self.dir, f"{entry_id}.json")
+            filepath = self._entry_path(entry_id)
+            if filepath is None:
+                return None
             with open(filepath, "r", encoding="utf-8") as f:
                 return json.load(f)
         except (OSError, json.JSONDecodeError) as e:
@@ -314,7 +391,10 @@ class _Spool:
         if not self._enabled:
             return
         try:
-            os.remove(os.path.join(self.dir, f"{entry_id}.json"))
+            filepath = self._entry_path(entry_id)
+            if filepath is None:
+                return
+            os.remove(filepath)
         except FileNotFoundError:
             pass  # already removed
         except OSError as e:
@@ -325,7 +405,9 @@ class _Spool:
         if not self._enabled:
             return
         try:
-            filepath = os.path.join(self.dir, f"{entry_id}.json")
+            filepath = self._entry_path(entry_id)
+            if filepath is None:
+                return
             with open(filepath, "r", encoding="utf-8") as f:
                 entry = json.load(f)
             entry["attempts"] = attempts
@@ -372,11 +454,11 @@ _DEFAULT_COST_HISTORY_DIR = os.path.expanduser(
     os.environ.get("CLOUDMANAGEMENT_COST_HISTORY_DIR", "~/.cache/cloud_management_client")
 )
 _DEFAULT_COST_HISTORY_FILE = "cost_history.json"
-_DEFAULT_COST_HISTORY_WINDOW_DAYS = int(
-    os.environ.get("CLOUDMANAGEMENT_COST_HISTORY_WINDOW_DAYS", "90")
+_DEFAULT_COST_HISTORY_WINDOW_DAYS = _env_int(
+    "CLOUDMANAGEMENT_COST_HISTORY_WINDOW_DAYS", 90
 )
-_DEFAULT_PRICE_CHANGE_THRESHOLD = float(
-    os.environ.get("CLOUDMANAGEMENT_PRICE_CHANGE_THRESHOLD", "0.15")
+_DEFAULT_PRICE_CHANGE_THRESHOLD = _env_float(
+    "CLOUDMANAGEMENT_PRICE_CHANGE_THRESHOLD", 0.15
 )
 
 
@@ -426,6 +508,13 @@ class LocalCostHistory:
               "unit_cost_usd": 0.035,
               "calibration_delta": -0.002,
               "updated_at": "2026-08-15T10:00:00Z"
+            }
+          },
+          "hub_free_tier": {
+            "<provider>::<api>": {
+              "remaining_calls": 850,
+              "rpd": 1000,
+              "reset_at": "2026-08-25T07:00:00+00:00"
             }
           }
         }
@@ -479,6 +568,8 @@ class LocalCostHistory:
             data["records"] = {}
         if "hub_expected" not in data:
             data["hub_expected"] = {}
+        if "hub_free_tier" not in data:
+            data["hub_free_tier"] = {}
         self._cache = data
         return data
 
@@ -553,6 +644,31 @@ class LocalCostHistory:
                 "unit_cost_usd": round(unit_cost_usd, 8),
                 "calibration_delta": round(calibration_delta, 8),
                 "updated_at": updated_at,
+            }
+            self._save(data)
+
+    def update_hub_free_tier(
+        self,
+        provider: str,
+        api: str,
+        remaining_calls: int,
+        reset_at: str = "",
+        rpd: int = 0,
+    ) -> None:
+        """Store the hub's free-tier quota snapshot for a provider/api.
+
+        Called after pulling ``GET /api/v1/expected-costs/<project_id>`` —
+        for each ``pricing[<model>]`` entry that has ``free_tier_remaining_calls``.
+        This is a cached snapshot, not live data — call ``get_expected_costs``
+        on a schedule to keep it fresh.
+        """
+        key = self._key(provider, api)
+        with self._lock:
+            data = self._load()
+            data["hub_free_tier"][key] = {
+                "remaining_calls": remaining_calls,
+                "rpd": rpd,
+                "reset_at": reset_at,
             }
             self._save(data)
 
@@ -782,8 +898,8 @@ class CloudManagementClient:
         # distinct from source_repo (the GitHub repo, e.g. "biofool/OSenseiDocuments").
         # Recorded on every intent/actual report for attribution in the dashboard.
         self.application = application or os.environ.get("CLOUDMANAGEMENT_APPLICATION", "")
-        self.timeout = timeout if timeout is not None else int(os.environ.get("CLOUDMANAGEMENT_TIMEOUT", "5"))
-        self.intent_timeout = intent_timeout if intent_timeout is not None else int(os.environ.get("CLOUDMANAGEMENT_INTENT_TIMEOUT", "3"))
+        self.timeout = timeout if timeout is not None else _env_int("CLOUDMANAGEMENT_TIMEOUT", 5)
+        self.intent_timeout = intent_timeout if intent_timeout is not None else _env_int("CLOUDMANAGEMENT_INTENT_TIMEOUT", 3)
         self.strict = strict if strict is not None else os.environ.get("CLOUDMANAGEMENT_STRICT", "false").lower() == "true"
 
         # Durable on-disk spool for report_actual (issue #12). Set
@@ -794,9 +910,9 @@ class CloudManagementClient:
             _spool_dir = os.environ.get("CLOUDMANAGEMENT_SPOOL_DIR", _DEFAULT_SPOOL_DIR)
         self._spool = _Spool(
             spool_dir=_spool_dir,
-            cap=int(os.environ.get("CLOUDMANAGEMENT_SPOOL_CAP", "1000")),
-            max_attempts=int(os.environ.get("CLOUDMANAGEMENT_SPOOL_MAX_ATTEMPTS", "10")),
-            max_age_seconds=float(os.environ.get("CLOUDMANAGEMENT_SPOOL_MAX_AGE_SECONDS", "86400")),
+            cap=_env_int("CLOUDMANAGEMENT_SPOOL_CAP", 1000),
+            max_attempts=_env_int("CLOUDMANAGEMENT_SPOOL_MAX_ATTEMPTS", 10),
+            max_age_seconds=_env_float("CLOUDMANAGEMENT_SPOOL_MAX_AGE_SECONDS", 86400.0),
             strict=self.strict,
         )
 
@@ -850,12 +966,15 @@ class CloudManagementClient:
             log.warning("cloud_management: project_id not set — client disabled")
         if not self.report_token and not self.use_identity:
             log.warning("cloud_management: report_token not set and use_identity=False — client disabled")
+        if urllib.parse.urlsplit(self.base_url).scheme not in ("http", "https"):
+            log.error("cloud_management: base_url is not http/https — client disabled")
+            self.base_url = ""
 
     @property
     def enabled(self) -> bool:
         # In identity mode, the token is fetched at request time from the
         # metadata server, so report_token is not required.
-        return bool(self.project_id and (self.report_token or self.use_identity))
+        return bool(self.project_id and self.base_url and (self.report_token or self.use_identity))
 
     # ------------------------------------------------------------------
     # Background worker for async report_actual
@@ -1043,10 +1162,14 @@ class CloudManagementClient:
         if not self.enabled:
             return None
         url = f"{self.base_url}{path}"
+        if not _is_http_url(url):
+            _fail(f"POST {path} refused: base_url is not http/https", strict=self.strict)
+            return None
         body = json.dumps(payload).encode("utf-8")
         headers = {
             "Content-Type": "application/json",
             "Authorization": f"Bearer {self._auth_token()}",
+            "User-Agent": "CloudManagementClient/1.0",
         }
         headers.update(self._gate_headers())
         req = urllib.request.Request(
@@ -1079,8 +1202,12 @@ class CloudManagementClient:
         if not self.enabled:
             return None
         url = f"{self.base_url}{path}"
+        if not _is_http_url(url):
+            _fail(f"GET {path} refused: base_url is not http/https", strict=self.strict)
+            return None
         headers = {
             "Authorization": f"Bearer {self._auth_token()}",
+            "User-Agent": "CloudManagementClient/1.0",
         }
         headers.update(self._gate_headers())
         req = urllib.request.Request(
@@ -1218,7 +1345,16 @@ class CloudManagementClient:
         log.warning("cloud_management: wait_for_reschedule timed out after %ss for %s", timeout, intent_id)
         return None
 
-    def check_budget(self, expected_cost_usd: float = 0.0) -> BudgetCheck:
+    def check_budget(
+        self,
+        expected_cost_usd: float = 0.0,
+        provider: str = "",
+        model: str = "",
+        location: str = "",
+        fallback_reason: str = "",
+        expected_tokens: int | None = None,
+        expected_calls: int = 0,
+    ) -> BudgetCheck:
         """Pre-flight budget admission probe (budget-informed runtimes).
 
         Asks the hub "can I afford ``expected_cost_usd`` of work right now?"
@@ -1233,6 +1369,11 @@ class CloudManagementClient:
         - ``expected_cost_usd == 0`` (default) → GET read-only budget
           status (``budget_remaining_usd`` / ``over_budget``); ``admit``
           is True iff the project is not over budget.
+        - ``provider="vertex_ai"`` (paid fallback, issue #83) → the POST
+          additionally runs the hub's fail-closed vertex admission gate;
+          pass ``model``, ``location``, ``fallback_reason``, and
+          ``expected_tokens`` so the probe validates the same fields a
+          real intent requires.
 
         Always synchronous. On error returns a BudgetCheck with
         ``admit=False`` (fail-closed: when the hub is unreachable, do not
@@ -1240,8 +1381,22 @@ class CloudManagementClient:
         """
         path = f"/api/v1/budget/{self.project_id}"
         if expected_cost_usd and expected_cost_usd > 0:
-            data = self._post_sync(path, {"expected_cost_usd": expected_cost_usd},
-                                   timeout=self.intent_timeout)
+            payload: dict[str, Any] = {"expected_cost_usd": expected_cost_usd}
+            if provider:
+                payload["provider"] = provider
+            if model or location or fallback_reason:
+                payload["metadata"] = {
+                    k: v for k, v in (
+                        ("model", model),
+                        ("location", location),
+                        ("fallback_reason", fallback_reason),
+                    ) if v
+                }
+            if expected_tokens is not None:
+                payload["expected_tokens"] = expected_tokens
+            if expected_calls:
+                payload["expected_calls"] = expected_calls
+            data = self._post_sync(path, payload, timeout=self.intent_timeout)
         else:
             data = self._get_sync(path, timeout=self.intent_timeout)
         if data is None:
@@ -1280,6 +1435,92 @@ class CloudManagementClient:
         return self.check_budget(expected_cost_usd).admit
 
     # ------------------------------------------------------------------
+    # Vertex AI paid fallback (issue #83)
+    # ------------------------------------------------------------------
+    #
+    # The paid-fallback contract: AI Studio is attempted first; only
+    # quota/model-availability failures are fallback-eligible. No paid
+    # Vertex call may run without an approved intent — and both helpers
+    # below FAIL CLOSED: hub unreachable → admit=False / approved=False,
+    # so a CloudManagement outage produces zero paid calls.
+
+    def admit_paid_fallback(
+        self,
+        model: str,
+        location: str,
+        fallback_reason: str,
+        expected_cost_usd: float,
+        expected_tokens: int | None = None,
+        expected_calls: int = 1,
+    ) -> BudgetCheck:
+        """Side-effect-free paid-fallback admission probe (issue #83).
+
+        POSTs ``provider="vertex_ai"`` to ``/api/v1/budget/<project>`` so
+        the hub applies the fail-closed vertex gate (account
+        ``vertex.mode == "enabled"``, model/location allowlists, verified
+        pricing record, per-run/monthly caps) AND the project budget
+        check. ``admit=True`` is required before any paid Vertex call;
+        on any hub error this returns ``admit=False`` and the caller
+        must take its normal manual/unavailable path.
+        """
+        return self.check_budget(
+            expected_cost_usd,
+            provider="vertex_ai",
+            model=model,
+            location=location,
+            fallback_reason=fallback_reason,
+            expected_tokens=expected_tokens,
+            expected_calls=expected_calls,
+        )
+
+    def declare_vertex_fallback(
+        self,
+        job_id: str,
+        model: str,
+        location: str,
+        fallback_reason: str,
+        expected_cost_usd: float,
+        expected_input_tokens: int = 0,
+        expected_output_tokens: int = 0,
+        expected_calls: int = 1,
+        api: str = "generateContent",
+        metadata: dict[str, Any] | None = None,
+        **kwargs: Any,
+    ) -> IntentResponse:
+        """Declare a paid Vertex AI fallback intent (issue #83).
+
+        Convenience wrapper over ``declare_intent`` that packages the
+        required token-aware admission fields. The hub denies unless the
+        project's ``vertex.mode`` is ``"enabled"`` in the registry and the
+        model has a verified pricing record. Callers must treat any
+        non-approved response — including hub-unreachable — as "do not
+        run the paid call".
+
+        ``fallback_reason`` should say which primary-path failure made
+        the call fallback-eligible (e.g. ``"ai_studio_quota_exhausted"``,
+        ``"ai_studio_model_unavailable"``).
+        """
+        expected_tokens = expected_input_tokens + expected_output_tokens
+        meta = dict(metadata or {})
+        meta.update({
+            "model": model,
+            "location": location,
+            "fallback_reason": fallback_reason,
+            "expected_input_tokens": expected_input_tokens,
+            "expected_output_tokens": expected_output_tokens,
+        })
+        return self.declare_intent(
+            job_id=job_id,
+            provider="vertex_ai",
+            api=api,
+            expected_calls=expected_calls,
+            expected_cost_usd=expected_cost_usd,
+            expected_tokens=expected_tokens or None,
+            metadata=meta,
+            **kwargs,
+        )
+
+    # ------------------------------------------------------------------
     # Expected-cost pull + local cost history (price-change feedback)
     # ------------------------------------------------------------------
 
@@ -1315,7 +1556,47 @@ class CloudManagementClient:
                     calibration_delta=cal_delta,
                     updated_at=updated_at,
                 )
+                # Cache per-model free-tier data from pricing dict (issue #73).
+                # The hub stores per-model free-tier state inside pricing,
+                # keyed by model id (e.g. "gemini-2.5-flash-lite").
+                pricing = info.get("pricing") or {}
+                for model_id, model_data in pricing.items():
+                    if not isinstance(model_data, dict):
+                        continue
+                    remaining = model_data.get("free_tier_remaining_calls")
+                    if remaining is not None:
+                        self.cost_history.update_hub_free_tier(
+                            provider=provider,
+                            api=model_id,
+                            remaining_calls=int(remaining),
+                            reset_at=str(model_data.get("free_tier_reset", "")),
+                            rpd=int(model_data.get("free_tier_rpd", 0)),
+                        )
         return data
+
+    def check_free_tier_remaining(self, provider: str, api: str) -> dict[str, Any] | None:
+        """Return cached free-tier quota for a (provider, api) pair.
+
+        Reads from the ``LocalCostHistory.hub_free_tier`` cache — no
+        network call.  Returns ``{"remaining_calls": int, "rpd": int,
+        "reset_at": str}`` or ``None`` if uncached.
+
+        This is a cached snapshot, not live — call ``get_expected_costs``
+        on a schedule to keep it fresh.  Same staleness posture as
+        ``suggest_expected_cost``.
+        """
+        if not self.cost_history:
+            return None
+        key = LocalCostHistory._key(provider, api)
+        data = self.cost_history._load()
+        entry = data.get("hub_free_tier", {}).get(key)
+        if entry is None:
+            return None
+        return {
+            "remaining_calls": int(entry.get("remaining_calls", 0)),
+            "rpd": int(entry.get("rpd", 0)),
+            "reset_at": str(entry.get("reset_at", "")),
+        }
 
     def suggest_expected_cost(
         self,
@@ -1377,6 +1658,30 @@ class CloudManagementClient:
         }
         return self._post_sync("/api/v1/exposure", payload)
 
+    def submit_report(
+        self,
+        kind: str,
+        data: dict[str, Any] | None = None,
+    ) -> dict[str, Any] | None:
+        """Submit an operational report to the hub (issue #86).
+
+        ``kind`` is ``"heartbeat"`` (liveness only — updates the project's
+        ``last_seen`` for the keepalive monitor) or ``"daily_report"``
+        (stored and rendered into the daily pipeline email).
+
+        ``data`` is a free-form dict; for ``daily_report`` the hub renders
+        ``data["title"]``, ``data["sections"]`` ([{name, rows}]) and
+        ``data["notes"]`` if present. Returns the server response, or None
+        when the client is disabled or the call fails.
+        """
+        if not self.enabled:
+            return None
+        return self._post_sync("/api/v1/reports/ingest", {
+            "project_id": self.project_id,
+            "kind": kind,
+            "data": data or {},
+        })
+
     def report_actual(
         self,
         intent_id: str,
@@ -1390,6 +1695,16 @@ class CloudManagementClient:
         started_at: str = "",
         ended_at: str = "",
         application: str = "",
+        billed_cost_usd: float | None = None,
+        free_tier: bool = False,
+        input_tokens: int | None = None,
+        output_tokens: int | None = None,
+        cached_tokens: int | None = None,
+        grounding_queries: int | None = None,
+        latency_ms: float | None = None,
+        model: str = "",
+        location: str = "",
+        fallback_reason: str = "",
         sync: bool = False,
     ) -> ActualResponse:
         """Report actual API usage (post-call or incremental).
@@ -1403,6 +1718,16 @@ class CloudManagementClient:
         ``sync=True`` to get the response synchronously, and call
         ``flush()`` afterwards to ensure all prior async reports have
         been delivered.
+
+        ``actual_cost_usd`` is list price (kill-switch / remaining).
+        Optional ``billed_cost_usd`` and ``free_tier`` tell the hub
+        invoice vs list for the job-spend email (issue #60).
+
+        Paid-fallback attribution (issue #83): vertex_ai callers should
+        pass ``input_tokens``/``output_tokens``/``cached_tokens``,
+        ``grounding_queries``, ``latency_ms``, and the model/location/
+        fallback_reason actually served (the hub defaults the last three
+        from the intent's metadata when omitted).
 
         Returns an ActualResponse.  In async mode (default), the
         response is a placeholder — the actual HTTP happens in the
@@ -1429,10 +1754,30 @@ class CloudManagementClient:
         }
         if actual_tokens is not None:
             payload["actual_tokens"] = actual_tokens
+        if input_tokens is not None:
+            payload["input_tokens"] = input_tokens
+        if output_tokens is not None:
+            payload["output_tokens"] = output_tokens
+        if cached_tokens is not None:
+            payload["cached_tokens"] = cached_tokens
+        if grounding_queries is not None:
+            payload["grounding_queries"] = grounding_queries
+        if latency_ms is not None:
+            payload["latency_ms"] = latency_ms
+        if model:
+            payload["model"] = model
+        if location:
+            payload["location"] = location
+        if fallback_reason:
+            payload["fallback_reason"] = fallback_reason
         if started_at:
             payload["started_at"] = started_at
         if ended_at:
             payload["ended_at"] = ended_at
+        if billed_cost_usd is not None:
+            payload["billed_cost_usd"] = billed_cost_usd
+        if free_tier:
+            payload["free_tier"] = True
 
         if sync or not self.enabled:
             # Persist to spool before the HTTP attempt so a crash mid-send

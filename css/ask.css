@@ -1,0 +1,139 @@
+/* ── Ask AikiField knowledge layer (issue #65) ────────────────────────────── */
+/* Ported from quantumaikido.com styles.css .arm-* block; mapped onto the
+   redesign.css token set (light theme, Source Serif/Public Sans). */
+
+.ask-page {
+    padding-bottom: 3rem;
+}
+.ask-subnav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1rem;
+    margin: 1.25rem 0 1.75rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--af-border);
+    font-size: 0.92rem;
+}
+.ask-subnav a {
+    color: var(--af-text-2);
+    text-decoration: none;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+}
+.ask-subnav a[aria-current="page"],
+.ask-subnav a:hover,
+.ask-subnav a:focus-visible {
+    color: var(--af-primary);
+}
+.ask-subnav__chat {
+    font-weight: 600;
+    color: var(--af-primary) !important;
+}
+.ask-direct-answer {
+    font-size: 1.15rem;
+    color: var(--af-ink);
+    margin: 0.75rem 0 1.25rem;
+}
+.ask-kicker {
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.75rem;
+    color: var(--af-muted);
+    margin-bottom: 0.35rem;
+}
+.ask-access-note {
+    margin: 0 0 1.25rem;
+    padding: 0.9rem 1.1rem;
+    background: var(--af-hover-bg);
+    border: 1px solid var(--af-border);
+    border-radius: 6px;
+    color: var(--af-text-2);
+}
+.ask-browse {
+    margin: 2.25rem 0;
+    scroll-margin-top: 6.5rem;
+}
+.ask-browse h2 {
+    margin-bottom: 1rem;
+    font-size: 1.35rem;
+}
+.ask-card-grid {
+    display: grid;
+    gap: 1rem;
+}
+@media (min-width: 768px) {
+    .ask-card-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+a.ask-card {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    background: var(--af-white);
+    border: 1px solid var(--af-border);
+    border-radius: 6px;
+    padding: 1.1rem 1.2rem;
+    min-height: 44px;
+}
+a.ask-card:hover,
+a.ask-card:focus-visible {
+    border-color: var(--af-primary);
+}
+a.ask-card h3 {
+    font-size: 1.12rem;
+    font-weight: 600;
+    letter-spacing: 0;
+    margin: 0.15rem 0 0.5rem;
+    color: var(--af-ink);
+}
+a.ask-card p:last-child {
+    color: var(--af-text-2);
+    margin: 0;
+    font-size: 0.95rem;
+}
+.aeo-review-item {
+    margin: 0 0 1.5rem;
+    padding: 1.1rem 1.2rem;
+    background: var(--af-white);
+    border: 1px solid var(--af-border);
+    border-radius: 6px;
+}
+.aeo-review-item h3 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    letter-spacing: 0;
+    margin: 0.2rem 0 0.6rem;
+}
+.aeo-status {
+    text-transform: none;
+    letter-spacing: 0;
+    color: var(--af-primary);
+}
+.ask-disclosure,
+.ask-lineage,
+.ask-reviewed,
+.ask-unpublished {
+    margin-top: 1.5rem;
+    padding: 1rem 1.15rem;
+    background: var(--af-hover-bg);
+    border: 1px solid var(--af-border);
+    border-radius: 6px;
+    color: var(--af-text-2);
+}
+.ask-index {
+    list-style: none;
+    padding: 0;
+}
+.ask-index li {
+    margin: 0 0 1.1rem;
+}
+.ask-provenance q {
+    color: var(--af-muted);
+}
+.ask-related ul,
+.ask-video ul,
+.ask-provenance ul {
+    padding-left: 1.2rem;
+}

@@ -1,0 +1,20 @@
+{
+  "kind": "video",
+  "question": "Aikido as Extraordinary Listening (needs public YouTube ID)",
+  "canonical_slug": "aikido-as-extraordinary-listening",
+  "short_answer": "Placeholder for a verified Moonsensei YouTube teaching on extraordinary listening. Not published until a public youtube_url is confirmed on this site.",
+  "answer_markdown": "Reserved. Do not emit HTML until a public YouTube URL is attached to the source record.",
+  "claims": [
+    {
+      "claim": "Extraordinary Listening is listed as a public PDF on the books index.",
+      "source_id": "page-books-index",
+      "quote": "The Power of Extraordinary Listening"
+    }
+  ],
+  "related_questions": [
+    "what-is-extraordinary-listening"
+  ],
+  "review_status": "needs_editorial_review",
+  "last_reviewed": "2026-08-18",
+  "attribution": "richard-moon"
+}

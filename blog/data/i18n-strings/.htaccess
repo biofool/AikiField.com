@@ -1,0 +1,15 @@
+# Allow web access to i18n string files (issue #120).
+# These are public locale translation files with no sensitive data.
+<IfModule mod_authz_core.c>
+    <FilesMatch "\.json$">
+        Require all granted
+    </FilesMatch>
+</IfModule>
+
+# Apache 2.2 fallback (legacy syntax)
+<IfModule !mod_authz_core.c>
+    Order deny,allow
+    <FilesMatch "\.json$">
+        Allow from all
+    </FilesMatch>
+</IfModule>

@@ -38,7 +38,7 @@ test.describe('login page rendering', () => {
 
   test('login page loads coach-login.js', async ({ page }) => {
     await page.goto('/login.php');
-    const jsLoaded = await page.locator('script[src="coach-login.js"]').count();
+    const jsLoaded = await page.locator('script[src^="coach-login.js"]').count();
     expect(jsLoaded).toBeGreaterThan(0);
   });
 

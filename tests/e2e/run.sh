@@ -4,6 +4,9 @@
 # Usage:
 #   bash tests/e2e/run.sh                 # whole suite (local stub backend)
 #   bash tests/e2e/run.sh login           # one spec file
+#   bash tests/e2e/run.sh visual          # visual regression (issue #57)
+#   bash tests/e2e/run.sh visual --update-snapshots all   # regenerate baselines
+#     ("all" required: bare flag only rewrites snapshots that fail the 5% diff)
 #   bash tests/e2e/run.sh --headed        # watch it in a browser
 #
 # Playwright starts and stops the two PHP servers itself (ports 8200/8201);

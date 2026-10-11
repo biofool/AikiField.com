@@ -34,9 +34,9 @@
  * footer, or any public-facing page. It is reachable only via the beta-gate
  * redirect. See docs/coach-auth-prd.md.
  *
- * Dual-PRD coordination: changes to this auth flow MUST update
+ * Triple-PRD coordination: changes to this auth flow MUST update
  *   - docs/coach-auth-prd.md (this repo)
- *   - ~/projects/quantumaikido.com/web/docs/coach-dashboard-prd.md
+ *   - ~/projects/quantumaikido.com/docs/coach-dashboard-prd.md
  *   - ~/projects/AIRichardMoon/backend/PRD.md
  * See docs/coach-auth-prd.md and AGENTS.md.
  */
@@ -146,7 +146,10 @@ $nextRaw = $_GET['next'] ?? '';
 $loginRedirect = af_safe_redirect($nextRaw, '/beta/');
 
 // --- If already authed, skip the form and go to ?next= ---
-if ($qaAlreadyAuthed) {
+// GET only: POSTs (logout from the /members chat's Sign Out, backend-login)
+// must reach their handlers below. Without the method check a signed-in
+// logout POST was redirected here and never signed the player out.
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && $qaAlreadyAuthed && empty($_GET['error']) && empty($_GET['reset']) && empty($_GET['confirm']) && empty($_GET['validate'])) {
     header('Location: ' . $loginRedirect);
     exit;
 }
@@ -234,13 +237,13 @@ $coachLoginUrl = $_SERVER['SCRIPT_NAME'] ?? '/login.php';
   <meta name="theme-color" content="#0f2942">
   <meta name="robots" content="noindex,nofollow">
   <title>Sign in — AikiField</title>
-  <meta name="description" content="Sign in to access AikiField beta assessment pages.">
+  <meta name="description" content="Sign in to access AikiField beta assessment pages and the games review area.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preload" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Public+Sans:wght@400;600;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <noscript><link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Public+Sans:wght@400;600;700&display=swap" rel="stylesheet"></noscript>
-  <link rel="stylesheet" href="css/redesign.css">
-  <link rel="stylesheet" href="coach-auth.css">
+  <link rel="stylesheet" href="css/redesign.css?v=20261003">
+  <link rel="stylesheet" href="coach-auth.css?v=20261005b">
   <?php if (defined('TURNSTILE_SITE_KEY') && TURNSTILE_SITE_KEY): ?>
   <script>
     // Turnstile callbacks must be defined BEFORE coach-login.js loads.
@@ -277,12 +280,40 @@ $coachLoginUrl = $_SERVER['SCRIPT_NAME'] ?? '/login.php';
     <label for="af-nav-check" class="af-nav__toggle" aria-label="Menu">&#9776;</label>
     <nav aria-label="Primary" class="af-nav">
       <a href="index.html" class="af-nav__link">Home</a>
-      <a href="process.html" class="af-nav__link">Process</a>
-      <a href="approach.html" class="af-nav__link">Approach</a>
-      <a href="services.html" class="af-nav__link">Services</a>
-      <a href="case-studies.html" class="af-nav__link">Case Studies</a>
+      <div class="af-nav__group">
+        <a href="services.html" class="af-nav__link">Services</a>
+        <button type="button" class="af-nav__sub-toggle" aria-expanded="false" aria-controls="af-nav-sub-services" aria-label="Services pages"><span aria-hidden="true">&#9662;</span></button>
+        <ul class="af-nav__submenu" id="af-nav-sub-services">
+          <li><a href="process.html" class="af-nav__sublink">Process</a></li>
+          <li><a href="approach.html" class="af-nav__sublink">Approach</a></li>
+          <li><a href="case-studies.html" class="af-nav__sublink" data-i18n="nav.case_studies">Case Studies</a></li>
+          <li><a href="assessment.html" class="af-nav__sublink" data-i18n="nav.assessment">Assessment</a></li>
+        </ul>
+      </div>
       <a href="projects.php" class="af-nav__link">Projects</a>
-      <a href="assessment.html" class="af-nav__link">Assessment</a>
+      <div class="af-nav__group">
+        <button type="button" class="af-nav__link af-nav__menu-btn" aria-expanded="false" aria-controls="af-nav-sub-uf" data-i18n="nav.unified_field_studies">Studies in the Unified Field</button>
+        <ul class="af-nav__submenu af-nav__submenu--end af-nav__submenu--mega" id="af-nav-sub-uf">
+          <li class="af-nav__megacol">
+            <a href="books.html" class="af-nav__colhead" data-i18n="nav.books">Books</a>
+            <ul class="af-nav__megalist">
+              <li><a href="books.html" class="af-nav__sublink" data-i18n="nav.all_books">All Books</a></li>
+              <li><a href="blog/" class="af-nav__sublink" data-i18n="nav.insights_blog">Author's Insights blog</a></li>
+            </ul>
+          </li>
+          <li class="af-nav__megacol">
+            <a href="/digital-experience/" class="af-nav__colhead" data-i18n="nav.digital_experience">Digital Experience</a>
+            <ul class="af-nav__megalist">
+          <li><a href="/digital-experience/lucky-wave.html#v1" class="af-nav__sublink">Ride the Lucky Wave</a></li>
+          <li><a href="/digital-experience/lucky-wave.html#v2" class="af-nav__sublink">Ride the Lucky Wave V2</a></li>
+          <li><a href="/digital-experience/practices.html" class="af-nav__sublink">Twenty Practices</a></li>
+          <li class="af-nav__subsep"><a href="/digital-experience/unified-field-chat.html" class="af-nav__sublink af-nav__sublink--feature">Enter the Unified Field Chat</a></li>
+              <li class="af-nav__subsep"><a href="blog/index.html#social" class="af-nav__sublink" data-i18n="nav.social_media">Social Media</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+      <a href="somatic-studios/" class="af-nav__link" data-i18n="nav.somatic_studios">Free Services For Studios</a>
       <a href="contact.html" class="af-nav__cta">Get Started</a>
     </nav>
   </div>
@@ -292,7 +323,9 @@ $coachLoginUrl = $_SERVER['SCRIPT_NAME'] ?? '/login.php';
 
   <section class="af-section af-section--lg">
     <div class="af-container">
-      <div class="af-intro" style="max-width:520px;margin:0 auto;">
+      <!-- No width cap here: .coach-login-layout is a two-column grid, so it
+           fills .af-container and lines up with the header and footer. -->
+      <div class="af-intro">
 
       <!-- Two-column layout: left = sign in/register, right = caveats.
            On mobile, caveats appear first as a collapsible <details> section. -->
@@ -301,10 +334,18 @@ $coachLoginUrl = $_SERVER['SCRIPT_NAME'] ?? '/login.php';
       <!-- Left column: auth forms -->
       <div class="coach-login-forms">
 
+      <!-- Single auth window: the segmented tab switcher is the header row of
+           the form card below it, so login and registration share one panel. -->
+      <div id="coach-auth-panel" class="coach-auth-panel coach-card--highlight">
+
+      <div id="coach-auth-tab-bar" class="coach-auth-tab-bar coach-auth-tab-bar--header" role="tablist" aria-label="Authentication modes">
+        <button type="button" class="coach-auth-tab active" id="coach-tab-login" role="tab" aria-selected="true" aria-controls="coach-login">Sign In</button>
+        <button type="button" class="coach-auth-tab" id="coach-tab-register" role="tab" aria-selected="false" aria-controls="coach-register">Create Account</button>
+      </div>
+
       <!-- Login step -->
-      <div id="coach-login" class="coach-card coach-card--highlight">
-        <h2>Sign In</h2>
-        <p class="coach-intro">Sign in or register to access the beta assessment pages.</p>
+      <div id="coach-login" class="coach-card" role="tabpanel" aria-labelledby="coach-tab-login">
+        <p class="coach-intro">Sign in or register to access the beta assessment and games review pages.</p>
 
         <!-- Social login buttons (shown if OAuth is configured) -->
         <div id="coach-social" class="coach-social" hidden>
@@ -314,16 +355,32 @@ $coachLoginUrl = $_SERVER['SCRIPT_NAME'] ?? '/login.php';
         <div id="coach-divider" class="coach-divider" hidden><span>or</span></div>
 
         <!-- Login form -->
-        <form id="coach-login-form" class="coach-form">
+        <form id="coach-login-form" class="coach-form" novalidate>
           <label for="coach-email" class="coach-label">Email address or login ID</label>
-          <input type="text" id="coach-email" class="coach-input" placeholder="name@example.com or your login ID" required autocomplete="username">
+          <input type="text" id="coach-email" class="coach-input" placeholder="name@example.com or your login ID" required autocomplete="username" inputmode="email" dir="auto">
 
           <label for="coach-password" class="coach-label">Password</label>
-          <input type="password" id="coach-password" class="coach-input" placeholder="Password" required autocomplete="current-password" minlength="8">
+          <div class="coach-password-wrap">
+            <input type="password" id="coach-password" class="coach-input coach-password-input" placeholder="Password" required autocomplete="current-password">
+            <button type="button" class="coach-password-toggle" aria-label="Show password field" aria-pressed="false">
+              <svg class="coach-eye-icon eye-show" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+              <svg class="coach-eye-icon eye-hide" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" hidden><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+            </button>
+          </div>
 
           <div id="coach-login-validation" class="coach-login-validation" hidden>
               <label for="coach-login-validation-code" class="coach-label">Email validation code <span class="coach-reg-hint" style="display:inline;font-weight:normal;">(sent to your email)</span></label>
-              <input type="text" id="coach-login-validation-code" class="coach-input" placeholder="Enter the 6-digit code from your email" autocomplete="off" inputmode="numeric" pattern="[0-9]{6}" maxlength="6">
+              <div class="coach-otp-wrapper" data-otp-group="login">
+                <div class="coach-otp-digits" role="group" aria-label="6-digit verification code">
+                  <input type="text" class="coach-otp-digit" maxlength="1" pattern="[0-9]" inputmode="numeric" data-idx="0" autocomplete="one-time-code" aria-label="Digit 1">
+                  <input type="text" class="coach-otp-digit" maxlength="1" pattern="[0-9]" inputmode="numeric" data-idx="1" autocomplete="off" aria-label="Digit 2">
+                  <input type="text" class="coach-otp-digit" maxlength="1" pattern="[0-9]" inputmode="numeric" data-idx="2" autocomplete="off" aria-label="Digit 3">
+                  <input type="text" class="coach-otp-digit" maxlength="1" pattern="[0-9]" inputmode="numeric" data-idx="3" autocomplete="off" aria-label="Digit 4">
+                  <input type="text" class="coach-otp-digit" maxlength="1" pattern="[0-9]" inputmode="numeric" data-idx="4" autocomplete="off" aria-label="Digit 5">
+                  <input type="text" class="coach-otp-digit" maxlength="1" pattern="[0-9]" inputmode="numeric" data-idx="5" autocomplete="off" aria-label="Digit 6">
+                </div>
+                <input type="hidden" id="coach-login-validation-code" name="loginValidationCode" class="coach-otp-value">
+              </div>
               <button type="button" id="coach-login-resend-code-btn" class="btn btn-link coach-reg-send-code-btn">Resend validation code</button>
           </div>
 
@@ -348,7 +405,11 @@ $coachLoginUrl = $_SERVER['SCRIPT_NAME'] ?? '/login.php';
           <?php endif; ?>
         </form>
 
-        <div id="coach-login-status" class="coach-status" hidden></div>
+        <div id="coach-login-status" class="coach-status" role="status" hidden></div>
+
+        <!-- Passkey (WebAuthn) login — issue #650. Hidden by default;
+             coach-login.js unhides it when window.PublicKeyCredential is available. -->
+        <button type="button" id="coach-passkey-btn" class="btn btn-link coach-passkey-link" aria-label="Sign in with passkey" hidden>Sign in with passkey</button>
 
         <!-- Consent notice (issue #20) -->
         <p class="coach-consent-notice">By signing in, you confirm that you have read the privacy notice and agree to the processing described in the Privacy Policy.</p>
@@ -361,30 +422,33 @@ $coachLoginUrl = $_SERVER['SCRIPT_NAME'] ?? '/login.php';
       </div>
 
       <!-- Registration form -->
-      <div id="coach-register" class="coach-card" hidden>
-        <h2>Create Account</h2>
-        <p class="coach-intro">Sign up with your email and password to access the beta pages.</p>
+      <div id="coach-register" class="coach-card" role="tabpanel" aria-labelledby="coach-tab-register" hidden>
+        <!-- Screen-reader heading: keeps the outline h1 → h2 → h3 (Required /
+             Optional below) instead of skipping a level. The tab names the form visually. -->
+        <h2 class="sr-only">Create an account</h2>
+        <p class="coach-intro">Sign up with your email and password to access the beta and games review pages.</p>
 
-        <form id="coach-register-form" class="coach-form">
+        <form id="coach-register-form" class="coach-form" novalidate>
+          <!-- Two-column layout: left = required, right = optional. -->
           <div class="coach-reg-columns">
             <!-- Left column: required fields -->
             <div class="coach-reg-col coach-reg-required">
               <h3 class="coach-reg-col-heading">Required</h3>
 
               <label for="coach-reg-email" class="coach-label">Email address</label>
-              <input type="email" id="coach-reg-email" class="coach-input" placeholder="name@example.com" required autocomplete="email">
-
+              <input type="email" id="coach-reg-email" class="coach-input" placeholder="name@example.com" required autocomplete="email" dir="auto">
               <button type="button" id="coach-reg-send-code-btn" class="btn btn-link coach-reg-send-code-btn">Send validation code</button>
-              <div id="coach-reg-email-status" class="coach-status" role="alert" hidden></div>
-
-              <label for="coach-reg-validation-code" class="coach-label">Email validation code <span class="coach-reg-hint" style="display:inline;font-weight:normal;">(sent to your email)</span></label>
-              <input type="text" id="coach-reg-validation-code" class="coach-input" placeholder="Enter the 6-digit code from your email" autocomplete="off" inputmode="numeric" pattern="[0-9]{6}" maxlength="6">
+              <div id="coach-reg-email-status" class="coach-status" role="status" hidden></div>
 
               <label for="coach-reg-password" class="coach-label">Password</label>
-              <input type="password" id="coach-reg-password" class="coach-input" placeholder="Choose a password (min 8 chars)" required autocomplete="new-password" minlength="8">
-
-              <label for="coach-reg-code" class="coach-label">Invitation code <span class="coach-reg-hint" style="display:inline;font-weight:normal;">(if you have one)</span></label>
-              <input type="text" id="coach-reg-code" class="coach-input" placeholder="Enter your invitation code (optional)" autocomplete="off">
+              <div class="coach-password-wrap">
+                <input type="password" id="coach-reg-password" class="coach-input coach-password-input" placeholder="Choose a password (min 12 characters)" required autocomplete="new-password">
+                <button type="button" class="coach-password-toggle" aria-label="Show password field" aria-pressed="false">
+                  <svg class="coach-eye-icon eye-show" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                  <svg class="coach-eye-icon eye-hide" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" hidden><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+                </button>
+              </div>
+              <div id="coach-reg-password-feedback" class="coach-reg-hint" aria-live="polite">Minimum 12 characters. Use a passphrase or password manager.</div>
             </div>
 
             <!-- Right column: optional fields -->
@@ -392,14 +456,35 @@ $coachLoginUrl = $_SERVER['SCRIPT_NAME'] ?? '/login.php';
               <h3 class="coach-reg-col-heading">Optional</h3>
 
               <label for="coach-reg-alias" class="coach-label">Alias / username</label>
-              <input type="text" id="coach-reg-alias" class="coach-input" placeholder="Choose a login name (or leave blank)" autocomplete="username" maxlength="40">
+              <input type="text" id="coach-reg-alias" class="coach-input" placeholder="Choose a login name (or leave blank)" autocomplete="username" dir="auto">
               <p class="coach-reg-hint">If set, you can log in with this instead of your email. Letters, numbers, hyphens, underscores, and dots only.</p>
 
-              <label for="coach-reg-language" class="coach-label">Preferred language</label>
-              <select id="coach-reg-language" class="coach-input">
-                <option value="">English (auto-detect)</option>
-              </select>
-              <p class="coach-reg-hint">Overrides auto-detection. AI Ki Questions Fielded will respond in this language.</p>
+            </div>
+          </div>
+
+          <!-- Bottom row: invitation code + email validation code (smaller, side
+               by side). The OTP wrapper stays hidden until a validation code is
+               actually sent — coach-login.js unhides it. -->
+          <div class="coach-reg-bottom-row">
+            <div class="coach-reg-bottom-field">
+              <label for="coach-reg-code" class="coach-label">Invitation code <span class="coach-reg-hint" style="display:inline;font-weight:normal;">(optional &mdash; grants instant access)</span></label>
+              <input type="text" id="coach-reg-code" class="coach-input" placeholder="Enter invitation code (optional)" autocomplete="off" dir="auto">
+              <p class="coach-reg-hint">Without a code, your account will be created and activated after administrator approval.</p>
+            </div>
+
+            <div id="coach-reg-email-validation" class="coach-reg-bottom-field coach-reg-email-validation coach-reg-email-validation--compact">
+              <label for="coach-reg-validation-code" class="coach-label">Email validation code <span class="coach-reg-hint" style="display:inline;font-weight:normal;">(6 digits, sent to your email)</span></label>
+              <div class="coach-otp-wrapper" data-otp-group="reg" hidden>
+                <div class="coach-otp-digits coach-otp-digits--sm" role="group" aria-label="6-digit email validation code">
+                  <input type="text" class="coach-otp-digit" maxlength="1" pattern="[0-9]" inputmode="numeric" data-idx="0" autocomplete="one-time-code" aria-label="Digit 1">
+                  <input type="text" class="coach-otp-digit" maxlength="1" pattern="[0-9]" inputmode="numeric" data-idx="1" autocomplete="off" aria-label="Digit 2">
+                  <input type="text" class="coach-otp-digit" maxlength="1" pattern="[0-9]" inputmode="numeric" data-idx="2" autocomplete="off" aria-label="Digit 3">
+                  <input type="text" class="coach-otp-digit" maxlength="1" pattern="[0-9]" inputmode="numeric" data-idx="3" autocomplete="off" aria-label="Digit 4">
+                  <input type="text" class="coach-otp-digit" maxlength="1" pattern="[0-9]" inputmode="numeric" data-idx="4" autocomplete="off" aria-label="Digit 5">
+                  <input type="text" class="coach-otp-digit" maxlength="1" pattern="[0-9]" inputmode="numeric" data-idx="5" autocomplete="off" aria-label="Digit 6">
+                </div>
+                <input type="hidden" id="coach-reg-validation-code" name="validationCode" class="coach-otp-value">
+              </div>
             </div>
           </div>
 
@@ -415,7 +500,7 @@ $coachLoginUrl = $_SERVER['SCRIPT_NAME'] ?? '/login.php';
           <button type="submit" class="btn btn-primary" id="coach-register-btn">Create account</button>
         </form>
 
-        <div id="coach-register-status" class="coach-status" hidden></div>
+        <div id="coach-register-status" class="coach-status" role="status" hidden></div>
 
         <div class="coach-toggle-row">
           <span>Already have an account?</span>
@@ -423,23 +508,32 @@ $coachLoginUrl = $_SERVER['SCRIPT_NAME'] ?? '/login.php';
         </div>
       </div>
 
+      </div><!-- /.coach-auth-panel -->
+
       <!-- Password reset form (shown when ?reset=token in URL) -->
       <div id="coach-reset-step" class="coach-card" hidden>
         <h2>Reset Password</h2>
-        <p class="coach-intro">Enter your new password below.</p>
-        <form id="coach-reset-form" class="coach-form">
+        <p class="coach-intro" id="coach-reset-intro">Enter your new password below.</p>
+        <form id="coach-reset-form" class="coach-form" novalidate>
           <label for="coach-reset-password" class="coach-label">New password</label>
-          <input type="password" id="coach-reset-password" class="coach-input" placeholder="New password (min 8 chars)" required autocomplete="new-password" minlength="8">
+          <div class="coach-password-wrap">
+            <input type="password" id="coach-reset-password" class="coach-input coach-password-input" placeholder="New password (min 12 characters)" required autocomplete="new-password">
+            <button type="button" class="coach-password-toggle" aria-label="Show password field" aria-pressed="false">
+              <svg class="coach-eye-icon eye-show" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+              <svg class="coach-eye-icon eye-hide" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" hidden><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+            </button>
+          </div>
+          <div id="coach-reset-password-feedback" class="coach-reg-hint" aria-live="polite">Minimum 12 characters. Use a passphrase or password manager.</div>
           <button type="submit" class="btn btn-primary" id="coach-reset-btn">Reset password</button>
         </form>
-        <div id="coach-reset-status" class="coach-status" hidden></div>
+        <div id="coach-reset-status" class="coach-status" role="status" hidden></div>
       </div>
 
       <!-- Confirmation status (shown when ?confirm=token in URL) -->
       <div id="coach-confirm-step" class="coach-card" hidden>
         <h2>Confirming your email...</h2>
         <p class="coach-intro" id="coach-confirm-text">Please wait while we confirm your email address.</p>
-        <div id="coach-confirm-status" class="coach-status" hidden></div>
+        <div id="coach-confirm-status" class="coach-status" role="status" hidden></div>
       </div>
 
       </div><!-- /.coach-login-forms -->
@@ -452,17 +546,10 @@ $coachLoginUrl = $_SERVER['SCRIPT_NAME'] ?? '/login.php';
         <!-- Compressed intro panel -->
         <div class="coach-intro-panel coach-intro-panel--highlight">
           <h2>Beta Access <span class="coach-free-badge">Members</span></h2>
-          <p class="coach-intro-subtitle">Sign in to access the AikiField beta assessment pages.</p>
-          <p class="coach-intro-text">
-            This sign-in gates the pre-release assessment tools under
-            <code>/beta/</code>. The same account works on
-            <a href="https://quantumaikido.com">quantumaikido.com</a> if you
-            are an AI Ki Questions Fielded member.
-          </p>
+          <p class="coach-intro-subtitle">Sign in to access the AikiField beta assessment pages and games review area.</p>
           <ul class="coach-intro-features">
             <li>Register with an invitation code, or sign in if you already have an account.</li>
             <li>Your session lasts 7 days and covers the whole <code>aikifield.com</code> origin.</li>
-            <li>You can sign out from any beta page.</li>
           </ul>
         </div>
 
@@ -471,12 +558,11 @@ $coachLoginUrl = $_SERVER['SCRIPT_NAME'] ?? '/login.php';
           <h2>Before you begin</h2>
           <ul class="coach-privacy-list">
             <li>Your session is stored in a cookie so you can return to the beta pages without signing in again.</li>
-            <li>Authentication is handled by the AI Ki Questions Fielded backend on Google Cloud Run.</li>
             <li>Please do not enter sensitive personal information.</li>
           </ul>
           <div class="coach-privacy-links">
-            <a href="https://quantum-aikido-coach-6bfpsd3kkq-uc.a.run.app/v1/policies/corpus-privacy" target="_blank" rel="noopener">Read the Privacy Policy</a>
-            <a href="https://quantum-aikido-coach-6bfpsd3kkq-uc.a.run.app/v1/policies/ai-security" target="_blank" rel="noopener">Read the AI Security &amp; Safety Notice</a>
+            <a href="https://aiqa-coach-uj5nyskptq-uc.a.run.app/v1/policies/corpus-privacy" target="_blank" rel="noopener">Read the Privacy Policy</a>
+            <a href="https://aiqa-coach-uj5nyskptq-uc.a.run.app/v1/policies/ai-security" target="_blank" rel="noopener">Read the AI Security &amp; Safety Notice</a>
           </div>
         </div>
 
@@ -514,6 +600,15 @@ $coachLoginUrl = $_SERVER['SCRIPT_NAME'] ?? '/login.php';
         <li><a href="assessment.html">Self-Assessment</a></li>
       </ul>
     </nav>
+    <nav aria-label="Studies">
+      <h3 class="af-footer__col-title" data-i18n="nav.unified_field_studies">Studies in the Unified Field</h3>
+      <ul class="af-footer__nav">
+        <li><a href="books.html" data-i18n="nav.books">Books</a></li>
+        <li><a href="blog/" data-i18n="nav.insights_blog">Author's Insights blog</a></li>
+        <li><a href="digital-experience/" data-i18n="nav.digital_experience">Digital Experience</a></li>
+        <li><a href="blog/index.html#social" data-i18n="nav.social_media">Social Media</a></li>
+      </ul>
+    </nav>
     <nav aria-label="Connect">
       <h3 class="af-footer__col-title">Connect</h3>
       <ul class="af-footer__nav">
@@ -534,7 +629,9 @@ window.COACH_LOGIN_REDIRECT = <?= json_encode($loginRedirect) ?>;
 window.COACH_LOGIN_URL = <?= json_encode($coachLoginUrl) ?>;
 window.COACH_LOGOUT_URL = <?= json_encode($coachLoginUrl) ?>;
 </script>
-<script src="coach-login.js" defer></script>
+<script src="js/locale-utils.js" defer></script>
+<script src="coach-login.js?v=20261005b" defer></script>
 
+<script src="/js/nav-menu.js?v=20261002" defer></script>
 </body>
 </html>

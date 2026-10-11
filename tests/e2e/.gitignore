@@ -3,3 +3,5 @@ test-results/
 playwright-report/
 blob-report/
 .stub-*.jsonl
+# Stub backend game-results state (stub-backend.php)
+af-e2e-stub-game-results.json*

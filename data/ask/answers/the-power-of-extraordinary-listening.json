@@ -1,0 +1,21 @@
+{
+  "kind": "book",
+  "question": "What is The Power of Extraordinary Listening?",
+  "canonical_slug": "the-power-of-extraordinary-listening",
+  "short_answer": "A public PDF on this site, described as a quantum leap in communication and commonwealth.",
+  "answer_markdown": "The books index lists *The Power of Extraordinary Listening* among free PDF downloads, with the one-line description \"A quantum leap in communication & commonwealth.\" Read the PDF itself for Moon's wording; this page does not paste the file.",
+  "claims": [
+    {
+      "claim": "The books index lists the PDF and its one-line description.",
+      "source_id": "page-books-index",
+      "quote": "The Power of Extraordinary Listening — A quantum leap in communication & commonwealth"
+    }
+  ],
+  "related_questions": [
+    "what-is-extraordinary-listening",
+    "the-business-of-listening"
+  ],
+  "review_status": "published",
+  "last_reviewed": "2026-08-18",
+  "attribution": "richard-moon"
+}

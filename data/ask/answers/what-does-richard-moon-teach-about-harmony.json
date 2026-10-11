@@ -1,0 +1,32 @@
+{
+  "kind": "question",
+  "question": "What does Richard Moon teach about harmony?",
+  "canonical_slug": "what-does-richard-moon-teach-about-harmony",
+  "short_answer": "Public teaching copy presents harmony as blending with incoming energy — not winning — so that conflict can be redirected into a more constructive relationship.",
+  "answer_markdown": "On the biography page, Moon describes the mat lesson as a choice: meet force with force and create collision, or enter, blend, and harmonize with the energy of the attack. The highlight line used on that page is that conflict is not something to win or lose; it is energy waiting to be transformed.\n\nThe book page uses the same move as the through-line of *Quantum Aikido: The Power of Harmony*: recognize pressure as information and channel reactivity into creativity.\n\nO Sensei's phrase \"the realization of love,\" quoted on the biography page, is the classical Aikido frame this site uses for that harmony — not a claim that Moon coined the phrase.",
+  "claims": [
+    {
+      "claim": "Harmony here means blending with the energy of an attack rather than colliding.",
+      "source_id": "page-richard-moon",
+      "quote": "It's energy waiting to be transformed."
+    },
+    {
+      "claim": "The book describes conflict as energy to harmonize, not defeat.",
+      "source_id": "page-book",
+      "quote": "Conflict as energy to harmonize, not defeat"
+    },
+    {
+      "claim": "The biography quotes O Sensei calling Aikido the realization of love.",
+      "source_id": "page-richard-moon",
+      "quote": "the realization of love"
+    }
+  ],
+  "related_questions": [
+    "what-is-quantum-aikido",
+    "how-does-aikido-transform-conflict",
+    "what-is-extraordinary-listening"
+  ],
+  "review_status": "published",
+  "last_reviewed": "2026-08-18",
+  "attribution": "richard-moon"
+}

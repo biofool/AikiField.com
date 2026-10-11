@@ -7,7 +7,7 @@
  * public — there is no login or chat on this page anymore.
  *
  * History: this page previously hosted an inline coaching login + AI Chat
- * (a public CTA authenticating against the AI Ki Questions Fielded backend
+ * (a public CTA authenticating against the Quantum Aikido Wisdom backend
  * on Cloud Run via coach-proxy.php). That surface was removed — the page
  * now shows an invitation card pointing visitors to the contact form to
  * request a live demo. The coaching login was extracted to a blind
@@ -35,14 +35,14 @@
   <link rel="apple-touch-icon" href="/favicon.svg">
   <meta name="theme-color" content="#0f2942">
   <title>AikiField — Technology We Build</title>
-  <meta name="description" content="Production AI and data pipelines designed and built by AikiField — a cited AI coaching chat and a global studio discovery pipeline. The same engineering capability is available to your organization, tailored to fit your needs.">
+  <meta name="description" content="Production AI and data pipelines designed and built by AikiField — AI coaching, studio outreach, multi-cloud cost control, resilience engineering, media intelligence, AI governance, and knowledge-graph research. The same engineering capability is available to your organization, tailored to fit your needs.">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="AikiField">
   <meta property="og:title" content="Technology We Build">
-  <meta property="og:description" content="Production AI and data pipelines designed and built by AikiField — a cited AI coaching chat and a global studio discovery pipeline. The same engineering capability is available to your organization, tailored to fit your needs.">
+  <meta property="og:description" content="Production AI and data pipelines designed and built by AikiField — AI coaching, studio outreach, multi-cloud cost control, resilience engineering, media intelligence, AI governance, and knowledge-graph research. The same engineering capability is available to your organization, tailored to fit your needs.">
   <meta property="og:url" content="https://aikifield.com/projects.php">
-  <meta property="og:image" content="https://aikifield.com/favicon.svg">
-  <meta name="twitter:card" content="summary">
+  <meta property="og:image" content="https://aikifield.com/assets/og-share.png">
+  <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Technology We Build">
   <meta name="twitter:description" content="Production AI and data pipelines designed and built by AikiField — a cited AI coaching chat and a global studio discovery pipeline. The same engineering capability is available to your organization, tailored to fit your needs.">
   <link rel="canonical" href="https://aikifield.com/projects.php">
@@ -50,7 +50,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preload" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Public+Sans:wght@400;600;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <noscript><link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Public+Sans:wght@400;600;700&display=swap" rel="stylesheet"></noscript>
-  <link rel="stylesheet" href="css/redesign.css">
+  <link rel="stylesheet" href="css/redesign.css?v=20261003">
 </head>
 <body>
 
@@ -67,12 +67,40 @@
     <label for="af-nav-check" class="af-nav__toggle" aria-label="Menu">&#9776;</label>
     <nav aria-label="Primary" class="af-nav">
       <a href="index.html" class="af-nav__link" data-i18n="nav.home">Home</a>
-      <a href="process.html" class="af-nav__link" data-i18n="nav.process">Process</a>
-      <a href="approach.html" class="af-nav__link" data-i18n="nav.approach">Approach</a>
-      <a href="services.html" class="af-nav__link" data-i18n="index.eyebrow_services">Services</a>
-      <a href="case-studies.html" class="af-nav__link" data-i18n="nav.case_studies">Case Studies</a>
+      <div class="af-nav__group">
+        <a href="services.html" class="af-nav__link" data-i18n="index.eyebrow_services">Services</a>
+        <button type="button" class="af-nav__sub-toggle" aria-expanded="false" aria-controls="af-nav-sub-services" aria-label="Services pages" data-i18n-attr="aria-label:nav.services_submenu"><span aria-hidden="true">&#9662;</span></button>
+        <ul class="af-nav__submenu" id="af-nav-sub-services">
+          <li><a href="process.html" class="af-nav__sublink" data-i18n="nav.process">Process</a></li>
+          <li><a href="approach.html" class="af-nav__sublink" data-i18n="nav.approach">Approach</a></li>
+          <li><a href="case-studies.html" class="af-nav__sublink" data-i18n="nav.case_studies">Case Studies</a></li>
+          <li><a href="assessment.html" class="af-nav__sublink" data-i18n="nav.assessment">Assessment</a></li>
+        </ul>
+      </div>
       <a href="projects.php" class="af-nav__link af-nav__link--active" aria-current="page" data-i18n="nav.demonstration_technologies">Projects</a>
-      <a href="assessment.html" class="af-nav__link" data-i18n="nav.assessment">Assessment</a>
+      <div class="af-nav__group">
+        <button type="button" class="af-nav__link af-nav__menu-btn" aria-expanded="false" aria-controls="af-nav-sub-uf" data-i18n="nav.unified_field_studies">Studies in the Unified Field</button>
+        <ul class="af-nav__submenu af-nav__submenu--end af-nav__submenu--mega" id="af-nav-sub-uf">
+          <li class="af-nav__megacol">
+            <a href="books.html" class="af-nav__colhead" data-i18n="nav.books">Books</a>
+            <ul class="af-nav__megalist">
+              <li><a href="books.html" class="af-nav__sublink" data-i18n="nav.all_books">All Books</a></li>
+              <li><a href="blog/" class="af-nav__sublink" data-i18n="nav.insights_blog">Author's Insights blog</a></li>
+            </ul>
+          </li>
+          <li class="af-nav__megacol">
+            <a href="/digital-experience/" class="af-nav__colhead" data-i18n="nav.digital_experience">Digital Experience</a>
+            <ul class="af-nav__megalist">
+          <li><a href="/digital-experience/lucky-wave.html#v1" class="af-nav__sublink" data-i18n="nav.dx_lucky_wave">Ride the Lucky Wave</a></li>
+          <li><a href="/digital-experience/lucky-wave.html#v2" class="af-nav__sublink" data-i18n="nav.dx_lucky_wave_v2">Ride the Lucky Wave V2</a></li>
+          <li><a href="/digital-experience/practices.html" class="af-nav__sublink" data-i18n="nav.dx_practices">Twenty Practices</a></li>
+          <li class="af-nav__subsep"><a href="/digital-experience/unified-field-chat.html" class="af-nav__sublink af-nav__sublink--feature" data-i18n="nav.dx_unified_field_chat">Enter the Unified Field Chat</a></li>
+              <li class="af-nav__subsep"><a href="blog/index.html#social" class="af-nav__sublink" data-i18n="nav.social_media">Social Media</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+      <a href="somatic-studios/" class="af-nav__link" data-i18n="nav.somatic_studios">Free Services For Studios</a>
       <a href="contact.html" class="af-nav__cta" data-i18n="nav.get_started">Get Started</a>
       <div id="af-language-selector" class="af-lang-selector" data-i18n-attr="aria-label:nav.language_selection">
         <span class="af-lang-label" aria-hidden="true">&#127760;</span>
@@ -88,48 +116,74 @@
   <!-- ============================================================ -->
   <section class="af-page-header af-page-header--tight af-page-header--green">
     <div class="af-container">
-      <p class="af-eyebrow">Built by AikiField</p>
-      <h1 class="af-h1">Technology we built &mdash; ready to fit your needs.</h1>
+      <p class="af-eyebrow">Bespoke Custom Software</p>
+      <h1 class="af-h1">Bespoke Software, Designed by AikiField Written by AI</h1>
       <p class="af-lead af-lead--wide af-page-header__lead">AikiField designs, builds, and operates the systems below &mdash; production AI and data pipelines running today, not demos or slide-ware. The same engineering capability, cost discipline, and leadership judgment that built them is available to your organization, tailored to fit your security program and your stage.</p>
-      <a href="#see-it-live" class="af-page-header__chat-cta">
+      <button type="button" id="see-it-live-toggle" class="af-page-header__chat-cta" aria-expanded="false" aria-controls="see-it-live-panel">
         <span class="af-page-header__chat-cta-badge">Free</span>
         See it live &mdash; request an invitation below
         <span class="af-page-header__chat-cta-arrow" aria-hidden="true">&darr;</span>
-      </a>
+      </button>
+      <!-- Dropdown invitation panel — drops down from the pill when toggled -->
+      <div id="see-it-live-panel" class="af-invite-dropdown" hidden>
+        <div class="af-invite-dropdown__inner">
+          <span class="af-svc__tag af-svc__tag--flagship">See it live</span>
+          <span class="af-svc__tag af-svc__tag--built">Free</span>
+          <h2 class="af-svc__title">Want to see it in action?</h2>
+          <p class="af-svc__lead">If you want to see it live, request an invitation when you <a href="contact.html">contact us</a> &mdash; we&rsquo;re happy to show you how easy it is to stand one up.</p>
+          <p class="af-svc__bestfor">Tech Support and Security AI runs in production at <a href="https://quantumaikido.com">quantumaikido.com</a>. We can walk you through a live demo, then design and build a corpus-specific chat grounded in your own knowledge base &mdash; runbooks, policies, product docs, or any body of text your team or customers keep asking about.</p>
+          <a href="contact.html" class="af-btn af-btn--light af-svc__cta">Request an invitation</a>
+          <p class="af-svc__fineprint">No account needed to look around this page &mdash; the project cards below describe what each system does and how the same pattern fits your needs.</p>
+        </div>
+      </div>
     </div>
   </section>
 
   <!-- ============================================================ -->
-  <!-- PROJECTS + INVITATION CARD — two-column split                 -->
-  <!-- Left: the sponsored project cards.                            -->
-  <!-- Right: invitation card (request a live demo), sticky.         -->
-  <!-- No --white modifier: falls through to body's --af-bg (warm    -->
-  <!-- paper), so the page reads dark green header -> paper section  -->
-  <!-- -> white cards, instead of white section -> paper cards.      -->
+  <!-- PROJECTS — full-width single column                           -->
+  <!-- The invitation card now lives in the page-header dropdown     -->
+  <!-- (toggled by the "See it live" pill above), so the project     -->
+  <!-- cards use the full width.                                     -->
   <!-- ============================================================ -->
   <section class="af-section">
     <div class="af-container">
-      <div class="af-projects-split">
+      <h2 class="af-h2" id="projects-heading">Projects completed</h2>
+      <p class="af-lead af-lead--wide">Seven systems designed and built by AikiField, running in production today. Select a technology to view its details &mdash; one at a time.</p>
+
+      <!-- ============================================================ -->
+      <!-- PROJECT SELECTOR PILLS — pick one to show that project       -->
+      <!-- ============================================================ -->
+      <div class="af-proj-pills" id="project-pills" role="group" aria-label="Select a project">
+        <button type="button" class="af-proj-pills__pill" data-project="1" aria-pressed="true" aria-controls="project-1">Tech Support and Security AI</button>
+        <button type="button" class="af-proj-pills__pill" data-project="2" aria-pressed="false" aria-controls="project-2">World Studio Finder</button>
+        <button type="button" class="af-proj-pills__pill" data-project="3" aria-pressed="false" aria-controls="project-3">MultiCloud-MultiPass</button>
+        <button type="button" class="af-proj-pills__pill" data-project="4" aria-pressed="false" aria-controls="project-4">ChaosEngine</button>
+        <button type="button" class="af-proj-pills__pill" data-project="5" aria-pressed="false" aria-controls="project-5">ClipQuotes</button>
+        <button type="button" class="af-proj-pills__pill" data-project="6" aria-pressed="false" aria-controls="project-6">Voice Synthesis Benchmarking</button>
+        <button type="button" class="af-proj-pills__pill" data-project="7" aria-pressed="false" aria-controls="project-7">Story Gatherer</button>
+      </div>
+
+      <div class="af-projects-split af-projects-split--full">
 
         <!-- LEFT COLUMN: sponsored projects -->
         <div class="af-projects-split__projects">
 
-          <!-- PROJECT 1: AIKIFIELD AI CHAT -->
-          <article class="af-svc af-svc--flagship">
+          <!-- PROJECT 1: TECH SUPPORT AND SECURITY AI -->
+          <article class="af-svc af-svc--flagship" id="project-1" data-project="1">
+            <p class="af-svc__category">Support AI</p>
             <div class="af-svc__tag-row">
-              <span class="af-svc__tag af-svc__tag--flagship">AI Coaching</span>
               <span class="af-svc__tag af-svc__tag--built">Built by AikiField</span>
             </div>
-            <h2 class="af-svc__title">AI Ki Questions Fielded</h2>
-            <p class="af-svc__lead">Corpus-specific AI Chat. Designed to provide hallucination-free Q&amp;A against a specific knowledge base. Free your team to handle the hard questions; give your customers a better interface to the documentation &mdash; because, who wants to read docs?</p>
+            <h2 class="af-svc__title">Tech Support and Security AI</h2>
+            <p class="af-svc__lead">Corpus-specific support AI. Designed to reliably draft answers to customer security questionnaires and guide support personnel with access to the latest technical updates. Free your team to handle the hard questions; give your customers a better interface to the documentation &mdash; because, who wants to read docs?</p>
             <p class="af-svc__bestfor">Live at <a href="https://quantumaikido.com">quantumaikido.com</a> &mdash; a public chat plus a members area (invitation-only, with email or Google login).</p>
-            <p class="af-svc__bestfor">How it works: it searches the teaching archive for relevant passages, drafts an answer with citations, keeps costs under control, and hands off to a human coach by video when it can&rsquo;t help or the member asks.</p>
+            <p class="af-svc__bestfor">How it works: it searches the teaching archive for relevant passages, drafts an answer with citations, keeps costs under control, and hands off to a human coach by video (a premium feature) when it can&rsquo;t help or the member asks.</p>
             <h3 class="af-svc__bullets-label">What it does</h3>
             <ul class="af-svc__bullets">
-              <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Answers grounded in the source teachings</strong> &mdash; with citations back to origin.</span></li>
-              <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Escalates to a live human coach</strong> &mdash; via video link when a question needs it.</span></li>
-              <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Runs on a fixed budget</strong> &mdash; so coaching stays free, with no surprise bills.</span></li>
-              <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Queues questions</strong> &mdash; so no single user crowds out the rest.</span></li>
+              <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Answers grounded in the set of corpus documents</strong> &mdash; with citations back to origin.</span></li>
+              <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Escalates to a live human coach</strong> &mdash; via video link (premium feature) when a question needs it.</span></li>
+              <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Runs on a fixed budget</strong> &mdash; throttle usage, so there&rsquo;s no surprise bills.</span></li>
+              <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Runs a fair queue</strong> &mdash; so no single user crowds out the rest.</span></li>
               <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Works on any cloud</strong> &mdash; without rewriting the code.</span></li>
               <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Self-service accounts</strong> &mdash; register, log in, reset your password, or delete your account (invitation-only).</span></li>
             </ul>
@@ -143,16 +197,16 @@
 
             <div class="af-diagram">
               <figure class="af-diagram__figure">
-                <img src="assets/aichat-flow.svg" data-af-diagram="aichat-flow" data-i18n-attr="alt:svg.aichat_flow.alt" alt="AI Ki Questions Fielded request flow: step 1 member asks a question; step 2a authenticate (email, password, Google OAuth, Turnstile) and 2b rate limit and queue; step 3 search teaching corpus via SQLite FTS5; step 4 Gemini drafts cited answer; step 5 decision — can it answer confidently? YES leads to 6a return cited answer (24/7, free, within budget), NO leads to 6b escalate to human coach via video link; step 7 member receives response. Infrastructure: Cloud Run, Firestore, Secret Manager, Pub/Sub, Cloud Functions, Docker, OpenTofu, DVC plus GCS." class="af-diagram__img" width="780" height="980" loading="lazy"/>
-                <figcaption class="af-diagram__caption"><strong>Figure 1.</strong> AI Ki Questions Fielded request flow &mdash; from member question through corpus search, Gemini-drafted answer, and the decision to return a cited answer or escalate to a live human coach. <a href="assets/aichat-flow.png" class="af-diagram__download" download>Download PNG &darr;</a></figcaption>
+                <img src="assets/aichat-flow.svg" data-af-diagram="aichat-flow" data-i18n-attr="alt:svg.aichat_flow.alt" alt="Tech Support and Security AI request flow: step 1 member asks a question; step 2a authenticate (email, password, Google OAuth, Turnstile) and 2b rate limit and queue; step 3 search teaching corpus via SQLite FTS5; step 4 Gemini drafts cited answer; step 5 decision — can it answer confidently? YES leads to 6a return cited answer (24/7, free, within budget), NO leads to 6b escalate to human coach via video link; step 7 member receives response. Infrastructure: Cloud Run, Firestore, Secret Manager, Pub/Sub, Cloud Functions, Docker, OpenTofu, DVC plus GCS." class="af-diagram__img" width="780" height="980" loading="lazy"/>
+                <figcaption class="af-diagram__caption"><strong>Figure 1.</strong> Tech Support and Security AI request flow &mdash; from member question through corpus search, Gemini-drafted answer, and the decision to return a cited answer or escalate to a live human coach. <a href="assets/aichat-flow.png" class="af-diagram__download" download>Download PNG &darr;</a></figcaption>
               </figure>
             </div>
           </article>
 
           <!-- PROJECT 2: STUDIO DISCOVERY -->
-          <article class="af-svc">
+          <article class="af-svc" id="project-2" data-project="2" hidden>
+            <p class="af-svc__category">Outreach Pipeline</p>
             <div class="af-svc__tag-row">
-              <span class="af-svc__tag">Outreach Pipeline</span>
               <span class="af-svc__tag af-svc__tag--built">Built by AikiField</span>
             </div>
             <h2 class="af-svc__title">World Studio Finder &mdash; Global Studio Discovery</h2>
@@ -183,9 +237,9 @@
           </article>
 
           <!-- PROJECT 3: MULTICLOUD-MULTIPASS -->
-          <article class="af-svc">
+          <article class="af-svc" id="project-3" data-project="3" hidden>
+            <p class="af-svc__category">Cloud Management</p>
             <div class="af-svc__tag-row">
-              <span class="af-svc__tag">Cloud Management</span>
               <span class="af-svc__tag af-svc__tag--built">Built by AikiField</span>
             </div>
             <h2 class="af-svc__title">MultiCloud-MultiPass &mdash; Multi-Cloud Cost Kill Switch</h2>
@@ -211,9 +265,9 @@
           </article>
 
           <!-- PROJECT 4: CHAOSENGINE -->
-          <article class="af-svc">
+          <article class="af-svc" id="project-4" data-project="4" hidden>
+            <p class="af-svc__category">Resilience Engineering</p>
             <div class="af-svc__tag-row">
-              <span class="af-svc__tag">Resilience Engineering</span>
               <span class="af-svc__tag af-svc__tag--built">Built by AikiField</span>
             </div>
             <h2 class="af-svc__title">ChaosEngine &mdash; Controlled Failure Injection for Security Resilience</h2>
@@ -238,9 +292,9 @@
           </article>
 
           <!-- PROJECT 5: CLIPQUOTES -->
-          <article class="af-svc">
+          <article class="af-svc" id="project-5" data-project="5" hidden>
+            <p class="af-svc__category">Media Intelligence</p>
             <div class="af-svc__tag-row">
-              <span class="af-svc__tag">Media Intelligence</span>
               <span class="af-svc__tag af-svc__tag--built">Built by AikiField</span>
             </div>
             <h2 class="af-svc__title">ClipQuotes &mdash; Automated Evidence &amp; Communications Extraction</h2>
@@ -265,9 +319,9 @@
           </article>
 
           <!-- PROJECT 6: VOICE SYNTHESIS BENCHMARKING -->
-          <article class="af-svc">
+          <article class="af-svc" id="project-6" data-project="6" hidden>
+            <p class="af-svc__category">AI Research &amp; Governance</p>
             <div class="af-svc__tag-row">
-              <span class="af-svc__tag">AI Research &amp; Governance</span>
               <span class="af-svc__tag af-svc__tag--built">Built by AikiField</span>
             </div>
             <h2 class="af-svc__title">Voice Synthesis Benchmarking &mdash; Deepfake-Aware AI Governance</h2>
@@ -291,29 +345,34 @@
             </div>
           </article>
 
-        </div><!-- /.af-projects-split__projects -->
-
-        <!-- RIGHT COLUMN: invitation card (request a live demo) — sticky.
-             Collapsed by default into a tag header; expands to reveal the
-             full invitation copy. Auto-opens when navigated to via #see-it-live
-             (e.g. from the page-header CTA). -->
-        <div class="af-projects-split__chat" id="see-it-live">
-          <details class="af-svc af-svc--invite af-invite-collapse">
-            <summary class="af-invite-collapse__summary">
-              <span class="af-svc__tag af-svc__tag--flagship">See it live</span>
-              <span class="af-svc__tag af-svc__tag--built">Free</span>
-              <span class="af-invite-collapse__hint">Want to see it in action?</span>
-              <svg class="af-invite-collapse__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
-            </summary>
-            <div class="af-invite-collapse__body">
-              <h2 class="af-svc__title">Want to see it in action?</h2>
-              <p class="af-svc__lead">If you want to see it live, request an invitation when you <a href="contact.html">contact us</a> &mdash; we&rsquo;re happy to show you how easy it is to stand one up.</p>
-              <p class="af-svc__bestfor">The AI Ki Questions Fielded runs in production at <a href="https://quantumaikido.com">quantumaikido.com</a>. We can walk you through a live demo, then design and build a corpus-specific chat grounded in your own knowledge base &mdash; runbooks, policies, product docs, or any body of text your team or customers keep asking about.</p>
-              <a href="contact.html" class="af-btn af-btn--light af-svc__cta">Request an invitation</a>
-              <p class="af-svc__fineprint">No account needed to look around this page &mdash; the project cards on the left describe what each system does and how the same pattern fits your needs.</p>
+          <!-- PROJECT 7: STORY GATHERER -->
+          <article class="af-svc" id="project-7" data-project="7" hidden>
+            <p class="af-svc__category">Knowledge Graph</p>
+            <div class="af-svc__tag-row">
+              <span class="af-svc__tag af-svc__tag--built">Built by AikiField</span>
             </div>
-          </details>
-        </div><!-- /.af-projects-split__chat -->
+            <h2 class="af-svc__title">Story Gatherer &mdash; Provenance-First Knowledge Graphs</h2>
+            <p class="af-svc__lead">A research pipeline that turns scattered web material &mdash; blogs, interviews, news archives, social posts, forum threads, videos &mdash; into a single, queryable, fully sourced knowledge graph about people and the communities around them.</p>
+            <p class="af-svc__bestfor">Built to document The Source restaurant and the Source Family commune, it now runs as a general engine for mapping martial-arts teachers, lineages, and organizations. A scheduled research job expands targeted subjects daily, with centralized cost tracking and a remote kill switch.</p>
+            <h3 class="af-svc__bullets-label">What it does</h3>
+            <ul class="af-svc__bullets">
+              <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Gathers sources automatically</strong> &mdash; crawls approved sites and searches newspaper archives, Reddit, Facebook groups, seminar listings, and video channels, including OCR of scanned periodicals.</span></li>
+              <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Extracts the cast and the claims</strong> &mdash; identifies people, groups, places, works, and events, resolves aliases, and records every claim with its stance (supports, disputes).</span></li>
+              <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Preserves disagreement</strong> &mdash; keeps &ldquo;who said what about whom, and where&rdquo; rather than collapsing sources into one canonical truth.</span></li>
+              <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Checks itself</strong> &mdash; flags contradictions between sources and uses a bounded AI verification layer that abstains rather than guesses; no claim is ever discarded.</span></li>
+              <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Fully auditable</strong> &mdash; every node, edge, and claim is tied to its source in a version-controlled, human-readable snapshot (~10,900 nodes, ~25,300 edges, ~5,800 sources).</span></li>
+              <li class="af-svc__bullet"><svg viewBox="0 0 24 24" fill="none" stroke="#0E4E44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><strong>Produces publishable output</strong> &mdash; Wikipedia draft proposals with source-reliability scoring and biographical reviews that grade every statement&rsquo;s citeability.</span></li>
+            </ul>
+            <h3 class="af-svc__bullets-label" style="margin-top:28px;">Tech stack</h3>
+            <p class="af-body">Python &middot; SQLite &middot; Flask &middot; Gemini API &middot; Playwright &middot; OCR pipeline &middot; GitHub Actions &middot; Google Cloud Run &middot; GCP Secret Manager &middot; Terraform</p>
+
+            <div class="af-svc__applied">
+              <p class="af-svc__applied-label">Applied to your needs</p>
+              <p class="af-svc__applied-body">The same pattern &mdash; <strong>a contradiction-aware research pipeline that makes provenance the product</strong> &mdash; can be built for your organization: aggregating vendor advisories, threat intelligence, and internal reports into an auditable graph where every statement is tied to its source, disagreements stay visible, and board- or regulator-facing output carries citations. We design, build, and operate it on a fixed budget.</p>
+            </div>
+          </article>
+
+        </div><!-- /.af-projects-split__projects -->
 
       </div><!-- /.af-projects-split -->
     </div>
@@ -322,12 +381,12 @@
   <!-- OVERVIEW DIAGRAM — below the split -->
   <section class="af-section">
     <div class="af-container">
-      <h2 class="af-h2">Six systems we built &mdash; at a glance</h2>
-      <p class="af-lead af-lead--wide">All six systems were designed and built by AikiField and run in production today &mdash; AI-grounded coaching, global studio outreach, multi-cloud cost control, resilience engineering, media intelligence, and AI governance research. The engineering patterns behind them are directly available to your engagement.</p>
+      <h2 class="af-h2">Seven systems we built &mdash; at a glance</h2>
+      <p class="af-lead af-lead--wide">All seven systems were designed and built by AikiField and run in production today &mdash; AI-grounded coaching, global studio outreach, multi-cloud cost control, resilience engineering, media intelligence, AI governance research, and provenance-first knowledge graphs. The engineering patterns behind them are directly available to your engagement.</p>
       <div class="af-diagram">
         <figure class="af-diagram__figure">
-          <img src="assets/projects-overview.svg" data-af-diagram="projects-overview" data-i18n-attr="alt:svg.projects_overview.alt" alt="Overview diagram: AikiField sponsors two projects — AI Ki Questions Fielded (inputs: member question and teaching corpus; core: Gemini API, SQLite FTS5, Cloud Run, Firestore, rate limiter, auth; outputs: cited answer and human coach escalation) and World Studio Finder (inputs: Google Maps, Places API, Hunter.io; core: Playwright scraper, email verifier, SQLite SCD Type 2, Google Sheets sync, geo-filter, Compute Engine; outputs: YAMM email campaigns and web form submission)." class="af-diagram__img" width="1120" height="760" loading="lazy"/>
-          <figcaption class="af-diagram__caption"><strong>Figure 3.</strong> Overview of the two systems AikiField built, showing inputs, core components, and outputs for each. <a href="assets/projects-overview.png" class="af-diagram__download" download>Download PNG &darr;</a></figcaption>
+          <img src="assets/projects-overview.svg" data-af-diagram="projects-overview" data-i18n-attr="alt:svg.projects_overview.alt" alt="Overview diagram: AikiField sponsors seven projects — Tech Support and Security AI (support AI; Gemini API, Cloud Run, Firestore, SQLite FTS5, Cloudflare), World Studio Finder (outreach pipeline; Playwright, Places API, Hunter.io, Sheets API, SQLite SCD Type 2), MultiCloud-MultiPass (cloud cost control; FastAPI, BigQuery, OpenStack, Cloudflare, Cloud Scheduler), ChaosEngine (resilience engineering; Go, AWS SDK, Docker, CI/CD approval gates), ClipQuotes (media intelligence; Whisper, pyannote, OpenCV, FFmpeg), Voice Synthesis Benchmarking (AI governance; PyTorch, torchaudio, Hugging Face, GPU inference) and Story Gatherer (knowledge graph; Python, SQLite, Flask, Cloud Run, Gemini API). All seven stand on a shared substrate: Python in all seven systems; Docker, OpenTofu/Terraform and SQLite in four each; Cloud Run and Flask in three each; FastAPI, Firestore and Gemini in two each; plus 30 domain specialists used by a single system each." class="af-diagram__img" width="1120" height="972" loading="lazy"/>
+          <figcaption class="af-diagram__caption"><strong>Figure 3.</strong> The seven systems AikiField built, each with its principal technologies, and the substrate they share &mdash; one language across all seven, with containerisation and infrastructure-as-code on every system that ships to a cloud. <a href="assets/projects-overview.png" class="af-diagram__download" download>Download PNG &darr;</a></figcaption>
         </figure>
       </div>
     </div>
@@ -429,6 +488,15 @@
         <li><a href="assessment.html">Self-Assessment</a></li>
       </ul>
     </nav>
+    <nav aria-label="Studies">
+      <h3 class="af-footer__col-title" data-i18n="nav.unified_field_studies">Studies in the Unified Field</h3>
+      <ul class="af-footer__nav">
+        <li><a href="books.html" data-i18n="nav.books">Books</a></li>
+        <li><a href="blog/" data-i18n="nav.insights_blog">Author's Insights blog</a></li>
+        <li><a href="digital-experience/" data-i18n="nav.digital_experience">Digital Experience</a></li>
+        <li><a href="blog/index.html#social" data-i18n="nav.social_media">Social Media</a></li>
+      </ul>
+    </nav>
     <nav aria-label="Connect">
       <h3 class="af-footer__col-title">Connect</h3>
       <ul class="af-footer__nav">
@@ -440,23 +508,95 @@
   <div class="af-footer__legal">&copy; 2026 AikiField. All rights reserved.</div>
 </footer>
 
-<script src="/js/locale-utils.js?v=20260818i18n"></script>
-<script src="/js/language-selector.js?v=20260818i18n"></script>
+<script src="/js/locale-utils.js?v=20261004-2"></script>
+<script src="/js/language-selector.js?v=20261004-2"></script>
 <script>
-  // Auto-expand the "See it live" invitation card when the page is navigated
-  // to with #see-it-live (e.g. from the page-header CTA). The card is collapsed
-  // by default for a compact sticky rail; this ensures the CTA still works.
+  // Toggle the "See it live" invitation dropdown from the page-header pill.
+  // The pill is a <button> that shows/hides the invitation panel below it.
   (function () {
-    var details = document.querySelector('.af-invite-collapse');
-    if (!details) return;
-    function openIfTarget() {
-      if (window.location.hash === '#see-it-live') {
-        details.open = true;
+    var toggle = document.getElementById('see-it-live-toggle');
+    var panel = document.getElementById('see-it-live-panel');
+    if (!toggle || !panel) return;
+    function openPanel() {
+      panel.hidden = false;
+      toggle.setAttribute('aria-expanded', 'true');
+      toggle.classList.add('af-page-header__chat-cta--open');
+    }
+    function closePanel() {
+      panel.hidden = true;
+      toggle.setAttribute('aria-expanded', 'false');
+      toggle.classList.remove('af-page-header__chat-cta--open');
+    }
+    toggle.addEventListener('click', function () {
+      if (panel.hidden) { openPanel(); } else { closePanel(); }
+    });
+    // Auto-open if navigated with #see-it-live (e.g. from another page link)
+    if (window.location.hash === '#see-it-live') { openPanel(); }
+    window.addEventListener('hashchange', function () {
+      if (window.location.hash === '#see-it-live') { openPanel(); }
+    });
+  })();
+
+  // Project selector pills — pick a pill to show that project's detail.
+  // Only one project detail card is visible at a time; the rest are hidden.
+  (function () {
+    var pills = document.querySelectorAll('.af-proj-pills__pill');
+    var panels = document.querySelectorAll('.af-projects-split__projects > article');
+    if (!pills.length || !panels.length) return;
+    var pillList = Array.prototype.slice.call(pills);
+
+    function selectProject(num) {
+      // Update pill states
+      pillList.forEach(function (pill) {
+        var isMatch = pill.getAttribute('data-project') === String(num);
+        pill.setAttribute('aria-pressed', isMatch ? 'true' : 'false');
+      });
+      // Show only the matching panel
+      panels.forEach(function (panel) {
+        panel.hidden = panel.getAttribute('data-project') !== String(num);
+      });
+      // Update URL hash without jumping
+      if (history.replaceState) {
+        history.replaceState(null, '', '#project-' + num);
       }
     }
-    openIfTarget();
-    window.addEventListener('hashchange', openIfTarget);
+
+    pillList.forEach(function (pill) {
+      var num = pill.getAttribute('data-project');
+      pill.addEventListener('click', function () { selectProject(num); });
+    });
+
+    // Arrow-key navigation between pills (left/right, plus up/down)
+    var bar = document.getElementById('project-pills');
+    if (bar) {
+      bar.addEventListener('keydown', function (e) {
+        var focused = document.activeElement;
+        if (!focused || !focused.classList.contains('af-proj-pills__pill')) return;
+        var idx = pillList.indexOf(focused);
+        if (idx === -1) return;
+        if ((e.key === 'ArrowRight' || e.key === 'ArrowDown') && idx < pillList.length - 1) {
+          e.preventDefault();
+          pillList[idx + 1].focus();
+        } else if ((e.key === 'ArrowLeft' || e.key === 'ArrowUp') && idx > 0) {
+          e.preventDefault();
+          pillList[idx - 1].focus();
+        } else if (e.key === 'Home') {
+          e.preventDefault();
+          pillList[0].focus();
+        } else if (e.key === 'End') {
+          e.preventDefault();
+          pillList[pillList.length - 1].focus();
+        }
+      });
+    }
+
+    // Restore selection from URL hash on load (e.g. #project-3)
+    var hashMatch = window.location.hash.match(/^#project-([1-7])$/);
+    if (hashMatch) {
+      selectProject(hashMatch[1]);
+    }
   })();
 </script>
+<script src="/js/nav-menu.js?v=20261002" defer></script>
 </body>
 </html>

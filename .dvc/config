@@ -1,4 +1,5 @@
 [core]
-    remote = aikifield-gcs
-['remote "aikifield-gcs"']
-    url = gs://aikifield-dvc/
+    remote = r2
+['remote "r2"']
+    url = s3://biofool-dvc/aikifield
+    endpointurl = https://062579a5337db8e60922bca1c0fd922f.r2.cloudflarestorage.com

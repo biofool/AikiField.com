@@ -53,14 +53,18 @@ function contact_client_ip(): string
 }
 
 // --- Staging guard ---
-// The aikifield.peec.biz staging subdomain runs this exact same file (it's
-// rsynced as-is, see sync.sh) so testing the contact form there must never
-// reach the real inbox. Detected by hostname rather than an env var/config
-// file so it works with zero extra cPanel configuration — whatever hostname
-// the staging subdomain is created under, matching "aikifield.peec.biz" (or
-// the STAGING=1 escape hatch below, for local/manual testing) is enough.
+// Every staging surface (issue #80: aikifield.peec.biz, staging.peec.biz,
+// staging.peec.biz/aikifield) runs this exact same file from the staging
+// docroot (it's rsynced as-is, see sync.sh) so testing the contact form
+// there must never reach the real inbox. Detected by hostname rather than
+// an env var/config file so it works with zero extra cPanel configuration —
+// any staging hostname (or the STAGING=1 escape hatch below, for
+// local/manual testing) is enough.
+$_staging_host = strtolower((string) ($_SERVER['HTTP_HOST'] ?? ''));
 $IS_STAGING = getenv('STAGING') === '1'
-    || str_contains(strtolower((string) ($_SERVER['HTTP_HOST'] ?? '')), 'aikifield.peec.biz');
+    || str_contains($_staging_host, 'aikifield.peec.biz')
+    || str_contains($_staging_host, 'staging.peec.biz');
+unset($_staging_host);
 
 // --- Only accept POST ---
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {

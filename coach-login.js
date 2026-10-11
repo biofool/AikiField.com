@@ -1,12 +1,12 @@
-// Unified login JS — AikiField projects.php (ported from quantumaikido.com
-// login.php, issue #51). Identical behaviour; AikiField renders the login form
-// inline at the top of the Sponsored Projects page instead of a standalone
-// login.php, and posts the backend-login to window.location.pathname
-// (projects.php) to establish the PHP session.
+// Unified login JS — AikiField login.php (ported from quantumaikido.com
+// login.php, issue #51). Identical behaviour; the form lives on the blind
+// /login.php page that gates /beta/ and /for-review/, and posts the
+// backend-login to window.location.pathname (login.php) to establish the
+// PHP session.
 // Handles: login (email+password), registration (email+password+invitation code),
 // email confirmation link, password reset link, Google OAuth, forgot-password.
 //
-// On successful auth, posts the session to projects.php (which stores it in the
+// On successful auth, posts the session to login.php (which stores it in the
 // PHP session cookie) and redirects to window.COACH_LOGIN_REDIRECT.
 //
 // This file consolidates the login logic from coach-auth.js and coach-auth-social.js.
@@ -56,6 +56,19 @@
         _initParams.get("redirect"),
         window.COACH_LOGIN_REDIRECT || "/members.php",
     );
+    // Invitation-code links: /login.php?invite=CODE, or nested inside the
+    // post-login target (beta-gate sends ?next= which PHP folds into
+    // COACH_LOGIN_REDIRECT).
+    const INVITE = (function () {
+        const direct = _initParams.get("invite") || _initParams.get("code");
+        if (direct) return direct;
+        try {
+            const nested = new URL(REDIRECT, window.location.origin).searchParams;
+            return nested.get("invite") || nested.get("code") || "";
+        } catch (_) {
+            return "";
+        }
+    })();
     let currentEmail = "";
     let pendingValidationEmail = "";
 
@@ -114,10 +127,185 @@
         el.hidden = false;
         el.className = "coach-status status-" + type;
         el.textContent = msg;
+        // Errors are assertive alerts; loading/success/info are polite status.
+        el.setAttribute("role", type === "error" ? "alert" : "status");
+    }
+
+    // Resend cooldown (ticket #510): after any send, disable the button with
+    // a visible countdown. Registration starts at 10 seconds and backs off
+    // exponentially; login-time activation retains its 60-second cooldown.
+    // The backend keeps up to 2 concurrent codes valid, so this is a UX guard.
+    const LOGIN_RESEND_COOLDOWN_SECONDS = 60;
+    const REGISTRATION_RESEND_BASE_SECONDS = 10;
+    const REGISTRATION_RESEND_MAX_SECONDS = 600;
+    let registrationResendCount = 0;
+    let _cooldownTimers = {};
+    function startResendCooldown(btn, seconds) {
+        const secs = seconds || LOGIN_RESEND_COOLDOWN_SECONDS;
+        const originalText = btn.dataset.originalText || btn.textContent;
+        btn.dataset.originalText = originalText;
+        let remaining = secs;
+        btn.disabled = true;
+        btn.textContent = "Resend code (" + remaining + "s)";
+        if (_cooldownTimers[btn.id]) clearInterval(_cooldownTimers[btn.id]);
+        _cooldownTimers[btn.id] = setInterval(() => {
+            remaining--;
+            if (remaining <= 0) {
+                clearInterval(_cooldownTimers[btn.id]);
+                delete _cooldownTimers[btn.id];
+                btn.disabled = false;
+                btn.textContent = originalText;
+            } else {
+                btn.textContent = "Resend code (" + remaining + "s)";
+            }
+        }, 1000);
+    }
+    function isOnCooldown(btn) {
+        return btn.disabled && _cooldownTimers[btn.id] != null;
+    }
+
+    // --- Field validation ------------------------------------------------
+    // These forms carry `novalidate`, so the browser never blocks submit on
+    // its own. That is deliberate: native constraint validation rejects a
+    // field with only a small tooltip, which reads as the button doing
+    // nothing at all. Every rejection below produces a visible status line.
+    //
+    // The backend requires 12-128 characters when a password is *set*
+    // (register / reset / change) — AIRichardMoon `backend/app/auth.py`.
+    // Signing in has NO length rule there, so an existing shorter password
+    // must still be accepted; the sign-in form only checks for emptiness.
+    const PASSWORD_MIN = 12;
+    const PASSWORD_MAX = 128;
+    const ALIAS_MAX = 40;
+
+    function newPasswordProblem(pw) {
+        if (!pw) return "Choose a password.";
+        if (pw.length < PASSWORD_MIN) {
+            return "Password must be at least " + PASSWORD_MIN
+                + " characters — yours is " + pw.length + ".";
+        }
+        if (pw.length > PASSWORD_MAX) {
+            return "Password must be " + PASSWORD_MAX
+                + " characters or fewer — yours is " + pw.length + ".";
+        }
+        return null;
+    }
+
+    function emailProblem(value) {
+        if (!value) return "Enter your email address.";
+        const at = value.indexOf("@");
+        if (at < 1 || at === value.length - 1 || /\s/.test(value)) {
+            return "Enter a valid email address.";
+        }
+        return null;
+    }
+
+    // Cold-start notice (biofool/AIRichardMoon#817). The coaching backend
+    // scales to zero with no keep-warm job (owner decision, 2026-10-04), so
+    // the first request after a quiet period waits while Cloud Run starts an
+    // instance (measured 10-17s, up to ~30s). If a request is still pending
+    // after COLD_START_NOTICE_MS, show a polite notice with a progress bar so
+    // the wait does not look like a hang. A counter (not a flag) covers
+    // overlapping requests; the notice hides when the last one settles.
+    // Background calls with short timeouts pass { slowNotice: false }.
+    //
+    // The bar is time-based, not real progress — Cloud Run reports none. It
+    // eases toward COLD_START_BAR_CAP so it never claims to be finished, then
+    // fills to 100% when the request settles.
+    const COLD_START_NOTICE_MS = 4000;
+    const COLD_START_BAR_TAU_MS = 8000;
+    const COLD_START_BAR_CAP = 95;
+    const COLD_START_TICK_MS = 250;
+    const COLD_START_DONE_HOLD_MS = 400;
+    const COLD_START_NOTICE_TEXT = "The coach is starting up, so there is a slight delay. This usually takes 10 to 20 seconds.";
+    let coldStartPending = 0;
+    let coldStartEl = null;
+    let coldStartText = null;
+    let coldStartBar = null;
+    let coldStartFill = null;
+    let coldStartTicker = null;
+    let coldStartHideTimer = null;
+
+    function coldStartNotice() {
+        if (!coldStartEl) {
+            coldStartEl = document.createElement("div");
+            coldStartEl.className = "coach-coldstart-notice";
+            coldStartEl.setAttribute("role", "status");
+            coldStartEl.setAttribute("aria-live", "polite");
+            coldStartEl.hidden = true;
+            coldStartText = document.createElement("p");
+            coldStartText.className = "coach-coldstart-text";
+            coldStartBar = document.createElement("div");
+            coldStartBar.className = "coach-coldstart-bar";
+            coldStartBar.setAttribute("role", "progressbar");
+            coldStartBar.setAttribute("aria-label", "Starting the coach");
+            coldStartBar.setAttribute("aria-valuemin", "0");
+            coldStartBar.setAttribute("aria-valuemax", "100");
+            coldStartFill = document.createElement("div");
+            coldStartFill.className = "coach-coldstart-fill";
+            coldStartBar.appendChild(coldStartFill);
+            coldStartEl.append(coldStartText, coldStartBar);
+            document.body.appendChild(coldStartEl);
+        }
+        return coldStartEl;
+    }
+
+    function setColdStartProgress(pct) {
+        const value = Math.round(pct);
+        coldStartFill.style.width = value + "%";
+        coldStartBar.setAttribute("aria-valuenow", String(value));
+    }
+
+    function showColdStartNotice(startedAt) {
+        const el = coldStartNotice();
+        clearTimeout(coldStartHideTimer);
+        el.hidden = false;
+        coldStartText.textContent = COLD_START_NOTICE_TEXT;
+        const tick = () => {
+            const elapsed = Date.now() - startedAt;
+            setColdStartProgress(COLD_START_BAR_CAP * (1 - Math.exp(-elapsed / COLD_START_BAR_TAU_MS)));
+        };
+        tick();
+        coldStartTicker = setInterval(tick, COLD_START_TICK_MS);
+    }
+
+    function hideColdStartNotice() {
+        clearInterval(coldStartTicker);
+        coldStartTicker = null;
+        setColdStartProgress(100);
+        coldStartHideTimer = setTimeout(() => {
+            coldStartEl.hidden = true;
+            coldStartText.textContent = "";
+        }, COLD_START_DONE_HOLD_MS);
+    }
+
+    function trackSlowRequest() {
+        const startedAt = Date.now();
+        let shown = false;
+        const timer = setTimeout(() => {
+            shown = true;
+            coldStartPending++;
+            if (!coldStartTicker) showColdStartNotice(startedAt);
+        }, COLD_START_NOTICE_MS);
+        return function settle() {
+            clearTimeout(timer);
+            if (!shown) return;
+            coldStartPending--;
+            if (coldStartPending === 0) hideColdStartNotice();
+        };
+    }
+
+    async function fetchWithTimeout(url, opts, options = {}) {
+        const settle = options.slowNotice === false ? null : trackSlowRequest();
+        try {
+            return await fetchWithRetry(url, opts, options);
+        } finally {
+            if (settle) settle();
+        }
     }
 
     // Fetch with timeout and bounded retry/backoff (issue #17).
-    async function fetchWithTimeout(url, opts, { timeoutMs = 15000, retries = 2, baseDelayMs = 500 } = {}) {
+    async function fetchWithRetry(url, opts, { timeoutMs = 35000, retries = 2, baseDelayMs = 500 } = {}) {
         let lastErr;
         for (let attempt = 0; attempt <= retries; attempt++) {
             const controller = new AbortController();
@@ -152,44 +340,98 @@
         return fallback || "Something went wrong. Please try again.";
     }
 
+    // A resp.json() SyntaxError means the server (or an edge-level
+    // block/rate-limit page in front of it) returned a non-JSON body.
+    // Surfacing the raw parser message (e.g. `Unexpected token 'R',
+    // "Rate exceeded." is not valid JSON`) is confusing — show a generic
+    // retry message for that case. Other errors (timeouts, DNS failures)
+    // keep their specific message.
+    function friendlyErrorMessage(err) {
+        if (err instanceof SyntaxError) {
+            return "Something went wrong. Please try again.";
+        }
+        return "Network error: " + (err && err.message ? err.message : "unknown");
+    }
+
+    // "step" only matters for reset/confirm, which take over the whole layout.
+    // Login/register visibility is managed by the tab switcher (selectTab).
     function showStep(step) {
-        loginStep.hidden    = (step !== "login");
-        registerStep.hidden = (step !== "register");
+        const overlayStep = (step === "reset" || step === "confirm");
+        loginStep.hidden    = overlayStep;
+        registerStep.hidden = overlayStep;
         resetStep.hidden    = (step !== "reset");
         confirmStep.hidden  = (step !== "confirm");
+        // Hide the tab bar during reset/confirm overlays so users can't
+        // click back to login/register while an overlay is active. The panel
+        // that wraps the bar and both forms draws the card border, so it has
+        // to go too — otherwise an empty box is left behind the overlay.
+        const tabBar = document.getElementById("coach-auth-tab-bar");
+        if (tabBar) tabBar.hidden = overlayStep;
+        const authPanel = document.getElementById("coach-auth-panel");
+        if (authPanel) authPanel.hidden = overlayStep;
     }
 
     // --- Establish server-side session ---
     // Posts email + sessionToken to login.php, which stores them in the PHP
     // session cookie. Then redirects to the destination.
-    async function establishServerSession(email, sessionToken) {
+    async function establishServerSession(email, sessionToken, statusEl) {
+        // login.php always replies 200 with {"ok":true|false} — false when the
+        // backend check-session call failed or was rejected (its curl timeout
+        // is 10s, which a cold Cloud Run start can exceed). The status code
+        // alone therefore says nothing; the body has to be read.
+        let established = false;
         try {
-            await fetchWithTimeout(window.location.pathname, {
+            const resp = await fetchWithTimeout(window.location.pathname, {
                 method: "POST",
                 headers: { "Content-Type": "application/x-www-form-urlencoded" },
                 body: "action=backend-login&email=" + encodeURIComponent(email)
                     + "&sessionToken=" + encodeURIComponent(sessionToken),
             });
-        } catch (_) {
+            const data = resp.ok ? await resp.json().catch(() => null) : null;
+            established = !!(data && data.ok);
+            if (!established) {
+                console.error(
+                    "establishServerSession: server session not created (status "
+                    + resp.status + ", ok=" + (data && data.ok) + ")");
+            }
+        } catch (err) {
+            console.error("establishServerSession: request failed", err);
             // If the server-side session POST fails, the httpOnly PHP session
-            // cookie won't be set and the redirect below will bounce back to
-            // login. There is no sessionStorage fallback on AikiField: the
+            // cookie won't be set, so we must NOT redirect — that is handled
+            // below. There is no sessionStorage fallback on AikiField: the
             // inline AI Chat that used to read qa_session_token from
             // sessionStorage has been removed from this site, so persisting
             // the raw bearer token client-side (readable by any script in
             // this origin, including future XSS) has no functional benefit
             // here — see AGENTS.md and projects.php's header comment.
         }
+
+        if (!established) {
+            // Redirecting without the session cookie bounces the user straight
+            // back to login with nothing shown — the silent-login failure.
+            // Surface it instead of navigating away.
+            const el = statusEl || loginStatus;
+            if (el) {
+                showStatus(el,
+                    "Signed in, but the session could not be established. "
+                    + "Please try again in a moment.", "error");
+            }
+            return false;
+        }
+
         // Redirect to destination
         window.location.href = REDIRECT;
+        return true;
     }
 
     // --- Turnstile captcha helpers ---
-    function getCaptchaToken() {
-        if (forgotCaptcha && !forgotCaptcha.hidden) {
+    // The token context cannot be inferred from which step is hidden — each
+    // call site passes it explicitly ("login" | "reg" | "forgot").
+    function getCaptchaToken(which) {
+        if (which === "forgot" && forgotCaptcha && !forgotCaptcha.hidden) {
             return (window.qaTurnstileTokens && window.qaTurnstileTokens.forgot) || "";
         }
-        if (loginStep && !loginStep.hidden) {
+        if (which === "login") {
             return (window.qaTurnstileTokens && window.qaTurnstileTokens.login) || "";
         }
         return (window.qaTurnstileTokens && window.qaTurnstileTokens.reg) || "";
@@ -228,7 +470,7 @@
             showStatus(loginStatus, data.error || "OAuth sign-in failed.", "error");
             return false;
         } catch (error) {
-            showStatus(loginStatus, "Network error: " + error.message, "error");
+            showStatus(loginStatus, friendlyErrorMessage(error), "error");
             return false;
         }
     }
@@ -248,6 +490,11 @@
                     ? ("You are signed in as " + email
                         + ", which does not have AEO review access. Ask an admin to grant the AEO review flag, or sign in with an admin account.")
                     : "Your account does not have AEO review access.";
+            case "site_reviewer_required":
+                return email
+                    ? ("You are signed in as " + email
+                        + ", which does not have site review access. Ask an admin to grant the site reviewer flag, or sign in with an admin account.")
+                    : "Your account does not have site review access.";
             case "session_expired":
                 return "Your session has expired. Please sign in again.";
             default:
@@ -286,14 +533,14 @@
             if (data.ok && data.sessionToken) {
                 confirmText.textContent = data.message || "Your email is confirmed!";
                 showStatus(confirmStatus, "Redirecting...", "success");
-                establishServerSession(data.email, data.sessionToken);
+                establishServerSession(data.email, data.sessionToken, confirmStatus);
             } else {
                 confirmText.textContent = "";
                 showStatus(confirmStatus, data.error || "Confirmation failed.", "error");
             }
         } catch (err) {
             confirmText.textContent = "";
-            showStatus(confirmStatus, "Network error: " + err.message, "error");
+            showStatus(confirmStatus, friendlyErrorMessage(err), "error");
         }
         history.replaceState(null, "", window.location.pathname);
         return true;
@@ -304,9 +551,54 @@
         const params = new URLSearchParams(window.location.search);
         const token = params.get("reset");
         if (!token) return false;
+        const email = params.get("email");
         showStep("reset");
         resetForm.dataset.token = token;
+        if (email) {
+            resetForm.dataset.email = email;
+            const intro = document.getElementById("coach-reset-intro");
+            if (intro) {
+                intro.textContent = "Resetting password for " + email + ". Enter your new password below.";
+            }
+        }
         resetPasswordInput.focus();
+        history.replaceState(null, "", window.location.pathname);
+        return true;
+    }
+
+    // --- Validation link handling (?validate=token&email=email) ---
+    // When the user clicks the link in the validation email, verify the token
+    // server-side, pre-fill the email field, and mark the email as validated.
+    // The user still enters password + invitation code to complete registration.
+    let pendingValidationToken = "";
+
+    async function handleValidationLink() {
+        const params = new URLSearchParams(window.location.search);
+        const token = params.get("validate");
+        if (!token) return false;
+        const email = params.get("email") || "";
+        // Show the registration step
+        if (registerStep) registerStep.scrollIntoView({ behavior: "smooth", block: "start" });
+        if (regEmailInput && email) regEmailInput.value = email;
+        showStatus(regEmailStatus, "Verifying your email link...", "loading");
+        try {
+            const resp = await fetchWithTimeout(API + "/v1/auth/verify-validation-token", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email, token }),
+            });
+            const data = await resp.json();
+            if (data.ok) {
+                pendingValidationToken = token;
+                lastSentEmail = email;
+                showStatus(regEmailStatus, "Your email is verified!", "success");
+                if (regPasswordInput) regPasswordInput.focus();
+            } else {
+                showStatus(regEmailStatus, data.error || "This validation link is invalid or expired. Please request a new code.", "error");
+            }
+        } catch (err) {
+            showStatus(regEmailStatus, friendlyErrorMessage(err), "error");
+        }
         history.replaceState(null, "", window.location.pathname);
         return true;
     }
@@ -347,7 +639,18 @@
         e.preventDefault();
         const email = emailInput.value.trim().toLowerCase();
         const password = passwordInput.value;
-        if (!email || !password) return;
+        // Sign-in deliberately applies no length rule — the backend has none,
+        // and accounts predating the 12-character minimum must still work.
+        if (!email) {
+            showStatus(loginStatus, "Enter your email address or login ID.", "error");
+            emailInput.focus();
+            return;
+        }
+        if (!password) {
+            showStatus(loginStatus, "Enter your password.", "error");
+            passwordInput.focus();
+            return;
+        }
         currentEmail = email;
 
         // If the validation code field is visible and filled, call activate
@@ -366,7 +669,7 @@
                         email,
                         code: validationCode,
                         password,
-                        captchaToken: getCaptchaToken(),
+                        captchaToken: getCaptchaToken("login"),
                     }),
                 });
                 const data = await resp.json();
@@ -382,7 +685,7 @@
                 loginBtn.disabled = false;
                 const msg = err && err.name === "AbortError"
                     ? "The request timed out. Please try again."
-                    : "Network error: " + (err && err.message ? err.message : "unknown");
+                    : friendlyErrorMessage(err);
                 showStatus(loginStatus, msg, "error");
             }
             return;
@@ -395,7 +698,7 @@
             const resp = await fetchWithTimeout(API + "/v1/auth/verify", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email, password, captchaToken: getCaptchaToken() }),
+                body: JSON.stringify({ email, password, captchaToken: getCaptchaToken("login") }),
             });
             const data = await resp.json();
             loginBtn.disabled = false;
@@ -423,10 +726,119 @@
             loginBtn.disabled = false;
             const msg = err && err.name === "AbortError"
                 ? "The request timed out. Please try again."
-                : "Network error: " + (err && err.message ? err.message : "unknown");
+                : friendlyErrorMessage(err);
             showStatus(loginStatus, msg, "error");
         }
     });
+
+    // --- Passkey (WebAuthn) login — issue #650 ---
+    // Shown only when the browser supports WebAuthn. On click: fetch auth
+    // options → navigator.credentials.get() → verify → establishServerSession.
+    const passkeyBtn = document.getElementById("coach-passkey-btn");
+
+    // Gated on the backend feature flag as well as browser support
+    // (AIRichardMoon issue #657). Browser support alone is not enough: the
+    // passkey endpoints ship dark, and a button that 404s is worse than no
+    // button. GET /v1/feature-flags is public precisely so this decision can
+    // be made before a session exists. Fail closed — any error leaves the
+    // button hidden. The flag is per-environment, so staging can run passkey
+    // sign-in while production does not.
+    async function passkeyEnabled() {
+        try {
+            const resp = await fetchWithTimeout(API + "/v1/feature-flags", { method: "GET" });
+            if (!resp.ok) {
+                console.warn("feature_flags_unavailable status=" + resp.status + " — passkey stays hidden");
+                return false;
+            }
+            const data = await resp.json();
+            return !!(data && data.flags && data.flags.passkey_login);
+        } catch (err) {
+            console.warn("feature_flags_fetch_failed — passkey stays hidden", err);
+            return false;
+        }
+    }
+
+    if (passkeyBtn && window.PublicKeyCredential) {
+        passkeyEnabled().then((on) => { if (on) passkeyBtn.hidden = false; });
+        passkeyBtn.addEventListener("click", async () => {
+            passkeyBtn.disabled = true;
+            passkeyBtn.setAttribute("aria-busy", "true");
+            showStatus(loginStatus, "Use your passkey to sign in…", "loading");
+            try {
+                const identifier = emailInput.value.trim();
+                const beginResp = await fetchWithTimeout(API + "/v1/auth/passkey/login/begin", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ identifier: identifier || "" }),
+                });
+                const beginData = await beginResp.json();
+                if (!beginData.ok) {
+                    showStatus(loginStatus, beginData.error || "Passkey sign-in could not start.", "error");
+                    return;
+                }
+                const opts = beginData.options;
+                const publicKey = {
+                    challenge: Uint8Array.from(atob(opts.challenge), c => c.charCodeAt(0)),
+                    rpId: opts.rpId,
+                    timeout: opts.timeout,
+                    userVerification: opts.userVerification || "preferred",
+                };
+                if (opts.allowCredentials && opts.allowCredentials.length) {
+                    publicKey.allowCredentials = opts.allowCredentials.map(c => ({
+                        type: c.type,
+                        id: Uint8Array.from(atob(c.id), ch => ch.charCodeAt(0)),
+                    }));
+                }
+                const assertion = await navigator.credentials.get({ publicKey });
+                const assertionJson = JSON.stringify({
+                    id: assertion.id,
+                    rawId: assertion.id,
+                    type: assertion.type,
+                    response: {
+                        authenticatorData: assertion.response.authenticatorData
+                            ? btoa(String.fromCharCode(...new Uint8Array(assertion.response.authenticatorData)))
+                            : "",
+                        clientDataJSON: assertion.response.clientDataJSON
+                            ? btoa(String.fromCharCode(...new Uint8Array(assertion.response.clientDataJSON)))
+                            : "",
+                        signature: assertion.response.signature
+                            ? btoa(String.fromCharCode(...new Uint8Array(assertion.response.signature)))
+                            : "",
+                        userHandle: assertion.response.userHandle
+                            ? btoa(String.fromCharCode(...new Uint8Array(assertion.response.userHandle)))
+                            : null,
+                    },
+                    clientExtensionResults: assertion.getClientExtensionResults ? assertion.getClientExtensionResults() : {},
+                });
+                const finishResp = await fetchWithTimeout(API + "/v1/auth/passkey/login/finish", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        credential: assertionJson,
+                        challengeKey: beginData.challengeKey,
+                        captchaToken: getCaptchaToken("login"),
+                    }),
+                });
+                const finishData = await finishResp.json();
+                if (finishData.ok && finishData.sessionToken) {
+                    showStatus(loginStatus, "Signed in! Redirecting...", "success");
+                    establishServerSession(finishData.email, finishData.sessionToken);
+                } else {
+                    showStatus(loginStatus, finishData.error || "Passkey sign-in failed.", "error");
+                    resetCaptchaToken("login");
+                }
+            } catch (error) {
+                if (error && error.name === "NotAllowedError") {
+                    showStatus(loginStatus, "Passkey sign-in was cancelled.", "info");
+                } else {
+                    showStatus(loginStatus, friendlyErrorMessage(error), "error");
+                }
+            } finally {
+                passkeyBtn.disabled = false;
+                passkeyBtn.removeAttribute("aria-busy");
+            }
+        });
+    }
 
     // --- Login-time activation: resend code ---
     if (loginResendCodeBtn) {
@@ -436,25 +848,27 @@
                 showStatus(loginStatus, "Enter your email address first.", "error");
                 return;
             }
+            if (isOnCooldown(loginResendCodeBtn)) return;
             loginResendCodeBtn.disabled = true;
             showStatus(loginStatus, "Sending validation code...", "loading");
             try {
                 const resp = await fetchWithTimeout(API + "/v1/auth/send-validation-code", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ email, captchaToken: getCaptchaToken() }),
+                    body: JSON.stringify({ email, captchaToken: getCaptchaToken("login") }),
                 });
                 const data = await resp.json();
-                loginResendCodeBtn.disabled = false;
                 if (data.ok) {
                     showStatus(loginStatus, data.message || "A new validation code has been sent to your email.", "success");
+                    startResendCooldown(loginResendCodeBtn);
                 } else {
+                    loginResendCodeBtn.disabled = false;
                     showStatus(loginStatus, data.error || "Failed to send validation code.", "error");
                 }
                 resetCaptchaToken("login");
             } catch (err) {
                 loginResendCodeBtn.disabled = false;
-                showStatus(loginStatus, "Network error: " + (err.message || "please try again."), "error");
+                showStatus(loginStatus, friendlyErrorMessage(err), "error");
             }
         });
     }
@@ -474,11 +888,11 @@
             forgotCaptchaShown = true;
             forgotCaptcha.hidden = false;
             if (loginCaptcha) loginCaptcha.hidden = true;
-            showStatus(loginStatus, "Please complete the captcha, then click \"Forgot password?\" again.", "info");
+            showStatus(loginStatus, "Please complete the captcha above, then click again.", "info");
             return;
         }
 
-        const captchaToken = getCaptchaToken();
+        const captchaToken = getCaptchaToken("forgot");
         if (forgotCaptcha && !captchaToken) {
             showStatus(loginStatus, "Please complete the captcha first.", "error");
             return;
@@ -502,24 +916,180 @@
             resetCaptchaToken("forgot");
         } catch (err) {
             forgotBtn.disabled = false;
-            showStatus(loginStatus, "Network error: " + err.message, "error");
+            showStatus(loginStatus, friendlyErrorMessage(err), "error");
         }
     });
 
-    // --- Toggle between login and register ---
-    toggleBtn.addEventListener("click", () => {
-        showStep("register");
-        regEmailInput.focus();
-    });
+    // --- Form UI Helpers (Tabs, OTP, Password Reveal) ---
+    function initPasswordToggles() {
+        document.querySelectorAll(".coach-password-wrap").forEach(wrap => {
+            const input = wrap.querySelector("input");
+            const toggle = wrap.querySelector(".coach-password-toggle");
+            if (!input || !toggle) return;
+            const eyeShow = toggle.querySelector(".eye-show");
+            const eyeHide = toggle.querySelector(".eye-hide");
+            toggle.addEventListener("click", () => {
+                const isPassword = input.type === "password";
+                input.type = isPassword ? "text" : "password";
+                toggle.setAttribute("aria-pressed", isPassword ? "true" : "false");
+                toggle.setAttribute("aria-label", isPassword ? "Hide password field" : "Show password field");
+                if (eyeShow) eyeShow.hidden = isPassword;
+                if (eyeHide) eyeHide.hidden = !isPassword;
+            });
+        });
+    }
 
-    toggleBackBtn.addEventListener("click", () => {
-        showStep("login");
-        emailInput.focus();
-    });
+    function initPasswordFeedback() {
+        function attach(input, feedbackId) {
+            const feedback = document.getElementById(feedbackId);
+            if (!input || !feedback) return;
+            input.addEventListener("input", () => {
+                const len = input.value.length;
+                if (len === 0) {
+                    feedback.textContent = "Minimum 12 characters. Use a passphrase or password manager.";
+                    feedback.style.color = "";
+                } else if (len < PASSWORD_MIN) {
+                    const diff = PASSWORD_MIN - len;
+                    feedback.textContent = diff + " more character" + (diff === 1 ? "" : "s") + " needed (minimum 12).";
+                    feedback.style.color = "#C62828";
+                } else if (len > PASSWORD_MAX) {
+                    feedback.textContent = "Password exceeds maximum length of " + PASSWORD_MAX + " characters.";
+                    feedback.style.color = "#C62828";
+                } else {
+                    feedback.textContent = "✓ Password meets length requirements.";
+                    feedback.style.color = "#2e7d32";
+                }
+            });
+        }
+        attach(regPasswordInput, "coach-reg-password-feedback");
+        attach(resetPasswordInput, "coach-reset-password-feedback");
+    }
+
+    function initOtpControllers() {
+        document.querySelectorAll(".coach-otp-wrapper").forEach(wrapper => {
+            const digits = wrapper.querySelectorAll(".coach-otp-digit");
+            const hiddenInput = wrapper.querySelector(".coach-otp-value");
+            if (!digits.length || !hiddenInput) return;
+
+            function updateHidden() {
+                let val = "";
+                digits.forEach(d => { val += d.value.trim(); });
+                hiddenInput.value = val;
+            }
+
+            digits.forEach((digit, idx) => {
+                digit.addEventListener("input", () => {
+                    const val = digit.value.replace(/\D/g, "");
+                    digit.value = val ? val.slice(-1) : "";
+                    updateHidden();
+                    if (digit.value && idx < digits.length - 1) {
+                        digits[idx + 1].focus();
+                        digits[idx + 1].select();
+                    }
+                });
+
+                digit.addEventListener("keydown", (e) => {
+                    if (e.key === "Backspace" && !digit.value && idx > 0) {
+                        digits[idx - 1].focus();
+                        digits[idx - 1].value = "";
+                        updateHidden();
+                    } else if (e.key === "ArrowLeft" && idx > 0) {
+                        digits[idx - 1].focus();
+                    } else if (e.key === "ArrowRight" && idx < digits.length - 1) {
+                        digits[idx + 1].focus();
+                    }
+                });
+
+                digit.addEventListener("paste", (e) => {
+                    e.preventDefault();
+                    const paste = (e.clipboardData || window.clipboardData).getData("text").replace(/\D/g, "").slice(0, digits.length);
+                    if (paste) {
+                        paste.split("").forEach((char, i) => {
+                            if (digits[i]) digits[i].value = char;
+                        });
+                        updateHidden();
+                        const nextIdx = Math.min(paste.length, digits.length - 1);
+                        digits[nextIdx].focus();
+                    }
+                });
+            });
+        });
+    }
+
+    function initAuthTabs() {
+        const tabLogin = document.getElementById("coach-tab-login");
+        const tabReg = document.getElementById("coach-tab-register");
+        const tabs = [tabLogin, tabReg].filter(Boolean);
+
+        function selectTab(tab) {
+            // Hide any overlay steps (reset/confirm) when switching tabs.
+            if (resetStep) resetStep.hidden = true;
+            if (confirmStep) confirmStep.hidden = true;
+            const tabBar = document.getElementById("coach-auth-tab-bar");
+            if (tabBar) tabBar.hidden = false;
+            const authPanel = document.getElementById("coach-auth-panel");
+            if (authPanel) authPanel.hidden = false;
+
+            if (tab === "register") {
+                if (tabReg) {
+                    tabReg.classList.add("active");
+                    tabReg.setAttribute("aria-selected", "true");
+                    tabReg.setAttribute("tabindex", "0");
+                }
+                if (tabLogin) {
+                    tabLogin.classList.remove("active");
+                    tabLogin.setAttribute("aria-selected", "false");
+                    tabLogin.setAttribute("tabindex", "-1");
+                }
+                if (loginStep) loginStep.hidden = true;
+                if (registerStep) registerStep.hidden = false;
+                if (regEmailInput) regEmailInput.focus();
+            } else {
+                if (tabLogin) {
+                    tabLogin.classList.add("active");
+                    tabLogin.setAttribute("aria-selected", "true");
+                    tabLogin.setAttribute("tabindex", "0");
+                }
+                if (tabReg) {
+                    tabReg.classList.remove("active");
+                    tabReg.setAttribute("aria-selected", "false");
+                    tabReg.setAttribute("tabindex", "-1");
+                }
+                if (loginStep) loginStep.hidden = false;
+                if (registerStep) registerStep.hidden = true;
+                if (emailInput) emailInput.focus();
+            }
+        }
+
+        // Arrow-key navigation: Left/Right move focus between tabs (wrapping).
+        tabs.forEach((tab, idx) => {
+            tab.addEventListener("keydown", (e) => {
+                if (e.key === "ArrowRight") {
+                    e.preventDefault();
+                    const next = tabs[(idx + 1) % tabs.length];
+                    next.focus();
+                    selectTab(next === tabReg ? "register" : "login");
+                } else if (e.key === "ArrowLeft") {
+                    e.preventDefault();
+                    const prev = tabs[(idx - 1 + tabs.length) % tabs.length];
+                    prev.focus();
+                    selectTab(prev === tabReg ? "register" : "login");
+                }
+            });
+        });
+
+        if (tabLogin) tabLogin.addEventListener("click", () => selectTab("login"));
+        if (tabReg) tabReg.addEventListener("click", () => selectTab("register"));
+        if (toggleBtn) toggleBtn.addEventListener("click", () => selectTab("register"));
+        if (toggleBackBtn) toggleBackBtn.addEventListener("click", () => selectTab("login"));
+
+        // Initialize tabindex: selected tab gets 0, others get -1.
+        if (tabLogin) tabLogin.setAttribute("tabindex", "0");
+        if (tabReg) tabReg.setAttribute("tabindex", "-1");
+    }
 
     // --- Send email validation code ---
-    // Triggered automatically when the email field loses focus with a valid
-    // email, or manually via the "Send validation code" button. The backend
+    // Manually via the "Send validation code" button. The backend
     // generates a 6-digit code and emails it. The code must be entered in the
     // validation-code field to complete registration.
     let lastSentEmail = "";
@@ -535,6 +1105,7 @@
             showStatus(regEmailStatus, "A validation code was already sent to " + email + ". Check your inbox (and spam folder).", "info");
             return;
         }
+        if (regSendCodeBtn && isOnCooldown(regSendCodeBtn)) return;
         if (regSendCodeBtn) regSendCodeBtn.disabled = true;
         showStatus(regEmailStatus, "Sending validation code to " + email + "...", "loading");
         try {
@@ -543,36 +1114,36 @@
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     email,
-                    captchaToken: getCaptchaToken(),
+                    captchaToken: getCaptchaToken("reg"),
                 }),
             });
             const data = await resp.json();
-            if (regSendCodeBtn) regSendCodeBtn.disabled = false;
             if (data.ok) {
                 lastSentEmail = email;
                 showStatus(regEmailStatus, data.message || "A validation code has been sent to " + email + ". Enter it below to continue.", "success");
+                // Unhide the OTP input wrapper now that a code has been sent.
+                const otpWrapper = document.querySelector("#coach-reg-email-validation .coach-otp-wrapper");
+                if (otpWrapper) otpWrapper.hidden = false;
+                if (regSendCodeBtn) {
+                    const cooldownSeconds = Math.min(
+                        REGISTRATION_RESEND_BASE_SECONDS * (2 ** registrationResendCount),
+                        REGISTRATION_RESEND_MAX_SECONDS
+                    );
+                    registrationResendCount++;
+                    startResendCooldown(regSendCodeBtn, cooldownSeconds);
+                }
             } else {
+                if (regSendCodeBtn) regSendCodeBtn.disabled = false;
                 showStatus(regEmailStatus, data.error || "Failed to send validation code.", "error");
             }
             resetCaptchaToken("reg");
         } catch (err) {
             if (regSendCodeBtn) regSendCodeBtn.disabled = false;
-            showStatus(regEmailStatus, "Network error: " + (err.message || "please try again."), "error");
+            showStatus(regEmailStatus, friendlyErrorMessage(err), "error");
         }
     }
 
-    // Auto-send when the email field loses focus with a valid address.
-    if (regEmailInput) {
-        regEmailInput.addEventListener("blur", () => {
-            const email = regEmailInput.value.trim().toLowerCase();
-            // Only auto-send if the email looks valid and hasn't already been sent.
-            if (email && email.includes("@") && email.indexOf("@") < email.length - 1 && email !== lastSentEmail) {
-                sendRegValidationCode();
-            }
-        });
-    }
-
-    // Manual send via button (still available as a resend / fallback).
+    // Manual send via button (explicit user action).
     if (regSendCodeBtn) {
         regSendCodeBtn.addEventListener("click", sendRegValidationCode);
     }
@@ -583,9 +1154,19 @@
         const email = regEmailInput.value.trim().toLowerCase();
         const validationCode = regValidationCodeInput ? regValidationCodeInput.value.trim() : "";
         const password = regPasswordInput.value;
-        const invitationCode = regCodeInput.value.trim();
+        const invitationCode = regCodeInput ? regCodeInput.value.trim() : "";
         const alias = regAliasInput ? regAliasInput.value.trim() : "";
-        if (!email || !password || !invitationCode) return;
+        const regProblem = emailProblem(email)
+            || newPasswordProblem(password)
+            || (alias && alias.length > ALIAS_MAX
+                ? "Login name must be " + ALIAS_MAX + " characters or fewer — yours is "
+                  + alias.length + "." : null)
+            || (validationCode && !/^\d{6}$/.test(validationCode)
+                ? "The validation code is the 6 digits from your email." : null);
+        if (regProblem) {
+            showStatus(registerStatus, regProblem, "error");
+            return;
+        }
 
         registerBtn.disabled = true;
         showStatus(registerStatus, "Creating your account...", "loading");
@@ -594,16 +1175,11 @@
             const body = {
                 email,
                 password,
-                invitationCode,
-                captchaToken: getCaptchaToken(),
+                captchaToken: getCaptchaToken("reg"),
             };
-            // Include validationCode when provided. The backend treats it as
-            // optional — if omitted, registration proceeds without email
-            // validation (backward compatible). When present and valid, the
-            // account is activated immediately.
+            if (invitationCode) body.invitationCode = invitationCode;
             if (validationCode) body.validationCode = validationCode;
-            // Only include alias if the user provided one (empty string is
-            // fine server-side, but omitting keeps the payload clean).
+            if (pendingValidationToken) body.validationToken = pendingValidationToken;
             if (alias) body.alias = alias;
             const resp = await fetchWithTimeout(API + "/v1/auth/register-with-password", {
                 method: "POST",
@@ -614,15 +1190,23 @@
             registerBtn.disabled = false;
 
             if (data.ok) {
-                showStatus(registerStatus, data.message || "Check your email for a confirmation link.", "success");
-                registerForm.reset();
+                if (data.active && data.sessionToken) {
+                    showStatus(registerStatus, data.message || "Account created! Signing you in...", "success");
+                    establishServerSession(data.email || email, data.sessionToken, registerStatus);
+                } else if (data.pending || data.active === false) {
+                    showStatus(registerStatus, data.message || "Account created. Your email is verified, and your account is pending administrator approval before you can sign in.", "info");
+                    registerForm.reset();
+                } else {
+                    showStatus(registerStatus, data.message || "Check your email for a confirmation link.", "success");
+                    registerForm.reset();
+                }
             } else {
                 showStatus(registerStatus, data.error || "Registration failed.", "error");
             }
             resetCaptchaToken("reg");
         } catch (err) {
             registerBtn.disabled = false;
-            showStatus(registerStatus, "Network error: " + err.message, "error");
+            showStatus(registerStatus, friendlyErrorMessage(err), "error");
         }
     });
 
@@ -631,7 +1215,17 @@
         e.preventDefault();
         const token = resetForm.dataset.token;
         const newPassword = resetPasswordInput.value;
-        if (!token || !newPassword) return;
+        if (!token) {
+            showStatus(resetStatus,
+                "This reset link is invalid or has expired. Request a new one.", "error");
+            return;
+        }
+        const resetProblem = newPasswordProblem(newPassword);
+        if (resetProblem) {
+            showStatus(resetStatus, resetProblem, "error");
+            resetPasswordInput.focus();
+            return;
+        }
 
         resetBtn.disabled = true;
         showStatus(resetStatus, "Resetting password...", "loading");
@@ -647,17 +1241,22 @@
 
             if (data.ok && data.sessionToken) {
                 showStatus(resetStatus, data.message || "Password reset. Redirecting...", "success");
-                establishServerSession(data.email, data.sessionToken);
+                establishServerSession(data.email, data.sessionToken, resetStatus);
             } else {
                 showStatus(resetStatus, data.error || "Reset failed.", "error");
             }
         } catch (err) {
             resetBtn.disabled = false;
-            showStatus(resetStatus, "Network error: " + err.message, "error");
+            showStatus(resetStatus, friendlyErrorMessage(err), "error");
         }
     });
 
     // --- Init ---
+    initPasswordToggles();
+    initPasswordFeedback();
+    initOtpControllers();
+    initAuthTabs();
+
     // handleOAuthCallback is async (one-time code exchange). If there's no
     // oauth_code, it returns false synchronously.
     const _oauthParams = new URLSearchParams(window.location.search);
@@ -665,13 +1264,34 @@
         handleOAuthCallback();
         return;
     }
-    if (handleConfirmLink()) {
+    // handleConfirmLink is async — it returns a Promise that resolves to
+    // true/false. A Promise is always truthy, so `if (handleConfirmLink())`
+    // always enters the block and returns, blocking handleResetLink() and
+    // every other init step below. Check ?confirm= synchronously instead
+    // (same pattern already used for ?validate= below).
+    if (_oauthParams.get("confirm")) {
+        handleConfirmLink();
         return;
     }
     if (handleResetLink()) {
         return;
     }
+    // handleValidationLink is async — it returns a Promise that resolves to
+    // true/false. We check synchronously whether ?validate= is in the URL;
+    // if so, we kick off the async handler and skip the rest of init (the
+    // handler will pre-fill the form and focus the password field).
+    if (_oauthParams.get("validate")) {
+        handleValidationLink();
+        return;
+    }
     handleQueryError();
+    if (INVITE && regCodeInput) {
+        regCodeInput.value = INVITE;
+    }
+    if (_oauthParams.get("register") === "1" || INVITE) {
+        const tabReg = document.getElementById("coach-tab-register");
+        if (tabReg) tabReg.click();
+    }
     // Social login disabled — not worth maintaining OAuth config at the moment.
     // loadProviders();
 })();

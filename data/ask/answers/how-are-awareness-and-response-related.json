@@ -1,0 +1,32 @@
+{
+  "kind": "question",
+  "question": "How are awareness and response related?",
+  "canonical_slug": "how-are-awareness-and-response-related",
+  "short_answer": "Public Quantum Pause copy says awareness opens the gap between what happens and what you do; without that pause, response collapses into habit.",
+  "answer_markdown": "The Quantum Pause essay opens with the line that between stimulus and response lies a space, and that in that space lives freedom. Awareness, in that public framing, is the capacity to notice the surge before the old program fires.\n\nWIGO is the inquiry that fills the pause: what is really going on, in the body and in the room, before you answer. Together they are one loop — see, pause, choose — which the about page also calls the location of human freedom after Viktor Frankl.\n\nThis is practice language from pages already on quantumaikido.com, not a new theoretical model.",
+  "claims": [
+    {
+      "claim": "The pause essay locates freedom between stimulus and response.",
+      "source_id": "blog-quantum-pause",
+      "quote": "Between stimulus and response lies a space."
+    },
+    {
+      "claim": "Without the pause, response stays habitual.",
+      "source_id": "blog-quantum-pause",
+      "quote": "Without the pause, you collapse into the same pattern every time."
+    },
+    {
+      "claim": "The about page identifies that interval as the location of human freedom.",
+      "source_id": "page-about",
+      "quote": "the space Viktor Frankl identified from inside a concentration camp as the location of human freedom"
+    }
+  ],
+  "related_questions": [
+    "what-is-the-quantum-pause",
+    "what-is-wigo",
+    "what-is-quantum-aikido"
+  ],
+  "review_status": "published",
+  "last_reviewed": "2026-08-18",
+  "attribution": "richard-moon"
+}

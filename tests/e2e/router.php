@@ -11,6 +11,12 @@
  *   .htaccess  /projects.html            → /projects.php  (301)
  *   .htaccess  /beta/assessment.html     → /beta/assessment.php  (301)
  *   .htaccess  /beta/assessment-*.html   → /beta/assessment-*.php  (301)
+ *   .htaccess  /for-review/games/lucky-wave/* → /games/lucky-wave/…  (301)
+ *   .htaccess  /games/lucky-wave/*.html  → /games/lucky-wave/*.php  (301, issue #71)
+ *   .htaccess  /games/verbal-aikido/* → /for-review/games/verbal-aikido/*  (301)
+ *   .htaccess  /games/exercises/index.html → /games/exercises/  (301)
+ *   .htaccess  /games/exercises/:slug    → exercises/index.php (internal, issue #71)
+ *   .htaccess  /members                  → members.php
  *
  * Everything else returns false, which lets the built-in server serve the
  * file (or execute the .php page) with the correct SCRIPT_NAME — login.php
@@ -44,14 +50,30 @@ $redirects = [
     '#^/beta/assessment-organisation\.html$#' => '/beta/assessment-organisation.php',
     '#^/beta/assessment-leadership\.html$#'   => '/beta/assessment-leadership.php',
     '#^/beta/assessment-crossview\.html$#'    => '/beta/assessment-crossview.php',
+    // Digital Experience gate (issue #71): old .html game entry points → gated .php
+    '#^/games/lucky-wave/RideTheLuckyWaveV1-legacy\.html$#' => '/games/lucky-wave/RideTheLuckyWaveV1-legacy.php',
+    '#^/games/lucky-wave/RideTheLuckyWaveV2\.html$#' => '/games/lucky-wave/RideTheLuckyWaveV2.php',
+    '#^/games/verbal-aikido/index\.html$#' => '/for-review/games/verbal-aikido/',
+    '#^/games/exercises/index\.html$#' => '/games/exercises/',
 ];
 
+// Lucky Wave was promoted from the gated review area; Verbal Aikido moved back.
+if (preg_match('#^/for-review/games/lucky-wave(/.*)?$#', $path, $m)) {
+    http_response_code(301);
+    header('Location: /games/lucky-wave' . ($m[1] ?? ''));
+    exit;
+}
 foreach ($redirects as $pattern => $target) {
     if (preg_match($pattern, $path)) {
         http_response_code(301);
         header('Location: ' . $target);
         exit;
     }
+}
+if (preg_match('#^/games/verbal-aikido(/.*)?$#', $path, $m)) {
+    http_response_code(301);
+    header('Location: /for-review/games/verbal-aikido' . ($m[1] ?? ''));
+    exit;
 }
 
 // ── /coach-api/* → coach-proxy.php ──────────────────────────────────────────
@@ -69,6 +91,35 @@ if (preg_match('#^/coach-api(/|$)#', $path)) {
     $_SERVER['SCRIPT_NAME'] = '/coach-proxy.php';
     chdir(dirname($file));
     require $file;
+    exit;
+}
+
+// ── /members → members.php (AI chat, session-gated) ─────────────────────────
+
+if (preg_match('#^/members/?$#', $path)) {
+    $_SERVER['SCRIPT_NAME'] = '/members.php';
+    chdir($root);
+    require $root . '/members.php';
+    exit;
+}
+
+// ── /for-review/* → gated dispatcher ────────────────────────────────────────
+
+if (preg_match('#^/for-review(/|$)#', $path)) {
+    $_SERVER['SCRIPT_NAME'] = '/includes/for-review-serve.php';
+    chdir($root);
+    require $root . '/includes/for-review-serve.php';
+    exit;
+}
+
+// ── /games/exercises/:slug → exercises/index.php (internal rewrite, issue #71)
+// REQUEST_URI keeps the pretty slug so beta-gate's ?next= preserves it and
+// the JS router can read the slug after sign-in.
+if (preg_match('#^/games/exercises/([a-z0-9-]+)/?$#', $path)
+    && !is_file($root . $path) && !is_dir($root . $path)) {
+    $_SERVER['SCRIPT_NAME'] = '/games/exercises/index.php';
+    chdir(dirname($root . '/games/exercises/index.php'));
+    require $root . '/games/exercises/index.php';
     exit;
 }
 

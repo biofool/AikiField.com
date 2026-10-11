@@ -1,0 +1,9 @@
+{
+  "source_id": "af-page-ai-devsecops",
+  "source_type": "page",
+  "title": "AI DevSecOps Vulnerability Remediation — 21 Days to 3 Days",
+  "author": "AikiField",
+  "public_url": "https://aikifield.com/ai-devsecops-vulnerability-remediation.html",
+  "license_status": "already-public-on-aikifield",
+  "exact_source_text": "How to reduce vulnerability remediation time from 21 days to 3 days using AI tooling. The bottleneck isn't finding vulnerabilities — it's the manual triage and escalation workflow. AI-assisted DevSecOps with Aikido.dev integration cuts remediation from 165 days to 21 days, and with AI-assisted remediation prompts, further down to 3 days. Reducing vulnerability remediation from 21 days to 3 days requires three changes: (1) integrate a vulnerability management platform like Aikido.dev into your CI/CD pipeline for continuous scanning at commit time, (2) implement AI-assisted triage that automatically prioritizes vulnerabilities by exploitability and business impact, and (3) use AI-assisted remediation workflows that generate fix prompts and validate patches. The engineer validates and ships — the AI handles the assessment bottleneck. 165 days Manual triage baseline before rearchitecture. 21 days After workflow rearchitecture with Aikido.dev integration. 3 days With AI-assisted remediation prompts and automated routing."
+}

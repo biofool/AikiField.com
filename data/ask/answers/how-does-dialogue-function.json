@@ -1,0 +1,33 @@
+{
+  "kind": "question",
+  "question": "How does dialogue function in this teaching?",
+  "canonical_slug": "how-does-dialogue-function",
+  "short_answer": "Public biography records study with physicist David Bohm on Dialogue and with Marshall Rosenberg on nonviolent communication, then applies that listening in diplomacy and executive teams.",
+  "answer_markdown": "Richard Moon's public biography states that he attended a seminar with physicist David Bohm exploring the practice of Dialogue and studied nonviolent communication with Marshall Rosenberg. Those are named teachers; this page does not collapse their work into Moon's authorship.\n\nThe about page then shows Dialogue in the field: Cyprus Track II rooms, Bosnia witness, and corporate teams via Quantum Edge. The through-line already published on the site is that the facilitators' state — listening beneath positions — changes what the room can do.\n\nDiscussing The Unified Field (the chat) is a separate, AI-supported interface. This knowledge page is editorial Q&A grounded in those public sources.",
+  "claims": [
+    {
+      "claim": "Moon studied Dialogue with David Bohm.",
+      "source_id": "page-richard-moon",
+      "quote": "seminar with physicist David Bohm exploring the practice of Dialogue"
+    },
+    {
+      "claim": "He also studied nonviolent communication with Marshall Rosenberg.",
+      "source_id": "page-richard-moon",
+      "quote": "studied nonviolent communication with Marshall Rosenberg"
+    },
+    {
+      "claim": "About-page peace work treats presence and listening as what makes transformation possible.",
+      "source_id": "page-about",
+      "quote": "WIGO is Richard's primary inquiry framework"
+    }
+  ],
+  "related_questions": [
+    "what-is-extraordinary-listening",
+    "who-is-richard-moon",
+    "how-does-aikido-transform-conflict"
+  ],
+  "review_status": "published",
+  "last_reviewed": "2026-08-18",
+  "lineage_note": "Dialogue here is Bohm's practice; NVC is Rosenberg's. Do not attribute those methods as Moon originals.",
+  "attribution": "richard-moon"
+}

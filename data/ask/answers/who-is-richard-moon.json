@@ -1,0 +1,33 @@
+{
+  "kind": "question",
+  "question": "Who is Richard Moon?",
+  "canonical_slug": "who-is-richard-moon",
+  "short_answer": "Richard Moon is a sixth-dan Aikido instructor, mediator, author, and musician based in the San Francisco Bay Area, whose public work spans martial practice, peace facilitation, and executive coaching.",
+  "answer_markdown": "Richard Moon is publicly described as an Aikido instructor, mediator, author, musician, and lifelong student of the human condition, based in the San Francisco Bay Area. He is a sixth dan of Aikikai Honbu Dojo.\n\nHe began martial arts in 1969 and encountered Aikido in 1971 under Robert Nadeau, a direct student of Morihei Ueshiba. That lineage note matters: centering and related mat practices in this archive are Nadeau-heavy and should not be treated as invented solely by Moon.\n\nPublic biography copy also records seminars with physicist David Bohm on Dialogue, study of nonviolent communication with Marshall Rosenberg, Track II diplomacy in Cyprus, reconciliation work in Bosnia, and decades of executive coaching — including seventeen years of contracted seminars through UTSA's Center for Professional Excellence.",
+  "claims": [
+    {
+      "claim": "Moon is a sixth-dan Aikido instructor based in the Bay Area.",
+      "source_id": "page-richard-moon",
+      "quote": "Richard Moon is an Aikido instructor, mediator, author, musician"
+    },
+    {
+      "claim": "He encountered Aikido in 1971 under Robert Nadeau.",
+      "source_id": "page-richard-moon",
+      "quote": "encountered Aikido in 1971 under Robert Nadeau"
+    },
+    {
+      "claim": "The about page summarizes fifty years on the mat plus peace and coaching work.",
+      "source_id": "page-about",
+      "quote": "fifty years on the mat, a decade of peace negotiations across three continents"
+    }
+  ],
+  "related_questions": [
+    "what-is-quantum-aikido",
+    "how-does-aikido-transform-conflict",
+    "how-does-dialogue-function"
+  ],
+  "review_status": "published",
+  "last_reviewed": "2026-08-18",
+  "lineage_note": "Aikido study began with Robert Nadeau, a direct student of Morihei Ueshiba. Centering language on this site is Nadeau-heavy; do not attribute that lineage solely to Richard Moon.",
+  "attribution": "richard-moon"
+}

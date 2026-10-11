@@ -1,0 +1,32 @@
+{
+  "kind": "question",
+  "attribution": "aikifield",
+  "question": "What is AikiField?",
+  "canonical_slug": "what-is-aikifield",
+  "short_answer": "AikiField is a security leadership consultancy for product companies — fractional CISO services, AI-assisted DevSecOps, and leadership coaching for SaaS and AI-powered teams.",
+  "answer_markdown": "AikiField provides **fractional CISO services, AI-assisted DevSecOps, and security leadership coaching for SaaS and product companies**. Its positioning is \"protection that doesn't slow you down\" — security left-shifted into the development budget and aligned to the revenue model.\n\nReported outcomes on the public site include a $5M blocked sales channel recovered, 87% of customer-reported security risk eliminated in three thirty-minute meetings, and vulnerability remediation cut from 21 days to 3 days.",
+  "claims": [
+    {
+      "claim": "AikiField offers fractional CISO services, AI-assisted DevSecOps, and security leadership coaching for SaaS and product companies.",
+      "source_id": "af-page-index",
+      "quote": "Fractional CISO services, AI-assisted DevSecOps, and security leadership coaching for SaaS and product companies."
+    },
+    {
+      "claim": "AikiField reports recovering a $5M blocked sales channel by resolving customer security objections.",
+      "source_id": "af-page-index",
+      "quote": "$5M Blocked sales channel recovered by resolving customer security objections."
+    },
+    {
+      "claim": "AikiField reports cutting vulnerability remediation time from 21 days to 3 days with AI-assisted triage.",
+      "source_id": "af-page-index",
+      "quote": "21 → 3 days Vulnerability remediation time cut with AI-assisted triage workflows."
+    }
+  ],
+  "related_questions": [
+    "what-is-a-fractional-ciso",
+    "how-does-aikifield-cut-vulnerability-remediation-time",
+    "what-is-aikifields-security-leadership-approach"
+  ],
+  "review_status": "published",
+  "last_reviewed": "2026-10-02"
+}

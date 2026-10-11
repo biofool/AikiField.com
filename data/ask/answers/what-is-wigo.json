@@ -1,0 +1,32 @@
+{
+  "kind": "question",
+  "question": "What is WIGO?",
+  "canonical_slug": "what-is-wigo",
+  "short_answer": "WIGO — What Is Really Going On — is Richard Moon's inquiry into the energy moving beneath stated positions, surface conflict, and visible behavior.",
+  "answer_markdown": "WIGO is published here as Richard Moon's primary inquiry framework: look past the stated position, the apparent conflict, and the visible behavior, and ask what is actually moving. The about page ties it to fifty years of Aikido practice and later executive coaching, and to the idea that the quality of attention shapes what becomes visible.\n\nThe WIGO essay asks the same question in conversation and leadership: someone says one thing, means another, feels a third. WIGO is active inquiry, not passive watching.\n\nPeace-work stories on the about page (Cyprus, Bosnia) use WIGO as the capacity to sense fear beneath anger and grief beneath a righteous position — depth of attention rather than technique.",
+  "claims": [
+    {
+      "claim": "WIGO is Moon's primary inquiry framework.",
+      "source_id": "page-about",
+      "quote": "WIGO is Richard's primary inquiry framework"
+    },
+    {
+      "claim": "The essay defines WIGO as asking what is actually going on beneath the surface story.",
+      "source_id": "blog-wigo",
+      "quote": "WIGO asks: what's actually going on here?"
+    },
+    {
+      "claim": "WIGO is active inquiry.",
+      "source_id": "blog-wigo",
+      "quote": "WIGO isn't passive observation. It's active inquiry."
+    }
+  ],
+  "related_questions": [
+    "what-is-the-quantum-pause",
+    "how-does-aikido-transform-conflict",
+    "how-can-quantum-aikido-apply-to-leadership"
+  ],
+  "review_status": "published",
+  "last_reviewed": "2026-08-18",
+  "attribution": "richard-moon"
+}

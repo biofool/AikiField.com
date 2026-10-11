@@ -3,7 +3,7 @@
  * AikiField coaching auth — production config template.
  *
  * This file is committed with NON-SECRET defaults. The coaching backend URL
- * below is the public AI Ki Questions Fielded Cloud Run service (the same one
+ * below is the public Quantum Aikido Wisdom Cloud Run service (the same one
  * quantumaikido.com proxies to). It is not a secret — direct access to
  * non-auth endpoints is rejected by the backend's X-Proxy-Secret check.
  *
@@ -18,8 +18,11 @@
  *   - this repo                         (docs/coach-auth-prd.md)
  */
 
-// Public AI Ki Questions Fielded backend (Cloud Run).
-define('COACH_BACKEND_URL', 'https://quantum-aikido-coach-6bfpsd3kkq-uc.a.run.app');
+// Public Quantum Aikido Wisdom backend (Cloud Run, aiqa-coaching project).
+define('COACH_BACKEND_URL', 'https://aiqa-coach-uj5nyskptq-uc.a.run.app');
+// Staging backend, used when COACH_FORCE_STAGING is set or a request carries
+// X-Target-Environment: staging.
+define('COACH_STAGING_URL', 'https://aiqa-coach-staging-uj5nyskptq-uc.a.run.app');
 
 // Shared proxy secret — MUST match PROXY_SECRET in the backend's GCP Secret
 // Manager. When set, coach-proxy.php sends it as X-Proxy-Secret so the backend

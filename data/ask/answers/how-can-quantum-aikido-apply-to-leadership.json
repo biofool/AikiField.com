@@ -1,0 +1,32 @@
+{
+  "kind": "question",
+  "question": "How can Quantum Aikido apply to leadership?",
+  "canonical_slug": "how-can-quantum-aikido-apply-to-leadership",
+  "short_answer": "Public biography and about-page copy apply the same presence and WIGO inquiry to executive teams: thirty years of coaching, including seventeen years of UTSA seminars.",
+  "answer_markdown": "The about page describes corporate leadership work from the mid-1980s onward: Aikido and Dialogue principles brought into more than fifty major corporations, with named clients such as Apple, Intel, and Motorola, and seventeen years of teaching through UTSA's Center for Professional Excellence.\n\nThe biography adds the 1997 electronic-coaching format — 60-to-120-second voicemail teachings organized around WIGO and the pause between trigger and reaction — developed with Chris Thorsen at Quantum Edge.\n\nLeadership application on this knowledge layer stays inside that public record: presence, listening, and the pause, not unpublished client stories.",
+  "claims": [
+    {
+      "claim": "Moon applied Aikido and Dialogue to executive leadership in more than fifty corporations.",
+      "source_id": "page-about",
+      "quote": "applied Aikido and Dialogue principles to executive leadership in more than fifty major corporations"
+    },
+    {
+      "claim": "He taught seventeen years at UTSA's Center for Professional Excellence.",
+      "source_id": "page-about",
+      "quote": "seventeen years"
+    },
+    {
+      "claim": "Book copy lists corporate coaching as a real-world application.",
+      "source_id": "page-book",
+      "quote": "Corporate coaching"
+    }
+  ],
+  "related_questions": [
+    "what-is-wigo",
+    "what-is-extraordinary-listening",
+    "how-does-dialogue-function"
+  ],
+  "review_status": "published",
+  "last_reviewed": "2026-08-18",
+  "attribution": "richard-moon"
+}

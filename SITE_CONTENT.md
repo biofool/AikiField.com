@@ -1,18 +1,30 @@
 # AikiField.com — Site Content
 
 > Source of truth for all text content on aikifield.com.
-> Last updated: 2026-08-08
+> Last updated: 2026-10-07
 
 ---
 
 ## Navigation
 
+**Header brand tagline:** Security Acceleration from a Cyber Aikido Guy
+
 - Home (`index.html`)
-- Process (`process.html`)
-- Approach (`approach.html`)
-- Services (`services.html`)
+- Services (`services.html`) — submenu:
+  - Process (`process.html`)
+  - Approach (`approach.html`)
 - Case Studies (`case-studies.html`)
 - Demonstration Technologies (`projects.php`)
+- Digital Experience — submenu (links point at public preview pages; the
+  experiences themselves require sign-in — issue #71):
+  - All experiences (`/digital-experience/` — hub)
+  - Ride the Lucky Wave (`/digital-experience/lucky-wave.html#v1` → gated `/games/lucky-wave/RideTheLuckyWaveV1-legacy.php`)
+  - Ride the Lucky Wave V2 (`/digital-experience/lucky-wave.html#v2` → gated `/games/lucky-wave/RideTheLuckyWaveV2.php`)
+  - Twenty Practices (`/digital-experience/practices.html` → gated `/games/exercises/`)
+  - Enter the Unified Field Chat (`/digital-experience/unified-field-chat.html` → gated `/members` — AI chat, sign-in required)
+- Verbal Aikido — Story Mode is not listed in the Digital Experience menu. Its review build is gated at `/for-review/games/verbal-aikido/`; the former `/games/verbal-aikido/` URL redirects there.
+- Free Services For Studios (`/somatic-studios/`) — audience pathway for somatic
+  practitioners and studios (see "Somatic Studios" section below)
 - Assessment (`assessment.html`)
 - Get Started (`contact.html`)
 
@@ -32,141 +44,82 @@
 
 ## Home (`index.html`)
 
-**Meta title:** AikiField — Security Leadership for Product Companies
-**Meta description:** AikiField is a B2B cybersecurity consulting firm providing Fractional CISO services, AI-assisted DevSecOps integration, and executive security leadership coaching for B2B SaaS and product companies. Specializing in reducing vulnerability remediation cycles, passing SOC 2/ISO 27001 compliance audits, and unblocking enterprise sales channels.
+Aikido-based leadership coaching home page, implemented 2026-10-06 from the
+"AikiField Redesign" design canvas (Home artboard). It replaced the previous
+security-consulting home page; that content still lives on `services.html`,
+`fractional-ciso-for-saas.html`, `ai-devsecops-vulnerability-remediation.html`,
+`case-studies.html` and `process.html`. Styles: `css/home.css` (home only).
+New copy has no `data-i18n` keys yet, so it shows in English in every locale.
+
+**Meta title:** AikiField — Aikido Leadership Coaching
+**Meta description:** Security acceleration from a cyber aikido guy — leadership coaching that teaches you to surface conflict and ride the wave. Plus 20 free exercises and two practice games.
+**OG / Twitter title:** Aikido Leadership Coaching — Ride the wave, don't try to guide the wave
 
 ### JSON-LD structured data (`<head>`)
 
-Multi-entity nested JSON-LD (`@graph`) for RAG/AEO parsers. `ProfessionalService` with `@id` `https://aikifield.com/#organization`, `areaServed: Global`, `knowsAbout` (Fractional CISO, DevSecOps, Application Security, Threat Modeling, SOC 2 Compliance, Vulnerability Remediation), and an `OfferCatalog` with two `Offer` items:
+`ProfessionalService` with `@id` `https://aikifield.com/#organization` (kept), `areaServed: Global`, `knowsAbout` (Leadership Coaching, Executive Presence, Aikido, Quantum Aikido, Fractional CISO, vCISO, DevSecOps), and an `OfferCatalog` with three `Offer` items:
+- **Aikido-Based Leadership Coaching** — Coaching in presence under pressure: centre, blend, and lead, practised on the job.
 - **Fractional CISO Leadership** — Executive security leadership, compliance roadmap execution, and enterprise sales unblocking.
 - **AI-Assisted DevSecOps Triage** — Automated application and cloud vulnerability triage reducing mitigation time from 21 days to 3 days using Aikido.dev integration.
 
-### Hero (static, green background, two-column: copy + "Why AikiField" panel)
+### Hero (two columns: copy + decorative colour blocks)
 
-- Eyebrow: B2B Cybersecurity Consulting
-- Title (H1): vCISO, DevSecOps AI & Cyber Leadership Development
-- Body para 1 (20px, full container width): AikiField is a B2B cybersecurity consulting firm providing Fractional CISO services, AI-assisted DevSecOps integration, and security leadership coaching for SaaS and product companies.
-- Body para 2 (20px, full container width): Fractional CISO leadership experienced in AI adoption, data center technology, and IoT. We specialize in cutting vulnerability remediation cycles (from 165 days down to 21), passing SOC 2/ISO 27001 audits, and unblocking enterprise sales channels.
-- CTAs: Book a Discovery Call | Explore Services
+- Eyebrow: Aikido-based leadership coaching
+- Title (H1): Ride the wave — don't try to guide the wave.
+- Lead: Learn to become someone who loves to surface conflict. It's the hidden conflict that's killing your business and your joy.
+- Aphorisms: Joy is the warrior's challenge. Learn to panic! Courage is not the lack of fear — it's facing the fear and doing it anyway!
+- CTAs: Book a conversation (→ contact.html) | Start with 20 free exercises (→ #exercises)
 
-**Proof metrics (3):**
-- $5M — Blocked sales channel recovered by resolving customer security objections. _Sub: Engagement cost under $25K — delivered as planned._
-- 87% — Customer-reported security risk eliminated in three thirty-minute meetings. _Sub: Optimized existing workflows and eliminated unnecessary activities._
-- 21 → 3 days — Vulnerability remediation time cut with AI-assisted triage workflows. _Sub: Same team, less engineering effort — 7× faster with AI-assisted triage workflows._
+### Audience gateway (`#paths`)
 
-**Side panel — Why AikiField (3 signals):**
-- Protection that doesn't slow you down — Security left-shifted into your development budget and aligned to your revenue model — lean, without dragging on velocity.
-- Vulnerabilities fixed in days, not weeks — AI-assisted triage and remediation across application, cloud, infrastructure, and customer-reported issues.
-- Leadership that sticks — Security advisory paired with presence-based coaching, so your leaders can carry the program for the long haul.
+**Heading:** What brings you to AikiField?
 
-### Role-and-outcome gateway ("What brings you here?")
+Four cards, each with a short description and a ghost button:
 
-Sits directly below the hero, above the carousel — the first routing decision
-on the page. Outcome-first: the visitor picks the result they want, not their
-job title. The "Who We Help" section below the carousel then covers who those
-outcomes have been delivered for.
+- **I want leadership coaching** — Aikido-based coaching for leaders who want to meet conflict with calm, decisive presence. → `#coaching` (How it works)
+- **I need security leadership** — Fractional CISO, DevSecOps remediation, and AI-assisted security engineering for product companies. → `services.html` (See services)
+- **I run a somatic or movement studio** — Free practical help for somatic practitioners and studios — a visibility review and a World Studio Finder listing. → `somatic-studios/` (Free Services For Studios)
+- **I want to try the practices** — Twenty free Aikido-based exercises and two games, with a free AikiField account. → `#exercises` (Start with the exercises)
 
-**Heading:** What brings you here?
-**Sub:** Pick the outcome you need — we'll take you straight to it.
+### Your coach (`#coach`, white)
 
-| Outcome (visitor's voice) | Goes to |
-|---|---|
-| "I need to win enterprise deals" | Fractional CISO → `fractional-ciso-for-saas.html` |
-| "I need to reduce security risk" | AI DevSecOps → `ai-devsecops-vulnerability-remediation.html` |
-| "I need security leadership" | Services → `services.html` |
-| "I need board-level clarity" | Case Studies → `case-studies.html` |
+- Eyebrow: Your coach
+- Heading: Security accountability and a lifetime of practice.
+- Para 1: Kenneth Kron is a virtual CISO with more than twenty years in cybersecurity, most recently in the IoT space, where leaders answer for products that live in the physical world.
+- Para 2: He has also practised Quantum Aikido for over forty years. Coaching here joins the two: the calm, decisive posture of Aikido applied to board rooms, incidents and hard conversations.
+- Para 3: His practice comes through the lineage of Quantum Aikido founder Richard Moon.
+- Para 4: His clients are founders, security leads and product teams at Series A–C startups and SaaS companies who carry enterprise security expectations.
 
-### Client strip (10 chips)
+### How the coaching works (`#coaching`)
 
-Series A–C startups | SaaS companies | AI-powered product teams | Venture-backed companies | Engineering-led organizations | Mid-market enterprises | Professional services firms | Critical service providers | Boards & audit committees | Mission-driven organisations
+**Heading:** How the coaching works
+**Sub:** Three ideas from Aikido, practised on the job.
 
-### Who We Help
+- **Centre** — Find your stable ground before you decide. Leaders who are centred hear more and react less.
+- **Blend** — Meet force with awareness instead of resistance. Turn conflict and pushback into direction.
+- **Lead** — Act with clarity and let others move with you. Influence that comes from presence, not pressure.
 
-> **Note — no geography is specified.** References to New Zealand / NZ /
-> Aotearoa were removed site-wide by decision, not by accident. Persona
-> cards, the client strip, and regulatory references are deliberately
-> region-neutral. Do not reintroduce a place name without checking first.
+### 20 exercises (`#exercises`, dark)
 
-**Heading:** Built for leaders who own security but can't hire a full-time CISO.
-**Intro:** Enterprise customers are asking hard questions, the backlog is growing, and security keeps landing on someone's already-full plate. We meet each of those leaders where they are — from venture-backed product teams to mid-market organisations.
+- Eyebrow: Free with an AikiField account
+- Heading: 20 exercises to begin your journey to personal mastery
+- Lead: Create a free account to open all twenty. Work through them in order or pick the one your day calls for.
+- Tiles (static list; titles from `games/exercises/data/collected_exercises_app_data.json`): Exercise 01 DropBackSinkOpen (DBSO) · 02 Listen to the impulse to breathe · 03 Feel / Locate / Align / Unify (Kamae) · 04 Tense & Release Body Scan · 05 Center of the Central Core Relaxation · 06 Wrist Grab Grounding · 07 Breathe Universal Harmony (Aiki Kokyu) · 08 Breathing the Whole System · 09 The O2 Continuum · 10 Ocean Breathing · 11 Infant Breathing · 12 Ten to the Tenth — State Shifting Scale · 13 Enjoy / Joy / Appreciate · 14 Shoulder Slap — Sensing Finer Dimensions · 15 Application Visualization · Interludes: Opening · After Part I · After Part II · After Part III · Closing
+- CTA: Start exercise 01 (→ /digital-experience/practices.html)
 
-Four cards. Two pairs were merged after the geography was removed, because
-the place name had been the only thing distinguishing them.
+### Games (`#games`)
 
-**Founder / CEO / GM — Turn security from deal-blocker into business advantage.**  (→ fractional-ciso-for-saas.html)
-Win enterprise deals with a credible security story — clear questionnaires without panic, and a posture that builds customer trust instead of stalling revenue. Translate cyber risk into decisions about continuity, reputation, and growth, without overwhelming non-technical stakeholders.
+**Heading:** Two games to practise with
+**Sub:** Free with an AikiField account, quick and built to teach by doing.
 
-**CTO / VP Engineering — Get senior support on architecture and delivery.**  (→ ai-devsecops-vulnerability-remediation.html)
-Threat modeling in the design phase, security in the CI/CD pipeline, and a remediation workflow that clears the backlog without derailing the roadmap.
+- **Slow Your Roll** — Coming soon to the Digital Experience. CTA: See all experiences (→ /digital-experience/). TODO: game URL and one-sentence description.
+- **Ride The Lucky Wave** (green card) — The four-phase lucky-wave protocol — Activate, Access, Declare, Launch. Score each phase and build momentum over time. CTA: Play Ride The Lucky Wave (→ /digital-experience/lucky-wave.html)
 
-**Board / Investors / Audit committee — Gain a defensible view of risk, resilience, and readiness.**  (→ services.html)
-Concise, defensible reporting on exposure, capability gaps, and practical next steps — technical risk translated into the business language governance actually needs, aligned to privacy legislation and critical-service obligations.
+### CTA (`#begin`, white)
 
-**Mission-driven organisation — Security that fits your mission, not a corporate template.**
-Practical security for NGOs and community organisations — right-sized to your risk, your budget, and the trust your community places in you.
-
-### Services (staggered two-column teaser, links to services.html)
-
-**Heading:** Engagements built around the outcome you need.
-**Intro:** Every engagement is designed to meet your security maturity and business stage — and to move a metric your business actually cares about. Leadership coaching runs through all of them.
-
-- **Fractional CISO (Flagship)** — CISO-level leadership without a full-time hire. Bullets: roadmap and risk prioritization aligned to revenue model; AI governance; monthly strategy, async help, incident availability.
-- **Program buildout** — A security program right-sized to your risk. Bullets: critical controls ranked; incident playbook and tabletop; living risk register.
-- **DevSecOps** — Clear the backlog blocking your enterprise deals. Bullets: pipeline assessment and rearchitecture; AI-assisted triage and remediation; team training.
-- **Threat modeling** — Catch security flaws before you write the code. Bullets: facilitated workshops; attack-surface mapping ranked by likelihood and impact; implementable mitigation plans.
-
-CTA: View All Services
-
-### Comparison table (How AikiField Compares)
-
-**Heading:** Why leaders choose fractional over traditional consulting or a full-time hire.
-**Intro:** Three paths to security leadership — only one delivers executive-level capability, AI-assisted velocity, and a cost model that fits a product company's stage.
-
-| Service Dimension | Traditional Security Consulting | In-House Full-Time CISO | AikiField Fractional CISO + AI DevSecOps |
-|---|---|---|---|
-| Cost Model | High hourly / project billing | $250k–$400k/yr + equity | Retainer-based / fractional |
-| Time to Deployment | 4–6 weeks (assessments) | 3–6 months (hiring) | Immediate (< 48 hours) |
-| Vulnerability Triage Speed | Manual (165-day avg.) | Variable | AI-assisted workflow (3-day avg.) |
-| Core Deliverable | Static PDF audits | Internal management | Operational capability & executive presence |
-
-### Engagement Process (4-step strip, links to process.html)
-
-**Heading:** Four agreements that make it stick.
-**Intro:** The container for security transformation — a clear path from where you are to where you want to be, with a concrete result at every step.
-
-- Agreement I · Aspiration — Leadership agreement — A clear, shared vision of what you're protecting, why, and at what level.
-- Agreement II · Execution — Management agreement — A security program that actually runs — roadmap, owners, and a review cadence.
-- Agreement III · Change — Development agreement — Deep trust between security, engineering, and product — no blame culture.
-- Agreement IV · Inspiration — Inquiry agreement — The composure and curiosity to adapt to emerging threats and AI risk.
-
-CTA: See the Six Phases
-
-### Deep Dives (cluster cards linking to dedicated AEO pages)
-
-**Heading:** Targeted answers to the questions buyers and AI engines ask.
-**Intro:** Two dedicated deep-dive pages targeting the specific sub-questions that come up when someone evaluates fractional CISO services and AI-assisted DevSecOps — structured for RAG parsers and written for decision-makers.
-
-- **Commercial / Conversion** — When should a Series A SaaS hire a Fractional CISO vs full-time? → `/fractional-ciso-for-saas.html`
-- **Technical / Product** — How to reduce vulnerability remediation time from 21 days to 3 days using AI tooling → `/ai-devsecops-vulnerability-remediation.html`
-
-### How We Think (dark section: featured insight + 3 mini links)
-
-**Heading:** From roadmap to reality.
-**Subhead:** Most security engagements produce a document. Ours produce a capability — here's the thinking behind it.
-
-**Featured — Cardinal assumption: Energy follows attention.**
-Where a leader places attention determines the security posture of the whole organization — the starting point before tools, before policies, before frameworks. Focus the leaders, and secure software follows. → Explore the Approach
-
-**Mini links:**
-- Self-Assessment — Measure your security maturity and leadership presence — Two assessments in one — honest self-inquiry across five security categories and seven presence dimensions. (→ assessment.html)
-- Engagement Process — Six phases to a program that fits — A collaborative design cycle tailored to your stage, risks, and customers. (→ process.html)
-- Demonstration Technologies — Technology we built, ready to fit your needs — AI Ki Questions Fielded, a cited coaching backend for the Quantum Aikido corpus; World Studio Finder, a global studio discovery pipeline; and MultiCloud-MultiPass, a multi-cloud cost kill switch. All built by AikiField; the same engineering is available to your organization. (→ projects.php)
-
-### CTA
-
-**Heading:** Ready to begin?
-**Body:** Whether you need a fractional CISO, AI-assisted security engineering, or leadership coaching for your engineering leaders — we'll design an engagement that meets you where you are.
-**Button:** Book a Discovery Call
+**Heading:** Ready to practise leadership as a discipline?
+**Body:** Begin with the free exercises, or talk with Kenneth about coaching for you or your team.
+**Buttons:** Book a conversation (→ contact.html) | Try the exercises (→ #exercises)
 
 ---
 
@@ -615,27 +568,27 @@ The composure and curiosity to adapt to emerging threats and AI risk.
 ## Demonstration Technologies (`projects.php`)
 
 **Meta title:** AikiField — Technology We Build
-**Meta description:** Production AI and data pipelines designed and built by AikiField — a cited AI coaching chat and a global studio discovery pipeline. The same engineering capability is available to your organization, tailored to fit your needs.
+**Meta description:** Production AI and data pipelines designed and built by AikiField — AI coaching, studio outreach, multi-cloud cost control, resilience engineering, media intelligence, AI governance, and knowledge-graph research. The same engineering capability is available to your organization, tailored to fit your needs.
 
 ### Hero
-- Eyebrow: Built by AikiField
-- Title: Technology we built — ready to fit your needs.
+- Eyebrow: Bespoke Custom Software
+- Title: Bespoke Software, Designed by AikiField Written by AI
 - Lead: AikiField designs, builds, and operates the systems below — production AI and data pipelines running today, not demos or slide-ware. The same engineering capability, cost discipline, and leadership judgment that built them is available to your organization, tailored to fit your security program and your stage.
 
-### Project 1: AI Ki Questions Fielded
+### Project 1: Tech Support and Security AI
 
-**Tag:** AI Coaching
+**Tag:** Support AI
 **Built-by tag:** Built by AikiField
-**Title:** AI Ki Questions Fielded
-**Lead:** Corpus-specific AI Chat. Designed to provide hallucination-free Q&A against a specific knowledge base. Free your team to handle the hard questions; give your customers a better interface to the documentation — because, who wants to read docs?
+**Title:** Tech Support and Security AI
+**Lead:** Corpus-specific support AI. Designed to reliably draft answers to customer security questionnaires and guide support personnel with access to the latest technical updates. Free your team to handle the hard questions; give your customers a better interface to the documentation — because, who wants to read docs?
 **Live at:** quantumaikido.com — a public chat plus a members area (invitation-only, with email or Google login).
 **How it works:** It searches the teaching archive for relevant passages, drafts an answer with citations, keeps costs under control, and hands off to a human coach by video when it can't help or the member asks.
 
 **What it does:**
-- **Answers grounded in the source teachings** — with citations back to origin.
+- **Answers grounded in the set of corpus documents** — with citations back to origin.
 - **Escalates to a live human coach** — via video link when a question needs it.
-- **Runs on a fixed budget** — so coaching stays free, with no surprise bills.
-- **Queues questions** — so no single user crowds out the rest.
+- **Runs on a fixed budget** — throttle usage, so there's no surprise bills.
+- **Runs a fair queue** — so no single user crowds out the rest.
 - **Works on any cloud** — without rewriting the code.
 - **Self-service accounts** — register, log in, reset your password, or delete your account (invitation-only).
 
@@ -683,10 +636,90 @@ The composure and curiosity to adapt to emerging threats and AI risk.
 
 **Applied to your needs:** The same pattern — a multi-cloud cost control layer with intent/actual reporting and a kill switch — can be built for your organization: a single dashboard for your cloud spend across providers, real-time overrun detection on your AI and data workloads, and an emergency shut-off before a runaway job generates a surprise bill. We design, build, and operate it on a fixed budget.
 
+### Project 4: ChaosEngine — Controlled Failure Injection for Security Resilience
+
+**Tag:** Resilience Engineering
+**Built-by tag:** Built by AikiField
+**Title:** ChaosEngine — Controlled Failure Injection for Security Resilience
+**Lead:** A Go-based CLI that runs staging-scoped chaos experiments — latency injection, dependency failure, resource pressure, and controlled process termination — to prove your systems fail safely before a real incident does.
+**How it works:** Every experiment declares a blast radius and a verified staging target before it runs, can be previewed in dry-run mode before it touches anything live, and rolls back automatically the moment a guardrail trips or the run window ends.
+
+**What it does:**
+- **Environment-scoped by design** — refuses to run against anything but a verified staging target.
+- **Blast-radius limits** — caps how much of the environment an experiment can touch, so a bad run stays contained.
+- **Dry-run mode** — previews exactly what an experiment would do before it touches anything live.
+- **Four experiment types** — latency injection, dependency failure, resource pressure, and controlled process termination.
+- **Automatic rollback** — reverts the injected fault the moment a guardrail trips or the experiment window ends.
+- **CI/CD approval gates** — every experiment requires sign-off and leaves a full audit log.
+
+**Tech stack:** Go · Python/Bash · AWS SDK/CLI · Docker · CI/CD approval gates
+
+**Applied to your needs:** The same pattern — controlled, guardrailed failure injection with blast-radius limits and automatic rollback — is what we use to pressure-test your incident-response runbooks and business continuity plan: proving detection and recovery procedures actually hold up under realistic failure conditions, with the same environment verification, approval gates, and logging a security engagement requires, before a real breach or outage tests them for you. We design, build, and operate it on a fixed budget.
+
+### Project 5: ClipQuotes — Automated Evidence & Communications Extraction
+
+**Tag:** Media Intelligence
+**Built-by tag:** Built by AikiField
+**Title:** ClipQuotes — Automated Evidence & Communications Extraction
+**Lead:** A retrieval and computer-vision pipeline that locates one specific spoken moment inside hours of long-form video or audio and extracts it as an accurately framed, timestamped clip.
+**How it works:** It transcribes and diarizes the source recording, retrieves the passage matching the request, tracks the speaker's face across frames to set the crop, then cuts and exports the moment with its source timestamp attached.
+
+**What it does:**
+- **Finds the moment, not just the transcript** — retrieves the exact spoken passage out of hours of footage.
+- **Speaker diarization** — identifies who said what, so the right speaker ends up in frame.
+- **Accurate framing** — tracks faces across frames via computer vision, so clips aren't cropped mid-speaker.
+- **Timestamped exports** — every clip carries the timestamp back to the original recording.
+- **Built for long-form source material** — designed for meetings, webinars, and recorded sessions, not just short clips.
+- **Simple review interface** — a Flask front end for queuing extraction requests and reviewing results.
+
+**Tech stack:** Python · Whisper · pyannote.audio · OpenCV · FFmpeg · Flask
+
+**Applied to your needs:** The same pattern — retrieval plus computer vision to pull a verified, timestamped moment out of long-form recordings — is what we use to build security-awareness training content and to extract incident post-mortem evidence: pulling exact, timestamped moments from recorded meetings, tabletop exercises, or webinars for compliance documentation and stakeholder communication. We design, build, and operate it on a fixed budget.
+
+### Project 6: Voice Synthesis Benchmarking — Deepfake-Aware AI Governance
+
+**Tag:** AI Research & Governance
+**Built-by tag:** Built by AikiField
+**Title:** Voice Synthesis Benchmarking — Deepfake-Aware AI Governance
+**Lead:** A consent-based benchmarking pipeline that evaluates open-source text-to-speech and voice-conversion models for naturalness, speaker similarity, and failure modes.
+**How it works:** Every model is run against consented, provenance-tracked voice data, scored for naturalness and speaker similarity, and stress-tested for where it breaks down — with strict provenance and consent controls enforced on every training and evaluation dataset.
+
+**What it does:**
+- **Consent-first data pipeline** — every voice sample used for evaluation is provenance-tracked and consent-verified end to end.
+- **Naturalness and similarity scoring** — benchmarks models on how convincing and how close to the source speaker they are.
+- **Failure-mode mapping** — documents exactly where and how each model breaks down, not just its best-case output.
+- **Covers TTS and voice conversion** — evaluates both text-to-speech and voice-cloning approaches side by side.
+- **GPU-inference benchmarking harness** — repeatable evaluation runs across model versions.
+- **Governance-ready reporting** — findings are written up in a form usable for policy decisions, not just a research log.
+
+**Tech stack:** Python · PyTorch · torchaudio · Hugging Face Transformers · GPU inference pipelines
+
+**Applied to your needs:** The same rigor — benchmarking model failure modes under consent-first data controls — is what we bring to your organization's exposure to voice-phishing and deepfake social engineering: helping you understand what today's synthetic-voice models can and can't convincingly fake, and building the responsible-AI governance policy that governs any generative voice tooling your teams procure or build in-house. We design, build, and operate it on a fixed budget.
+
+### Project 7: Story Gatherer — Provenance-First Knowledge Graphs
+
+**Tag:** Knowledge Graph
+**Built-by tag:** Built by AikiField
+**Title:** Story Gatherer — Provenance-First Knowledge Graphs
+**Lead:** A research pipeline that turns scattered web material — blogs, interviews, news archives, social posts, forum threads, videos — into a single, queryable, fully sourced knowledge graph about people and the communities around them.
+**How it works:** Built to document The Source restaurant and the Source Family commune, it now runs as a general engine for mapping martial-arts teachers, lineages, and organizations. A scheduled research job expands targeted subjects daily, with centralized cost tracking and a remote kill switch.
+
+**What it does:**
+- **Gathers sources automatically** — crawls approved sites and searches newspaper archives, Reddit, Facebook groups, seminar listings, and video channels, including OCR of scanned periodicals.
+- **Extracts the cast and the claims** — identifies people, groups, places, works, and events, resolves aliases, and records every claim with its stance (supports, disputes).
+- **Preserves disagreement** — keeps "who said what about whom, and where" rather than collapsing sources into one canonical truth.
+- **Checks itself** — flags contradictions between sources and uses a bounded AI verification layer that abstains rather than guesses; no claim is ever discarded.
+- **Fully auditable** — every node, edge, and claim is tied to its source in a version-controlled, human-readable snapshot (~10,900 nodes, ~25,300 edges, ~5,800 sources).
+- **Produces publishable output** — Wikipedia draft proposals with source-reliability scoring and biographical reviews that grade every statement's citeability.
+
+**Tech stack:** Python · SQLite · Flask · Gemini API · Playwright · OCR pipeline · GitHub Actions · Google Cloud Run · GCP Secret Manager · Terraform
+
+**Applied to your needs:** The same pattern — a contradiction-aware research pipeline that makes provenance the product — can be built for your organization: aggregating vendor advisories, threat intelligence, and internal reports into an auditable graph where every statement is tied to its source, disagreements stay visible, and board- or regulator-facing output carries citations. We design, build, and operate it on a fixed budget.
+
 ### Overview
 
-**Heading:** Six systems we built — at a glance
-**Lead:** All six systems were designed and built by AikiField and run in production today — AI-grounded coaching, global studio outreach, multi-cloud cost control, resilience engineering, media intelligence, and AI governance research. The engineering patterns behind them are directly available to your engagement.
+**Heading:** Seven systems we built — at a glance
+**Lead:** All seven systems were designed and built by AikiField and run in production today — AI-grounded coaching, global studio outreach, multi-cloud cost control, resilience engineering, media intelligence, AI governance research, and provenance-first knowledge graphs. The engineering patterns behind them are directly available to your engagement.
 
 ### From these projects to your security program
 
@@ -730,32 +763,30 @@ Both systems are built to sense and adapt — cost monitoring and data quality c
 **Body:** We built the systems above end-to-end — architecture, code, cost controls, and operation. The same engineering can be tailored to fit your security program, your stack, and your budget. Let's talk about what you need built.
 **Button:** Book a Discovery Call
 
-### Invitation card (right column on projects.php)
+### Invitation dropdown (page header on projects.php)
 
-The projects page no longer hosts a coaching login or an inline AI Chat.
-Instead the right column shows an invitation card pointing visitors to the
-contact form to request a live demo. (The coaching login was extracted to a
-blind `/login.php` page that gates only the `/beta/` assessment pages — see
+The projects page no longer hosts a coaching login or an inline AI Chat, and
+no longer has a right-column invitation card. Instead, the page-header pill
+("Free / See it live — request an invitation below") is a toggle button that
+drops down an invitation panel directly below it. The project cards use the
+full page width. (The coaching login was extracted to a blind `/login.php`
+page that gates only the `/beta/` assessment pages — see
 `docs/coach-auth-prd.md`.)
 
-The card is a collapsible dropdown (native `<details>`/`<summary>`): collapsed
-by default into a compact header showing the tags + a one-line hint, expanding
-on click to reveal the full invitation copy. The page-header CTA
-(`#see-it-live`) auto-expands it via a small inline script.
+The pill is collapsed by default; clicking it drops down the invitation panel
+(a white card with the copy below). The arrow rotates 180° when open.
+Navigating to `#see-it-live` auto-opens the panel via a small inline script.
 
-**Collapsed header tags:** See it live | Free
-**Collapsed header hint:** Want to see it in action?
-**Heading (expanded):** Want to see it in action?
+**Pill badge:** Free
+**Pill text:** See it live — request an invitation below
+**Pill arrow:** ↓ (rotates to ↑ when open)
+
+**Dropdown panel tags:** See it live | Free
+**Heading:** Want to see it in action?
 **Lead:** If you want to see it live, request an invitation when you contact us — we're happy to show you how easy it is to stand one up.
-**Body:** The AI Ki Questions Fielded runs in production at quantumaikido.com. We can walk you through a live demo, then design and build a corpus-specific chat grounded in your own knowledge base — runbooks, policies, product docs, or any body of text your team or customers keep asking about.
+**Body:** Tech Support and Security AI runs in production at quantumaikido.com. We can walk you through a live demo, then design and build a corpus-specific chat grounded in your own knowledge base — runbooks, policies, product docs, or any body of text your team or customers keep asking about.
 **Button:** Request an invitation (links to contact.html)
-**Fine print:** No account needed to look around this page — the project cards on the left describe what each system does and how the same pattern fits your needs.
-
-### Page-header CTA (projects.php)
-
-**Badge:** Free
-**Text:** See it live — request an invitation below
-**Arrow:** ↓ (anchors to #see-it-live, the invitation card)
+**Fine print:** No account needed to look around this page — the project cards below describe what each system does and how the same pattern fits your needs.
 
 ---
 
@@ -953,6 +984,46 @@ Practice and review regularly. Adjust based on results, incidents, and changing 
 > (on the green background) so they aid conversion at first glance rather than
 > after scrolling past the form.
 
+## Books (`books.html`)
+
+Ported from `quantumaikido.com/books/` (2026-10-07), reordered: the commercial
+book sits at the **bottom** of the page instead of as the top hero, and the
+review carousels sit just above it. Canonical since 2026-10-09: QA 301s its
+`/books` landing variants here while `/books/*` assets (PDFs, print-on-demand,
+egbert) stay hosted on QA. Not linked from the nav — same blind-page pattern
+as the blog.
+
+**Meta title:** Books by Richard Moon | AikiField
+**Stylesheet:** `css/books.css` — QA component styles scoped under `.af-books`,
+custom properties mapped onto `--af-*` tokens.
+**JavaScript:** `js/books.js` — book search/filter controls + two quote
+carousels (ported from QA `script.js`).
+
+### Page order
+
+1. Print-on-Demand Books (links to `quantumaikido.com/books/print-on-demand`)
+2. Richard's Open Source Books — search box + topic chips + six grouped
+   sections (Start Here / Listening / Business / Personal / Movement / Children)
+   with 13 book cards. All PDF links are absolute `quantumaikido.com/books/…`
+   URLs — the PDFs stay single-sourced on QA.
+3. Videos — three `videos.quantumaikido.com` embeds.
+4. **Reviews — "About Richard's Writings"** — two
+   auto-rotating quote carousels: **Reviewers** (10 expert endorsements) and
+   **Readers** (6 reader quotes), data in `js/books.js`. Portrait photos load
+   from `quantumaikido.com/ReviewPortraits/…`. "Submit a Review/Comment" links
+   point at the QA contact form; a footer line links to `quantumaikido.com/reviews`.
+5. Featured Book (commercial) — `Quantum Aikido: The Power of Harmony` hero
+   card with Amazon / Inner Traditions / Barnes & Noble buy links, the
+   free-chapter banner (→ `quantumaikido.com/free_chapter`), and a
+   "More about" link (→ `quantumaikido.com/book`).
+
+### Supporting data
+
+- `data/books-search.json` — verbatim copy of QA's `books/books-search.json`
+  full-text index (fetched lazily on first search input; `js/books.js` strips
+  the `https://quantumaikido.com/books/` prefix from card hrefs so index keys
+  still match). Regenerate/copy again if the QA book set changes.
+
 ## Design System
 
 **Stylesheet:** `css/redesign.css`
@@ -1122,3 +1193,78 @@ normal light styling; only `<main class="bta-main">` is dark.
   text variants used on the warm panel, since teal and amber fail contrast there
 
 Verified contrast ratios are documented at the top of `beta/css/assessment.css`.
+
+## Ask AikiField — AEO knowledge layer (`/ask/`)
+
+Issue #65 — port of the quantumaikido.com "Discussing The Unified Field" AEO system. Public, indexable sourced Q&A pages rendered dynamically by `ask/index.php` (`.htaccess` routes `/ask/*`). Records live in `data/ask/{sources,answers}/*.json`; only `review_status: "published"` emits public HTML. Two corpora: `attribution: "aikifield"` (this site's public copy) and `attribution: "richard-moon"` (ported QA records, cited to quantumaikido.com). Editorial review index at `/AEO/` (sign-in + admin/aeoAccess). Validate with `php scripts/validate_ask.php`; test with `php tests/test_ask.php`; regenerate sitemap with `php scripts/generate-sitemap.php --write`. `llms.txt` describes the layer for AI crawlers.
+
+## Blog (`/blog/`)
+
+Migrated from `quantumaikido.com/blog/` (quantumaikido.com issue #365) — Richard
+Moon's long-form essays ("Insights") now live on AikiField. Nineteen posts plus
+an index; static HTML served extensionless (`/blog/nz-tour`) via `blog/.htaccess`,
+which also 301s the old `.php`/`.html`/trailing-slash variants — matching the
+extensionless canonical the posts had on Cloudflare Pages.
+
+Self-contained under `blog/`: `styles.css`, `js/locale-utils.js` +
+`js/language-selector.js` (QA copies patched to fetch `/blog/data/…`),
+`subscribe-popup.js` (subscribe CTA points back to
+`https://quantumaikido.com/sangha`), `favicon.ico`, `assets/`, and
+`data/` (i18n config + strings + terminology JSON the language selector needs).
+In-page nav links point back to `https://quantumaikido.com/…` absolute URLs;
+canonical/og/schema.org URLs use `https://aikifield.com/blog/<slug>`.
+
+Posts: Aikido and Conflict Resolution · Blowing the Whistle · Bosnia ·
+Collaborators · Cyprus · David Pearl · Endorsers (Business) · Future School ·
+Kenneth Kron · Music Events · NZ Tour · OSensei Mindmap · Pacific Rim ·
+Print-on-Demand Publishing · Quantum Pause · Quantum Physics and Aikido ·
+Using AI for Martial Arts Practice · WIGO.
+
+## Somatic Studios (`/somatic-studios/`)
+
+Top-of-funnel pathway for somatic practitioners and studios — a distinct
+audience route alongside the security and coaching offers. English-only
+(`thanks.html` is `noindex`). The page is the conversion path for the free
+**Studio Visibility and Digital Readiness Review** and the free **World
+Studio Finder** listing.
+
+### Landing page (`somatic-studios/index.html`)
+
+**Meta title:** Free digital support for somatic studios and embodied-practice teachers — AikiField
+**Meta description:** Get a free Studio Visibility Review or list your somatic practice in the World Studio Finder. Practical help with websites, discovery, AI visibility, and digital systems.
+
+- Hero (green): "Help the right people find your somatic practice." — free
+  visibility and digital-readiness review for somatic studios, coaches,
+  movement teachers, and embodied-practice organisations. CTAs: Request my
+  free review / List my studio for free (both → `#review-form`). Trust line:
+  "No sales pitch. No obligation. Just practical observations you can use."
+- Problem: "A good practice can still be hard to find." — seven common gaps
+  (search visibility, outcome vs. method messaging, unclear booking paths,
+  inconsistent listings, thin AI-search representation, repeated questions).
+- Free review: what the review examines (search visibility, website clarity,
+  mobile usability, contact/booking, directory consistency, AI
+  comprehension, trust signals) and the deliverable — a concise Studio
+  Visibility Snapshot with three ranked improvements. Explicitly not a
+  promise of rankings or leads.
+- Free services (three cards): Studio Visibility Review · World Studio
+  Finder listing (opt-in, editable, removable) · 20-minute digital office
+  hour.
+- Coaching offers (four cards): Studio clarity session · Practice growth
+  coaching · Digital systems coaching · Ethical AI and visibility coaching —
+  each tied to a stated outcome.
+- Scope boundary: digital/business/technology support only — not clinical,
+  therapeutic, or medical advice; listings are not endorsements; studios own
+  listing accuracy; no client data through the form.
+- Intake form (`#review-form`) → `studio-review-handler.php` →
+  `thanks.html` on success. Fields: name, email (required); studio name,
+  website, city/country, practice type, "what would you most like help
+  with", optional message; opt-in checkboxes for the World Studio Finder
+  listing and occasional resources. Honeypot (`fax`), Turnstile, per-IP rate
+  limit — same mechanics as `contact-handler.php`; staging hostnames no-op
+  the mail().
+
+### Thank-you page (`somatic-studios/thanks.html`)
+
+`noindex`. Confirms receipt, sets expectations (snapshot reply, listing
+confirmation), offers the contact page for a sooner conversation. Trimmed
+nav (Home / Free Services For Studios / Get Started).

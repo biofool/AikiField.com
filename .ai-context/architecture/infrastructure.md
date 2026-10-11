@@ -77,6 +77,11 @@
 - Used for large binary assets: `AikiField.pdf`,
   `AikiField homepage accessibility redesign.zip.dvc`
 - `.dvcignore` present; `.dvc/config` present
+- Remote `r2` → `s3://biofool-dvc/aikifield` on Cloudflare R2
+  (endpoint `https://062579a5337db8e60922bca1c0fd922f.r2.cloudflarestorage.com`;
+  migrated from `gs://aikifield-dvc/` 2026-10 — see biofool/CloudManagement#101).
+  Keys in gitignored `.dvc/config.local` (from GCP Secret Manager
+  `quantum-aikido-coaching`: `R2_ACCESS_KEY_ID` / `R2_SECRET_ACCESS_KEY`).
 - `dvc pull` / `dvc push` to sync tracked binaries
 
 ## Cloudflare management scripts (OBSERVED)

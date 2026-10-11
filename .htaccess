@@ -28,6 +28,10 @@
 # ── Canonical redirects ────────────────────────────────────────────────────
 RewriteEngine On
 
+# Issue #89: renamed product page — 'Moon — 20 Exclusive Practices' is now
+# 'Twenty Practices' at practices.html (author's name is not a product label).
+RewriteRule ^digital-experience/moon-practices\.html$ /digital-experience/practices.html [R=301,L]
+
 # ── Origin lock: only accept HTTP(S) from Cloudflare edge IPs (issue #46) ──
 # Without this, anyone who discovers the origin IP (e.g. via dig mail.aikifield.com)
 # can bypass Cloudflare's WAF, rate limiting, and SSL by hitting the origin directly.
@@ -94,6 +98,34 @@ RewriteEngine On
   </IfModule>
 </IfModule>
 
+# ── Staging surfaces (issues #80, #81) ──────────────────────────────────────
+# This file ships to both docroots. Since the #81 vhost split,
+# aikifield.peec.biz and staging.peec.biz are cPanel vhosts whose docroot is
+# public_html/aikifield-staging/; aikifield.com has public_html/aikifield.peec.biz/.
+# All rules here are Host-gated, so they are inert on aikifield.com.
+
+# aikifield.peec.biz: canonicalize www → non-www and http → https WITHOUT
+# bouncing to aikifield.com (the generic redirects below would otherwise
+# send staging visitors to production).
+RewriteCond %{HTTP_HOST} ^www\.aikifield\.peec\.biz$ [NC]
+RewriteRule ^(.*)$ https://aikifield.peec.biz/$1 [R=301,L]
+RewriteCond %{HTTP_HOST} ^aikifield\.peec\.biz$ [NC]
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://aikifield.peec.biz/$1 [R=301,L]
+
+# staging.peec.biz: http → https preserving the staging host (the generic
+# redirect below would bounce to aikifield.com).
+RewriteCond %{HTTP_HOST} ^(www\.)?staging\.peec\.biz$ [NC]
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://staging.peec.biz/$1 [R=301,L]
+
+# staging.peec.biz/<project>/* — identical alias pattern for every project:
+# redirect to the project's own staging subdomain, path preserved.
+RewriteCond %{HTTP_HOST} ^(www\.)?staging\.peec\.biz$ [NC]
+RewriteRule ^aikifield/?(.*)$ https://aikifield.peec.biz/$1 [R=301,L]
+RewriteCond %{HTTP_HOST} ^(www\.)?staging\.peec\.biz$ [NC]
+RewriteRule ^quantumaikido/?(.*)$ https://quantumaikido.peec.biz/$1 [R=301,L]
+
 # www → non-www (single canonical domain)
 RewriteCond %{HTTP_HOST} ^www\.aikifield\.com$ [NC]
 RewriteRule ^(.*)$ https://aikifield.com/$1 [R=301,L]
@@ -103,6 +135,14 @@ RewriteCond %{HTTPS} off
 RewriteRule ^(.*)$ https://aikifield.com/$1 [R=301,L]
 
 # ── Rewrites ────────────────────────────────────────────────────────────────
+
+# Locale path prefix — strip /xx/ and serve the underlying file internally.
+# e.g. /es/projects.php → /projects.php, /es/ → /index.html
+# The locale is detected client-side by locale-utils.js (localeFromPath()).
+# Only 2-letter locale prefixes that have real translations are listed.
+# 'en' is the default locale — /en/ redirects to the non-prefixed URL.
+RewriteRule ^(en|es)/?$ /index.html [L]
+RewriteRule ^(en|es)/(.+)$ /$2 [L]
 
 # Coach API proxy — forward /coach-api/* to coach-proxy.php
 RewriteRule ^coach-api(/.*)?$ coach-proxy.php [L]
@@ -116,6 +156,30 @@ RewriteRule ^(en|es|fr|de|pt|ja|zh|ko|ar|he|fa|hi)/dashboard\.php$ /dashboard.ph
 # URL so existing internal/external links keep working.
 RewriteRule ^projects\.html$ /projects.php [R=301,L]
 
+# /members — AI Chat ("Enter the Unified Field Chat", Digital Experience
+# menu). Extensionless URL mirrors quantumaikido.com/members. members.php is
+# session-gated (beta-gate.load.php) and redirects to /login.php when unauthed.
+RewriteRule ^members/?$ members.php [L]
+
+# Lucky Wave was promoted out of the gated review area to /games/. Verbal
+# Aikido moved back into /for-review/ and its former /games/ URL redirects to
+# the gated review path. These rules must stay above the catch-all below.
+RewriteRule ^for-review/games/lucky-wave(/.*)?$ /games/lucky-wave$1 [R=301,L]
+RewriteRule ^games/verbal-aikido/index\.html$ /for-review/games/verbal-aikido/ [R=301,L]
+RewriteRule ^games/verbal-aikido(/.*)?$ /for-review/games/verbal-aikido$1 [R=301,L]
+
+# /ask/* — Ask AikiField AEO knowledge layer (issue #65). Public, indexable
+# sourced Q&A pages; ask/index.php renders them dynamically from data/ask/.
+RewriteRule ^ask(/.*)?$ /ask/index.php [L]
+
+# /for-review/* — gated games review area (moved from
+# quantumaikido.com/for-review/games*). Every request is routed through
+# includes/for-review-serve.php, which requires the same coaching session
+# as /beta/ (existing QA accounts sign in via /login.php?next=…) and then
+# serves the file. This also gates assets, so review content never reaches
+# the Cloudflare edge cache unauthenticated.
+RewriteRule ^for-review(/.*)?$ includes/for-review-serve.php [L]
+
 # /beta/ assessment pages are session-gated PHP (gated by the blind
 # /login.php coaching login). Redirect the old static URLs so existing
 # links keep working.
@@ -123,6 +187,13 @@ RewriteRule ^beta/assessment\.html$ /beta/assessment.php [R=301,L]
 RewriteRule ^beta/assessment-organisation\.html$ /beta/assessment-organisation.php [R=301,L]
 RewriteRule ^beta/assessment-leadership\.html$ /beta/assessment-leadership.php [R=301,L]
 RewriteRule ^beta/assessment-crossview\.html$ /beta/assessment-crossview.php [R=301,L]
+
+# /games/ Digital Experience entry points are session-gated PHP (issue #71 —
+# same blind /login.php gate as /beta/ and /members). Redirect the old static
+# URLs so existing links and bookmarks keep working.
+RewriteRule ^games/lucky-wave/RideTheLuckyWaveV1-legacy\.html$ /games/lucky-wave/RideTheLuckyWaveV1-legacy.php [R=301,L]
+RewriteRule ^games/lucky-wave/RideTheLuckyWaveV2\.html$ /games/lucky-wave/RideTheLuckyWaveV2.php [R=301,L]
+RewriteRule ^games/exercises/index\.html$ /games/exercises/ [R=301,L]
 
 # ── Caching ────────────────────────────────────────────────────────────────
 
@@ -132,6 +203,15 @@ RewriteRule ^beta/assessment-crossview\.html$ /beta/assessment-crossview.php [R=
 <IfModule mod_headers.c>
   <FilesMatch "\.html$">
     Header set Cache-Control "public, max-age=3600"
+  </FilesMatch>
+
+  # Site JSON (i18n strings/config, welcome messages, terminology) — mutable
+  # render-critical content read by locale-utils.js on every page load. A
+  # missing header let browsers/edge heuristic-cache stale strings, which
+  # reverted freshly-deployed text after first paint (issue #73). Keep a
+  # short TTL with revalidation so deploys propagate in minutes.
+  <FilesMatch "\.json$">
+    Header set Cache-Control "public, max-age=300, must-revalidate"
   </FilesMatch>
 </IfModule>
 

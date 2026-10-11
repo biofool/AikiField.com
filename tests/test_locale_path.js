@@ -195,31 +195,31 @@ var tests = {
     assert.strictEqual(result, 'es', 'URL path should take priority, expected es, got ' + result);
   },
 
-  'detectLocale: query param fallback when no path prefix': function () {
+  'detectLocale: no path prefix → default (ignores query param)': function () {
     mockLocation.pathname = '/approach.html';
     mockLocation.search = '?lang=ja';
     mockLocalStorage['af_locale'] = 'fr';
     mockNavigator.language = 'de';
     var result = AFLocale.detectLocale();
-    assert.strictEqual(result, 'ja', 'Query param should be used when no path prefix, expected ja, got ' + result);
+    assert.strictEqual(result, 'en', 'No path prefix should return default en, got ' + result);
   },
 
-  'detectLocale: localStorage fallback when no path prefix or query': function () {
+  'detectLocale: no path prefix → default (ignores localStorage)': function () {
     mockLocation.pathname = '/approach.html';
     mockLocation.search = '';
     mockLocalStorage['af_locale'] = 'fr';
     mockNavigator.language = 'de';
     var result = AFLocale.detectLocale();
-    assert.strictEqual(result, 'fr', 'localStorage should be used, expected fr, got ' + result);
+    assert.strictEqual(result, 'en', 'No path prefix should return default en, got ' + result);
   },
 
-  'detectLocale: browser language fallback': function () {
+  'detectLocale: no path prefix → default (ignores browser language)': function () {
     mockLocation.pathname = '/approach.html';
     mockLocation.search = '';
     mockLocalStorage = {};
     mockNavigator.language = 'pt-BR';
     var result = AFLocale.detectLocale();
-    assert.strictEqual(result, 'pt', 'Browser language base should be used, expected pt, got ' + result);
+    assert.strictEqual(result, 'en', 'No path prefix should return default en, got ' + result);
   },
 
   'detectLocale: default fallback': function () {
