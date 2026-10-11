@@ -41,8 +41,8 @@
   <meta property="og:title" content="Technology We Build">
   <meta property="og:description" content="Production AI and data pipelines designed and built by AikiField — AI coaching, studio outreach, multi-cloud cost control, resilience engineering, media intelligence, AI governance, and knowledge-graph research. The same engineering capability is available to your organization, tailored to fit your needs.">
   <meta property="og:url" content="https://aikifield.com/projects.php">
-  <meta property="og:image" content="https://aikifield.com/favicon.svg">
-  <meta name="twitter:card" content="summary">
+  <meta property="og:image" content="https://aikifield.com/assets/og-share.png">
+  <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Technology We Build">
   <meta name="twitter:description" content="Production AI and data pipelines designed and built by AikiField — a cited AI coaching chat and a global studio discovery pipeline. The same engineering capability is available to your organization, tailored to fit your needs.">
   <link rel="canonical" href="https://aikifield.com/projects.php">
