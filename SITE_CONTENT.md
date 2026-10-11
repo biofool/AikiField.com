@@ -1252,9 +1252,9 @@ Studio Finder** listing.
 - Coaching offers (four cards): Studio clarity session · Practice growth
   coaching · Digital systems coaching · Ethical AI and visibility coaching —
   each tied to a stated outcome.
-- Scope boundary: digital/business/technology support only — not clinical,
-  therapeutic, or medical advice; listings are not endorsements; studios own
-  listing accuracy; no client data through the form.
+- Scope boundary: digital/business/technology support only; listings are
+  not endorsements; studios own listing accuracy; no client data through
+  the form.
 - Intake form (`#review-form`) → `studio-review-handler.php` →
   `thanks.html` on success. Fields: name, email (required); studio name,
   website, city/country, practice type, "what would you most like help
