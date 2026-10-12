@@ -132,7 +132,7 @@
       <div class="af-callout">
         <h2 class="af-callout__title">Members get the full experience</h2>
         <p class="af-callout__body">Every game, every practice, and the Unified Field Chat are included with a free AikiField account. Sign in — or create an account in under a minute.</p>
-        <a href="/login.php" class="af-btn af-btn--light">Sign in or create an account</a>
+        <a href="/login.php" id="de-signin-cta" class="af-btn af-btn--light">Sign in or create an account</a>
       </div>
     </div>
   </section>
@@ -184,5 +184,14 @@
 <script src="/js/locale-utils.js?v=20261004-2"></script>
 <script src="/js/language-selector.js?v=20261004-2"></script>
 <script src="/js/nav-menu.js?v=20261002" defer></script>
+<script>
+  // Tagged LinkedIn landing (?src=li): send the CTA to login with the tag so
+  // "Continue with LinkedIn" shows first, and return here afterwards.
+  (function () {
+    if (new URLSearchParams(window.location.search).get("src") !== "li") return;
+    var cta = document.getElementById("de-signin-cta");
+    if (cta) cta.href = "/login.php?src=li&next=%2Fdigital-experience%2F";
+  })();
+</script>
 </body>
 </html>

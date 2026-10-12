@@ -630,7 +630,7 @@ window.COACH_LOGIN_URL = <?= json_encode($coachLoginUrl) ?>;
 window.COACH_LOGOUT_URL = <?= json_encode($coachLoginUrl) ?>;
 </script>
 <script src="js/locale-utils.js" defer></script>
-<script src="coach-login.js?v=20261005b" defer></script>
+<script src="coach-login.js?v=20261012a" defer></script>
 
 <script src="/js/nav-menu.js?v=20261002" defer></script>
 </body>

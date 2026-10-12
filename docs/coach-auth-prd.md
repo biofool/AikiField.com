@@ -965,3 +965,16 @@ maintain a three-branch workflow: `dev` → `staging` → `main`:
   flow (email coach, no video)](#coach-contact-flow-email-coach-no-video).
 - AikiField profile page (`/profile.php`) if profile management is wanted
   here (currently profile management is only on `quantumaikido.com`).
+
+## LinkedIn sign-in (frontend)
+
+### Sign In with LinkedIn (OIDC), 2026-10-12
+
+LinkedIn Sign In is the one-click gate for the aikifield.com Digital Experience funnel (LinkedIn group post, `?src=li`).
+- **Backend (AIRichardMoon):** generic provider `linkedin` in `auth/oauth_exchange.py`. Scopes `openid profile email`; endpoints `/oauth/v2/authorization`, `/oauth/v2/accessToken`, `/v2/userinfo`. Secrets `LINKEDIN_OAUTH_CLIENT_ID` and `LINKEDIN_OAUTH_CLIENT_SECRET` (Secret Manager, project aiqa-coaching). Production env `LINKEDIN_OAUTH_REDIRECT_URI=https://aikifield.com/coach-api/v1/auth/linkedin/callback` and `LINKEDIN_OAUTH_LOGIN_URL=https://aikifield.com/login.php?next=/digital-experience/`.
+- **Account rules:** the userinfo `email_verified` claim must be `true` and `sub` must be present (fail closed). Accounts match by verified email; `sub` is stored as `provider_user_id`.
+- **Auto-activation:** a NEW account created through `/v1/auth/linkedin/authorize?src=li` is created active (free tier; no admin/AEO/reviewer flags). `src` is carried in the OAuth state record, allowlisted in `AUTO_ACTIVATE_SRC`, and never reactivates an existing pending/deleted account. Other providers and untagged sign-ins keep manual approval. `src` is a client-supplied tag, so the verified LinkedIn email is the real gate.
+- **Hand-off contract:** the callback redirects to `LINKEDIN_OAUTH_LOGIN_URL` with `?oauth_code=<OTC>`; the browser POSTs `/v1/auth/oauth/exchange?otc=<OTC>` (the `otc` query parameter, not a JSON body). Failures redirect with `?error=`.
+- **Events logged (backend):** `oauth_login_started`, `oauth_login`, `oauth_login_failed`.
+- **Open:** quantumaikido.com's `coach-login.js` still posts a JSON body to the exchange endpoint and expects `/login.html`; reconcile before enabling social login there.
+- **Frontend (AikiField.com):** `coach-login.js` loads providers only when `?src=li` is present and shows only "Continue with LinkedIn" (above the password form); `digital-experience/index.html` rewrites its CTA to `/login.php?src=li&next=/digital-experience/`; `games/privacy/index.html` carries the LinkedIn data disclosure. The `coach-proxy.php` `/coach-api/*` path already forwards the callback.

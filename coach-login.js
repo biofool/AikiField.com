@@ -456,11 +456,11 @@
         if (!oauthCode) return false;
         history.replaceState(null, "", window.location.pathname);
         try {
-            const resp = await fetchWithTimeout(API + "/v1/auth/oauth/exchange", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ code: oauthCode }),
-            });
+            // Backend contract: POST /v1/auth/oauth/exchange?otc=<one-time code>.
+            const resp = await fetchWithTimeout(
+                API + "/v1/auth/oauth/exchange?otc=" + encodeURIComponent(oauthCode),
+                { method: "POST" }
+            );
             const data = await resp.json();
             if (data.ok && data.sessionToken) {
                 showStatus(loginStatus, "Signed in! Redirecting...", "success");
@@ -604,14 +604,17 @@
     }
 
     // --- Load OAuth providers ---
+    // Only LinkedIn is enabled, and only for visitors arriving from a tagged
+    // LinkedIn link (?src=li). Everyone else sees the normal sign-in form.
     async function loadProviders() {
         try {
             const resp = await fetchWithTimeout(API + "/v1/auth/providers");
             const data = await resp.json();
-            if (data.providers && data.providers.length > 0) {
+            const providers = (data.providers || []).filter((p) => p.id === "linkedin");
+            if (providers.length > 0) {
                 socialDiv.hidden = false;
                 divider.hidden = false;
-                for (const p of data.providers) {
+                for (const p of providers) {
                     const btn = document.createElement("button");
                     btn.className = "coach-social-btn";
                     btn.type = "button";
@@ -626,12 +629,14 @@
                     label.textContent = "Continue with " + p.label;
                     btn.appendChild(label);
                     btn.addEventListener("click", () => {
-                        window.location.href = API + "/v1/auth/" + p.id + "/authorize";
+                        window.location.href = API + "/v1/auth/" + p.id + "/authorize?src=li";
                     });
                     socialDiv.appendChild(btn);
                 }
             }
-        } catch (_) { /* hide social if unavailable */ }
+        } catch (err) {
+            console.warn("coach-login: could not load OAuth providers:", err);
+        }
     }
 
     // --- Login form ---
@@ -1292,6 +1297,8 @@
         const tabReg = document.getElementById("coach-tab-register");
         if (tabReg) tabReg.click();
     }
-    // Social login disabled — not worth maintaining OAuth config at the moment.
-    // loadProviders();
+    // LinkedIn Sign In is offered first when the visitor came from LinkedIn.
+    if (_oauthParams.get("src") === "li") {
+        loadProviders();
+    }
 })();
