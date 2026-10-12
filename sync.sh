@@ -226,6 +226,9 @@ EXCLUDES=(
     --exclude='.venv/'
     --exclude='node_modules/'
     --exclude='tests/'
+    # Server-only secrets file (gitignored). Excluding it also stops
+    # `rsync --delete` from removing it on the remote.
+    --exclude='coach-config.local.php'
 )
 
 do_rsync() {
