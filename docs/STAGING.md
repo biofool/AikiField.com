@@ -71,6 +71,16 @@ Notes:
   `coach-config.staging.php`. Never put the production Cloud Run URL in
   either file on the staging remote.
 
+  Since 2026-10-13 the staging docroot holds a server-only
+  `coach-config.local.php` (mode 600, never committed, excluded from
+  `sync.sh` so `--delete` leaves it alone). It points `COACH_BACKEND_URL`
+  at `aiqa-coach-staging` and sets `COACH_PROXY_SECRET` from Secret
+  Manager `PROXY_SECRET_STAGING` (not the production `PROXY_SECRET`). It is
+  a full copy of `coach-config.staging.php` with those two values changed,
+  because only the first config file found is loaded. The staging backend
+  uses the `staging` Firestore database and the LinkedIn callback
+  `https://staging.peec.biz/coach-api/v1/auth/linkedin/callback`.
+
 - **Contact form is safe by default on staging.** `contact-handler.php`
   detects staging by hostname or a `STAGING=1` environment variable and
   no-ops instead of calling `mail()` — it validates input and redirects
