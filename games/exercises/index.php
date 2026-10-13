@@ -3,8 +3,20 @@
  * Members-only entry point (issue #71 — Digital Experience previews + login gate).
  * Unauthenticated requests are redirected to /login.php?next=<this page> by the
  * shared coaching session gate, same as /beta/ and /members.
+ *
+ * Exception (issue #101 — LinkedIn taste-then-ask): anonymous visitors who
+ * arrive with ?src=li skip the gate and keep the three free practices the
+ * page's JS already exposes to signed-out users. Signed-in visitors (session
+ * cookie present) always go through the gate so their session revalidates.
+ * No session is started for the free preview, so the page stays cookie-free
+ * for that traffic.
  */
-require dirname(__DIR__, 2) . '/includes/beta-gate.load.php';
+$afFreePreview = (($_GET['src'] ?? '') === 'li') && empty($_COOKIE[session_name()]);
+if (!$afFreePreview) {
+    require dirname(__DIR__, 2) . '/includes/beta-gate.load.php';
+} else {
+    error_log('exercises: li-landing free preview ua=' . ($_SERVER['HTTP_USER_AGENT'] ?? '-'));
+}
 ?>
 <!DOCTYPE html>
 <html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
@@ -115,7 +127,8 @@ function showLockedModal(ex){
    <div style="font-size:11px;letter-spacing:0.12em;margin-bottom:10px">LOCKED PRACTICE</div>
    <h2 style="font-size:20px;margin-bottom:10px">${ex.title}</h2>
    <p style="font-size:14px;font-style:italic">Twenty practices from the work of Richard Moon 6th Dan</p>
-   <p style="font-size:12px;opacity:0.7;margin:14px 0">Free practices: DBSO, Wrist Grab Grounding, Ten to the Tenth. Unlock all 15+5 with Creator membership.</p>
+   <p style="font-size:12px;opacity:0.7;margin:14px 0">Free practices: DBSO, Wrist Grab Grounding, Ten to the Tenth. Unlock all 15+5 with a free AikiField account.</p>
+   <a href="/login.php?next=/games/exercises/" class="btn" style="display:inline-block;margin-bottom:10px">Sign in to unlock all</a><br>
    <button class="btn" id="lockClose">Back to free practices</button>
  </div>`;
  document.body.appendChild(overlay);
