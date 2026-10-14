@@ -160,6 +160,8 @@ $qaIsAdmin   = $_SESSION['qa_is_admin'] ?? false;
                         <a href="https://quantumaikido.com/privacy" class="coach-menu-item" role="menuitem" tabindex="-1">Privacy</a>
                         <a href="https://quantumaikido.com/terms" class="coach-menu-item" role="menuitem" tabindex="-1">Terms</a>
                         <div class="coach-menu-sep" role="separator"></div>
+                        <button type="button" id="coach-passkey-register" class="coach-menu-item" role="menuitem" tabindex="-1" hidden>Register passkey</button>
+                        <div class="coach-menu-sep" role="separator"></div>
                         <button type="button" id="coach-logout" class="coach-menu-item coach-logout-btn" role="menuitem" tabindex="-1">Sign Out</button>
                     </div>
                 </div>
