@@ -1252,6 +1252,10 @@
             if (data.ok && data.sessionToken) {
                 showStatus(resetStatus, data.message || "Password reset. Redirecting...", "success");
                 establishServerSession(data.email, data.sessionToken, resetStatus);
+            } else if (data.ok && data.pending) {
+                // Backend #880: pending accounts reset the password but get
+                // no session — admin approval still required.
+                showStatus(resetStatus, data.message || "Password reset. Your account is pending approval.", "info");
             } else {
                 showStatus(resetStatus, data.error || "Reset failed.", "error");
             }
