@@ -130,9 +130,9 @@
           <span class="af-svc__tag af-svc__tag--flagship">See it live</span>
           <span class="af-svc__tag af-svc__tag--built">Free</span>
           <h2 class="af-svc__title">Want to see it in action?</h2>
-          <p class="af-svc__lead">If you want to see it live, request an invitation when you <a href="contact.html">contact us</a> &mdash; we&rsquo;re happy to show you how easy it is to stand one up.</p>
+          <p class="af-svc__lead">If you want to see it live, request an invitation when you <a href="contact-coaching.html">contact us</a> &mdash; we&rsquo;re happy to show you how easy it is to stand one up.</p>
           <p class="af-svc__bestfor">Tech Support and Security AI runs in production at <a href="https://quantumaikido.com">quantumaikido.com</a>. We can walk you through a live demo, then design and build a corpus-specific chat grounded in your own knowledge base &mdash; runbooks, policies, product docs, or any body of text your team or customers keep asking about.</p>
-          <a href="contact.html" class="af-btn af-btn--light af-svc__cta">Request an invitation</a>
+          <a href="contact-coaching.html" class="af-btn af-btn--light af-svc__cta">Request an invitation</a>
           <p class="af-svc__fineprint">No account needed to look around this page &mdash; the project cards below describe what each system does and how the same pattern fits your needs.</p>
         </div>
       </div>
@@ -459,7 +459,7 @@
       <div class="af-callout af-callout--sm">
         <h2 class="af-callout__title af-callout__title--sm">Want this capability built for you?</h2>
         <p class="af-callout__body af-callout__body--sm af-callout__body--52">We built the systems above end-to-end &mdash; architecture, code, cost controls, and operation. The same engineering can be tailored to fit your security program, your stack, and your budget. Let&rsquo;s talk about what you need built.</p>
-        <a href="contact.html" class="af-btn af-btn--light">Book a Discovery Call</a>
+        <a href="contact-security.html" class="af-btn af-btn--light">Book a Discovery Call</a>
       </div>
     </div>
   </section>
