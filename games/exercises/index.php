@@ -142,10 +142,15 @@ function selectStudioBySlug(slug){
  const st=studios.find(x=>studioSlug(x.name)===slug.toLowerCase());
  if(st) showStudioBanner(st);
 }
+// Translations arrive as {itemId: translatedText}; tr() returns the
+// translation when one is cached, else the English source (issue #894).
+const TR={}; let ANNOT=null;
+function tr(id, src){ return TR[id] || src; }
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 function renderPartTabs(){
  const tabs=document.getElementById('partTabs');
  const parts=[["all","All 15"], ["Part I","Part I · centering (6)"], ["Part II","Part II · breath (5)"], ["Part III","Part III · attention (3)"], ["Part IV","Part IV · dialogue (1)"]];
- tabs.innerHTML=parts.map(p=>`<span class="chip ${p[0]==='all'?'active':''}" data-part="${p[0]}">${p[1]}</span>`).join('');
+ tabs.innerHTML=parts.map(p=>`<span class="chip ${p[0]==='all'?'active':''}" data-part="${p[0]}">${esc(tr('part.'+p[0], p[1]))}</span>`).join('');
  tabs.querySelectorAll('.chip').forEach(el=>{
    el.onclick=()=>{ tabs.querySelectorAll('.chip').forEach(x=>x.classList.remove('active')); el.classList.add('active'); currentPart=el.dataset.part; renderExList(currentPart); }
  });
@@ -154,7 +159,7 @@ function renderExList(part="all"){
  const list=document.getElementById('exList');
  let filtered=exercises;
  if(part!=="all") filtered=exercises.filter(e=>e.part.includes(part));
- list.innerHTML=filtered.map(e=>`<span class="chip ex-chip ${e.id===currentId?'active':''} ${freeIds.has(e.id)?'':'locked'}" data-id="${e.id}">${e.id}. ${e.title} ${freeIds.has(e.id)?'• FREE':'🔒'}</span>`).join('');
+ list.innerHTML=filtered.map(e=>`<span class="chip ex-chip ${e.id===currentId?'active':''} ${freeIds.has(e.id)?'':'locked'}" data-id="${e.id}">${e.id}. ${esc(tr('ex'+e.id+'.title', e.title))} ${freeIds.has(e.id)?'• FREE':'🔒'}</span>`).join('');
  list.querySelectorAll('.ex-chip').forEach(el=>{
    el.onclick=()=>{
      const ex=exercises.find(e=>e.id===parseInt(el.dataset.id));
@@ -169,18 +174,26 @@ function renderPlayer(){
  const isWrist=ex.title.includes('Wrist Grab');
  const interMap={'Part I — centering & grounding':interludes[1],'Part II — breath & energy':interludes[2],'Part III — attention & feeling':interludes[3],'Part IV — dialogue & relationship':interludes[4]};
  const inter=interMap[ex.part]||null;
+ const bodyText=tr('ex'+ex.id+'.body', ex.body);
+ const bodyParas=bodyText.split(/\n\n+/).map((p,i)=>`<div class="tp" data-p="p${i}">${esc(p).replace(/\n/g,'<br>')}</div>`).join('');
  document.getElementById('player').innerHTML=`
-   <div style="display:flex;justify-content:space-between"><div><h2 style="font-size:22px">${ex.title}</h2><div class="meta">${ex.meta} · ${ex.part}</div></div><span style="font-size:10px;border:1px solid #000;padding:3px 7px">Complexity ${ex.complexity}</span></div>
+   <div style="display:flex;justify-content:space-between"><div><h2 style="font-size:22px">${esc(tr('ex'+ex.id+'.title', ex.title))}</h2><div class="meta">${esc(tr('ex'+ex.id+'.meta', ex.meta))} · ${esc(tr('ex'+ex.id+'.part', ex.part))}</div></div><span style="font-size:10px;border:1px solid #000;padding:3px 7px">Complexity ${ex.complexity}</span></div>
    ${isWrist?`<div class="toggle"><button id="realB">Real Partner</button><button id="invB" class="active">Invisible Partner — "we say invisible"</button></div>`:''}
-   <div class="body">${ex.body.replace(/\n/g,'<br>')}</div>
+   <div class="body">${bodyParas}</div>
    <div class="timer"><div id="phase">Phase: 50/50 — Resist less, ground more</div><div class="circle" id="circ">${Math.floor(timeLeft/60)}:${String(timeLeft%60).padStart(2,'0')}</div><div id="prompt" style="font-size:11px">${isWrist?'Push... feel where you are':'Breathe...'}</div>${isWrist?`<div class="ground"><div class="ground-fill" id="gfill" style="width:${groundPercent}%"></div></div><div style="font-size:10px">${groundPercent}% ground — goal 60% — DBSO</div>`:''}
    <div style="display:flex;gap:6px;margin-top:10px"><button class="btn" id="playB" style="flex:1">${isPlaying?'Pause':'Play Guided'}</button><button class="btn" id="resetB" style="flex:0.3;background:#fff;color:#000;border:1px solid #000">Reset</button></div></div>
    <button class="btn" id="keepB">KeepDoingIt — Log Session</button>
    <div id="pdots" style="margin-top:10px;font-size:10px"></div>
-   ${inter?`<div class="poem"><b>${inter.title}</b>
+   ${inter?`<div class="poem"><b>${esc(tr('int'+interludes.indexOf(inter)+'.title', inter.title))}</b>
 
-${inter.text}</div>`:''}
+${esc(tr('int'+interludes.indexOf(inter)+'.text', inter.text))}</div>`:''}
  `;
+ if(ANNOT){
+   const srcParas=ex.body.split(/\n\n+/);
+   document.querySelectorAll('#player .tp').forEach((el,i)=>ANNOT(el,'ex'+ex.id+'.body:p'+i, srcParas[i]||'', el.textContent));
+   const poem=document.querySelector('#player .poem');
+   if(poem&&inter) ANNOT(poem,'int'+interludes.indexOf(inter)+'.text',inter.text,poem.textContent);
+ }
  document.getElementById('playB').onclick=togglePlay;
  document.getElementById('resetB').onclick=reset;
  document.getElementById('keepB').onclick=()=>{completed.add(currentId); sessionLog.push({id:currentId,at:new Date().toISOString()}); persistProgress(); renderProgress(); alert('Logged! KeepDoingIt');};
@@ -269,5 +282,40 @@ fetch('auth-state.php',{credentials:'same-origin'})
   }
 })();
 </script>
+
+<script>
+// Game-translation registry for games/translate.js (issue #894).
+window.AF_GAME = {
+  id: 'exercises',
+  collect() {
+    const items=[];
+    exercises.forEach(e=>{
+      items.push({id:'ex'+e.id+'.title', text:e.title});
+      items.push({id:'ex'+e.id+'.meta', text:e.meta});
+      items.push({id:'ex'+e.id+'.part', text:e.part});
+      e.body.split(/\n\n+/).forEach((p,i)=>{ if(p.trim()) items.push({id:'ex'+e.id+'.body:p'+i, text:p}); });
+    });
+    interludes.forEach((it,i)=>{
+      items.push({id:'int'+i+'.title', text:it.title});
+      items.push({id:'int'+i+'.text', text:it.text});
+    });
+    [["all","All 15"],["Part I","Part I · centering (6)"],["Part II","Part II · breath (5)"],["Part III","Part III · attention (3)"],["Part IV","Part IV · dialogue (1)"]]
+      .forEach(p=>items.push({id:'part.'+p[0], text:p[1]}));
+    return items;
+  },
+  apply(map, annotate) {
+    Object.assign(TR, map);
+    // Per-paragraph ids (ex1.body:p0) roll up to the whole body for tr().
+    exercises.forEach(e=>{
+      const paras=[];
+      for(let i=0; map['ex'+e.id+'.body:p'+i]!==undefined; i++) paras.push(map['ex'+e.id+'.body:p'+i]);
+      if(paras.length) TR['ex'+e.id+'.body']=paras.join('\n\n');
+    });
+    ANNOT=(el,itemId,src,trans)=>annotate(el,itemId,src,trans);
+    renderPartTabs(); renderExList(currentPart); renderPlayer();
+  },
+};
+</script>
+<script src="../translate.js"></script>
 
 </body></html>
