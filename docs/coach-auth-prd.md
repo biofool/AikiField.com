@@ -30,6 +30,16 @@ demo. The login form + PHP session handler were extracted to the blind
 marketing site. The inline AI Chat (`coach-chat.js`) was removed entirely;
 the live chat lives on `quantumaikido.com`.
 
+**2026-10-16 — complete members chat and visible sign-out control.**
+`aikifield.com/members` is a full authenticated chat surface. It includes the
+conversation switcher, new-chat action, message history, response-language
+selector, feature menu, clear-conversation action, composer, feedback controls,
+and session-aware backend calls. A visible **Sign out** button now appears in
+the top chat bar in addition to the existing More-menu action. Both controls
+end the PHP and backend sessions, clear local chat state, and return the user to
+`/login.php?next=/members`. This statement supersedes older N/A notes in this
+document that say AikiField has no members page, chat UI, or `coach-chat.js`.
+
 **2026-10-02 — AI Chat replicated at `aikifield.com/members`.** The QA
 members chat (`members.html` + `coach-chat.js`) is replicated as
 `members.php`, linked from the public nav's **Digital Experience** menu as
