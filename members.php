@@ -34,7 +34,7 @@ $qaIsAdmin   = $_SESSION['qa_is_admin'] ?? false;
   <link rel="preload" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Public+Sans:wght@400;600;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <noscript><link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Public+Sans:wght@400;600;700&display=swap" rel="stylesheet"></noscript>
   <link rel="stylesheet" href="/css/redesign.css?v=20261003">
-  <link rel="stylesheet" href="/css/coach-chat.css?v=20261005b">
+  <link rel="stylesheet" href="/css/coach-chat.css?v=20261016">
 </head>
 <body>
 
@@ -160,10 +160,17 @@ $qaIsAdmin   = $_SESSION['qa_is_admin'] ?? false;
                         <a href="https://quantumaikido.com/privacy" class="coach-menu-item" role="menuitem" tabindex="-1">Privacy</a>
                         <a href="https://quantumaikido.com/terms" class="coach-menu-item" role="menuitem" tabindex="-1">Terms</a>
                         <div class="coach-menu-sep" role="separator"></div>
+                        <button type="button" id="coach-passkey-register" class="coach-menu-item" role="menuitem" tabindex="-1" hidden>Register passkey</button>
+                        <div class="coach-menu-sep" role="separator"></div>
                         <button type="button" id="coach-logout" class="coach-menu-item coach-logout-btn" role="menuitem" tabindex="-1">Sign Out</button>
                     </div>
                 </div>
             </div>
+            <!-- Visible Sign out: the More-menu item alone was too hidden to find. -->
+            <button type="button" id="coach-logout-bar" class="coach-signout-btn" title="Sign out">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                <span class="coach-signout-label">Sign out</span>
+            </button>
         </div>
     </div>
 
@@ -320,7 +327,7 @@ window.QA_SESSION = {
     premium: false
 };
 </script>
-<script src="/coach-chat.js?v=20261005b"></script>
+<script src="/coach-chat.js?v=20261016"></script>
 <script src="/js/nav-menu.js?v=20261002" defer></script>
 </body>
 </html>

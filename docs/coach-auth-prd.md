@@ -30,6 +30,16 @@ demo. The login form + PHP session handler were extracted to the blind
 marketing site. The inline AI Chat (`coach-chat.js`) was removed entirely;
 the live chat lives on `quantumaikido.com`.
 
+**2026-10-16 — complete members chat and visible sign-out control.**
+`aikifield.com/members` is a full authenticated chat surface. It includes the
+conversation switcher, new-chat action, message history, response-language
+selector, feature menu, clear-conversation action, composer, feedback controls,
+and session-aware backend calls. A visible **Sign out** button now appears in
+the top chat bar in addition to the existing More-menu action. Both controls
+end the PHP and backend sessions, clear local chat state, and return the user to
+`/login.php?next=/members`. This statement supersedes older N/A notes in this
+document that say AikiField has no members page, chat UI, or `coach-chat.js`.
+
 **2026-10-02 — AI Chat replicated at `aikifield.com/members`.** The QA
 members chat (`members.html` + `coach-chat.js`) is replicated as
 `members.php`, linked from the public nav's **Digital Experience** menu as
@@ -393,7 +403,9 @@ A "Sign in with passkey" button (`#coach-passkey-btn`) appears below the login s
 3. The assertion is sent to `POST /v1/auth/passkey/login/finish` → verified by the backend via `py_webauthn` → session token issued (same shape as password login)
 4. `establishServerSession()` is called with the result, identical to password login — the PHP session cookie is set and the user is redirected
 
-Passkeys complement (not replace) password and OAuth login. A user must first register a passkey via an authenticated session (passkey registration endpoints are session-required on the backend). Cancellation (`NotAllowedError`) shows a friendly "cancelled" message; other errors surface visibly. The passkey endpoints are exempt from `X-Proxy-Secret` via the `/v1/auth/` prefix, so `coach-proxy.php` forwards them without special handling. See `AIRichardMoon/backend/PRD.md` § Authentication endpoints for the full endpoint contract.
+Passkeys complement (not replace) password and OAuth login. Cancellation (`NotAllowedError`) shows a friendly "cancelled" message; other errors surface visibly. The passkey endpoints are exempt from `X-Proxy-Secret` via the `/v1/auth/` prefix, so `coach-proxy.php` forwards them without special handling — except `Origin`, which `coach-proxy.php` adds to `FORWARD_REQ_HEADERS` so the backend can resolve the relying party per site (multi-RP). See `AIRichardMoon/backend/PRD.md` § Authentication endpoints for the full endpoint contract.
+
+**Passkey registration (multi-RP):** a "Register passkey" item (`#coach-passkey-register`) lives in the `/members` chat More menu, hidden unless `window.PublicKeyCredential` is available AND the `passkey_login` feature flag is on (same fail-closed gate as the login button). On click `coach-chat.js` calls `POST /v1/auth/passkey/register/begin` (session auth) → `navigator.credentials.create()` → `POST /v1/auth/passkey/register/finish`. The backend resolves the RP from the request `Origin` (`https://aikifield.com` must be in `auth_webauthn_allowed_origins`), so AF-registered passkeys are bound to `rpId=aikifield.com` and never offered on quantumaikido.com. Status messages reuse the chat toast.
 
 ### Registration + login-time activation flow (issue #228, ticket #535)
 
@@ -967,3 +979,16 @@ maintain a three-branch workflow: `dev` → `staging` → `main`:
   flow (email coach, no video)](#coach-contact-flow-email-coach-no-video).
 - AikiField profile page (`/profile.php`) if profile management is wanted
   here (currently profile management is only on `quantumaikido.com`).
+
+## LinkedIn sign-in (frontend)
+
+### Sign In with LinkedIn (OIDC), 2026-10-12
+
+LinkedIn Sign In is the one-click gate for the aikifield.com Digital Experience funnel (LinkedIn group post, `?src=li`).
+- **Backend (AIRichardMoon):** generic provider `linkedin` in `auth/oauth_exchange.py`. Scopes `openid profile email`; endpoints `/oauth/v2/authorization`, `/oauth/v2/accessToken`, `/v2/userinfo`. Secrets `LINKEDIN_OAUTH_CLIENT_ID` and `LINKEDIN_OAUTH_CLIENT_SECRET` (Secret Manager, project aiqa-coaching). Production env `LINKEDIN_OAUTH_REDIRECT_URI=https://aikifield.com/coach-api/v1/auth/linkedin/callback` and `LINKEDIN_OAUTH_LOGIN_URL=https://aikifield.com/login.php?next=/digital-experience/`.
+- **Account rules:** the userinfo `email_verified` claim must be `true` and `sub` must be present (fail closed). Accounts match by verified email; `sub` is stored as `provider_user_id`.
+- **Auto-activation:** a NEW account created through `/v1/auth/linkedin/authorize?src=li` is created active (free tier; no admin/AEO/reviewer flags). `src` is carried in the OAuth state record, allowlisted in `AUTO_ACTIVATE_SRC`, and never reactivates an existing pending/deleted account. Other providers and untagged sign-ins keep manual approval. `src` is a client-supplied tag, so the verified LinkedIn email is the real gate.
+- **Hand-off contract:** the callback redirects to `LINKEDIN_OAUTH_LOGIN_URL` with `?oauth_code=<OTC>`; the browser POSTs `/v1/auth/oauth/exchange?otc=<OTC>` (the `otc` query parameter, not a JSON body). Failures redirect with `?error=`.
+- **Events logged (backend):** `oauth_login_started`, `oauth_login`, `oauth_login_failed`.
+- **Open:** quantumaikido.com's `coach-login.js` still posts a JSON body to the exchange endpoint and expects `/login.html`; reconcile before enabling social login there.
+- **Frontend (AikiField.com):** `coach-login.js` loads providers only when `?src=li` is present and shows only "Continue with LinkedIn" (above the password form); `digital-experience/index.html` rewrites its CTA to `/login.php?src=li&next=/digital-experience/`; `games/privacy/index.html` carries the LinkedIn data disclosure. The `coach-proxy.php` `/coach-api/*` path already forwards the callback.

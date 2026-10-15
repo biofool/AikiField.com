@@ -226,6 +226,9 @@ EXCLUDES=(
     --exclude='.venv/'
     --exclude='node_modules/'
     --exclude='tests/'
+    # Server-only secrets file (gitignored). Excluding it also stops
+    # `rsync --delete` from removing it on the remote.
+    --exclude='coach-config.local.php'
 )
 
 do_rsync() {
@@ -307,9 +310,20 @@ cloudflare_ip_check() {
 # up either way; a CI failure fails the sync command (gate at end).
 CI_LOCAL_PID=""
 CI_LOCAL_LOG=""
+CI_LOCAL_TREE=""
 start_ci_local() {
     if [[ "${SKIP_CI:-0}" == "1" ]]; then
         echo "  Local CI: SKIPPED (--skip-ci)"
+        return 0
+    fi
+    # Skip if this exact tree already cleared a CI run (staging CI clears
+    # the prod sync — the marker records the tree sha, not the commit sha,
+    # so a staging→main merge commit still matches).
+    local marker="${LOCAL_PATH}ci-results/.ci-passed"
+    local head_tree
+    head_tree="$(git -C "${LOCAL_PATH}" rev-parse 'HEAD^{tree}' 2>/dev/null || true)"
+    if [[ -n "$head_tree" && -f "$marker" && "$(cut -d' ' -f2 "$marker" 2>/dev/null)" == "$head_tree" ]]; then
+        echo "  Local CI: cleared (tree ${head_tree:0:8} already passed — see $marker)"
         return 0
     fi
     local script="${LOCAL_PATH}scripts/ci-local.sh"
@@ -318,6 +332,9 @@ start_ci_local() {
         return 0
     fi
     mkdir -p "${LOCAL_PATH}ci-results"
+    # Capture the tree under test now — a mid-deploy git pull can move HEAD
+    # before wait_ci_local records the result.
+    CI_LOCAL_TREE="$(git -C "${LOCAL_PATH}" rev-parse 'HEAD^{tree}' 2>/dev/null || true)"
     CI_LOCAL_LOG="${LOCAL_PATH}ci-results/sync-$(date +%Y%m%d-%H%M%S).log"
     # CI_LOCAL_ARGS overrides the default step set (php-lint + unit + e2e).
     # shellcheck disable=SC2086
@@ -338,6 +355,10 @@ wait_ci_local() {
         return 1
     fi
     echo "  ✓ Local CI passed ($CI_LOCAL_LOG)"
+    # Record the cleared tree so a later prod deploy of the same content
+    # can skip a redundant CI run.
+    echo "$(git -C "${LOCAL_PATH}" rev-parse HEAD 2>/dev/null) ${CI_LOCAL_TREE}" \
+        > "${LOCAL_PATH}ci-results/.ci-passed" 2>/dev/null || true
     return 0
 }
 
@@ -766,9 +787,23 @@ case "$CMD" in
             require_git_branch "staging"
             echo ""
         fi
-        # Issue #67: local CI gates every deploy, not just staging — prod
-        # deploys ship the same content and deserve the same check. Kick it
-        # off in parallel; wait_ci_local (end of this case) gates the result.
+        # Issue #67: prod deploys ship the same content and deserve the same
+        # check — but CI must not run twice. Staging's run is the gate: prod
+        # is blocked unless HEAD's tree is recorded as passed
+        # (ci-results/.ci-passed), so deploy to staging first. For staging
+        # itself, kick CI off in parallel; wait_ci_local (end of this case)
+        # gates the result.
+        if [[ "$REMOTE_NAME" == "prod" && "${SKIP_CI:-0}" != "1" ]]; then
+            _marker="${LOCAL_PATH}ci-results/.ci-passed"
+            _head_tree="$(git -C "${LOCAL_PATH}" rev-parse 'HEAD^{tree}' 2>/dev/null || true)"
+            if [[ -z "$_head_tree" || ! -f "$_marker" || "$(cut -d' ' -f2 "$_marker" 2>/dev/null)" != "$_head_tree" ]]; then
+                echo "ERROR: production deploy blocked — this tree has not cleared staging CI." >&2
+                echo "  Run './sync.sh --staging deploy' first (its CI run clears the same tree)," >&2
+                echo "  or pass --skip-ci to bypass." >&2
+                exit 1
+            fi
+            echo "  ✓ Staging CI clearance found (tree ${_head_tree:0:8} — see $_marker)"
+        fi
         start_ci_local
         php_lint
         echo ""
