@@ -116,6 +116,17 @@ test.describe('/members AI chat', () => {
     expect(email).toBe(TEST_EMAIL);
   });
 
+  test('signed in: a visible Sign out button in the chat bar signs out', async ({ page }) => {
+    expect((await establishSession(page.request)).body.ok).toBe(true);
+    await page.goto('/members');
+    const signOut = page.locator('#coach-logout-bar');
+    await expect(signOut).toBeVisible();
+    await signOut.click();
+    await page.waitForURL(/\/login\.php\?next=/);
+    const after = await page.request.get('/members', { maxRedirects: 0 });
+    expect([302, 303]).toContain(after.status());
+  });
+
   test('Sign Out really signs out (logout POST is not swallowed by the signed-in redirect)', async ({ request }) => {
     expect((await establishSession(request)).body.ok).toBe(true);
     expect((await request.get('/members', { maxRedirects: 0 })).status()).toBe(200);

@@ -50,7 +50,8 @@
     const charCount      = document.getElementById("coach-char-count");
     const queueBanner    = document.getElementById("coach-queue-banner");
     const userInfo       = document.getElementById("coach-user-info");
-    const logoutBtn      = document.getElementById("coach-logout");
+    // Sign out lives in two places: the always-visible bar button and the More menu.
+    const logoutBtns     = [document.getElementById("coach-logout"), document.getElementById("coach-logout-bar")].filter(Boolean);
     const clearBtn       = document.getElementById("coach-clear-btn");
     const languageSelect = document.getElementById("coach-language-select");
     const sessionSelect  = document.getElementById("coach-session-select");
@@ -1540,7 +1541,7 @@
     }
 
     // --- Logout ---
-    if (logoutBtn) {
+    logoutBtns.forEach((logoutBtn) => {
         logoutBtn.addEventListener("click", async () => {
             // Clear server-side session via login.php
             try {
@@ -1562,7 +1563,7 @@
             // Redirect to login
             window.location.href = '/login.php?next=' + encodeURIComponent(window.location.pathname);
         });
-    }
+    });
 
     // --- Clear conversation / New chat (issues #17, #324) ---
     // Forgiveness pattern: no confirm dialog. Clear and New chat act at once and
