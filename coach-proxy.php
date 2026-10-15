@@ -67,6 +67,7 @@ $FORWARD_REQ_HEADERS = [
     'x-auth-session',
     'x-request-id',
     'authorization',
+    'origin',          // WebAuthn multi-RP: backend resolves rp_id from the site origin
 ];
 
 $FORWARD_RESP_HEADERS = [
