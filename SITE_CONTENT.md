@@ -144,6 +144,7 @@ note belongs on these pages (issue #112);
 - Meta description for the preview: A short preview of Twenty Practices, movement practices from the work of Richard Moon 6th Dan. Sign in free to unlock all N. (N is the number of practices in `data/exercises/practices.json`; every count on the page comes from the data.)
 - Sign-in modal: lists the free practices by title from the data (`"free": true`) and says "Unlock all N with a free AikiField account."
 - Play Guided: a timer per practice, starting at the practice's own duration (`guide.duration_sec` in the data). Only Wrist Grab Grounding shows prompts (Push, Pull, ...) and the ground meter; the other practices show a quiet timer. At the end the timer shows "Done" with "Log session" and "Reset" buttons; logging confirms with "Logged! KeepDoingIt". No alert box opens.
+- Part tabs: All N, then one tab per part, built from the practices' part tags with the count of practices that carry the tag (for example "Part I · centering (5)").
 - Studio list (`data/exercises/studios.json`): name and area only. The owner confirms that each studio agreed to appear.
 - Not shown to players: prices or plans, deep-link examples, image-copy notes, developer labels, the completed-IDs debug line.
 

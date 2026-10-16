@@ -136,7 +136,18 @@ page layout, hero, or left column — keep it hidden until form submission.
   one practice: showing another practice stops and resets it. The end of a
   session shows an inline "Done" state with "Log session" and "Reset"; there
   is no `alert()`. Spec: `tests/e2e/specs/exercises-guided.spec.js` (fake
-  clock, `page.clock.runFor`). Tests:
+  clock, `page.clock.runFor`).
+  **Wording and tabs (issue #111):** `inlineMarkup()` in the page renders
+  `*emphasis*` and `**strong**` in practice text after escaping it (a star
+  with no partner stays a star). The part tabs are built from the practices'
+  own `part` tags ("Part II — breath & energy" gives "Part II · breath"), in
+  numeral order, and a tab lists exactly the practices that carry its tag, so
+  a count cannot drift from the list. A cached translation holds no number
+  (ids `tab.<part>`); the count is added after it. Spec:
+  `tests/e2e/specs/exercises-wording.spec.js`. Left for the author's yes or no
+  (issue #111): the O2 Continuum lines, the run-on lines in practice 12, the
+  lowercase title of practice 2, "Venusial", the CABW spellings and the DBSO
+  part tag. Tests:
   `tests/unit/test-exercises-data.php`, `tests/unit/test_exercises_data.py`
   (reads the real `.htaccess`), `tests/e2e/specs/exercises-preview.spec.js`
   (every route that can serve practice text); `tests/e2e/router.php` reads the

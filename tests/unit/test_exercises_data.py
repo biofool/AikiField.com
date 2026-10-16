@@ -164,6 +164,43 @@ class GuideDataTests(unittest.TestCase):
                     self.assertNotIn(phrase, text)
 
 
+class WordingDataTests(unittest.TestCase):
+    """Only the mechanical errors of issue #111 are fixed in the data.
+
+    The author's own wording (the O2 Continuum lines, the run-on lines in
+    practice 12, the lowercase title of practice 2, the CABW spellings, the DBSO
+    part tag) is not pinned here on purpose: it changes when he says so.
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        cls.body = {p["id"]: p["body"] for p in json.loads(PRACTICES.read_text(encoding="utf-8"))["practices"]}
+
+    def test_practice_12_typos_are_fixed(self):
+        text = self.body[12]
+        self.assertIn("Relabel 10 as a new '1'", text)
+        self.assertNotIn("Rlabel", text)
+        self.assertIn("'Square away' your posture", text)
+        self.assertNotIn("'Square away'your", text)
+        self.assertIn("After climbing to 4,", text)
+        self.assertNotIn("climbing to  4", text)
+
+    def test_practice_14_glued_sentences_are_two_sentences(self):
+        text = self.body[14]
+        self.assertIn("Give the most honest feedback you can. Progress from one step to two.", text)
+        self.assertNotIn("canProgress", text)
+
+    def test_every_asterisk_belongs_to_a_pair_the_page_renders(self):
+        # Mirrors inlineMarkup() in games/exercises/index.php: **strong** and *emphasis*.
+        pair = re.compile(r"\*\*([^*]+)\*\*|\*([^*]+)\*")
+        for pid, text in self.body.items():
+            with self.subTest(id=pid):
+                self.assertNotIn("*", pair.sub("", text), "a star with no partner would show on the page")
+
+    def test_the_two_practices_with_marks_are_12_and_14(self):
+        self.assertEqual(sorted(pid for pid, text in self.body.items() if "*" in text), [12, 14])
+
+
 class StudioDataTests(unittest.TestCase):
     """The studio list is third-party business data: name and area only (issue #112)."""
 

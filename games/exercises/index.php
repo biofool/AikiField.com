@@ -317,11 +317,44 @@ function selectStudioBySlug(slug){
 // translation when one is cached, else the English source (issue #894).
 const TR={}; let ANNOT=null;
 function tr(id, src){ return TR[id] || src; }
-function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+// Inline emphasis in practice text (issue #111): *x* is emphasis, **x** is strong.
+// The text is escaped FIRST, so nothing in the data can become markup; the only tags
+// made here are <em> and <strong>. A star with no partner stays a star.
+function inlineMarkup(s){
+ return esc(s).replace(/\*\*([^*]+)\*\*|\*([^*]+)\*/g,(m,strong,em)=>strong!==undefined?`<strong>${strong}</strong>`:`<em>${em}</em>`);
+}
+// Part tabs come from the practices' own part tags (issue #111), so a tab and its
+// count cannot disagree with the list under it. "Part II — breath & energy" gives
+// the tab "Part II · breath". Tabs run in numeral order; a count is the number of
+// practices that carry the tag exactly.
+function partKey(e){ return e.part.split(' — ')[0]; }
+function partName(e){ return (e.part.split(' — ')[1]||'').split(' & ')[0]; }
+function romanValue(key){
+ const v={I:1,V:5,X:10}, r=key.replace(/^Part\s+/,'');
+ let n=0;
+ for(let i=0;i<r.length;i++){
+   const c=v[r[i]], next=v[r[i+1]]||0;
+   if(!c) return Infinity;
+   n+=c<next?-c:c;
+ }
+ return n;
+}
+function partTabs(){
+ const parts=new Map();
+ exercises.forEach(e=>{
+   const key=partKey(e);
+   if(!parts.has(key)) parts.set(key,{key, text:partName(e)?`${key} · ${partName(e)}`:key, count:0});
+   parts.get(key).count++;
+ });
+ const ordered=[...parts.values()].sort((x,y)=>romanValue(x.key)-romanValue(y.key)||x.key.localeCompare(y.key));
+ return [{key:'all', text:'All', count:exercises.length}].concat(ordered);
+}
+// The count is added after translation, so a cached translation never holds a stale number.
+function tabLabel(p){ const t=tr('tab.'+p.key, p.text); return p.key==='all'?`${t} ${p.count}`:`${t} (${p.count})`; }
 function renderPartTabs(){
  const tabs=document.getElementById('partTabs');
- const parts=[["all","All 15"], ["Part I","Part I · centering (6)"], ["Part II","Part II · breath (5)"], ["Part III","Part III · attention (3)"], ["Part IV","Part IV · dialogue (1)"]];
- tabs.innerHTML=parts.map(p=>`<span class="chip ${p[0]==='all'?'active':''}" data-part="${p[0]}">${esc(tr('part.'+p[0], p[1]))}</span>`).join('');
+ tabs.innerHTML=partTabs().map(p=>`<span class="chip ${p.key===currentPart?'active':''}" data-part="${esc(p.key)}">${esc(tabLabel(p))}</span>`).join('');
  tabs.querySelectorAll('.chip').forEach(el=>{
    el.onclick=()=>{ tabs.querySelectorAll('.chip').forEach(x=>x.classList.remove('active')); el.classList.add('active'); currentPart=el.dataset.part; renderExList(currentPart); }
  });
@@ -329,7 +362,7 @@ function renderPartTabs(){
 function renderExList(part="all"){
  const list=document.getElementById('exList');
  let filtered=exercises;
- if(part!=="all") filtered=exercises.filter(e=>e.part.includes(part));
+ if(part!=="all") filtered=exercises.filter(e=>partKey(e)===part);
  list.innerHTML=filtered.map(e=>`<span class="chip ex-chip ${e.id===currentId?'active':''} ${isUnlocked(e)?'':'locked'}" data-id="${e.id}">${e.id}. ${esc(tr('ex'+e.id+'.title', e.title))} ${isUnlocked(e)?'• FREE':'🔒'}</span>`).join('');
  list.querySelectorAll('.ex-chip').forEach(el=>{
    el.onclick=()=>selectPractice(parseInt(el.dataset.id), part);
@@ -355,7 +388,7 @@ function renderPlayer(){
  const interMap={'Part I — centering & grounding':interludes[1],'Part II — breath & energy':interludes[2],'Part III — attention & feeling':interludes[3],'Part IV — dialogue & relationship':interludes[4]};
  const inter=interMap[ex.part]||null;
  const bodyText=tr('ex'+ex.id+'.body', ex.body);
- const bodyParas=bodyText.split(/\n\n+/).map((p,i)=>`<div class="tp" data-p="p${i}">${esc(p).replace(/\n/g,'<br>')}</div>`).join('');
+ const bodyParas=bodyText.split(/\n\n+/).map((p,i)=>`<div class="tp" data-p="p${i}">${inlineMarkup(p).replace(/\n/g,'<br>')}</div>`).join('');
  document.getElementById('player').innerHTML=`
    <div style="display:flex;justify-content:space-between"><div><h2 style="font-size:22px">${esc(tr('ex'+ex.id+'.title', ex.title))}</h2><div class="meta">${esc(tr('ex'+ex.id+'.meta', ex.meta))} · ${esc(tr('ex'+ex.id+'.part', ex.part))}</div></div><span style="font-size:10px;border:1px solid #000;padding:3px 7px">Complexity ${ex.complexity}</span></div>
    ${isWrist?`<div class="toggle"><button id="realB">Real Partner</button><button id="invB" class="active" title="Invisible partner means practicing by yourself." aria-describedby="invB-desc">Invisible Partner</button><span id="invB-desc" hidden>Invisible partner means practicing by yourself.</span></div>`:''}
@@ -556,8 +589,7 @@ window.AF_GAME = {
       items.push({id:'int'+i+'.title', text:it.title});
       items.push({id:'int'+i+'.text', text:it.text});
     });
-    [["all","All 15"],["Part I","Part I · centering (6)"],["Part II","Part II · breath (5)"],["Part III","Part III · attention (3)"],["Part IV","Part IV · dialogue (1)"]]
-      .forEach(p=>items.push({id:'part.'+p[0], text:p[1]}));
+    partTabs().forEach(p=>items.push({id:'tab.'+p.key, text:p.text}));
     return items;
   },
   apply(map, annotate) {
