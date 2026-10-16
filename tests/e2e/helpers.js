@@ -13,9 +13,20 @@ const TEST_EMAIL = 'test@example.com';
 const ADMIN_EMAIL = 'admin@example.com';
 const PASSWORD = 'testpass123';
 
-/** The session token minted by stub-backend.php for an email. */
+/**
+ * The first-generation session token of a stub account. After a logout the
+ * stub hands out a new token (like the real backend), so a test that signs in
+ * asks for the current one with currentStubToken().
+ */
 function stubToken(email) {
   return `stub|${email}`;
+}
+
+/** The token the stub backend currently accepts for an account. */
+async function currentStubToken(request, email) {
+  const resp = await request.get(`${STUB_URL}/__stub/token`, { params: { email } });
+  if (!resp.ok()) throw new Error(`stub has no account ${email} (HTTP ${resp.status()})`);
+  return (await resp.json()).token;
 }
 
 /**
@@ -44,7 +55,7 @@ async function establishSession(request, { email = TEST_EMAIL, headers = SAME_OR
     form: {
       action: 'backend-login',
       email,
-      sessionToken: stubToken(email),
+      sessionToken: await currentStubToken(request, email),
     },
   });
   return { status: resp.status(), body: await resp.json() };
@@ -107,6 +118,7 @@ module.exports = {
   ADMIN_EMAIL,
   PASSWORD,
   stubToken,
+  currentStubToken,
   establishSession,
   stubRequests,
   clearStubRequests,

@@ -199,4 +199,13 @@ test.describe('signed visitor address', () => {
     expect(hit.afClientIp).toMatch(LOOPBACK_RE);
     expect(hit.afClientSigValid).toBe(true);
   });
+
+  test('server-side calls from login.php are signed too', async ({ request }) => {
+    await establishSession(request);
+    const log = await stubRequests(request);
+    const hit = log.requests.find((r) => r.path === '/v1/auth/check-session');
+    expect(hit, 'check-session was not called').toBeTruthy();
+    expect(hit.afClientIp).toMatch(LOOPBACK_RE);
+    expect(hit.afClientSigValid).toBe(true);
+  });
 });

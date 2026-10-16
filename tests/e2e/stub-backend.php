@@ -77,10 +77,17 @@ $path   = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
 $sent   = (string) ($_SERVER['HTTP_X_PROXY_SECRET'] ?? '');
 $rawBody = (string) file_get_contents('php://input');
 
-/** Mint a session token for an email. */
+/**
+ * The current session token for an email. Like the real backend, a logout
+ * revokes the token and the next sign-in is handed a new one: the token
+ * carries a generation that /v1/auth/logout increments. Generation 0 keeps the
+ * plain "stub|<email>" form older specs and headers use.
+ */
 function stub_token(string $email): string
 {
-    return 'stub|' . $email;
+    global $STATE_FILE;
+    $gen = (int) (stub_state_read($STATE_FILE)['gen'][$email] ?? 0);
+    return 'stub|' . $email . ($gen > 0 ? '|' . $gen : '');
 }
 
 /** Send a JSON response and stop. */
@@ -215,14 +222,23 @@ function stub_state_write(string $file, array $state): void
     }
 }
 
+if ($path === '/__stub/token' && $method === 'GET') {
+    $e = strtolower(trim((string) ($_GET['email'] ?? '')));
+    if (!isset($USERS[$e])) {
+        stub_json(404, ['detail' => 'Unknown stub account.']);
+    }
+    stub_json(200, ['token' => stub_token($e)]);
+}
+
 if ($path === '/__stub/reset' && $method === 'POST') {
     @unlink($STATE_FILE);
     stub_json(200, ['ok' => true]);
 }
 // Control switches, all POST {…}: providers {linkedin:bool}, feature-flags
-// {flags:{name:bool}}, check-session-delay {ms:int}, oauth/require-nonce {on:bool}.
+// {flags:{name:bool}}, check-session-delay {ms:int}, oauth/require-nonce {on:bool},
+// logout-fails {on:bool} (POST /v1/auth/logout answers 503).
 if (str_starts_with($path, '/__stub/') && $method === 'POST'
-    && in_array($path, ['/__stub/providers', '/__stub/feature-flags', '/__stub/check-session-delay', '/__stub/oauth/require-nonce'], true)) {
+    && in_array($path, ['/__stub/providers', '/__stub/feature-flags', '/__stub/check-session-delay', '/__stub/oauth/require-nonce', '/__stub/logout-fails'], true)) {
     $state = stub_state_read($STATE_FILE);
     $body = stub_body($rawBody);
     switch ($path) {
@@ -237,6 +253,9 @@ if (str_starts_with($path, '/__stub/') && $method === 'POST'
             break;
         case '/__stub/oauth/require-nonce':
             $state['requireNonce'] = (bool) ($body['on'] ?? true);
+            break;
+        case '/__stub/logout-fails':
+            $state['logoutFails'] = (bool) ($body['on'] ?? true);
             break;
     }
     stub_state_write($STATE_FILE, $state);
@@ -359,7 +378,7 @@ if ($path === '/v1/auth/oauth/exchange' && $method === 'POST') {
     if ($email === null || !isset($USERS[$email])) {
         stub_json(410, ['detail' => 'OAuth code is invalid or expired']);   // AIR: HTTPException 410
     }
-    unset($state['oauth']['otcs'][$otc], $state['revoked'][$email]);   // one-time code
+    unset($state['oauth']['otcs'][$otc]);   // one-time code
     stub_state_write($STATE_FILE, $state);
     stub_json(200, [
         'ok'           => true,
@@ -381,12 +400,6 @@ if ($path === '/v1/auth/verify' && $method === 'POST') {
         stub_json(200, ['ok' => false, 'error' => 'Invalid email or password.']);
     }
     $user = $USERS[$email];
-    // A fresh sign-in re-enables the (deterministic) stub token that a logout revoked.
-    $state = stub_state_read($STATE_FILE);
-    if (isset($state['revoked'][$email])) {
-        unset($state['revoked'][$email]);
-        stub_state_write($STATE_FILE, $state);
-    }
     stub_json(200, [
         'ok'                => true,
         'email'             => $email,
@@ -406,7 +419,7 @@ if ($path === '/v1/auth/check-session' && $method === 'POST') {
     if (($state['checkSessionDelayMs'] ?? 0) > 0) {
         usleep((int) $state['checkSessionDelayMs'] * 1000);
     }
-    if (!isset($USERS[$email]) || !hash_equals(stub_token($email), $token) || isset($state['revoked'][$email])) {
+    if (!isset($USERS[$email]) || !hash_equals(stub_token($email), $token) ) {
         error_log('stub-backend: check-session rejected email=' . $email);
         stub_json(200, ['ok' => false, 'error' => 'Session is not valid.']);
     }
@@ -430,7 +443,10 @@ if ($path === '/v1/auth/logout' && $method === 'POST') {
         stub_json(200, ['ok' => false]);
     }
     $state = stub_state_read($STATE_FILE);
-    $state['revoked'][$email] = true;
+    if ($state['logoutFails'] ?? false) {
+        stub_json(503, ['detail' => 'Sign-out is temporarily unavailable.']);
+    }
+    $state['gen'][$email] = (int) ($state['gen'][$email] ?? 0) + 1;   // revoke: the old token stops working
     stub_state_write($STATE_FILE, $state);
     stub_json(200, ['ok' => true]);
 }

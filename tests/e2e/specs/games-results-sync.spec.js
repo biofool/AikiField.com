@@ -8,6 +8,7 @@
 const { test, expect } = require('@playwright/test');
 const {
   establishSession, ADMIN_EMAIL, resetStubGameResults, stubGameResultsMissing, stubGameResultsLastRequest,
+  SAME_ORIGIN_HEADERS,
 } = require('../helpers');
 
 const SYNC = '/games/results.php';
@@ -118,7 +119,7 @@ test.describe('Lucky Wave UI', () => {
     await playRound(page);
     await expect.poll(async () => (await sync(page.request)).body.results.length).toBe(1);
 
-    await page.request.post('/login.php', { form: { action: 'logout' }, maxRedirects: 0 });
+    await page.request.post('/login.php', { headers: SAME_ORIGIN_HEADERS, form: { action: 'logout' }, maxRedirects: 0 });
     expect((await establishSession(page.request, { email: ADMIN_EMAIL })).body.ok).toBe(true);
     await openIntro(page);
     await expect(page.getByText(SYNCED_NOTE)).toBeVisible();

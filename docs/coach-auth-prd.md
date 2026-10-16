@@ -549,6 +549,37 @@ See `backend/PRD.md` in AIRichardMoon for full endpoint details.
   `session_expired` to friendly copy and prefers `?redirect=` over the
   baked `COACH_LOGIN_REDIRECT` (parity with QA Pages; AikiField has no
   `/AEO/` gate that emits `aeo_required`).
+- **Session reliability (AF #123, 2026-10-16):** the rules live in one place,
+  `includes/coach-session.php`, used by `login.php` and `includes/beta-gate.load.php`.
+  - *Lifetime:* the cookie lasts 7 days (`AF_SESSION_LIFETIME_SECONDS`) and
+    `session.gc_maxlifetime` is set to the same value before `session_start()`.
+    PHP's default of 1440 s deleted the session file after 24 minutes of
+    silence whatever the cookie said. **Host check after deploy:** a session
+    left idle for more than 25 minutes must still validate. If it does not, the
+    host runs its own session cleaner with a shorter limit and that setting must
+    change on the host.
+  - *Revalidation:* the gate asks `/v1/auth/check-session` every 6 hours with a
+    **35 s timeout** (Cloud Run cold start is 10-17 s; it used to wait 10 s).
+    Three outcomes: valid (refresh the clock and the tier), rejected (sign out,
+    login page shows "Your session has expired" via `?error=session_expired`),
+    unknown (timeout, transport error, non-200). Unknown no longer signs the
+    member out: the session is kept for up to 6 hours more after the
+    revalidation interval, measured from the last good check, then fails closed
+    so a revoked session cannot outlive a long outage. `login.php` seeds
+    `beta_last_validated` at sign-in; before, only the gate set it, so the first
+    check after a long idle period destroyed a valid session. Retries while the
+    backend is down are limited to one per minute.
+  - *Sign-out:* `action=logout` calls `/v1/auth/logout` so the backend token
+    (embedded in `/members` for the chat) stops working at once, then ends the
+    PHP session even if that call fails (logged). It needs the same same-origin
+    headers as `backend-login`. The Sign Out button in `coach-chat.js` no longer
+    swallows a failed request: it shows "Sign-out did not go through" and stays,
+    instead of navigating to a login page that signs the member straight back in.
+  - *Tests:* `tests/e2e/config.test.php` shortens the timings
+    (`COACH_SESSION_REVALIDATE_SECONDS`, `COACH_SESSION_CHECK_TIMEOUT`,
+    `COACH_SESSION_UNKNOWN_GRACE`); `session-reliability.spec.js` delays the
+    stub's check-session to model a cold start. The stub backend now hands out a
+    new token after each logout, like the real one.
 - **Login CSRF guard (AF #121, 2026-10-16):** `action=backend-login` is accepted
   only from this site's own pages: `Sec-Fetch-Site: same-origin`, or an `Origin`
   whose host and port equal `Host`. Anything else (a foreign Origin, `Origin:

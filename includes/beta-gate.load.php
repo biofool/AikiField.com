@@ -11,58 +11,9 @@
  */
 
 require dirname(__DIR__) . '/includes/coach-config.load.php';
+require_once dirname(__DIR__) . '/includes/coach-session.php';
 
-/**
- * Re-verify a /beta/ session against the backend's /v1/auth/check-session.
- * Same request shape login.php's POST handler already uses at sign-in.
- *
- * Returns true (still valid), false (backend explicitly rejected it), or
- * null (couldn't tell - transport/HTTP error, treat as "unknown" rather
- * than "revoked" so a backend hiccup doesn't log everyone out).
- */
-function qa_revalidate_beta_session(string $email, string $token): ?bool
-{
-    $verifyUrl = rtrim(COACH_BACKEND_URL, '/') . '/v1/auth/check-session';
-    $payload = json_encode(['email' => $email, 'sessionToken' => $token]);
-    $ch = curl_init($verifyUrl);
-    $reqHeaders = ['Content-Type: application/json'];
-    if (defined('COACH_PROXY_SECRET') && COACH_PROXY_SECRET !== '') {
-        $reqHeaders[] = 'X-Proxy-Secret: ' . COACH_PROXY_SECRET;
-    }
-    curl_setopt_array($ch, [
-        CURLOPT_POST           => true,
-        CURLOPT_POSTFIELDS     => $payload,
-        CURLOPT_HTTPHEADER     => $reqHeaders,
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_TIMEOUT        => 10,
-        CURLOPT_SSL_VERIFYPEER => COACH_VERIFY_TLS,
-        CURLOPT_SSL_VERIFYHOST => COACH_VERIFY_TLS ? 2 : 0,
-    ]);
-    $resp = curl_exec($ch);
-    $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-    if ($resp === false || $code !== 200) {
-        error_log('beta-gate: check-session revalidation failed http=' . (int) $code
-            . ' err=' . ($resp === false ? 'transport' : 'status'));
-        return null;
-    }
-    $data = json_decode($resp, true);
-    return (bool) ($data['ok'] ?? false);
-}
-
-if (session_status() === PHP_SESSION_NONE) {
-    $secure = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
-        || (($_SERVER['SERVER_PORT'] ?? '') == 443);
-    session_set_cookie_params([
-        'lifetime' => 86400 * 7,  // 7 days
-        'path'     => '/',
-        'domain'   => '',
-        'secure'   => $secure,
-        'httponly' => true,
-        'samesite' => 'Lax',
-    ]);
-    session_start();
-}
+af_session_start();
 
 $qaEmail         = $_SESSION['qa_email'] ?? null;
 $qaSessionToken  = $_SESSION['qa_session_token'] ?? null;
@@ -70,66 +21,72 @@ $betaAuthed      = !empty($qaEmail) && !empty($qaSessionToken);
 $betaGateError   = '';
 
 // --- Periodic re-validation against the backend ---
-// login.php only calls /v1/auth/check-session once, at sign-in, then this
-// gate trusted qa_email/qa_session_token for the full 7-day cookie lifetime
-// with no further check. If the backend disables the account or
-// revokes/rotates the token, that revocation would otherwise not take effect
-// here for up to 7 days. Re-check on a cadence instead: once per PHP session
-// is too coarse given the 7-day cookie, and re-checking on every single
-// request is wasteful, so use a wall-clock interval stored alongside the
-// token (login.php sets qa_session_checked_at at sign-in).
-const BETA_REVALIDATE_INTERVAL_SECONDS = 6 * 3600; // re-check at most every 6h
-// While the backend is unreachable, retrying on *every* request would turn a
-// backend outage into a 10s-per-request (CURLOPT_TIMEOUT) storm across all of
-// /beta/ on shared hosting with a small worker pool. Back off: only retry the
-// check once per this interval, tracked separately from qa_session_checked_at
-// so a failed attempt doesn't look like — or block — a later successful one.
-// On a failed check, fail closed (redirect to login) unless the session was
-// validated within BETA_CACHED_VALIDITY_SECONDS — a short cached-validity
-// window that keeps a recently-verified session working through a transient
-// backend hiccup without letting a revoked session retain access indefinitely.
+// login.php only calls /v1/auth/check-session once, at sign-in. If the backend
+// disables the account or revokes/rotates the token, that revocation would
+// otherwise not take effect here for the whole 7-day cookie lifetime, so ask
+// again on a cadence (AF_SESSION_REVALIDATE_SECONDS, 6 hours) rather than
+// once per session (too coarse) or on every request (wasteful).
+//
+// The backend answers one of three ways (af_coach_check_session):
+//   valid     -> remember the time, refresh the tier
+//   rejected  -> sign out, with ?error=session_expired on the login page
+//   unknown   -> timeout, transport error, non-200. Cloud Run needs 10-17 s to
+//                start from cold, so this must not sign members out. The
+//                session is kept while it was valid within the revalidation
+//                interval plus AF_SESSION_UNKNOWN_GRACE_SECONDS (12 hours in
+//                all), then fails closed so a revoked session cannot outlive a
+//                long outage. login.php seeds beta_last_validated at sign-in,
+//                so even a first check after a long idle period has a grace
+//                to fall back on (it used to destroy the session instead).
+// While the backend is down, the check runs at most once per
+// BETA_REVALIDATE_RETRY_BACKOFF_SECONDS instead of on every request.
 const BETA_REVALIDATE_RETRY_BACKOFF_SECONDS = 60;
-const BETA_CACHED_VALIDITY_SECONDS = 300; // 5 minutes — fail-open grace window
 
 if ($betaAuthed) {
+    $revalidateAfter = af_session_setting('COACH_SESSION_REVALIDATE_SECONDS', AF_SESSION_REVALIDATE_SECONDS);
     $lastChecked = (int) ($_SESSION['qa_session_checked_at'] ?? 0);
     $lastFailedAt = (int) ($_SESSION['qa_session_check_failed_at'] ?? 0);
-    $due = (time() - $lastChecked) > BETA_REVALIDATE_INTERVAL_SECONDS;
+    $due = (time() - $lastChecked) > $revalidateAfter;
     $backedOff = $lastFailedAt !== 0 && (time() - $lastFailedAt) < BETA_REVALIDATE_RETRY_BACKOFF_SECONDS;
     if ($due && !$backedOff) {
-        $stillValid = qa_revalidate_beta_session($qaEmail, $qaSessionToken);
-        if ($stillValid === true) {
+        $check = af_coach_check_session($qaEmail, $qaSessionToken);
+        if ($check['status'] === true) {
             $_SESSION['qa_session_checked_at'] = time();
             $_SESSION['beta_last_validated'] = time();
+            $_SESSION['qa_tier'] = af_session_tier($check['data']);
             unset($_SESSION['qa_session_check_failed_at']);
-        } elseif ($stillValid === false) {
+        } elseif ($check['status'] === false) {
             // Backend explicitly said the session is no longer valid
-            // (disabled account, rotated/expired token, de-invited, etc.) —
-            // clear the local session and force a fresh login.
+            // (disabled account, rotated/expired token, de-invited, etc.).
             $_SESSION = [];
             session_destroy();
             $betaAuthed = false;
+            $betaGateError = 'session_expired';
         } else {
-            // $stillValid === null means the backend call itself failed
-            // (network/timeout/non-200). Fail closed (redirect to login)
-            // unless the session was validated within
-            // BETA_CACHED_VALIDITY_SECONDS — a short cached-validity window
-            // that keeps a recently-verified session working through a
-            // transient backend hiccup without letting a revoked session
-            // retain access indefinitely during an extended outage. Record
-            // the failure either way so we back off instead of retrying on
-            // every request while the outage lasts.
             $_SESSION['qa_session_check_failed_at'] = time();
-            $lastValidated = (int) ($_SESSION['beta_last_validated'] ?? 0);
-            if ($lastValidated === 0 || (time() - $lastValidated) >= BETA_CACHED_VALIDITY_SECONDS) {
+            $graceUntil = $revalidateAfter
+                + af_session_setting('COACH_SESSION_UNKNOWN_GRACE', AF_SESSION_UNKNOWN_GRACE_SECONDS);
+            $lastValidated = (int) ($_SESSION['beta_last_validated'] ?? $lastChecked);
+            $sinceValid = $lastValidated === 0 ? PHP_INT_MAX : time() - $lastValidated;
+            if ($sinceValid >= $graceUntil) {
+                error_log('beta-gate: check-session unavailable and the session was last valid '
+                    . ($lastValidated === 0 ? 'never' : $sinceValid . ' s ago') . '; signing out');
                 $_SESSION = [];
                 session_destroy();
                 $betaAuthed = false;
                 $betaGateError = 'session_expired';
+            } else {
+                error_log('beta-gate: WARNING check-session unavailable; keeping the session (last valid '
+                    . $sinceValid . ' s ago, limit ' . $graceUntil . ' s)');
             }
         }
     }
 }
+
+// Tier of the signed-in account ("member" or "free"). Sessions created before
+// the backend reported a tier are members, as they always were.
+$qaTier = $betaAuthed ? (string) ($_SESSION['qa_tier'] ?? 'member') : '';
+$betaIsMember = $betaAuthed && $qaTier === 'member';
 
 // AF_GATE_NO_REDIRECT: defined by callers that want the session state
 // ($betaAuthed) without the unauthenticated redirect — e.g. JSON status

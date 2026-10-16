@@ -50,10 +50,11 @@ handling, and an ops dashboard.
 - **Responsibility:** Session gate for `/beta/*.php`; redirects
   unauthenticated to `/login.php?next=<original path>`
 - **Session:** Identical `session_set_cookie_params` as `login.php`
-- **Revalidation:** Every 6h (`BETA_REVALIDATE_INTERVAL_SECONDS`),
-  calls `qa_revalidate_beta_session()` → backend
-  `/v1/auth/check-session`; fails open on transport error (null);
-  destroys session on explicit rejection (false)
+- **Revalidation:** Every 6h (`AF_SESSION_REVALIDATE_SECONDS`),
+  calls `af_coach_check_session()` → backend
+  `/v1/auth/check-session` (35 s timeout); keeps the session for up to
+  6h more on a timeout or transport error (null); destroys it on explicit
+  rejection (false)
 - **Retry backoff:** 60s (`BETA_REVALIDATE_RETRY_BACKOFF_SECONDS`)
   after a failed check, to avoid per-request timeout storm
 - **Returns:** null (fail open) / true (valid) / false (revoked)

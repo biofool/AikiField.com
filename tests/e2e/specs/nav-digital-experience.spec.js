@@ -8,7 +8,7 @@
 //    preview pages from the user flow (their old URLs 301).
 
 const { test, expect } = require('@playwright/test');
-const { establishSession, TEST_EMAIL } = require('../helpers');
+const { establishSession, TEST_EMAIL, SAME_ORIGIN_HEADERS } = require('../helpers');
 
 const DX_LINKS = [
   ['Digital Experience', '/digital-experience/'],
@@ -202,7 +202,7 @@ test.describe('/members AI chat', () => {
   test('Sign Out really signs out (logout POST is not swallowed by the signed-in redirect)', async ({ request }) => {
     expect((await establishSession(request)).body.ok).toBe(true);
     expect((await request.get('/members', { maxRedirects: 0 })).status()).toBe(200);
-    await request.post('/login.php', { form: { action: 'logout' }, maxRedirects: 0 });
+    await request.post('/login.php', { headers: SAME_ORIGIN_HEADERS, form: { action: 'logout' }, maxRedirects: 0 });
     const after = await request.get('/members', { maxRedirects: 0 });
     expect([302, 303]).toContain(after.status());
     expect(after.headers()['location']).toMatch(/^\/login\.php\?next=/);

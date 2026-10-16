@@ -16,13 +16,16 @@ OR user navigates directly to `/login.php`.
    params as `login.php:128-135`)
 5. `beta-gate.load.php:67-69` reads `qa_email` + `qa_session_token`
 6. If authenticated (`$betaAuthed`):
-   - `beta-gate.load.php:89-115` — periodic revalidation (every 6h)
-     via `qa_revalidate_beta_session()` → backend
-     `/v1/auth/check-session`
-     - `true` → update `qa_session_checked_at`, continue
-     - `false` → destroy session, redirect to login
-     - `null` (transport error) → fail open, set
-       `qa_session_check_failed_at`, continue
+   - periodic revalidation (every 6h) via `af_coach_check_session()`
+     (`includes/coach-session.php`) → backend `/v1/auth/check-session`,
+     35 s timeout (a Cloud Run cold start takes 10-17 s)
+     - `true` → update `qa_session_checked_at`, `beta_last_validated`
+       and `qa_tier`, continue
+     - `false` → destroy session, redirect to login with
+       `?error=session_expired`
+     - `null` (timeout, transport error) → keep the session while it was
+       valid within 6h + 6h grace, set `qa_session_check_failed_at`
+       (60 s backoff), then fail closed (AF #123)
    - Page renders normally
 7. If NOT authenticated:
    - `beta-gate.load.php:117-124` — redirect to
@@ -88,7 +91,7 @@ OR user navigates directly to `/login.php`.
 1. User navigates to another `/beta/*.php` page
 2. `beta-gate.load.php` reads same session cookie
 3. If within 6h of last check → page renders (no backend call)
-4. If past 6h → revalidation via `qa_revalidate_beta_session()`
+4. If past 6h → revalidation via `af_coach_check_session()`
 
 ## Evidence
 
@@ -110,7 +113,7 @@ OR user navigates directly to `/login.php`.
 |---------|----------|----------|
 | Backend unreachable (proxy) | 502 JSON `{detail, backendUrl}` | `coach-proxy.php:218-226` |
 | Backend unreachable (login) | `error_log()`, returns `{ok: false}` | `login.php:198-201` |
-| Backend unreachable (gate) | Fail open (null), set `qa_session_check_failed_at`, 60s backoff | `beta-gate.load.php:106-113` |
+| Backend unreachable (gate) | Keep the session within 6h + 6h grace of the last good check (null), set `qa_session_check_failed_at`, 60s backoff; fail closed after that | `beta-gate.load.php` (AF #123) |
 | Backend rejects session (gate) | Destroy session, redirect to login | `beta-gate.load.php:99-105` |
 | Bad credentials | `coach-login.js` shows error in aria-live region | `coach-login.js` |
 | Rate limited (429) | `coach-login.js` maps to user-safe message via `httpErrorMessage(429)` | DECLARED: PRD |

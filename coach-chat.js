@@ -1610,15 +1610,25 @@
     // --- Logout ---
     logoutBtns.forEach((logoutBtn) => {
         logoutBtn.addEventListener("click", async () => {
-            // Clear server-side session via login.php
+            // Clear server-side session via login.php. When this fails the PHP
+            // session is still alive, and going to login.php would only bounce
+            // the member straight back in, so say so and stay (AF #123).
+            let signedOut = false;
             try {
-                const loginUrl = '/login.php';
-                await fetch(loginUrl, {
+                const resp = await fetch('/login.php', {
                     method: "POST",
                     headers: { "Content-Type": "application/x-www-form-urlencoded" },
                     body: "action=logout",
                 });
-            } catch (_) { /* best-effort */ }
+                signedOut = resp.ok;
+                if (!signedOut) console.error("coach-chat: sign-out failed, HTTP " + resp.status);
+            } catch (err) {
+                console.error("coach-chat: sign-out request failed", err);
+            }
+            if (!signedOut) {
+                showStatusToast("Sign-out did not go through. Please try again.");
+                return;
+            }
             // Clear client-side state
             sessionStorage.removeItem("qa_email");
             sessionStorage.removeItem("qa_session_token");
@@ -2057,8 +2067,9 @@
         return btoa(String.fromCharCode(...new Uint8Array(buf)))
             .replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
     }
-    function showPasskeyStatus(msg) {
-        // Reuse the chat toast without its Undo button.
+    function showStatusToast(msg) {
+        // Reuse the chat toast without its Undo button (passkey registration and
+        // a failed sign-out both use it).
         if (!toastEl || !toastMsg) { console.warn("passkey:", msg); return; }
         toastMsg.textContent = msg;
         if (toastUndoBtn) toastUndoBtn.hidden = true;
@@ -2079,7 +2090,7 @@
 
         passkeyRegBtn.addEventListener("click", async function() {
             passkeyRegBtn.disabled = true;
-            showPasskeyStatus("Follow your browser's prompt to create a passkey…");
+            showStatusToast("Follow your browser's prompt to create a passkey…");
             try {
                 const beginResp = await fetchWithTimeout(API + "/v1/auth/passkey/register/begin", {
                     method: "POST",
@@ -2087,7 +2098,7 @@
                 });
                 const beginData = await beginResp.json();
                 if (!beginData.ok) {
-                    showPasskeyStatus(beginData.error || "Passkey registration could not start.");
+                    showStatusToast(beginData.error || "Passkey registration could not start.");
                     return;
                 }
                 const o = beginData.options;
@@ -2109,7 +2120,7 @@
                 };
                 const cred = await navigator.credentials.create({ publicKey: publicKey });
                 if (!cred) {
-                    showPasskeyStatus("Passkey registration was cancelled.");
+                    showStatusToast("Passkey registration was cancelled.");
                     return;
                 }
                 const credJson = JSON.stringify({
@@ -2132,15 +2143,15 @@
                     }),
                 });
                 const finishData = await finishResp.json();
-                showPasskeyStatus(finishData.ok
+                showStatusToast(finishData.ok
                     ? "Passkey registered. You can sign in with it next time."
                     : (finishData.error || "Passkey registration failed."));
             } catch (err) {
                 if (err && err.name === "NotAllowedError") {
-                    showPasskeyStatus("Passkey registration was cancelled.");
+                    showStatusToast("Passkey registration was cancelled.");
                 } else {
                     console.warn("passkey registration failed:", err);
-                    showPasskeyStatus("Passkey registration failed. Please try again.");
+                    showStatusToast("Passkey registration failed. Please try again.");
                 }
             } finally {
                 passkeyRegBtn.disabled = false;

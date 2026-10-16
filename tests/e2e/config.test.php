@@ -24,3 +24,11 @@ define('COACH_TIMEOUT', 10);
 
 define('TURNSTILE_SITE_KEY', '');    // no captcha widget in tests
 define('COACH_LOGIN_REDIRECT', '/beta/');
+
+// Session timings, shortened so tests/e2e/specs/session-reliability.spec.js
+// runs in seconds (production: 6 h revalidation, 35 s check timeout, 6 h grace;
+// see includes/coach-session.php). 2 + 5 = a session counts as stale 7 s after
+// its last successful check when the backend cannot be reached.
+define('COACH_SESSION_REVALIDATE_SECONDS', 2);
+define('COACH_SESSION_CHECK_TIMEOUT', 2);
+define('COACH_SESSION_UNKNOWN_GRACE', 5);

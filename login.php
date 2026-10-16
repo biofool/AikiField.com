@@ -19,7 +19,7 @@
  * contract as the former projects.php integration (session keys: qa_email,
  * qa_session_token, qa_target_env, qa_is_admin). includes/beta-gate.load.php
  * reads the same session, so logging in here unlocks all /beta/ pages for
- * the cookie lifetime (7 days).
+ * the cookie lifetime (7 days, AF_SESSION_LIFETIME_SECONDS).
  *
  * Supports a ?next= query parameter (URL-encoded path) for post-login
  * redirect — beta-gate.load.php passes the originally-requested path so the
@@ -42,6 +42,7 @@
  */
 
 require __DIR__ . '/includes/coach-config.load.php';
+require_once __DIR__ . '/includes/coach-session.php';
 
 /**
  * Open-redirect guard for AikiField ?next= redirects.
@@ -150,22 +151,10 @@ function af_is_same_origin_post(): bool
 }
 
 // --- Start PHP session with secure cookie settings ---
-// Identical params to the former projects.php handler and to
-// includes/beta-gate.load.php — the session cookie must be valid site-wide
-// so /beta/ pages read it.
-if (session_status() === PHP_SESSION_NONE) {
-    $secure = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
-        || (($_SERVER['SERVER_PORT'] ?? '') == 443);
-    session_set_cookie_params([
-        'lifetime' => 86400 * 7,  // 7 days
-        'path'     => '/',
-        'domain'   => '',
-        'secure'   => $secure,
-        'httponly' => true,
-        'samesite' => 'Lax',
-    ]);
-    session_start();
-}
+// Identical params to includes/beta-gate.load.php (both call
+// af_session_start()) — the session cookie must be valid site-wide so /beta/
+// pages read it, and the session file must live as long as the cookie.
+af_session_start();
 
 $qaEmail        = $_SESSION['qa_email'] ?? null;
 $qaSessionToken = $_SESSION['qa_session_token'] ?? null;
@@ -208,46 +197,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'backe
     $postToken = is_string($_POST['sessionToken'] ?? null) ? trim($_POST['sessionToken']) : '';
     $qaSessionEstablished = false;
     if ($postEmail !== '' && $postToken !== '') {
-        $verifyUrl = rtrim(COACH_BACKEND_URL, '/') . '/v1/auth/check-session';
-        $payload = json_encode(['email' => $postEmail, 'sessionToken' => $postToken]);
-        $ch = curl_init($verifyUrl);
-        $reqHeaders = ['Content-Type: application/json'];
-        if (defined('COACH_PROXY_SECRET') && COACH_PROXY_SECRET !== '') {
-            $reqHeaders[] = 'X-Proxy-Secret: ' . COACH_PROXY_SECRET;
+        $check = af_coach_check_session($postEmail, $postToken);
+        if ($check['status'] === true) {
+            $data = $check['data'];
+            session_regenerate_id(true);
+            $_SESSION['qa_email']         = $data['email'] ?? $postEmail;
+            $_SESSION['qa_session_token'] = $postToken;
+            $_SESSION['qa_target_env']    = $data['targetEnvironment'] ?? 'both';
+            $_SESSION['qa_is_admin']      = $data['admin'] ?? false;
+            $_SESSION['qa_tier']          = af_session_tier($data);
+            // Timestamp this check-session call so includes/beta-gate.load.php
+            // knows not to re-check again immediately; it re-verifies on its
+            // own cadence from this point rather than trusting the session
+            // for the full 7-day cookie lifetime. beta_last_validated is the
+            // gate's grace anchor when the backend is slow or down at the next
+            // check (AF #123); without it the first check after a long idle
+            // period signed the member out.
+            $_SESSION['qa_session_checked_at'] = time();
+            $_SESSION['beta_last_validated']   = time();
+            $qaSessionEstablished = true;
+        } elseif ($check['status'] === false) {
+            error_log('login.php: check-session returned ok=false for ' . $postEmail);
         }
-        curl_setopt_array($ch, [
-            CURLOPT_POST           => true,
-            CURLOPT_POSTFIELDS     => $payload,
-            CURLOPT_HTTPHEADER     => $reqHeaders,
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_TIMEOUT        => 10,
-            CURLOPT_SSL_VERIFYPEER => COACH_VERIFY_TLS,
-            CURLOPT_SSL_VERIFYHOST => COACH_VERIFY_TLS ? 2 : 0,
-        ]);
-        $resp = curl_exec($ch);
-        $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
-        if ($resp !== false && $code === 200) {
-            $data = json_decode($resp, true);
-            if ($data['ok'] ?? false) {
-                session_regenerate_id(true);
-                $_SESSION['qa_email']         = $data['email'] ?? $postEmail;
-                $_SESSION['qa_session_token'] = $postToken;
-                $_SESSION['qa_target_env']    = $data['targetEnvironment'] ?? 'both';
-                $_SESSION['qa_is_admin']      = $data['admin'] ?? false;
-                // Timestamp this check-session call so includes/beta-gate.load.php
-                // knows not to re-check again immediately; it re-verifies on its
-                // own cadence from this point rather than trusting the session
-                // for the full 7-day cookie lifetime.
-                $_SESSION['qa_session_checked_at'] = time();
-                $qaSessionEstablished = true;
-            } else {
-                error_log('login.php: check-session returned ok=false for ' . $postEmail);
-            }
-        } else {
-            error_log('login.php: check-session failed http=' . (int)$code
-                . ' err=' . ($resp === false ? 'transport' : 'status'));
-        }
+        // status === null (could not tell) is logged by af_coach_check_session().
     }
     session_write_close();
     header('Content-Type: application/json');
@@ -258,6 +230,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'backe
 
 // --- Handle logout ---
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'logout') {
+    if (!af_is_same_origin_post()) {
+        // Logout now revokes the backend token, so a foreign page must not be
+        // able to trigger it (same guard as backend-login).
+        error_log('login.php: logout refused (not same-origin) origin='
+            . substr((string) preg_replace('/[^\x20-\x7e]/', '?', (string) ($_SERVER['HTTP_ORIGIN'] ?? '')), 0, 100)
+            . ' sec-fetch-site='
+            . substr((string) preg_replace('/[^\x20-\x7e]/', '?', (string) ($_SERVER['HTTP_SEC_FETCH_SITE'] ?? '')), 0, 100));
+        session_abort();
+        header_remove('Set-Cookie');
+        http_response_code(403);
+        header('Content-Type: text/plain; charset=utf-8');
+        echo 'Cross-site sign-out refused.';
+        exit;
+    }
+    // End the session at the backend too. Without this the token (embedded in
+    // /members for the chat) stayed valid for its whole lifetime after
+    // "Sign out". A failure is logged by af_coach_logout(); the PHP session
+    // ends either way.
+    if (!empty($_SESSION['qa_email']) && !empty($_SESSION['qa_session_token'])) {
+        af_coach_logout((string) $_SESSION['qa_email'], (string) $_SESSION['qa_session_token']);
+    }
     $_SESSION = [];
     if (ini_get('session.use_cookies')) {
         $p = session_get_cookie_params();
