@@ -17,6 +17,8 @@
  *   .htaccess  /games/exercises/index.html → /games/exercises/  (301)
  *   .htaccess  /games/exercises/:slug    → exercises/index.php (internal, issue #71)
  *   .htaccess  /members                  → members.php
+ *   .htaccess  any directory whose own .htaccess says `Require all denied`
+ *              (data/exercises/, data/private/, data/ask/, beta/data/) → 403
  *
  * Everything else returns false, which lets the built-in server serve the
  * file (or execute the .php page) with the correct SCRIPT_NAME — login.php
@@ -39,6 +41,60 @@ if (!is_string($path) || $path === '') {
 $path = rawurldecode($path);
 if (str_contains($path, '..')) {
     http_response_code(400);
+    exit;
+}
+
+// ── Directories the real site denies (`Require all denied`) ────────────────
+// Apache applies a directory's .htaccess to everything beneath it, including
+// files that do not exist. php -S ignores .htaccess, so read the REAL files:
+// if the deny line is removed from one, this router stops denying it too and
+// the specs that expect a 403 fail.
+
+/** True when the .htaccess at $file has an active top-level `Require all denied`. */
+function af_router_htaccess_denies(string $file): bool
+{
+    $lines = file($file, FILE_IGNORE_NEW_LINES);
+    if ($lines === false) {
+        error_log('e2e router: cannot read ' . $file);
+        return false;
+    }
+    $depth = 0; // inside <IfModule>, <FilesMatch>, ... a deny is conditional: ignore it
+    foreach ($lines as $line) {
+        $line = trim($line);
+        if ($line === '' || $line[0] === '#') {
+            continue;
+        }
+        if (str_starts_with($line, '</')) {
+            $depth = max(0, $depth - 1);
+        } elseif ($line[0] === '<') {
+            $depth++;
+        } elseif ($depth === 0 && preg_match('/^Require\s+all\s+denied$/i', $line) === 1) {
+            return true;
+        }
+    }
+    return false;
+}
+
+/** True when $path (URL path) sits in or below a directory that denies all. */
+function af_router_denied(string $root, string $path): bool
+{
+    $dir = $root;
+    foreach (array_filter(explode('/', $path), 'strlen') as $segment) {
+        $dir .= '/' . $segment;
+        if (!is_dir($dir)) {
+            break; // the rest is a file name or a path that does not exist
+        }
+        if (is_file($dir . '/.htaccess') && af_router_htaccess_denies($dir . '/.htaccess')) {
+            return true;
+        }
+    }
+    return false;
+}
+
+if (af_router_denied($root, $path)) {
+    http_response_code(403);
+    header('Content-Type: text/plain; charset=utf-8');
+    echo "Forbidden\n";
     exit;
 }
 

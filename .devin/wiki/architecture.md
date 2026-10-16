@@ -110,9 +110,26 @@ page layout, hero, or left column — keep it hidden until form submission.
   `games/results.php` → AI Chat backend `POST /v1/game-results/sync`
   (Firestore). Deploy the backend first; until then sync falls back to
   browser-only storage.
+- **Twenty Practices data (issue #114, 2026-10-16):** the practice text lives
+  ONCE, in `data/exercises/practices.json`. `data/exercises/` has its own
+  `.htaccess` (`Require all denied`), so no file in it is served; the same
+  directory holds `lightness.json`. `games/exercises/index.php` reads the file
+  on the server through `includes/exercises-data.php` and sends each visitor
+  only what they may see: a signed-in member (passed
+  `includes/beta-gate.load.php`) gets all 15 practices; an anonymous `?src=li`
+  visitor gets the practices flagged `"free": true` (1, 6, 12) in full and the
+  other 12 as stubs (`id`, `title`, `part` only, built from the allowlist
+  `AF_EXERCISES_STUB_KEYS`). The member copy is sent `Cache-Control: private,
+  no-store`. `games/exercises/auth-state.php` is now only used by a preview
+  page to notice a later sign-in (it then offers a reload). The old
+  `games/exercises/data/` directory and its three dead copies are gone. Tests:
+  `tests/unit/test-exercises-data.php`, `tests/unit/test_exercises_data.py`
+  (reads the real `.htaccess`), `tests/e2e/specs/exercises-preview.spec.js`
+  (every route that can serve practice text); `tests/e2e/router.php` reads the
+  real `.htaccess` files so the e2e server denies what Apache denies.
 - **Twenty Practices post-log lines (issue #110):** after "KeepDoingIt — Log
   Session" the player shows one short, unattributed line from
-  `games/exercises/data/lightness.json` (100 lines, each with `practices`,
+  `data/exercises/lightness.json` (100 lines, each with `practices`,
   `kind`, `themes`, `approved`). `includes/lightness.php` loads and validates
   the file server-side and logs any problem; a missing or broken file just
   means no lines. The nth logged session of a practice shows the nth line of

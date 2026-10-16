@@ -1,0 +1,144 @@
+#!/usr/bin/env python3
+"""Data and deployment rules for the Twenty Practices data (AikiField issue #114).
+
+The practice text lives in ONE file, data/exercises/practices.json, in a
+directory the web server must deny. These tests check the file itself, that no
+other copy of the text is left, and that the directory's REAL .htaccess still
+denies every request. They read the real .htaccess on purpose: a test that only
+checked the e2e router could pass while production allowed the file.
+
+No network. Run:
+
+    python3 tests/unit/test_exercises_data.py
+"""
+
+from __future__ import annotations
+
+import json
+import re
+import unittest
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[2]
+PRIVATE_DIR = ROOT / "data" / "exercises"
+PRACTICES = PRIVATE_DIR / "practices.json"
+HTACCESS = PRIVATE_DIR / ".htaccess"
+FREE_IDS = {1, 6, 12}
+PART_RE = re.compile(r"^Part (I|II|III|IV) — \S")
+
+
+def _active_lines(text: str) -> list[str]:
+    """The lines of an .htaccess that Apache acts on (no blanks, no comments)."""
+    return [ln.strip() for ln in text.splitlines() if ln.strip() and not ln.strip().startswith("#")]
+
+
+class PracticeDataTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.doc = json.loads(PRACTICES.read_text(encoding="utf-8"))
+        cls.practices = cls.doc["practices"]
+
+    def test_header(self):
+        for key in ("title", "book_title", "author", "note"):
+            self.assertTrue(isinstance(self.doc[key], str) and self.doc[key].strip(), key)
+        self.assertIsInstance(self.doc["version"], int)
+
+    def test_fifteen_practices_with_ids_one_to_fifteen(self):
+        self.assertEqual([p["id"] for p in self.practices], list(range(1, 16)))
+
+    def test_practice_shape(self):
+        for p in self.practices:
+            with self.subTest(id=p["id"]):
+                for key in ("title", "meta", "body", "part"):
+                    self.assertTrue(isinstance(p[key], str) and p[key].strip(), key)
+                self.assertTrue(isinstance(p["complexity"], int) and p["complexity"] >= 1)
+                self.assertEqual(p["type"], "exercise")
+                self.assertRegex(p["part"], PART_RE)
+
+    def test_titles_are_unique(self):
+        titles = [p["title"] for p in self.practices]
+        self.assertEqual(len(titles), len(set(titles)))
+
+    def test_free_flag_marks_practices_1_6_and_12(self):
+        free = {p["id"] for p in self.practices if "free" in p}
+        self.assertEqual(free, FREE_IDS)
+        for p in self.practices:
+            if "free" in p:
+                self.assertIs(p["free"], True, f"practice {p['id']}: free is true or absent")
+
+
+class OneCopyTests(unittest.TestCase):
+    """The practice text exists once, in the private directory."""
+
+    def test_the_three_dead_copies_are_gone(self):
+        data_dir = ROOT / "games" / "exercises" / "data"
+        self.assertFalse(data_dir.exists(), "games/exercises/data/ must not exist")
+        for name in (
+            "collected_exercises_app_data.json",
+            "collected_exercises_16_app.jsonl",
+            "collected_exercises_full_markdown.jsonl",
+        ):
+            self.assertFalse((data_dir / name).exists(), name)
+
+    def test_lightness_data_moved_to_the_private_directory(self):
+        self.assertTrue((PRIVATE_DIR / "lightness.json").is_file())
+        self.assertFalse((ROOT / "games" / "exercises" / "data" / "lightness.json").exists())
+
+    def test_no_other_file_under_games_carries_a_practice_body(self):
+        bodies = [p["body"] for p in json.loads(PRACTICES.read_text(encoding="utf-8"))["practices"]]
+        # A sentence-sized probe from each body; shorter ones would match unrelated copy.
+        probes = []
+        for body in bodies:
+            runs = re.findall(r"[A-Za-z0-9 ,.']{20,}", body)
+            self.assertTrue(runs, "no probe-sized run of plain characters in a body")
+            probes.append(max(runs, key=len)[:60])
+        self.assertEqual(len(probes), 15)
+        offenders = []
+        for path in sorted((ROOT / "games").rglob("*")):
+            if not path.is_file() or path.suffix.lower() in {".webp", ".png", ".jpg", ".jpeg", ".gif"}:
+                continue
+            try:
+                text = path.read_text(encoding="utf-8")
+            except UnicodeDecodeError:
+                continue
+            for probe in probes:
+                if probe in text:
+                    offenders.append((str(path.relative_to(ROOT)), probe))
+        self.assertEqual(offenders, [], "practice text found outside data/exercises/")
+
+
+class PrivateDirectoryTests(unittest.TestCase):
+    """The REAL .htaccess is what production reads."""
+
+    def test_htaccess_exists_and_denies_everything(self):
+        self.assertTrue(HTACCESS.is_file(), "data/exercises/.htaccess is missing")
+        active = _active_lines(HTACCESS.read_text(encoding="utf-8"))
+        self.assertIn("Require all denied", active)
+
+    def test_nothing_in_the_htaccess_grants_access_again(self):
+        active = " ".join(_active_lines(HTACCESS.read_text(encoding="utf-8"))).lower()
+        for grant in ("require all granted", "allow from", "satisfy any", "require ip", "require valid-user"):
+            self.assertNotIn(grant, active)
+
+    def test_no_php_or_html_file_sits_in_the_private_directory(self):
+        # Apache would execute or serve them if the deny line were ever lost.
+        for path in PRIVATE_DIR.rglob("*"):
+            if path.is_file():
+                self.assertIn(path.suffix.lower(), {".json", ""}, str(path))
+
+    def test_the_page_reads_only_from_the_private_directory(self):
+        page = (ROOT / "games" / "exercises" / "index.php").read_text(encoding="utf-8")
+        self.assertIn("/data/exercises/practices.json", page)
+        self.assertIn("/data/exercises/lightness.json", page)
+        self.assertNotIn("games/exercises/data", page)
+
+    def test_the_router_reads_the_real_htaccess_files(self):
+        # tests/e2e/router.php must derive its 403s from the real files, so the
+        # e2e specs cannot pass while the production rule is missing.
+        router = (ROOT / "tests" / "e2e" / "router.php").read_text(encoding="utf-8")
+        self.assertIn(".htaccess", router)
+        self.assertIn("Require\\s+all\\s+denied", router)
+
+
+if __name__ == "__main__":
+    unittest.main(verbosity=2)

@@ -2,10 +2,11 @@
 /**
  * Post-log "lightness" lines for Twenty Practices (issue #110).
  *
- * games/exercises/data/lightness.json holds short, kind lines. The page shows
- * one after a member logs a session. The page must keep working when the file
- * is missing or broken, so every failure is logged and an empty list comes
- * back. Nothing here ever throws.
+ * data/exercises/lightness.json holds short, kind lines (that directory is
+ * denied to the web, issue #114). The page shows one after a member logs a
+ * session. The page must keep working when the file is missing or broken, so
+ * every failure is logged and an empty list comes back. Nothing here ever
+ * throws.
  *
  * Tests: tests/unit/test-lightness-loader.php (loader),
  *        tests/unit/test_lightness_data.py (data rules).

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Data-rule tests for games/exercises/data/lightness.json (AikiField issue #110).
+"""Data-rule tests for data/exercises/lightness.json (AikiField issues #110, #114).
 
 The file holds the short, kind lines the Twenty Practices page shows after a
 member logs a session. These tests enforce the rules from the issue: 100 unique
@@ -18,8 +18,8 @@ import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-DATA = ROOT / "games" / "exercises" / "data" / "lightness.json"
-EXERCISES = ROOT / "games" / "exercises" / "data" / "collected_exercises_app_data.json"
+DATA = ROOT / "data" / "exercises" / "lightness.json"
+PRACTICES = ROOT / "data" / "exercises" / "practices.json"
 RULES = Path(__file__).resolve().parent / "data" / "lightness_rules.json"
 
 ITEM_KEYS = {"id", "text", "kind", "practices", "themes", "approved"}
@@ -34,8 +34,8 @@ class LightnessDataTests(unittest.TestCase):
     def setUpClass(cls):
         cls.data = json.loads(DATA.read_text(encoding="utf-8"))
         cls.rules = json.loads(RULES.read_text(encoding="utf-8"))
-        exercises = json.loads(EXERCISES.read_text(encoding="utf-8"))["exercises"]
-        cls.practice_ids = {e["id"] for e in exercises}
+        practices = json.loads(PRACTICES.read_text(encoding="utf-8"))["practices"]
+        cls.practice_ids = {p["id"] for p in practices}
         cls.items = cls.data["items"]
 
     def test_header(self):

@@ -140,7 +140,7 @@ lt_check('script literal: missing file gives []', '[]', af_lightness_json('/none
 lt_log();
 
 // --- the real data file -----------------------------------------------------
-$real = af_lightness_items(__DIR__ . '/../../games/exercises/data/lightness.json');
+$real = af_lightness_items(__DIR__ . '/../../data/exercises/lightness.json');
 lt_check('real file: 100 items load', 100, count($real));
 lt_check('real file: ids are unique', 100, count(array_unique(array_column($real, 'id'))));
 lt_check('real file: nothing logged', '', lt_log());

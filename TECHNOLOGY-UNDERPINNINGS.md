@@ -116,10 +116,13 @@ See `docs/coach-auth-prd.md` for the shared-flow contract with
   experiences: Ride the Lucky Wave, Twenty Practices, and the Unified Field
   Chat. The previews explain the experience and link to the gated paths.
 - **`/games/`** serves the public game hub at `games/index.html` and the
-  Twenty Practices exercise app at `games/exercises/index.html`. The app loads
-  exercise data from `games/exercises/data/*.json` and `*.jsonl`, stores
-  progress in `localStorage`, and supports `?exercise=` and `?studio_id=` query
-  parameters plus slug routing via `games/exercises/.htaccess`.
+  Twenty Practices exercise app at `games/exercises/index.php`. The server
+  reads the practice text from `data/exercises/practices.json` (a directory
+  the web server denies, issue #114) and sends a signed-in member every
+  practice, and an anonymous `?src=li` visitor only the practices marked free.
+  The app stores progress in `localStorage`, and supports `?exercise=` and
+  `?studio_id=` query parameters plus slug routing via
+  `games/exercises/.htaccess`.
 
 ## Assessment tools
 

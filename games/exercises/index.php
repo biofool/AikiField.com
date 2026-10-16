@@ -5,11 +5,11 @@
  * shared coaching session gate, same as /beta/ and /members.
  *
  * Exception (issue #101 — LinkedIn taste-then-ask): anonymous visitors who
- * arrive with ?src=li skip the gate and keep the three free practices the
- * page's JS already exposes to signed-out users. Signed-in visitors (session
- * cookie present) always go through the gate so their session revalidates.
- * No session is started for the free preview, so the page stays cookie-free
- * for that traffic.
+ * arrive with ?src=li skip the gate and get a short preview: the practices
+ * marked "free" in data/exercises/practices.json, in full. Signed-in visitors
+ * (session cookie present) always go through the gate so their session
+ * revalidates, and get every practice. No session is started for the free
+ * preview, so the page stays cookie-free for that traffic.
  */
 $afFreePreview = (($_GET['src'] ?? '') === 'li') && empty($_COOKIE[session_name()]);
 if (!$afFreePreview) {
@@ -18,10 +18,32 @@ if (!$afFreePreview) {
     error_log('exercises: li-landing free preview ua=' . ($_SERVER['HTTP_USER_AGENT'] ?? '-'));
 }
 
+// Issue #114: the practice text is read here, on the server, from a directory
+// the web server denies. A member passed the gate above (it redirects and exits
+// otherwise), so $betaAuthed is true; the free preview never ran the gate, so
+// that visitor is anonymous. Anonymous visitors get the free practices in full
+// and every other practice as a title-only stub: the rest never leaves the
+// server. If the gate ever stops exiting, an unauthenticated visitor still
+// gets stubs, because membership needs $betaAuthed as well.
+require_once dirname(__DIR__, 2) . '/includes/exercises-data.php';
+$afMember = !$afFreePreview && !empty($betaAuthed);
+$afExercises = af_exercises_visible(
+    af_exercises_load(dirname(__DIR__, 2) . '/data/exercises/practices.json'),
+    $afMember
+);
+$afExercisesJson = af_exercises_json($afExercises);
+if ($afExercises === []) {
+    http_response_code(503);
+}
+if ($afMember) {
+    // This page differs by visitor: a shared cache must never keep the member copy.
+    header('Cache-Control: private, no-store');
+}
+
 // Issue #110: short kind lines shown after a logged session. A missing or
 // broken data file is logged and the page works without them.
 require dirname(__DIR__, 2) . '/includes/lightness.php';
-$afLightnessJson = af_lightness_json(__DIR__ . '/data/lightness.json');
+$afLightnessJson = af_lightness_json(dirname(__DIR__, 2) . '/data/exercises/lightness.json');
 ?>
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
@@ -151,7 +173,11 @@ studio_id personalizes the banner; exercise auto-opens the practice.
 </div>
 </main>
 <script>
-const exercises = [{"id": 1, "title": "DropBackSinkOpen (DBSO)", "meta": "Solo \u00b7 30 sec, repeated through the day", "body": "Whenever you notice tension, a fixed idea, or a reactive moment: drop back, sink, open. If you re-tighten, release again \u2014 in ever-finer increments, anywhere, any time.\n\nThis is the foundation everything else rests on. 'Calm the spirit. Return to the source.' Once in the morning is not enough \u2014 KeepDoingIt.", "complexity": 4, "type": "exercise", "part": "Part IV \u2014 dialogue & relationship"}, {"id": 2, "title": "listen to the impulse to breathe", "meta": "Solo \u00b7 2\u20134 min \u00b7 after DBSO \u00b7 the reverse movement of the five-stage breath", "body": "after dropping back, sinking, and opening, don't take the breath \u2014 wait for it. feel the impulse to breathe arise on its own, and let it breathe you.\n\nrather than running the breath, feel life activating it \u2014 the universal pulse breathing you. this is the reverse of Breathing the Whole System.", "complexity": 1, "type": "exercise", "part": "Part I \u2014 centering & grounding"}, {"id": 3, "title": "Feel / Locate / Align / Unify (Kamae)", "meta": "Solo \u00b7 3\u20135 min \u00b7 Create A Beautiful World in 3 Aikido Lessons", "body": "Feel and locate the central core of your being. Feel the 'glow of life' that is you. Apply DBSO in ever-finer alignment.\n\nNotice that each small shift in the location of attention creates a different experiential world.", "complexity": 1, "type": "exercise", "part": "Part I \u2014 centering & grounding"}, {"id": 4, "title": "Tense & Release Body Scan (Align, Allow, Appreciate)", "meta": "Solo \u00b7 5\u201315 min \u00b7 CABW 3 Aikido Lessons", "body": "Gently tense the whole body, then relax and feel. Re-tense the muscles progressively closer to the spine, head to hips, releasing each time.\n\nAs you relax, feel into the central core of being \u2014 align with gravity, allow the tension to release, appreciate the flow. How long? As long as you're enjoying it.", "complexity": 1, "type": "exercise", "part": "Part I \u2014 centering & grounding"}, {"id": 5, "title": "Center of the Central Core Relaxation", "meta": "Solo \u00b7 10\u201320 min \u00b7 CABW 3 Aikido Lessons", "body": "Move sequentially through the body's regions \u2014 mind, brain, forehead, eyes, jaw, throat, shoulders, abdomen, hips, legs, feet \u2014 sinking open into the 'gravity shadow' at each.\n\nNo fixed pace.", "complexity": 1, "type": "exercise", "part": "Part I \u2014 centering & grounding"}, {"id": 6, "title": "Wrist Grab Grounding", "meta": "Partner \u00b7 5 min \u00b7 Adventures in Aiki-land (R. Moon, 2010)", "body": "A partner grabs your extended wrist and gently pushes, then pulls. Resisting the push lets them pull you easily, resisting the pull lets them push you; relaxing and 'feeling where you are' produces an effortless presence that is harder to move.\n\nAt first 50/50 - resist less, ground more. After a while the resistance becomes hard to see from outside but you feel it inside. Eventually 50% \u2192 60% ground.\n\nDBSO KeepDoingIt. Real or invisible partner.", "complexity": 1, "type": "exercise", "part": "Part I \u2014 centering & grounding"}, {"id": 7, "title": "Lesson II \u2014 Breathe Universal Harmony (Aiki Kokyu)", "meta": "Solo \u00b7 3\u20135 min \u00b7 Create A Beautiful World in 3 Aikido Lessons", "body": "Breathe in harmony so each cell 'enjoys life's glow.'", "complexity": 2, "type": "exercise", "part": "Part II \u2014 breath & energy"}, {"id": 8, "title": "Breathing the Whole System (Five-Stage Breath)", "meta": "Solo \u00b7 5\u201310 min \u00b7 CABW 3 Aikido Lessons", "body": "Feel into each phase in turn:\n\nexternal breathing, air moving in and out of the lungs;\n\ntransfer, oxygen into the bloodstream;\n\ntransport, the blood carrying it to every cell;\n\nabsorption, each cell taking it in;\n\nlife, each cell burning oxygen into the glow of aliveness.\n\nThen reverse the imagery. Feel life activating the breath \u2014 the universal pulse breathing you. Listen to the impulse to breathe.", "complexity": 2, "type": "exercise", "part": "Part II \u2014 breath & energy"}, {"id": 9, "title": "The O2 Continuum", "meta": "Solo \u00b7 3\u20135 min \u00b7 CABW 3 Aikido Lessons", "body": "Feel where you are on the O2 continuum \u2014 from O2 debt, through perfect saturation, to reserve. Locate it consciously; sense which cells feel in balance and which don't.\n\nThen breathe exactly the way you want for two or three breaths, and feel your location shift. It usually takes fewer than three; it never takes seven. First your own oxygen mask on first\u2014 then you have the reserves\n\n-- create a beautiful world.", "complexity": 2, "type": "exercise", "part": "Part II \u2014 breath & energy"}, {"id": 10, "title": "Ocean Breathing", "meta": "Solo \u00b7 2\u20134 min \u00b7 Experiential Breathing Explorations", "body": "Remember, or imagine, the first deep breath of ocean air \u2014 every cell lights up, the glow of life increases, and a natural desire for another breath follows. Breathe at the ocean even when you can't be there; hold the feeling.", "complexity": 2, "type": "exercise", "part": "Part II \u2014 breath & energy"}, {"id": 11, "title": "Infant Breathing", "meta": "Solo \u00b7 3\u20135 min \u00b7 Experiential Breathing Explorations", "body": "Imagine breathing as an infant \u2014 oxygen equalized after birth, simply lying there breathing and enjoying the glow of life, no thought, no thing. A return to the purity of being before socialization.", "complexity": 2, "type": "exercise", "part": "Part II \u2014 breath & energy"}, {"id": 12, "title": "Ten to the Tenth \u2014 State Shifting Scale", "meta": "Solo (can be coached) \u00b7 10\u201330 min to learn, seconds once trained \u00b7 Ten to the Tenth", "body": "Rate your current state 1\u201310. Notice why, by felt sense. 'Square away'your posture, breath, and attention until the number plateaus higher, then 'call up' the next number and embody it, on up to 10.\n\n*Down the Scale (Contrast Step)*\n\n*Solo \u00b7 1\u20132 min \u00b7 Ten to the Tenth*\n\nAfter climbing to  4, briefly imagine and feel dropping a number back to 3 then go to 6 then drop back to 4 \u2014 6 to 5 to 4 \u2014 noticing the self-talk and physical contraction that come with it.\n\n*Getting to 10*\n\n7 should be feeling very capable.  10 will be your best operating place, entering flow state.\n\n8 Remember a day when everything went fine, even the hard stuff\n\n9 Remember one of those really great days that come back to you, good times with family, a great day at work\n\n10 Think back to the best day you can remember.  Really soak in it move, breathe.  Think again when did you enter flow state and were able to be there for longer than made sense.  You were laughing joyously as the unsolvable situation just melted away\n\n*Quantum Shift*\n\nRlabel 10 as a new '1' and climb again through octaves. Once trained, the whole move compresses to a near-instant cue.", "complexity": 3, "type": "exercise", "part": "Part III \u2014 attention & feeling"}, {"id": 13, "title": "Enjoy / Joy / Appreciate", "meta": "Solo \u00b7 3\u20135 min \u00b7 CABW 3 Aikido Lessons", "body": "Intentionally enjoy yourself \u2014 'enjoy yourSELF enjoying joy.' Bring attention to something you love, and treat the enjoyment as guidance: 'feeling better' signals a useful direction. Close with DBSO.", "complexity": 3, "type": "exercise", "part": "Part III \u2014 attention & feeling"}, {"id": 14, "title": "Shoulder Slap \u2014 Sensing Finer Dimensions", "meta": "Partner \u00b7 5\u201315 min \u00b7 Aikido class teaching (R. Moon)", "body": "A re-attacking slap on the shoulder in place of a shomen strike. Stance is flexible \u2014 natural stance (shizentai), a left- or right-foot lead all work; natural stance paired with the finger-snap is the simplest way in, and hanmi is fine in a dojo. Partners stand one step apart and agree on force: relaxed enough to sting a little, reality not fear, never to hurt.\n\n*Attacker***.** Don't telegraph. Go from nothing to the hit as fast as you can \u2014 a real attack carries a burst of ki, and a slow or sloppy approach gives a different, weaker feel. Vary the timing; never count \u201cone, two, three, slap.\u201d\n\n*Receiver***.** Start one step away. For the first few reps, snap your fingers the instant you sense the attack is about to come, then check \u2014 early, late, close? Come to center and face the attacker so you feel their attention. Give the most honest feedback you canProgress from one step to two.", "complexity": 3, "type": "exercise", "part": "Part III \u2014 attention & feeling"}, {"id": 15, "title": "Application Visualization", "meta": "Solo \u00b7 5\u201310 min \u00b7 Ten to the Tenth", "body": "Visualize how you'd normally handle an upcoming situation. Run Ten to the Tenth, climb several octaves, and re-visualize the situation from the new state. Repeat until a satisfying strategy emerges, then push past it for a quantum shift.", "complexity": 4, "type": "exercise", "part": "Part IV \u2014 dialogue & relationship"}];
+// Issue #114: sent by the server (includes/exercises-data.php). A member gets every
+// practice; an anonymous visitor gets the free ones in full and the rest as
+// {id,title,part} stubs. The text of a locked practice never reaches this page.
+const AF_MEMBER = <?= $afMember ? 'true' : 'false' ?>;
+const exercises = <?= $afExercisesJson ?>;
 const interludes = [{"title": "INTERLUDE \u2014 OPENING", "text": "This second has passed\nas has this one\nThe moment is so fleeting\nyet\nthe now is eternal\n\nRichard Moon"}, {"title": "INTERLUDE \u2014 AFTER PART I", "text": "Feel\ninto the center\nof your central core\neven by drops\nin ever finer adjustments\n\nRichard Moon"}, {"title": "INTERLUDE \u2014 AFTER PART II", "text": "Listen to the impulse to breathe\nfollow the guidance\nbreathe exactly\nlike you want to\n\nRichard Moon"}, {"title": "INTERLUDE \u2014 AFTER PART III", "text": "I don't really study Aikido as a Martial art,\nan art in the realm of Mars, the god of war.\nI study Aikido as a Venusial art,\nan art in the realm of Venus, the goddess of love.\n\nRichard Moon"}, {"title": "INTERLUDE \u2014 CLOSING", "text": "joy is the greatest treasure\ndon't get mad\ndon't even get even\ncreate a beautiful world\n\nRichard Moon\n\n\u201cLove gives birth to harmony, harmony brings forth joy, and joy is the greatest treasure.\u201d \u2014 Morihei Ueshiba, O-Sensei."}];
 const studios = [
 {name:"City Aikido", region:"SF Bay", cat:"Aikido dojo", about:"Home dojo of Robert Nadeau Shihan, Richard Moon's teacher since 1971. Friends of City Aikido and O-Sensei's teachings."},
@@ -177,9 +203,15 @@ const studios = [
 ];
 let currentId = 6;
 let groundPercent=50, timeLeft=300, isPlaying=false, timer=null;
-const FREE_IDS=[1,6,12];
-let freeIds=new Set(FREE_IDS);
 let currentPart='all';
+// Members have every practice. Everyone else has the ones the data marks free;
+// the rest arrived as stubs (id, title, part) with no text to show.
+function isUnlocked(ex){ return AF_MEMBER || ex.free===true; }
+// The page opens on a practice the visitor can read.
+if(!exercises.some(e=>e.id===currentId&&isUnlocked(e))){
+ const first=exercises.find(isUnlocked);
+ if(first) currentId=first.id;
+}
 // KeepDoingIt progress persists in localStorage.
 let completed=new Set(JSON.parse(localStorage.getItem('moon_completed')||'[1]'));
 let sessionLog=JSON.parse(localStorage.getItem('moon_session_log')||'[]');
@@ -290,18 +322,26 @@ function renderExList(part="all"){
  const list=document.getElementById('exList');
  let filtered=exercises;
  if(part!=="all") filtered=exercises.filter(e=>e.part.includes(part));
- list.innerHTML=filtered.map(e=>`<span class="chip ex-chip ${e.id===currentId?'active':''} ${freeIds.has(e.id)?'':'locked'}" data-id="${e.id}">${e.id}. ${esc(tr('ex'+e.id+'.title', e.title))} ${freeIds.has(e.id)?'• FREE':'🔒'}</span>`).join('');
+ list.innerHTML=filtered.map(e=>`<span class="chip ex-chip ${e.id===currentId?'active':''} ${isUnlocked(e)?'':'locked'}" data-id="${e.id}">${e.id}. ${esc(tr('ex'+e.id+'.title', e.title))} ${isUnlocked(e)?'• FREE':'🔒'}</span>`).join('');
  list.querySelectorAll('.ex-chip').forEach(el=>{
-   el.onclick=()=>{
-     const ex=exercises.find(e=>e.id===parseInt(el.dataset.id));
-     if(!freeIds.has(ex.id)){ showLockedModal(ex); return; }
-     currentId=parseInt(el.dataset.id); renderPlayer(); renderExList(part);
-   }
+   el.onclick=()=>selectPractice(parseInt(el.dataset.id), part);
  });
+}
+// Open a practice. A locked one shows the sign-in modal and leaves the player
+// on the practice it already shows.
+function selectPractice(id, part){
+ const ex=exercises.find(e=>e.id===id);
+ if(!ex){ console.warn('selectPractice: no practice with id', id); return; }
+ if(!isUnlocked(ex)){ showLockedModal(ex); return; }
+ currentId=id; renderPlayer(); renderExList(part||currentPart);
 }
 function renderPlayer(){
  const ex=exercises.find(e=>e.id===currentId);
- if(!freeIds.has(ex.id)){ showLockedModal(ex); return; }
+ if(!ex||!isUnlocked(ex)){
+   console.error('renderPlayer: no readable practice for id', currentId);
+   document.getElementById('player').textContent='The practices are unavailable right now. Please try again soon.';
+   return;
+ }
  const isWrist=ex.title.includes('Wrist Grab');
  const interMap={'Part I — centering & grounding':interludes[1],'Part II — breath & energy':interludes[2],'Part III — attention & feeling':interludes[3],'Part IV — dialogue & relationship':interludes[4]};
  const inter=interMap[ex.part]||null;
@@ -362,19 +402,26 @@ function togglePlay(){
 function reset(){ clearInterval(timer); isPlaying=false; timeLeft=300; groundPercent=50; renderPlayer(); }
 document.getElementById('search').oninput=(e)=>renderStudios(e.target.value);
 renderStudios(); renderPartTabs(); renderExList(); renderPlayer(); renderProgress();
-// Signed-in members get every practice free — check the shared site session.
-fetch('auth-state.php',{credentials:'same-origin'})
- .then(r=>r.ok?r.json():Promise.reject(new Error('auth-state HTTP '+r.status)))
- .then(d=>{
-   if(!d.authed) return;
-   freeIds=new Set(exercises.map(e=>e.id));
-   document.getElementById('lockModal')?.remove();
-   const b=document.getElementById('authBadge');
-   b.style.display='block';
-   b.innerHTML='Signed in — <strong>all 20 practices unlocked</strong>.';
-   renderExList(currentPart); renderPlayer();
- })
- .catch(e=>console.error('auth-state check failed',e));
+// Issue #114: the server decides who gets the full text (the same session gate as
+// before), so a member's page already holds every practice. An anonymous preview
+// page holds only the free ones; if the visitor signed in elsewhere since the
+// page loaded, auth-state.php says so and the visitor reloads to get the rest.
+function showAuthBadge(html){
+ const b=document.getElementById('authBadge');
+ b.style.display='block';
+ b.innerHTML=html;
+}
+function checkSignedIn(){
+ return fetch('auth-state.php',{credentials:'same-origin'})
+  .then(r=>r.ok?r.json():Promise.reject(new Error('auth-state HTTP '+r.status)))
+  .then(d=>{
+    if(!d.authed) return;
+    showAuthBadge('Signed in — <a href="">reload to unlock all practices</a>.');
+  })
+  .catch(e=>console.error('auth-state check failed',e));
+}
+if(AF_MEMBER) showAuthBadge('Signed in — <strong>all 20 practices unlocked</strong>.');
+else checkSignedIn();
 </script>
 
 <script>
@@ -402,7 +449,7 @@ fetch('auth-state.php',{credentials:'same-origin'})
   if(studioParam) { try { selectStudioBySlug(studioParam); } catch(e){ console.error('studio banner', e); } }
   const exSlug = (params.get('exercise')||'').toLowerCase();
   if(slugMap[exSlug]) {
-    try { currentId = slugMap[exSlug]; if(typeof renderPlayer==='function') renderPlayer(); } catch(e){ console.error('exercise slug route', e); }
+    try { selectPractice(slugMap[exSlug]); } catch(e){ console.error('exercise slug route', e); }
   }
   // Support path-based /games/exercises/:slug
   const pathParts = location.pathname.split('/').filter(Boolean);
@@ -410,7 +457,7 @@ fetch('auth-state.php',{credentials:'same-origin'})
   if(pathParts.length>=3 && pathParts[0]==='games' && pathParts[1]==='exercises') {
     const last = pathParts[pathParts.length-1].toLowerCase();
     if(slugMap[last]) {
-      try { currentId = slugMap[last]; if(typeof renderPlayer==='function') renderPlayer(); } catch(e){ console.error('exercise path route', e); }
+      try { selectPractice(slugMap[last]); } catch(e){ console.error('exercise path route', e); }
     }
   }
 })();
@@ -424,8 +471,9 @@ window.AF_GAME = {
     const items=[];
     exercises.forEach(e=>{
       items.push({id:'ex'+e.id+'.title', text:e.title});
-      items.push({id:'ex'+e.id+'.meta', text:e.meta});
       items.push({id:'ex'+e.id+'.part', text:e.part});
+      if(!isUnlocked(e)) return; // a stub has no meta or body to translate
+      items.push({id:'ex'+e.id+'.meta', text:e.meta});
       e.body.split(/\n\n+/).forEach((p,i)=>{ if(p.trim()) items.push({id:'ex'+e.id+'.body:p'+i, text:p}); });
     });
     interludes.forEach((it,i)=>{
