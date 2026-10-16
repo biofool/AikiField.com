@@ -68,6 +68,102 @@ class PracticeDataTests(unittest.TestCase):
                 self.assertIs(p["free"], True, f"practice {p['id']}: free is true or absent")
 
 
+def _time_range_seconds(meta: str) -> tuple[int, int]:
+    """The first time range in a practice's meta line, as (low, high) seconds."""
+    m = re.search(r"(\d+)\s*[\u2013-]\s*(\d+)\s*min", meta)
+    if m:
+        return int(m.group(1)) * 60, int(m.group(2)) * 60
+    m = re.search(r"(\d+)\s*min", meta)
+    if m:
+        return int(m.group(1)) * 60, int(m.group(1)) * 60
+    m = re.search(r"(\d+)\s*sec", meta)
+    if m:
+        return int(m.group(1)), int(m.group(1))
+    raise AssertionError(f"no time range in meta: {meta}")
+
+
+class GuideDataTests(unittest.TestCase):
+    """Play Guided data (issue #113): a duration per practice, prompts only where the author wrote them."""
+
+    MAX_SEC = 7200
+
+    @classmethod
+    def setUpClass(cls):
+        cls.practices = json.loads(PRACTICES.read_text(encoding="utf-8"))["practices"]
+
+    def test_every_practice_has_a_guide_with_a_duration(self):
+        for p in self.practices:
+            with self.subTest(id=p["id"]):
+                d = p["guide"]["duration_sec"]
+                self.assertTrue(isinstance(d, int) and not isinstance(d, bool))
+                self.assertTrue(1 <= d <= self.MAX_SEC, d)
+
+    def test_duration_sits_inside_the_practices_own_time_range(self):
+        # Started at the low end of the range; the owner may raise it per practice
+        # but it must stay inside what the practice's own meta line promises.
+        for p in self.practices:
+            with self.subTest(id=p["id"]):
+                low, high = _time_range_seconds(p["meta"])
+                self.assertTrue(low <= p["guide"]["duration_sec"] <= high, (low, p["guide"]["duration_sec"], high))
+
+    def test_durations_as_shipped_are_the_low_end_of_each_range(self):
+        shipped = {p["id"]: p["guide"]["duration_sec"] for p in self.practices}
+        self.assertEqual(
+            shipped,
+            {1: 30, 2: 120, 3: 180, 4: 300, 5: 600, 6: 300, 7: 180, 8: 300, 9: 180, 10: 120, 11: 180, 12: 600, 13: 180, 14: 300, 15: 300},
+        )
+
+    def test_guide_keys_are_known(self):
+        for p in self.practices:
+            with self.subTest(id=p["id"]):
+                self.assertLessEqual(set(p["guide"]), {"duration_sec", "phase", "prompt", "meter", "steps"})
+
+    def test_steps_are_in_order_inside_the_session(self):
+        for p in self.practices:
+            g = p["guide"]
+            previous = 0
+            for i, step in enumerate(g.get("steps", [])):
+                with self.subTest(id=p["id"], step=i):
+                    self.assertLessEqual(set(step), {"at_sec", "prompt", "phase", "meter"})
+                    self.assertTrue(isinstance(step["at_sec"], int) and previous < step["at_sec"] < g["duration_sec"])
+                    previous = step["at_sec"]
+                    self.assertTrue({"prompt", "phase", "meter"} & set(step), "a step changes something")
+                    for key in ("prompt", "phase"):
+                        if key in step:
+                            self.assertTrue(isinstance(step[key], str) and step[key].strip())
+                    if "meter" in step:
+                        self.assertIn("meter", g)
+                        self.assertTrue(0 <= step["meter"] <= 100)
+
+    def test_meter_shape(self):
+        for p in self.practices:
+            m = p["guide"].get("meter")
+            if m is None:
+                continue
+            with self.subTest(id=p["id"]):
+                self.assertEqual(set(m), {"start", "goal", "caption"})
+                self.assertTrue(0 <= m["start"] <= 100 and 0 <= m["goal"] <= 100)
+                self.assertIn("{value}", m["caption"])
+
+    def test_wrist_grab_grounding_keeps_push_pull_and_the_ground_meter(self):
+        g = next(p for p in self.practices if p["id"] == 6)["guide"]
+        prompts = [s["prompt"] for s in g["steps"] if "prompt" in s]
+        self.assertTrue(any(t.startswith("Push") for t in prompts))
+        self.assertTrue(any(t.startswith("Pull") for t in prompts))
+        self.assertEqual(g["meter"]["start"], 50)
+        self.assertEqual(g["meter"]["goal"], 60)
+        self.assertEqual([s["meter"] for s in g["steps"] if "meter" in s], [50, 55, 60])
+
+    def test_no_other_practice_borrows_the_wrist_grab_wording(self):
+        for p in self.practices:
+            if p["id"] == 6:
+                continue
+            with self.subTest(id=p["id"]):
+                text = json.dumps(p["guide"], ensure_ascii=False)
+                for phrase in ("Push", "Pull", "ground", "Resist", "50/50", "DBSO \u2014"):
+                    self.assertNotIn(phrase, text)
+
+
 class StudioDataTests(unittest.TestCase):
     """The studio list is third-party business data: name and area only (issue #112)."""
 

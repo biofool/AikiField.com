@@ -96,6 +96,11 @@ body{background:#FAF6EF}
 .ground{height:8px;background:#E8E0D0;margin:10px 0} .ground-fill{height:100%;background:#1A1A1A;transition:width .5s}
 img.hero{width:100%;max-width:300px;display:block;margin:10px auto;border:1px solid #E8E0D0}
 #exList{margin-top:10px}
+.timer-actions{display:flex;gap:6px;margin-top:10px}
+.btn-alt{background:#fff;color:#000;border:1px solid #000}
+.timer-done .circle{font-size:22px}
+.log-status{margin-top:8px;font-size:12px}
+.log-status:empty{display:none}
 .lightness-opt{display:block;margin-top:8px;font-size:11px;opacity:0.75;cursor:pointer}
 .lightness-opt input{margin-right:6px;vertical-align:middle}
 .lightness{margin-top:10px;padding:10px 12px;background:#F5F0E6;border-left:3px solid #1A1A1A;font-size:13px;font-style:italic;line-height:1.5}
@@ -188,7 +193,10 @@ const interludes = [{"title": "INTERLUDE \u2014 OPENING", "text": "This second h
 // region are sent (no street address, no blurb).
 const studios = <?= $afStudiosJson ?>;
 let currentId = 6;
-let groundPercent=50, timeLeft=300, isPlaying=false, timer=null;
+// Play Guided (issue #113). The timer belongs to ONE practice: showing a different
+// practice stops it and starts it again from that practice's own duration. The
+// duration, and any timed prompts, come from the practice's "guide" in the data.
+const play={id:null,total:0,left:0,running:false,done:false,handle:null};
 let currentPart='all';
 // Members have every practice. Everyone else has the ones the data marks free;
 // the rest arrived as stubs (id, title, part) with no text to show.
@@ -342,6 +350,7 @@ function renderPlayer(){
    document.getElementById('player').textContent='The practices are unavailable right now. Please try again soon.';
    return;
  }
+ if(play.id!==ex.id) resetPlay(ex); // a different practice: stop and reset the timer
  const isWrist=ex.title.includes('Wrist Grab');
  const interMap={'Part I — centering & grounding':interludes[1],'Part II — breath & energy':interludes[2],'Part III — attention & feeling':interludes[3],'Part IV — dialogue & relationship':interludes[4]};
  const inter=interMap[ex.part]||null;
@@ -351,9 +360,9 @@ function renderPlayer(){
    <div style="display:flex;justify-content:space-between"><div><h2 style="font-size:22px">${esc(tr('ex'+ex.id+'.title', ex.title))}</h2><div class="meta">${esc(tr('ex'+ex.id+'.meta', ex.meta))} · ${esc(tr('ex'+ex.id+'.part', ex.part))}</div></div><span style="font-size:10px;border:1px solid #000;padding:3px 7px">Complexity ${ex.complexity}</span></div>
    ${isWrist?`<div class="toggle"><button id="realB">Real Partner</button><button id="invB" class="active" title="Invisible partner means practicing by yourself." aria-describedby="invB-desc">Invisible Partner</button><span id="invB-desc" hidden>Invisible partner means practicing by yourself.</span></div>`:''}
    <div class="body">${bodyParas}</div>
-   <div class="timer"><div id="phase">Phase: 50/50 — Resist less, ground more</div><div class="circle" id="circ">${Math.floor(timeLeft/60)}:${String(timeLeft%60).padStart(2,'0')}</div><div id="prompt" style="font-size:11px">${isWrist?'Push... feel where you are':'Breathe...'}</div>${isWrist?`<div class="ground"><div class="ground-fill" id="gfill" style="width:${groundPercent}%"></div></div><div style="font-size:10px">${groundPercent}% ground — goal 60% — DBSO</div>`:''}
-   <div style="display:flex;gap:6px;margin-top:10px"><button class="btn" id="playB" style="flex:1">${isPlaying?'Pause':'Play Guided'}</button><button class="btn" id="resetB" style="flex:0.3;background:#fff;color:#000;border:1px solid #000">Reset</button></div></div>
+   <div id="timerSlot"></div>
    <button class="btn" id="keepB">KeepDoingIt — Log Session</button>
+   <div id="logStatus" class="log-status" role="status" aria-live="polite"></div>
    ${LIGHTNESS.length?`<label class="lightness-opt"><input type="checkbox" id="lightnessToggle" ${lightnessOn()?'checked':''}> A little smile after logging</label><div id="lightness" class="lightness" role="status" aria-live="polite"></div>`:''}
    ${inter?`<div class="poem"><b>${esc(tr('int'+interludes.indexOf(inter)+'.title', inter.title))}</b>
 
@@ -365,9 +374,8 @@ ${esc(tr('int'+interludes.indexOf(inter)+'.text', inter.text))}</div>`:''}
    const poem=document.querySelector('#player .poem');
    if(poem&&inter) ANNOT(poem,'int'+interludes.indexOf(inter)+'.text',inter.text,poem.textContent);
  }
- document.getElementById('playB').onclick=togglePlay;
- document.getElementById('resetB').onclick=reset;
- document.getElementById('keepB').onclick=()=>{completed.add(currentId); sessionLog.push({id:currentId,at:new Date().toISOString()}); persistProgress(); renderProgress(); showLightness(currentId); alert('Logged! KeepDoingIt');};
+ renderTimer(ex);
+ document.getElementById('keepB').onclick=logSession;
  bindLightness();
  if(isWrist){
    document.getElementById('realB').onclick=(e)=>{e.target.parentElement.querySelectorAll('button').forEach(b=>b.classList.remove('active')); e.target.classList.add('active')};
@@ -380,24 +388,94 @@ function renderProgress(){
  const dots=exercises.map(e=>completed.has(e.id)?'●':'○').join(' ');
  el.innerHTML=`<div style="font-size:10px">Progress: ${completed.size}/${exercises.length}<br>${dots}</div>`;
 }
-function togglePlay(){
- isPlaying=!isPlaying;
- document.getElementById('playB').textContent=isPlaying?'Pause':'Play Guided';
- if(isPlaying){
-   timer=setInterval(()=>{
-     timeLeft--; const c=document.getElementById('circ'); if(c) c.textContent=`${Math.floor(timeLeft/60)}:${String(timeLeft%60).padStart(2,'0')}`;
-     if(timeLeft%15===0){
-       const prompt=document.getElementById('prompt'), phase=document.getElementById('phase'), fill=document.getElementById('gfill');
-       if(timeLeft>180){ if(prompt) prompt.textContent=timeLeft%30===0?'Push — resisting lets them pull you easily — relax & feel where you are':'Pull — resisting lets them push — relax & feel where you are'; if(phase) phase.textContent='50/50 — Resist less, ground more'; groundPercent=50; }
-       else if(timeLeft>60){ if(prompt) prompt.textContent='Resistance hard to see from outside but you feel it inside'; if(phase) phase.textContent='Inside feel'; groundPercent=55; }
-       else{ if(prompt) prompt.textContent='DBSO — 60% ground — KeepDoingIt'; if(phase) phase.textContent='60% ground'; groundPercent=60; }
-       if(fill) fill.style.width=groundPercent+'%';
-     }
-     if(timeLeft<=0){ clearInterval(timer); isPlaying=false; timeLeft=300; alert(interludes[1].text); renderPlayer(); }
-   },1000);
- } else { clearInterval(timer); }
+function clockText(sec){ return `${Math.floor(sec/60)}:${String(sec%60).padStart(2,'0')}`; }
+function guideDuration(ex){
+ const d=ex.guide&&ex.guide.duration_sec;
+ return Number.isInteger(d)&&d>0?d:0;
 }
-function reset(){ clearInterval(timer); isPlaying=false; timeLeft=300; groundPercent=50; renderPlayer(); }
+// What the guide shows once `elapsed` seconds have passed: its opening phase,
+// prompt and meter, changed by every step that has started by then.
+function guideState(g, elapsed){
+ const st={phase:g.phase||'', prompt:g.prompt||'', meter:g.meter?g.meter.start:null};
+ (g.steps||[]).forEach(step=>{
+   if(step.at_sec>elapsed) return;
+   if(step.phase!==undefined) st.phase=step.phase;
+   if(step.prompt!==undefined) st.prompt=step.prompt;
+   if(step.meter!==undefined) st.meter=step.meter;
+ });
+ return st;
+}
+function guideHas(g, key){ return g[key]!==undefined||(g.steps||[]).some(step=>step[key]!==undefined); }
+function meterCaption(g, value){ return g.meter.caption.replace('{value}', value).replace('{goal}', g.meter.goal); }
+function currentExercise(){ return exercises.find(e=>e.id===currentId); }
+function stopPlay(){
+ if(play.handle!==null){ clearInterval(play.handle); play.handle=null; }
+ play.running=false;
+}
+function resetPlay(ex){
+ stopPlay();
+ play.id=ex.id; play.total=guideDuration(ex); play.left=play.total; play.done=false;
+}
+// A practice with no prompts gets a quiet timer: the clock and the buttons only.
+function timerHtml(ex){
+ if(!play.total){
+   console.warn('practice', ex.id, 'has no usable guide.duration_sec; the timer is hidden');
+   return '';
+ }
+ if(play.done){
+   return `<div class="timer timer-done" id="timerBox" role="status"><div class="circle" id="circ">Done</div>
+   <div class="timer-actions"><button class="btn" id="doneLogB" style="flex:1">Log session</button><button class="btn btn-alt" id="resetB" style="flex:0.3">Reset</button></div></div>`;
+ }
+ const g=ex.guide, st=guideState(g, play.total-play.left);
+ return `<div class="timer" id="timerBox">
+   ${guideHas(g,'phase')?`<div id="phase">${esc(st.phase)}</div>`:''}
+   <div class="circle" id="circ">${clockText(play.left)}</div>
+   ${guideHas(g,'prompt')?`<div id="prompt" style="font-size:11px" aria-live="polite">${esc(st.prompt)}</div>`:''}
+   ${g.meter?`<div class="ground"><div class="ground-fill" id="gfill" style="width:${st.meter}%"></div></div><div id="gcap" style="font-size:10px">${esc(meterCaption(g, st.meter))}</div>`:''}
+   <div class="timer-actions"><button class="btn" id="playB" style="flex:1">${play.running?'Pause':'Play Guided'}</button><button class="btn btn-alt" id="resetB" style="flex:0.3">Reset</button></div></div>`;
+}
+function renderTimer(ex){
+ const slot=document.getElementById('timerSlot'); if(!slot) return;
+ slot.innerHTML=timerHtml(ex);
+ const playB=document.getElementById('playB'), resetB=document.getElementById('resetB'), doneLogB=document.getElementById('doneLogB');
+ if(playB) playB.onclick=togglePlay;
+ if(resetB) resetB.onclick=resetTimer;
+ if(doneLogB) doneLogB.onclick=logSession;
+}
+function paintTimer(ex){
+ const c=document.getElementById('circ'); if(c) c.textContent=clockText(play.left);
+ const g=ex.guide; if(!g) return;
+ const st=guideState(g, play.total-play.left);
+ const phase=document.getElementById('phase'), prompt=document.getElementById('prompt'), fill=document.getElementById('gfill'), cap=document.getElementById('gcap');
+ if(phase) phase.textContent=st.phase;
+ if(prompt) prompt.textContent=st.prompt;
+ if(fill) fill.style.width=st.meter+'%';
+ if(cap) cap.textContent=meterCaption(g, st.meter);
+}
+function tick(){
+ const ex=currentExercise();
+ if(!ex||ex.id!==play.id){ console.warn('timer tick for a practice that is no longer shown; stopping the timer'); stopPlay(); return; }
+ play.left--;
+ if(play.left<=0){ stopPlay(); play.left=0; play.done=true; renderTimer(ex); return; } // inline "Done", no alert
+ paintTimer(ex);
+}
+function togglePlay(){
+ const ex=currentExercise(); if(!ex||play.done||!play.total) return;
+ if(play.running) stopPlay();
+ else{ play.running=true; play.handle=setInterval(tick,1000); }
+ renderTimer(ex);
+}
+function resetTimer(){
+ const ex=currentExercise(); if(!ex) return;
+ resetPlay(ex); renderTimer(ex);
+}
+// Log the practice on screen. Used by the log button and by the Done state; it
+// confirms inline, never with a blocking alert.
+function logSession(){
+ completed.add(currentId); sessionLog.push({id:currentId,at:new Date().toISOString()});
+ persistProgress(); renderProgress(); showLightness(currentId);
+ const status=document.getElementById('logStatus'); if(status) status.textContent='Logged! KeepDoingIt';
+}
 document.getElementById('search').oninput=(e)=>renderStudios(e.target.value);
 renderStudios(); renderPartTabs(); renderExList(); renderPlayer(); renderProgress();
 // Issue #114: the server decides who gets the full text (the same session gate as

@@ -3,7 +3,7 @@
   "title": "Twenty Practices: practice text (AikiField issue #114)",
   "book_title": "Quantum Aikido - Book of Exercises & Practices",
   "author": "Richard Moon",
-  "note": "Private data. data/exercises/.htaccess denies every web request for this directory. games/exercises/index.php reads this file on the server (includes/exercises-data.php) and sends each visitor only what the visitor may see: a signed-in member gets every practice; anyone else gets the practices marked \"free\": true in full and the rest as title-only stubs (id, title, part). To put a practice in the free preview, add \"free\": true to it. This is the only copy of the practice text.",
+  "note": "Private data. data/exercises/.htaccess denies every web request for this directory. games/exercises/index.php reads this file on the server (includes/exercises-data.php) and sends each visitor only what the visitor may see: a signed-in member gets every practice; anyone else gets the practices marked \"free\": true in full and the rest as title-only stubs (id, title, part). To put a practice in the free preview, add \"free\": true to it. Each practice has a \"guide\" for Play Guided: duration_sec (taken from the low end of the practice's own time range; edit it per practice) and, optionally, timed prompts. A practice with no prompts gets a quiet timer. This is the only copy of the practice text.",
   "practices": [
     {
       "id": 1,
@@ -13,7 +13,10 @@
       "complexity": 4,
       "type": "exercise",
       "part": "Part IV — dialogue & relationship",
-      "free": true
+      "free": true,
+      "guide": {
+        "duration_sec": 30
+      }
     },
     {
       "id": 2,
@@ -22,7 +25,10 @@
       "body": "after dropping back, sinking, and opening, don't take the breath — wait for it. feel the impulse to breathe arise on its own, and let it breathe you.\n\nrather than running the breath, feel life activating it — the universal pulse breathing you. this is the reverse of Breathing the Whole System.",
       "complexity": 1,
       "type": "exercise",
-      "part": "Part I — centering & grounding"
+      "part": "Part I — centering & grounding",
+      "guide": {
+        "duration_sec": 120
+      }
     },
     {
       "id": 3,
@@ -31,7 +37,10 @@
       "body": "Feel and locate the central core of your being. Feel the 'glow of life' that is you. Apply DBSO in ever-finer alignment.\n\nNotice that each small shift in the location of attention creates a different experiential world.",
       "complexity": 1,
       "type": "exercise",
-      "part": "Part I — centering & grounding"
+      "part": "Part I — centering & grounding",
+      "guide": {
+        "duration_sec": 180
+      }
     },
     {
       "id": 4,
@@ -40,7 +49,10 @@
       "body": "Gently tense the whole body, then relax and feel. Re-tense the muscles progressively closer to the spine, head to hips, releasing each time.\n\nAs you relax, feel into the central core of being — align with gravity, allow the tension to release, appreciate the flow. How long? As long as you're enjoying it.",
       "complexity": 1,
       "type": "exercise",
-      "part": "Part I — centering & grounding"
+      "part": "Part I — centering & grounding",
+      "guide": {
+        "duration_sec": 300
+      }
     },
     {
       "id": 5,
@@ -49,7 +61,10 @@
       "body": "Move sequentially through the body's regions — mind, brain, forehead, eyes, jaw, throat, shoulders, abdomen, hips, legs, feet — sinking open into the 'gravity shadow' at each.\n\nNo fixed pace.",
       "complexity": 1,
       "type": "exercise",
-      "part": "Part I — centering & grounding"
+      "part": "Part I — centering & grounding",
+      "guide": {
+        "duration_sec": 600
+      }
     },
     {
       "id": 6,
@@ -59,7 +74,61 @@
       "complexity": 1,
       "type": "exercise",
       "part": "Part I — centering & grounding",
-      "free": true
+      "free": true,
+      "guide": {
+        "duration_sec": 300,
+        "phase": "Phase: 50/50 — Resist less, ground more",
+        "prompt": "Push... feel where you are",
+        "meter": {
+          "start": 50,
+          "goal": 60,
+          "caption": "{value}% ground — goal {goal}% — DBSO"
+        },
+        "steps": [
+          {
+            "at_sec": 15,
+            "prompt": "Pull — resisting lets them push — relax & feel where you are",
+            "phase": "50/50 — Resist less, ground more",
+            "meter": 50
+          },
+          {
+            "at_sec": 30,
+            "prompt": "Push — resisting lets them pull you easily — relax & feel where you are"
+          },
+          {
+            "at_sec": 45,
+            "prompt": "Pull — resisting lets them push — relax & feel where you are"
+          },
+          {
+            "at_sec": 60,
+            "prompt": "Push — resisting lets them pull you easily — relax & feel where you are"
+          },
+          {
+            "at_sec": 75,
+            "prompt": "Pull — resisting lets them push — relax & feel where you are"
+          },
+          {
+            "at_sec": 90,
+            "prompt": "Push — resisting lets them pull you easily — relax & feel where you are"
+          },
+          {
+            "at_sec": 105,
+            "prompt": "Pull — resisting lets them push — relax & feel where you are"
+          },
+          {
+            "at_sec": 120,
+            "prompt": "Resistance hard to see from outside but you feel it inside",
+            "phase": "Inside feel",
+            "meter": 55
+          },
+          {
+            "at_sec": 240,
+            "prompt": "DBSO — 60% ground — KeepDoingIt",
+            "phase": "60% ground",
+            "meter": 60
+          }
+        ]
+      }
     },
     {
       "id": 7,
@@ -68,7 +137,10 @@
       "body": "Breathe in harmony so each cell 'enjoys life's glow.'",
       "complexity": 2,
       "type": "exercise",
-      "part": "Part II — breath & energy"
+      "part": "Part II — breath & energy",
+      "guide": {
+        "duration_sec": 180
+      }
     },
     {
       "id": 8,
@@ -77,7 +149,10 @@
       "body": "Feel into each phase in turn:\n\nexternal breathing, air moving in and out of the lungs;\n\ntransfer, oxygen into the bloodstream;\n\ntransport, the blood carrying it to every cell;\n\nabsorption, each cell taking it in;\n\nlife, each cell burning oxygen into the glow of aliveness.\n\nThen reverse the imagery. Feel life activating the breath — the universal pulse breathing you. Listen to the impulse to breathe.",
       "complexity": 2,
       "type": "exercise",
-      "part": "Part II — breath & energy"
+      "part": "Part II — breath & energy",
+      "guide": {
+        "duration_sec": 300
+      }
     },
     {
       "id": 9,
@@ -86,7 +161,10 @@
       "body": "Feel where you are on the O2 continuum — from O2 debt, through perfect saturation, to reserve. Locate it consciously; sense which cells feel in balance and which don't.\n\nThen breathe exactly the way you want for two or three breaths, and feel your location shift. It usually takes fewer than three; it never takes seven. First your own oxygen mask on first— then you have the reserves\n\n-- create a beautiful world.",
       "complexity": 2,
       "type": "exercise",
-      "part": "Part II — breath & energy"
+      "part": "Part II — breath & energy",
+      "guide": {
+        "duration_sec": 180
+      }
     },
     {
       "id": 10,
@@ -95,7 +173,10 @@
       "body": "Remember, or imagine, the first deep breath of ocean air — every cell lights up, the glow of life increases, and a natural desire for another breath follows. Breathe at the ocean even when you can't be there; hold the feeling.",
       "complexity": 2,
       "type": "exercise",
-      "part": "Part II — breath & energy"
+      "part": "Part II — breath & energy",
+      "guide": {
+        "duration_sec": 120
+      }
     },
     {
       "id": 11,
@@ -104,7 +185,10 @@
       "body": "Imagine breathing as an infant — oxygen equalized after birth, simply lying there breathing and enjoying the glow of life, no thought, no thing. A return to the purity of being before socialization.",
       "complexity": 2,
       "type": "exercise",
-      "part": "Part II — breath & energy"
+      "part": "Part II — breath & energy",
+      "guide": {
+        "duration_sec": 180
+      }
     },
     {
       "id": 12,
@@ -114,7 +198,10 @@
       "complexity": 3,
       "type": "exercise",
       "part": "Part III — attention & feeling",
-      "free": true
+      "free": true,
+      "guide": {
+        "duration_sec": 600
+      }
     },
     {
       "id": 13,
@@ -123,7 +210,10 @@
       "body": "Intentionally enjoy yourself — 'enjoy yourSELF enjoying joy.' Bring attention to something you love, and treat the enjoyment as guidance: 'feeling better' signals a useful direction. Close with DBSO.",
       "complexity": 3,
       "type": "exercise",
-      "part": "Part III — attention & feeling"
+      "part": "Part III — attention & feeling",
+      "guide": {
+        "duration_sec": 180
+      }
     },
     {
       "id": 14,
@@ -132,7 +222,10 @@
       "body": "A re-attacking slap on the shoulder in place of a shomen strike. Stance is flexible — natural stance (shizentai), a left- or right-foot lead all work; natural stance paired with the finger-snap is the simplest way in, and hanmi is fine in a dojo. Partners stand one step apart and agree on force: relaxed enough to sting a little, reality not fear, never to hurt.\n\n*Attacker***.** Don't telegraph. Go from nothing to the hit as fast as you can — a real attack carries a burst of ki, and a slow or sloppy approach gives a different, weaker feel. Vary the timing; never count “one, two, three, slap.”\n\n*Receiver***.** Start one step away. For the first few reps, snap your fingers the instant you sense the attack is about to come, then check — early, late, close? Come to center and face the attacker so you feel their attention. Give the most honest feedback you canProgress from one step to two.",
       "complexity": 3,
       "type": "exercise",
-      "part": "Part III — attention & feeling"
+      "part": "Part III — attention & feeling",
+      "guide": {
+        "duration_sec": 300
+      }
     },
     {
       "id": 15,
@@ -141,7 +234,10 @@
       "body": "Visualize how you'd normally handle an upcoming situation. Run Ten to the Tenth, climb several octaves, and re-visualize the situation from the new state. Repeat until a satisfying strategy emerges, then push past it for a quantum shift.",
       "complexity": 4,
       "type": "exercise",
-      "part": "Part IV — dialogue & relationship"
+      "part": "Part IV — dialogue & relationship",
+      "guide": {
+        "duration_sec": 300
+      }
     }
   ]
 }

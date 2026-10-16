@@ -126,7 +126,17 @@ page layout, hero, or left column — keep it hidden until form submission.
   `data/exercises/studios.json` (issue #112) holds the studio list; only
   `name` and `region` ever reach the page (the loader drops every other
   field), and the heading count, the sign-in modal count and the free
-  practice names all come from the data, never from typed text. Tests:
+  practice names all come from the data, never from typed text.
+  **Play Guided (issue #113):** each practice has a `guide` in
+  `practices.json`: `duration_sec` (the low end of the practice's own time
+  range; editable per practice, kept inside that range by
+  `tests/unit/test_exercises_data.py`) and optional `phase`, `prompt`,
+  `meter` and timed `steps`. Only Wrist Grab Grounding has prompts and the
+  ground meter; every other practice gets a quiet timer. The timer belongs to
+  one practice: showing another practice stops and resets it. The end of a
+  session shows an inline "Done" state with "Log session" and "Reset"; there
+  is no `alert()`. Spec: `tests/e2e/specs/exercises-guided.spec.js` (fake
+  clock, `page.clock.runFor`). Tests:
   `tests/unit/test-exercises-data.php`, `tests/unit/test_exercises_data.py`
   (reads the real `.htaccess`), `tests/e2e/specs/exercises-preview.spec.js`
   (every route that can serve practice text); `tests/e2e/router.php` reads the

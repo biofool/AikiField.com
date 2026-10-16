@@ -33,6 +33,9 @@ declare(strict_types=1);
 /** The only fields an anonymous visitor gets for a practice that is not free. */
 const AF_EXERCISES_STUB_KEYS = ['id', 'title', 'part'];
 
+/** The longest Play Guided session the data may ask for (two hours). */
+const AF_EXERCISES_MAX_GUIDE_SEC = 7200;
+
 /**
  * Why one practice is unusable, or null when it is fine.
  *
@@ -53,6 +56,76 @@ function af_exercises_problem($item): ?string
     }
     if (!isset($item['complexity']) || !is_int($item['complexity']) || $item['complexity'] < 1) {
         return 'complexity must be a positive integer';
+    }
+    return null;
+}
+
+/**
+ * Why a practice's "guide" (the Play Guided timer data, issue #113) is unusable,
+ * or null when it is fine. A guide has a duration in seconds and, optionally,
+ * an opening phase and prompt, a meter, and timed steps. Each step names the
+ * second it starts at and may change the phase, the prompt or the meter.
+ *
+ * @param mixed $guide
+ */
+function af_exercises_guide_problem($guide): ?string
+{
+    if (!is_array($guide)) {
+        return 'guide must be an object';
+    }
+    $duration = $guide['duration_sec'] ?? null;
+    if (!is_int($duration) || $duration < 1 || $duration > AF_EXERCISES_MAX_GUIDE_SEC) {
+        return 'duration_sec must be a whole number of seconds from 1 to ' . AF_EXERCISES_MAX_GUIDE_SEC;
+    }
+    foreach (['phase', 'prompt'] as $key) {
+        if (array_key_exists($key, $guide) && !is_string($guide[$key])) {
+            return "$key must be text";
+        }
+    }
+    $hasMeter = array_key_exists('meter', $guide);
+    if ($hasMeter) {
+        $meter = $guide['meter'];
+        if (!is_array($meter)) {
+            return 'meter must be an object';
+        }
+        foreach (['start', 'goal'] as $key) {
+            if (!isset($meter[$key]) || !is_int($meter[$key]) || $meter[$key] < 0 || $meter[$key] > 100) {
+                return "meter.$key must be a whole number from 0 to 100";
+            }
+        }
+        if (!isset($meter['caption']) || !is_string($meter['caption'])) {
+            return 'meter.caption must be text';
+        }
+    }
+    if (array_key_exists('steps', $guide)) {
+        $steps = $guide['steps'];
+        if (!is_array($steps) || $steps !== array_values($steps)) {
+            return 'steps must be a list';
+        }
+        $previous = 0;
+        foreach ($steps as $index => $step) {
+            if (!is_array($step)) {
+                return "step #$index is not an object";
+            }
+            $at = $step['at_sec'] ?? null;
+            if (!is_int($at) || $at <= $previous || $at >= $duration) {
+                return "step #$index: at_sec must be a whole number after the previous step and before duration_sec";
+            }
+            $previous = $at;
+            foreach (['phase', 'prompt'] as $key) {
+                if (array_key_exists($key, $step) && !is_string($step[$key])) {
+                    return "step #$index: $key must be text";
+                }
+            }
+            if (array_key_exists('meter', $step)) {
+                if (!$hasMeter) {
+                    return "step #$index: meter needs a guide.meter";
+                }
+                if (!is_int($step['meter']) || $step['meter'] < 0 || $step['meter'] > 100) {
+                    return "step #$index: meter must be a whole number from 0 to 100";
+                }
+            }
+        }
     }
     return null;
 }
@@ -104,6 +177,13 @@ function af_exercises_load(string $path): array
             $free = false;
         }
         $item['free'] = $free;
+        if (array_key_exists('guide', $item)) {
+            $guideProblem = af_exercises_guide_problem($item['guide']);
+            if ($guideProblem !== null) {
+                error_log("exercises: practice {$item['id']} in $path: guide dropped: $guideProblem");
+                unset($item['guide']);
+            }
+        }
         $practices[] = $item;
     }
     if ($practices === []) {

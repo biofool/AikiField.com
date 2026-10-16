@@ -236,6 +236,80 @@ foreach ($real as $practice) {
 ex_check('real file, anonymous: no sentence of a locked body or meta is in the payload', [], $leaks);
 ex_check('real file, member: all 15 carry text', 15, count(array_filter(af_exercises_visible($real, true), fn ($p) => isset($p['body']))));
 
+// --- the guide block: Play Guided data (issue #113) ------------------------------
+$validGuide = [
+    'duration_sec' => 300,
+    'phase' => 'Phase: start',
+    'prompt' => 'Begin',
+    'meter' => ['start' => 50, 'goal' => 60, 'caption' => '{value}% of {goal}%'],
+    'steps' => [
+        ['at_sec' => 15, 'prompt' => 'One', 'phase' => 'A', 'meter' => 50],
+        ['at_sec' => 30, 'prompt' => 'Two'],
+        ['at_sec' => 120, 'meter' => 55],
+    ],
+];
+ex_check('guide: a complete guide is fine', null, af_exercises_guide_problem($validGuide));
+ex_check('guide: duration alone is fine', null, af_exercises_guide_problem(['duration_sec' => 30]));
+ex_check('guide: the longest allowed session is fine', null, af_exercises_guide_problem(['duration_sec' => AF_EXERCISES_MAX_GUIDE_SEC]));
+
+$badGuides = [
+    'not an object' => 'text',
+    'no duration' => ['prompt' => 'x'],
+    'duration zero' => ['duration_sec' => 0],
+    'duration negative' => ['duration_sec' => -5],
+    'duration too long' => ['duration_sec' => AF_EXERCISES_MAX_GUIDE_SEC + 1],
+    'duration as text' => ['duration_sec' => '300'],
+    'duration as float' => ['duration_sec' => 30.5],
+    'phase not text' => ['duration_sec' => 30, 'phase' => 5],
+    'prompt not text' => ['duration_sec' => 30, 'prompt' => ['x']],
+    'meter not an object' => ['duration_sec' => 30, 'meter' => 50],
+    'meter start out of range' => ['duration_sec' => 30, 'meter' => ['start' => 101, 'goal' => 60, 'caption' => 'c']],
+    'meter goal missing' => ['duration_sec' => 30, 'meter' => ['start' => 50, 'caption' => 'c']],
+    'meter caption missing' => ['duration_sec' => 30, 'meter' => ['start' => 50, 'goal' => 60]],
+    'steps not a list' => ['duration_sec' => 30, 'steps' => ['a' => ['at_sec' => 5]]],
+    'step not an object' => ['duration_sec' => 30, 'steps' => ['x']],
+    'step without at_sec' => ['duration_sec' => 30, 'steps' => [['prompt' => 'x']]],
+    'step at zero' => ['duration_sec' => 30, 'steps' => [['at_sec' => 0, 'prompt' => 'x']]],
+    'step not after the previous one' => ['duration_sec' => 30, 'steps' => [['at_sec' => 10], ['at_sec' => 10]]],
+    'steps out of order' => ['duration_sec' => 30, 'steps' => [['at_sec' => 20], ['at_sec' => 10]]],
+    'step at the end' => ['duration_sec' => 30, 'steps' => [['at_sec' => 30, 'prompt' => 'x']]],
+    'step prompt not text' => ['duration_sec' => 30, 'steps' => [['at_sec' => 5, 'prompt' => 7]]],
+    'step phase not text' => ['duration_sec' => 30, 'steps' => [['at_sec' => 5, 'phase' => 7]]],
+    'step meter without a guide meter' => ['duration_sec' => 30, 'steps' => [['at_sec' => 5, 'meter' => 50]]],
+    'step meter out of range' => ['duration_sec' => 30, 'meter' => ['start' => 1, 'goal' => 2, 'caption' => 'c'], 'steps' => [['at_sec' => 5, 'meter' => 101]]],
+];
+foreach ($badGuides as $label => $guide) {
+    ex_check("guide: $label is refused", true, af_exercises_guide_problem($guide) !== null);
+}
+
+$withGuides = af_exercises_load(ex_data([
+    ex_item(1, 'Good guide', ['free' => true, 'guide' => $validGuide]),
+    ex_item(2, 'Bad guide', ['free' => true, 'guide' => ['duration_sec' => 0]]),
+    ex_item(3, 'No guide', ['free' => true]),
+    ex_item(4, 'Locked with a guide', ['guide' => $validGuide]),
+]));
+ex_check('guide: a practice with a bad guide is still loaded', [1, 2, 3, 4], array_column($withGuides, 'id'));
+ex_check('guide: the good guide is kept as written', $validGuide, $withGuides[0]['guide']);
+ex_check('guide: the bad guide is dropped', false, array_key_exists('guide', $withGuides[1]));
+ex_check('guide: a practice without a guide stays without one', false, array_key_exists('guide', $withGuides[2]));
+$guideLog = ex_log();
+ex_check('guide: the drop is logged with the practice and the reason', true, str_contains($guideLog, 'practice 2 in') && str_contains($guideLog, 'guide dropped: duration_sec must be a whole number'));
+ex_check('guide: only the bad guide is logged', 1, substr_count($guideLog, 'guide dropped'));
+$guideAnon = af_exercises_visible($withGuides, false);
+ex_check('guide: a free practice sends its guide to an anonymous visitor', $validGuide, $guideAnon[0]['guide']);
+ex_check('guide: a locked practice sends no guide to an anonymous visitor', ['id', 'part', 'title'], (function () use ($guideAnon) {
+    $keys = array_keys($guideAnon[3]);
+    sort($keys);
+    return $keys;
+})());
+ex_check('guide: a member gets the locked practice guide too', $validGuide, af_exercises_visible($withGuides, true)[3]['guide']);
+
+$realWithGuides = af_exercises_load(__DIR__ . '/../../data/exercises/practices.json');
+ex_check('real file: every practice keeps a guide with a duration', 15, count(array_filter($realWithGuides, fn ($p) => isset($p['guide']['duration_sec']))));
+ex_check('real file: nothing was logged while loading the guides', '', ex_log());
+$wrist = array_values(array_filter($realWithGuides, fn ($p) => $p['id'] === 6))[0];
+ex_check('real file: Wrist Grab Grounding keeps its steps and meter', [true, true], [count($wrist['guide']['steps']) > 0, isset($wrist['guide']['meter'])]);
+
 // --- the studio list (issue #112) ------------------------------------------------
 function ex_studio_file(array $studios): string
 {
