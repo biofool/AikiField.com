@@ -135,7 +135,10 @@ page layout, hero, or left column — keep it hidden until form submission.
   means no lines. The nth logged session of a practice shows the nth line of
   [lines tagged to it, then the general ones]; a checkbox opts out
   (`localStorage` `moon_lightness`). All lines start `approved: false`;
-  `display.show_unapproved: false` in the file hides every unapproved line.
+  only an explicit `display.show_unapproved: true` shows unapproved lines
+  (the file ships with `true` until the owner decides). `false`, a missing
+  key or a non-boolean value hides every unapproved line, and a missing or
+  non-boolean key logs a warning (fail safe, issue #127).
   Tests: `tests/unit/test_lightness_data.py` (rules in
   `tests/unit/data/lightness_rules.json`), `tests/unit/test-lightness-loader.php`,
   `tests/e2e/specs/exercises-lightness.spec.js`.

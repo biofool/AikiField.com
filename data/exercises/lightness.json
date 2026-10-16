@@ -12,7 +12,7 @@
   },
   "display": {
     "show_unapproved": true,
-    "note": "Set show_unapproved to false to hide every line that is not approved yet."
+    "note": "Set show_unapproved to false to hide every line that is not approved yet. Only an explicit true shows them: if this key is missing or is not true/false, lines that are not approved stay hidden and a warning is logged."
   },
   "guidelines": [
     "Warm, and never at anyone's expense.",
