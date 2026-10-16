@@ -210,6 +210,17 @@ resolved URL stays same-origin, because WHATWG `URL` parsing treats `\` as
 AikiField's `?next=` guard should be updated to the same standard; it currently
 shares the same relative-path-only intent.
 
+**Hardening (AF #121, 2026-10-16):** `af_safe_redirect()` (`login.php`) and
+`safeRedirect()` (`coach-login.js`) now also reject every C0 control character
+(TAB, CR, LF, NUL ...), the space, DEL and backslashes anywhere in the value.
+Browsers strip TAB, CR and LF from a URL, so `/<TAB>/evil.com` used to come out
+as `//evil.com`: signed in, `login.php` sent it in a `Location` header; signed
+out, it was baked into `window.COACH_LOGIN_REDIRECT` and `coach-login.js` used it
+without a check. `next` must be a string (`?next[]=x` is ignored; it used to be
+an HTTP 500), and the baked `COACH_LOGIN_REDIRECT` now goes through
+`safeRedirect()` again in the browser. Covered by
+`tests/e2e/specs/login-security.spec.js` (signed in, signed out, in the browser).
+
 ### Already-authed fast path
 
 If a visitor hits `/login.php` with an existing valid session, PHP redirects
@@ -538,6 +549,17 @@ See `backend/PRD.md` in AIRichardMoon for full endpoint details.
   `session_expired` to friendly copy and prefers `?redirect=` over the
   baked `COACH_LOGIN_REDIRECT` (parity with QA Pages; AikiField has no
   `/AEO/` gate that emits `aeo_required`).
+- **Login CSRF guard (AF #121, 2026-10-16):** `action=backend-login` is accepted
+  only from this site's own pages: `Sec-Fetch-Site: same-origin`, or an `Origin`
+  whose host and port equal `Host`. Anything else (a foreign Origin, `Origin:
+  null`, same-site, or no header at all) gets HTTP 403 `{"ok":false}`, no
+  cookie, and a log line. Without the guard any web page could post an
+  attacker's email and session token from the victim's browser and sign the
+  victim into the attacker's account, so the victim's chat history would land
+  where the attacker reads it. A browser always sends one of the two headers on
+  a POST and a page cannot forge either. Array values in the POST (`email[]=`)
+  now give `{"ok":false}` instead of an HTTP 500. The e2e helpers
+  (`establishSession`, `SAME_ORIGIN_HEADERS`) send the headers a browser sends.
 - On success the user is redirected to the `?next=` target (or `/beta/`).
   The session cookie covers the whole `aikifield.com` origin, so all
   `/beta/` pages read it via `includes/beta-gate.load.php`.
@@ -995,4 +1017,9 @@ LinkedIn Sign In is the one-click gate for the aikifield.com Digital Experience 
 - **Hand-off contract:** the callback redirects to `LINKEDIN_OAUTH_LOGIN_URL` with `?oauth_code=<OTC>`; the browser POSTs `/v1/auth/oauth/exchange?otc=<OTC>` (the `otc` query parameter, not a JSON body). Failures redirect with `?error=`.
 - **Events logged (backend):** `oauth_login_started`, `oauth_login`, `oauth_login_failed`.
 - **Open:** quantumaikido.com's `coach-login.js` still posts a JSON body to the exchange endpoint and expects `/login.html`; reconcile before enabling social login there.
+- **Hardening (2026-10-16, AF #121 with AIR#940-#943):**
+  - *State binding:* the backend sets a nonce cookie (`oauth_nonce`, HttpOnly, SameSite=Lax) on `/v1/auth/linkedin/authorize` and checks it on `/callback`, so a callback link minted in another browser cannot sign a victim into the attacker's account. `coach-proxy.php` already relays `Set-Cookie` from the backend; it now also forwards **only** the cookie named `oauth_nonce` (override with `COACH_OAUTH_NONCE_COOKIE`, value format checked) to `/v1/auth/<provider>/callback` GET requests, never the PHP session cookie. The backend flag `oauth_state_binding_required` stays off (warn only) until this proxy change is deployed, then switches on. quantumaikido.com's proxy does not forward cookies, so binding is limited to the `linkedin` provider (`oauth_state_binding_providers`).
+  - *Visitor address:* every backend call from this site (`coach-proxy.php`, `includes/coach-backend.php`) carries `X-AF-Client-IP`, `X-AF-Client-Ts` and `X-AF-Client-Sig = hex(HMAC-SHA256(proxy secret, "<ip>|<ts>"))` (`includes/client-ip-signing.php`), so the backend rate-limits per visitor instead of treating the whole site as one client (AIR#943). The address is the Cloudflare-verified one (see `qa_resolve_client_ip_headers`); an old backend ignores the headers.
+  - *Free tier:* a LinkedIn sign-up gets `tier: "free"` from `check-session` (AIR#940); the gates that need an invited member refuse it (AF #122).
+  - *Tests:* `tests/e2e/specs/linkedin-signin.spec.js` drives the button, the callback, the one-time code, a cancelled consent, a callback without the nonce cookie, a backend without LinkedIn settings (AF #105) and the cookie forwarding. The stub backend implements the same redirect contract and reads its callback and landing URLs from `QA_STUB_APP_ORIGIN`, as AIR reads them from Settings.
 - **Frontend (AikiField.com):** `coach-login.js` loads providers only when `?src=li` is present and shows only "Continue with LinkedIn" (above the password form); `digital-experience/index.html` rewrites its CTA to `/login.php?src=li&next=/digital-experience/`; `games/privacy/index.html` carries the LinkedIn data disclosure. The `coach-proxy.php` `/coach-api/*` path already forwards the callback.

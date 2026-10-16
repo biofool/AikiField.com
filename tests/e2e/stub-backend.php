@@ -13,17 +13,26 @@
  *   2. /v1/auth/verify — returns a fake session token for known test users.
  *   3. /v1/auth/check-session — validates the token (called by login.php to
  *      establish the PHP session).
- *   4. /v1/auth/providers — returns an empty provider list (no social login
- *      in tests).
+ *   4. /v1/auth/providers — LinkedIn only (the one provider AikiField offers);
+ *      /__stub/providers switches it off to model a backend whose LinkedIn
+ *      settings are not deployed (AikiField #105).
+ *   5. /v1/auth/linkedin/{authorize,callback} and /v1/auth/oauth/exchange —
+ *      the same redirect contract as AIRichardMoon, including the state-binding
+ *      nonce cookie (AIR#941) the AikiField proxy has to relay.
+ *   6. /v1/auth/logout, /v1/feature-flags and the passkey register routes, with
+ *      the response shapes of AIRichardMoon.
+ *   7. `tier` ("member" | "free") on check-session, like AIR#940.
  *
  * It also keeps a request log (QA_STUB_LOG) that tests read through
  * /__stub/requests to assert which backend was contacted and whether the
  * proxy secret and forwarded headers arrived — a much stronger check than
  * inspecting the DOM alone.
  *
- * Test accounts (password is the same for both):
- *   test@example.com  — standard user (beta access)
- *   admin@example.com — admin user
+ * Test accounts (password is the same for all):
+ *   test@example.com           — standard member (beta access)
+ *   admin@example.com          — admin user
+ *   free@example.com           — free tier (a LinkedIn sign-up): games and chat, no for-review
+ *   linkedin-user@example.com  — free tier; the account the LinkedIn stub flow signs in
  */
 declare(strict_types=1);
 
@@ -38,12 +47,28 @@ $USERS = [
         'admin'             => false,
         'active'            => true,
         'targetEnvironment' => 'both',
+        'tier'              => 'member',
     ],
     'admin@example.com' => [
         'username'          => 'admin',
         'admin'             => true,
         'active'            => true,
         'targetEnvironment' => 'both',
+        'tier'              => 'member',
+    ],
+    'free@example.com' => [
+        'username'          => 'freeuser',
+        'admin'             => false,
+        'active'            => true,
+        'targetEnvironment' => 'both',
+        'tier'              => 'free',
+    ],
+    'linkedin-user@example.com' => [
+        'username'          => 'linkedinuser',
+        'admin'             => false,
+        'active'            => true,
+        'targetEnvironment' => 'both',
+        'tier'              => 'free',
     ],
 ];
 
@@ -99,6 +124,20 @@ $record = [
     'requestId'        => $_SERVER['HTTP_X_REQUEST_ID'] ?? '',
     'contentType'      => $_SERVER['HTTP_CONTENT_TYPE'] ?? '',
     'authorization'    => $_SERVER['HTTP_AUTHORIZATION'] ?? '',
+    'origin'           => $_SERVER['HTTP_ORIGIN'] ?? '',
+    // Cookie NAMES only, never values: proves the proxy forwards exactly the
+    // OAuth state-binding cookie and nothing else (no PHP session id).
+    'cookieNames'      => implode(',', array_keys($_COOKIE)),
+    // Signed visitor address (AIR#943): X-AF-Client-IP / -Ts / -Sig, plus whether
+    // the signature verifies with the shared proxy secret.
+    'afClientIp'       => $_SERVER['HTTP_X_AF_CLIENT_IP'] ?? '',
+    'afClientTs'       => $_SERVER['HTTP_X_AF_CLIENT_TS'] ?? '',
+    'afClientSig'      => $_SERVER['HTTP_X_AF_CLIENT_SIG'] ?? '',
+    'afClientSigValid' => ($SECRET !== '' && isset($_SERVER['HTTP_X_AF_CLIENT_IP'], $_SERVER['HTTP_X_AF_CLIENT_TS'], $_SERVER['HTTP_X_AF_CLIENT_SIG'])
+        && hash_equals(
+            hash_hmac('sha256', $_SERVER['HTTP_X_AF_CLIENT_IP'] . '|' . $_SERVER['HTTP_X_AF_CLIENT_TS'], $SECRET),
+            (string) $_SERVER['HTTP_X_AF_CLIENT_SIG']
+        )),
 ];
 if (!str_starts_with($path, '/__stub/')) {
     if (@file_put_contents($LOG_FILE, json_encode($record) . "\n", FILE_APPEND | LOCK_EX) === false) {
@@ -152,6 +191,58 @@ if ($path === '/__stub/game-results/missing' && $method === 'POST') {
     stub_json(200, ['ok' => true, 'missing' => $on]);
 }
 
+// Stub switches and server-side state (revoked tokens, OAuth states, flags).
+// One JSON file next to the request log; /__stub/reset wipes it.
+$STATE_FILE = dirname($LOG_FILE) . '/af-e2e-stub-state.json';
+
+function stub_state_read(string $file): array
+{
+    if (!is_file($file)) {
+        return [];
+    }
+    $decoded = json_decode((string) file_get_contents($file), true);
+    if (!is_array($decoded)) {
+        error_log('stub-backend: state file is not JSON, starting empty: ' . $file);
+        return [];
+    }
+    return $decoded;
+}
+
+function stub_state_write(string $file, array $state): void
+{
+    if (file_put_contents($file, json_encode($state), LOCK_EX) === false) {
+        error_log('stub-backend: could not write state file ' . $file);
+    }
+}
+
+if ($path === '/__stub/reset' && $method === 'POST') {
+    @unlink($STATE_FILE);
+    stub_json(200, ['ok' => true]);
+}
+// Control switches, all POST {…}: providers {linkedin:bool}, feature-flags
+// {flags:{name:bool}}, check-session-delay {ms:int}, oauth/require-nonce {on:bool}.
+if (str_starts_with($path, '/__stub/') && $method === 'POST'
+    && in_array($path, ['/__stub/providers', '/__stub/feature-flags', '/__stub/check-session-delay', '/__stub/oauth/require-nonce'], true)) {
+    $state = stub_state_read($STATE_FILE);
+    $body = stub_body($rawBody);
+    switch ($path) {
+        case '/__stub/providers':
+            $state['linkedinEnabled'] = (bool) ($body['linkedin'] ?? true);
+            break;
+        case '/__stub/feature-flags':
+            $state['flags'] = is_array($body['flags'] ?? null) ? $body['flags'] : [];
+            break;
+        case '/__stub/check-session-delay':
+            $state['checkSessionDelayMs'] = max(0, (int) ($body['ms'] ?? 0));
+            break;
+        case '/__stub/oauth/require-nonce':
+            $state['requireNonce'] = (bool) ($body['on'] ?? true);
+            break;
+    }
+    stub_state_write($STATE_FILE, $state);
+    stub_json(200, ['ok' => true, 'state' => $state]);
+}
+
 // ── Proxy-secret enforcement (mirrors backend/app/main.py) ───────────────────
 
 $isExempt = str_starts_with($path, '/v1/auth/')
@@ -170,8 +261,116 @@ if ($SECRET !== '' && !$isExempt && !hash_equals($SECRET, $sent)) {
 // ── Auth endpoints ──────────────────────────────────────────────────────────
 
 if ($path === '/v1/auth/providers') {
-    // No social providers in tests — coach-login.js hides the social block.
-    stub_json(200, ['providers' => []]);
+    // LinkedIn is the only provider AikiField offers (and only for ?src=li).
+    // /__stub/providers {linkedin:false} models production today: the LinkedIn
+    // settings are not deployed, so the provider list is empty (AikiField #105).
+    $state = stub_state_read($STATE_FILE);
+    if (!($state['linkedinEnabled'] ?? true)) {
+        stub_json(200, ['providers' => []]);
+    }
+    stub_json(200, ['providers' => [[
+        'id'    => 'linkedin',
+        'label' => 'LinkedIn',
+        'icon'  => '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><rect width="24" height="24" rx="3" fill="#0a66c2"/></svg>',
+    ]]]);
+}
+
+// ── OAuth (LinkedIn): authorize → callback → one-time code → exchange ───────
+// Same redirect contract as AIRichardMoon. authorize sets the state-binding
+// nonce cookie (AIR#941); callback checks it when the stub's require-nonce
+// switch is on (AIR's oauth_state_binding_required). The consent screen is
+// skipped: authorize redirects straight back to redirect_uri.
+
+if ($path === '/v1/auth/linkedin/authorize' && $method === 'GET') {
+    $state = stub_state_read($STATE_FILE);
+    if (!($state['linkedinEnabled'] ?? true)) {
+        stub_json(503, ['detail' => 'LinkedIn sign-in is not configured.']);
+    }
+    // Like AIR, the callback and landing URLs come from the backend's own
+    // settings (linkedin_oauth_redirect_uri / linkedin_oauth_login_url), here
+    // QA_STUB_APP_ORIGIN, never from the request.
+    $appOrigin = rtrim((string) (getenv('QA_STUB_APP_ORIGIN') ?: ''), '/');
+    if ($appOrigin === '') {
+        error_log('stub-backend: QA_STUB_APP_ORIGIN is not set; the LinkedIn flow cannot redirect');
+        stub_json(500, ['detail' => 'Stub is missing QA_STUB_APP_ORIGIN.']);
+    }
+    $redirectUri = $appOrigin . '/coach-api/v1/auth/linkedin/callback';
+    $oauthState = bin2hex(random_bytes(12));
+    $nonce = bin2hex(random_bytes(16));
+    $state['oauth']['states'][$oauthState] = [
+        'nonceHash' => hash('sha256', $nonce),
+        'src'       => (string) ($_GET['src'] ?? ''),
+    ];
+    stub_state_write($STATE_FILE, $state);
+    setcookie('oauth_nonce', $nonce, ['expires' => time() + 600, 'path' => '/', 'httponly' => true, 'samesite' => 'Lax']);
+    $target = $redirectUri . '?'
+        . (isset($_GET['stub_cancel'])
+            ? 'error=access_denied&state=' . $oauthState
+            : 'code=stubcode&state=' . $oauthState);
+    http_response_code(302);
+    header('Location: ' . $target);
+    exit;
+}
+
+if ($path === '/v1/auth/linkedin/callback' && $method === 'GET') {
+    $state = stub_state_read($STATE_FILE);
+    $oauthState = (string) ($_GET['state'] ?? '');
+    $rec = $state['oauth']['states'][$oauthState] ?? null;
+    // AIR redirects to linkedin_oauth_login_url with ?error=<plain message> or
+    // &oauth_code=<one-time code> appended (auth/oauth_config.py login_redirect_url).
+    $login = static function (string $query): void {
+        $appOrigin = rtrim((string) (getenv('QA_STUB_APP_ORIGIN') ?: ''), '/');
+        http_response_code(302);
+        header('Location: ' . $appOrigin . '/login.php?next=/digital-experience/' . $query);
+        exit;
+    };
+    if (($_GET['error'] ?? '') !== '') {
+        // The member cancelled at LinkedIn: no `code`. AIR#942 turns this into a
+        // plain message on the login page instead of raw 422 JSON.
+        unset($state['oauth']['states'][$oauthState]);
+        stub_state_write($STATE_FILE, $state);
+        $login('&error=' . rawurlencode('LinkedIn sign-in was cancelled.'));
+    }
+    if ($rec === null) {
+        error_log('stub-backend: linkedin callback with unknown state');
+        $login('&error=' . rawurlencode('That sign-in link has expired. Please start again.'));
+    }
+    unset($state['oauth']['states'][$oauthState]);   // state is single use
+    $cookieNonce = (string) ($_COOKIE['oauth_nonce'] ?? '');
+    $bound = $cookieNonce !== '' && hash_equals($rec['nonceHash'], hash('sha256', $cookieNonce));
+    if (!$bound) {
+        error_log('stub-backend: linkedin callback without a matching oauth_nonce cookie');
+        if ($state['requireNonce'] ?? false) {
+            stub_state_write($STATE_FILE, $state);
+            $login('&error=' . rawurlencode('Sign-in could not be verified in this browser. Please start again.'));
+        }
+    }
+    $otc = 'otc_' . bin2hex(random_bytes(12));
+    $state['oauth']['otcs'][$otc] = 'linkedin-user@example.com';
+    stub_state_write($STATE_FILE, $state);
+    setcookie('oauth_nonce', '', ['expires' => time() - 3600, 'path' => '/']);
+    $login('&oauth_code=' . $otc);
+}
+
+if ($path === '/v1/auth/oauth/exchange' && $method === 'POST') {
+    $state = stub_state_read($STATE_FILE);
+    $otc = (string) ($_GET['otc'] ?? '');
+    $email = $state['oauth']['otcs'][$otc] ?? null;
+    if ($email === null || !isset($USERS[$email])) {
+        stub_json(410, ['detail' => 'OAuth code is invalid or expired']);   // AIR: HTTPException 410
+    }
+    unset($state['oauth']['otcs'][$otc], $state['revoked'][$email]);   // one-time code
+    stub_state_write($STATE_FILE, $state);
+    stub_json(200, [
+        'ok'           => true,
+        'token'        => stub_token($email),
+        'sessionToken' => stub_token($email),
+        'email'        => $email,
+        'name'         => '',
+        'username'     => $USERS[$email]['username'],
+        'admin'        => $USERS[$email]['admin'],
+        'expiresAt'    => date('c', time() + 86400),
+    ]);
 }
 
 if ($path === '/v1/auth/verify' && $method === 'POST') {
@@ -182,12 +381,19 @@ if ($path === '/v1/auth/verify' && $method === 'POST') {
         stub_json(200, ['ok' => false, 'error' => 'Invalid email or password.']);
     }
     $user = $USERS[$email];
+    // A fresh sign-in re-enables the (deterministic) stub token that a logout revoked.
+    $state = stub_state_read($STATE_FILE);
+    if (isset($state['revoked'][$email])) {
+        unset($state['revoked'][$email]);
+        stub_state_write($STATE_FILE, $state);
+    }
     stub_json(200, [
         'ok'                => true,
         'email'             => $email,
         'sessionToken'      => stub_token($email),
         'admin'             => $user['admin'],
         'targetEnvironment' => $user['targetEnvironment'],
+        'tier'              => $user['tier'],
     ]);
 }
 
@@ -195,7 +401,12 @@ if ($path === '/v1/auth/check-session' && $method === 'POST') {
     $body  = stub_body($rawBody);
     $email = strtolower(trim((string) ($body['email'] ?? '')));
     $token = (string) ($body['sessionToken'] ?? '');
-    if (!isset($USERS[$email]) || !hash_equals(stub_token($email), $token)) {
+    $state = stub_state_read($STATE_FILE);
+    // /__stub/check-session-delay models a cold Cloud Run start (AikiField #123).
+    if (($state['checkSessionDelayMs'] ?? 0) > 0) {
+        usleep((int) $state['checkSessionDelayMs'] * 1000);
+    }
+    if (!isset($USERS[$email]) || !hash_equals(stub_token($email), $token) || isset($state['revoked'][$email])) {
         error_log('stub-backend: check-session rejected email=' . $email);
         stub_json(200, ['ok' => false, 'error' => 'Session is not valid.']);
     }
@@ -205,7 +416,67 @@ if ($path === '/v1/auth/check-session' && $method === 'POST') {
         'email'             => $email,
         'admin'             => $user['admin'],
         'targetEnvironment' => $user['targetEnvironment'],
+        'tier'              => $user['tier'],
     ]);
+}
+
+// POST /v1/auth/logout {email, sessionToken} → {ok}. Revokes the token, like
+// the real backend (AikiField #123: sign-out must end the backend session).
+if ($path === '/v1/auth/logout' && $method === 'POST') {
+    $body  = stub_body($rawBody);
+    $email = strtolower(trim((string) ($body['email'] ?? '')));
+    $token = (string) ($body['sessionToken'] ?? '');
+    if (!isset($USERS[$email]) || !hash_equals(stub_token($email), $token)) {
+        stub_json(200, ['ok' => false]);
+    }
+    $state = stub_state_read($STATE_FILE);
+    $state['revoked'][$email] = true;
+    stub_state_write($STATE_FILE, $state);
+    stub_json(200, ['ok' => true]);
+}
+
+// GET /v1/feature-flags → {flags:{name:bool}} (public, like AIR).
+if ($path === '/v1/feature-flags' && $method === 'GET') {
+    $state = stub_state_read($STATE_FILE);
+    stub_json(200, ['flags' => array_merge(['passkey_login' => false], is_array($state['flags'] ?? null) ? $state['flags'] : [])]);
+}
+
+// Passkey registration (authenticated). Response shapes follow AIR's
+// auth/_passkey_register.py: begin → {ok, challengeKey, options}; finish
+// takes {credential (JSON string), challengeKey} → {ok}.
+if (($path === '/v1/auth/passkey/register/begin' || $path === '/v1/auth/passkey/register/finish') && $method === 'POST') {
+    $email = strtolower(trim((string) ($_SERVER['HTTP_X_AUTH_EMAIL'] ?? '')));
+    $token = (string) ($_SERVER['HTTP_X_AUTH_SESSION'] ?? '');
+    if (!isset($USERS[$email]) || !hash_equals(stub_token($email), $token)) {
+        stub_json(401, ['detail' => 'Invalid, inactive, or expired session. Please log in.']);
+    }
+    $state = stub_state_read($STATE_FILE);
+    if ($path === '/v1/auth/passkey/register/begin') {
+        $key = 'ck_' . bin2hex(random_bytes(8));
+        $state['passkeyChallenge'][$email] = $key;
+        stub_state_write($STATE_FILE, $state);
+        stub_json(200, [
+            'ok'           => true,
+            'challengeKey' => $key,
+            'options'      => [
+                'rp'                     => ['name' => 'AikiField', 'id' => 'localhost'],
+                'user'                   => ['id' => 'dXNlcg', 'name' => $email, 'displayName' => $email],
+                'challenge'              => 'Y2hhbGxlbmdl',
+                'pubKeyCredParams'       => [['type' => 'public-key', 'alg' => -7]],
+                'timeout'                => 60000,
+                'excludeCredentials'     => [],
+                'attestation'            => 'none',
+                'authenticatorSelection' => ['authenticatorAttachment' => 'platform', 'userVerification' => 'preferred', 'residentKey' => 'preferred', 'requireResidentKey' => false],
+            ],
+        ]);
+    }
+    $body = stub_body($rawBody);
+    if (!is_string($body['credential'] ?? null) || ($body['challengeKey'] ?? '') !== ($state['passkeyChallenge'][$email] ?? null)) {
+        stub_json(200, ['ok' => false, 'error' => 'Registration challenge expired or invalid. Please try again.']);
+    }
+    unset($state['passkeyChallenge'][$email]);
+    stub_state_write($STATE_FILE, $state);
+    stub_json(200, ['ok' => true]);
 }
 
 // ── AI Chat (games/ai-coach.php → /v1/chat-secure) ──────────────────────────

@@ -35,7 +35,9 @@
     function safeRedirect(candidate, fallback) {
         if (!candidate || typeof candidate !== "string") return fallback;
         const c = candidate.trim();
-        if (!c || c[0] !== "/" || c.startsWith("//") || c.includes("\r") || c.includes("\n") || containsBackslash(c)) {
+        // Any C0 control (TAB, CR, LF, NUL...), space or DEL is refused: browsers
+        // strip TAB/CR/LF from a URL, so "/<TAB>/evil.com" would become "//evil.com".
+        if (!c || c[0] !== "/" || c.startsWith("//") || /[\u0000-\u0020\u007f]/.test(c) || containsBackslash(c)) {
             return fallback;
         }
         try {
@@ -52,9 +54,12 @@
         }
     }
     const _initParams = new URLSearchParams(window.location.search);
+    // The baked COACH_LOGIN_REDIRECT goes through the same check: login.php
+    // validates it too, but a static or cached copy of the page must not be able
+    // to send a signed-in member off-site.
     const REDIRECT = safeRedirect(
         _initParams.get("redirect"),
-        window.COACH_LOGIN_REDIRECT || "/members.php",
+        safeRedirect(window.COACH_LOGIN_REDIRECT, "/members.php"),
     );
     // Invitation-code links: /login.php?invite=CODE, or nested inside the
     // post-login target (beta-gate sends ?next= which PHP folds into

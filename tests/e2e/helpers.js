@@ -19,15 +19,28 @@ function stubToken(email) {
 }
 
 /**
+ * Headers a browser adds to a same-origin POST. login.php refuses a
+ * backend-login POST that does not look like one (login CSRF guard, AF #121),
+ * and APIRequestContext sends neither header on its own.
+ */
+const SAME_ORIGIN_HEADERS = Object.freeze({
+  Origin: BASE_URL,
+  'Sec-Fetch-Site': 'same-origin',
+});
+
+/**
  * Establish a real PHP session by posting to login.php exactly as
  * coach-login.js does after a successful backend auth. Returns login.php's
  * JSON body ({ ok }) so a caller can assert the session was actually created.
  *
  * @param {import('@playwright/test').APIRequestContext} request
- * @param {{email?: string}} opts
+ * @param {{email?: string, headers?: Record<string, string>}} opts
+ *   headers: replaces the browser-like same-origin headers, so a test can
+ *   send a cross-site POST instead.
  */
-async function establishSession(request, { email = TEST_EMAIL } = {}) {
+async function establishSession(request, { email = TEST_EMAIL, headers = SAME_ORIGIN_HEADERS } = {}) {
   const resp = await request.post('/login.php', {
+    headers,
     form: {
       action: 'backend-login',
       email,
@@ -84,6 +97,7 @@ async function stubGameResultsLastRequest(request) {
 }
 
 module.exports = {
+  SAME_ORIGIN_HEADERS,
   stubGameResultsLastRequest,
   resetStubGameResults,
   stubGameResultsMissing,

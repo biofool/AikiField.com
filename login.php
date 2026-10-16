@@ -48,10 +48,12 @@ require __DIR__ . '/includes/coach-config.load.php';
  *
  * Rejects absolute URLs, scheme-relative //evil.com, backslashes (WHATWG
  * URL treats \ as /, so /%5Cevil.com resolves to https://evil.com/),
- * percent-encoded backslashes, CR/LF injection, and login.php targets.
- * Also rejects any path that resolves off-site.
+ * percent-encoded backslashes, every C0 control character (browsers strip
+ * TAB, CR and LF from a URL, so "/<TAB>/evil.com" would become
+ * "//evil.com"), spaces, DEL, and login.php targets. Also rejects any path
+ * that resolves off-site. A non-string value (?next[]=x) is never valid.
  */
-function af_safe_redirect(?string $candidate, string $fallback): string
+function af_safe_redirect(mixed $candidate, string $fallback): string
 {
     $candidate = is_string($candidate) ? trim($candidate) : '';
     if ($candidate === ''
@@ -59,8 +61,7 @@ function af_safe_redirect(?string $candidate, string $fallback): string
         || str_starts_with($candidate, '//')
         || parse_url($candidate, PHP_URL_HOST) !== null
         || parse_url($candidate, PHP_URL_SCHEME) !== null
-        || str_contains($candidate, "\r")
-        || str_contains($candidate, "\n")
+        || preg_match('/[\x00-\x20\x7f\\\\]/', $candidate) === 1
         || af_contains_backslash($candidate)
     ) {
         return $fallback;
@@ -118,6 +119,36 @@ function af_url_is_offsite(string $candidate, string $scheme, string $host): boo
     return false;
 }
 
+/**
+ * True when a state-changing POST was sent by one of this site's own pages.
+ *
+ * The backend-login POST turns a backend session token into a PHP session
+ * cookie. Without this check any other site can post an attacker's email and
+ * token from the victim's browser and sign the victim into the attacker's
+ * account (login CSRF), so the victim's chat history lands where the
+ * attacker reads it. Browsers send Sec-Fetch-Site (modern) and Origin (all
+ * engines) on a POST and a page cannot forge either. A request with neither
+ * header is refused: the only legitimate caller is coach-login.js in a
+ * browser.
+ */
+function af_is_same_origin_post(): bool
+{
+    $site = strtolower(trim((string) ($_SERVER['HTTP_SEC_FETCH_SITE'] ?? '')));
+    if ($site !== '') {
+        return $site === 'same-origin';
+    }
+    $origin = trim((string) ($_SERVER['HTTP_ORIGIN'] ?? ''));
+    if ($origin === '' || $origin === 'null') {
+        return false;
+    }
+    $parts = parse_url($origin);
+    if (!is_array($parts) || empty($parts['host'])) {
+        return false;
+    }
+    $originHost = strtolower($parts['host']) . (isset($parts['port']) ? ':' . $parts['port'] : '');
+    return $originHost === strtolower((string) ($_SERVER['HTTP_HOST'] ?? ''));
+}
+
 // --- Start PHP session with secure cookie settings ---
 // Identical params to the former projects.php handler and to
 // includes/beta-gate.load.php — the session cookie must be valid site-wide
@@ -158,8 +189,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && $qaAlreadyAuthed && empty($_GET['err
 // coach-login.js posts email + sessionToken here after a successful backend
 // auth. We verify against the backend and store in the PHP session cookie.
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'backend-login') {
-    $postEmail = trim($_POST['email'] ?? '');
-    $postToken = trim($_POST['sessionToken'] ?? '');
+    if (!af_is_same_origin_post()) {
+        // Login CSRF guard: see af_is_same_origin_post(). Log what the browser
+        // said (printable ASCII only, capped), never the posted credentials.
+        $printable = static fn (string $v): string => substr((string) preg_replace('/[^\x20-\x7e]/', '?', $v), 0, 100);
+        error_log('login.php: backend-login refused (not same-origin) origin='
+            . $printable((string) ($_SERVER['HTTP_ORIGIN'] ?? '')) . ' sec-fetch-site='
+            . $printable((string) ($_SERVER['HTTP_SEC_FETCH_SITE'] ?? '')));
+        session_abort();
+        header_remove('Set-Cookie');
+        header('Content-Type: application/json');
+        http_response_code(403);
+        echo json_encode(['ok' => false]);
+        exit;
+    }
+    // ?email[]=x would make trim() throw a TypeError (HTTP 500).
+    $postEmail = is_string($_POST['email'] ?? null) ? trim($_POST['email']) : '';
+    $postToken = is_string($_POST['sessionToken'] ?? null) ? trim($_POST['sessionToken']) : '';
     $qaSessionEstablished = false;
     if ($postEmail !== '' && $postToken !== '') {
         $verifyUrl = rtrim(COACH_BACKEND_URL, '/') . '/v1/auth/check-session';

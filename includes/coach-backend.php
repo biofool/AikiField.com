@@ -1,6 +1,8 @@
 <?php
 declare(strict_types=1);
 
+require_once __DIR__ . '/client-ip-signing.php';
+
 /**
  * Server-side POST to the AI Chat backend (AIRichardMoon) as the signed-in
  * member — used by the Digital Experience game endpoints
@@ -24,6 +26,10 @@ function af_backend_post(string $path, array $body, string $email, string $sessi
     ];
     if (COACH_PROXY_SECRET !== '') {
         $headers[] = 'X-Proxy-Secret: ' . COACH_PROXY_SECRET;
+    }
+    // Signed visitor address so the backend rate-limits per visitor (AIR#943).
+    foreach (qa_signed_client_ip_headers(COACH_PROXY_SECRET) as $line) {
+        $headers[] = $line;
     }
     foreach (qa_resolve_client_ip_headers(
         (string) ($_SERVER['REMOTE_ADDR'] ?? ''),

@@ -31,6 +31,9 @@ function stubServer(port) {
     env: {
       QA_STUB_PROXY_SECRET: PROXY_SECRET,
       QA_STUB_LOG: path.join(E2E_DIR, '.stub-aikifield.jsonl'),
+      // AIR takes its OAuth callback and landing URLs from Settings; the stub
+      // takes them from here.
+      QA_STUB_APP_ORIGIN: `http://0.0.0.0:${APP_PORT}`,
     },
     reuseExistingServer: !process.env.CI,
     stdout: 'ignore',

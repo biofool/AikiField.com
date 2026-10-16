@@ -132,6 +132,7 @@ for cmd in "${COMMANDS[@]}"; do
             run_step "unit:locale-path" node tests/test_locale_path.js
             run_step "unit:lightness-data" python3 tests/unit/test_lightness_data.py
             run_step "unit:lightness-loader" php tests/unit/test-lightness-loader.php
+            run_step "unit:client-ip-signing" php tests/unit/test-client-ip-signing.php
             ;;
         e2e)
             if [[ ! -d "$WT/tests/e2e/node_modules/@playwright/test" ]]; then

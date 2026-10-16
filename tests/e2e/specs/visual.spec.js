@@ -25,12 +25,13 @@ const { AxeBuilder } = require('@axe-core/playwright');
 const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
-const { TEST_EMAIL, PASSWORD, stubToken } = require('../helpers');
+const { TEST_EMAIL, PASSWORD, stubToken, SAME_ORIGIN_HEADERS } = require('../helpers');
 
 // Gated pages need a PHP session. page.request shares the browser context's
 // cookie jar, so posting backend-login here authenticates the page too.
 async function login(page) {
   const resp = await page.request.post('/login.php', {
+    headers: SAME_ORIGIN_HEADERS,
     form: {
       action: 'backend-login',
       email: TEST_EMAIL,

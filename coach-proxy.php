@@ -23,6 +23,7 @@
 // Load config — coach-config.local.php (gitignored) → coach-config.php.
 require __DIR__ . '/includes/coach-config.load.php';
 require __DIR__ . '/includes/cloudflare-ips.php';
+require_once __DIR__ . '/includes/client-ip-signing.php';
 if (!defined('COACH_TIMEOUT')) {
     define('COACH_TIMEOUT', 30);
 }
@@ -156,6 +157,27 @@ foreach (qa_resolve_client_ip_headers($remoteAddr, $clientCfConnectingIp, $clien
 // Add proxy secret header so the backend knows this came through the proxy
 if (COACH_PROXY_SECRET !== '') {
     $headers[] = 'X-Proxy-Secret: ' . COACH_PROXY_SECRET;
+}
+
+// Signed visitor address (AIR#943). The backend only ever sees this PHP host
+// as the TCP peer, so without this every visitor shares one rate-limit key.
+// See includes/client-ip-signing.php for the contract.
+foreach (qa_signed_client_ip_headers(COACH_PROXY_SECRET) as $line) {
+    $headers[] = $line;
+}
+
+// OAuth state binding (AIR#941). At authorize the backend sets a nonce cookie,
+// which the Set-Cookie pass-through below hands to the browser; at callback the
+// backend checks that the same browser sends it back. Forward ONLY that one
+// cookie (never the PHP session cookie) and only to the callback route.
+if ($method === 'GET' && preg_match('#^/v1/auth/[^/?]+/callback(\?|$)#', $path)) {
+    $nonceCookie = defined('COACH_OAUTH_NONCE_COOKIE') ? (string) COACH_OAUTH_NONCE_COOKIE : 'oauth_nonce';
+    $nonceValue = $_COOKIE[$nonceCookie] ?? null;
+    if (is_string($nonceValue) && preg_match('/^[A-Za-z0-9_\-]{16,256}$/', $nonceValue) === 1) {
+        $headers[] = 'Cookie: ' . $nonceCookie . '=' . $nonceValue;
+    } elseif ($nonceValue !== null) {
+        error_log('coach-proxy.php: OAuth nonce cookie has an unexpected format; not forwarded');
+    }
 }
 
 // For any OAuth authorize endpoint, pass the local redirect_uri to the

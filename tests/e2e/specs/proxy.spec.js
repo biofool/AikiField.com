@@ -166,3 +166,37 @@ test.describe('proxy response header passthrough', () => {
     expect(resp.headers()['content-type']).toContain('application/json');
   });
 });
+
+// Signed visitor address (AIR#943). The backend only sees this PHP host as the
+// TCP peer, so the proxy signs the visitor address with the shared proxy
+// secret: X-AF-Client-IP, X-AF-Client-Ts and X-AF-Client-Sig. The stub verifies
+// the signature the way AIRichardMoon does (afClientSigValid).
+test.describe('signed visitor address', () => {
+  const LOOPBACK_RE = /^(127\.0\.0\.1|::1)$/;
+
+  test('every proxied request carries a valid signature over the visitor address', async ({ request }) => {
+    await request.get('/coach-api/v1/auth/providers');
+    const log = await stubRequests(request);
+    const hit = log.requests.find((r) => r.path === '/v1/auth/providers');
+    expect(hit, 'stub backend was not contacted').toBeTruthy();
+    expect(hit.afClientIp).toMatch(LOOPBACK_RE);
+    expect(Math.abs(Number(hit.afClientTs) - Date.now() / 1000)).toBeLessThan(300);
+    expect(hit.afClientSig).toMatch(/^[0-9a-f]{64}$/);
+    expect(hit.afClientSigValid).toBe(true);
+  });
+
+  test('a client-supplied address header is never signed (the peer is not Cloudflare)', async ({ request }) => {
+    await request.get('/coach-api/v1/auth/providers', {
+      headers: {
+        'CF-Connecting-IP': '203.0.113.42',
+        'X-Forwarded-For': '198.51.100.10',
+        'X-AF-Client-IP': '203.0.113.99',
+        'X-AF-Client-Sig': 'forged',
+      },
+    });
+    const log = await stubRequests(request);
+    const hit = log.requests.find((r) => r.path === '/v1/auth/providers');
+    expect(hit.afClientIp).toMatch(LOOPBACK_RE);
+    expect(hit.afClientSigValid).toBe(true);
+  });
+});
