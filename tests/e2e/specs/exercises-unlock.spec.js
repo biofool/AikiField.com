@@ -49,4 +49,14 @@ test.describe('exercises gate (issue #71)', () => {
     await expect(page.locator('#player h2')).toBeVisible();
     await expect(page.locator('#player .body')).not.toBeEmpty();
   });
+
+  test('signed-in: Invisible Partner toggle has a clean label and an accessible explanation', async ({ page }) => {
+    await browserLogin(page, { email: TEST_EMAIL, password: PASSWORD, next: '/games/exercises/' });
+    await page.locator('.ex-chip', { hasText: 'Wrist Grab' }).click();
+    const invB = page.locator('#invB');
+    await expect(invB).toHaveText('Invisible Partner');
+    await expect(invB).toHaveAttribute('title', 'Invisible partner means practicing by yourself.');
+    await expect(invB).toHaveAttribute('aria-describedby', 'invB-desc');
+    await expect(page.locator('#invB-desc')).toHaveText('Invisible partner means practicing by yourself.');
+  });
 });

@@ -1312,7 +1312,7 @@ class CloudManagementClient:
         status changes. Returns the full intent dict, or None on error.
         No project-scoped auth — the intent_id is an unguessable token.
         """
-        return self._get_sync(f"/api/v1/intent/{intent_id}")
+        return self._get_sync(f"/api/v1/intent/{urllib.parse.quote(intent_id, safe='')}")
 
     def wait_for_reschedule(
         self,
@@ -1335,7 +1335,7 @@ class CloudManagementClient:
         import time as _time
         deadline = _time.monotonic() + timeout
         while _time.monotonic() < deadline:
-            data = self._get_sync(f"/api/v1/intent/{intent_id}")
+            data = self._get_sync(f"/api/v1/intent/{urllib.parse.quote(intent_id, safe='')}")
             if data is None:
                 return None
             status = data.get("status", "")
@@ -1834,9 +1834,9 @@ class CloudManagementClient:
         """
         if not self.enabled:
             return []
-        params = f"project_id={self.project_id}"
+        params = urllib.parse.urlencode({"project_id": self.project_id})
         if since:
-            params += f"&since={since}"
+            params += "&" + urllib.parse.urlencode({"since": since})
         data = self._get_sync(f"/api/v1/kill-orders?{params}")
         if data is None:
             return []

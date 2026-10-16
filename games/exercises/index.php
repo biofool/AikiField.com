@@ -3,8 +3,20 @@
  * Members-only entry point (issue #71 — Digital Experience previews + login gate).
  * Unauthenticated requests are redirected to /login.php?next=<this page> by the
  * shared coaching session gate, same as /beta/ and /members.
+ *
+ * Exception (issue #101 — LinkedIn taste-then-ask): anonymous visitors who
+ * arrive with ?src=li skip the gate and keep the three free practices the
+ * page's JS already exposes to signed-out users. Signed-in visitors (session
+ * cookie present) always go through the gate so their session revalidates.
+ * No session is started for the free preview, so the page stays cookie-free
+ * for that traffic.
  */
-require dirname(__DIR__, 2) . '/includes/beta-gate.load.php';
+$afFreePreview = (($_GET['src'] ?? '') === 'li') && empty($_COOKIE[session_name()]);
+if (!$afFreePreview) {
+    require dirname(__DIR__, 2) . '/includes/beta-gate.load.php';
+} else {
+    error_log('exercises: li-landing free preview ua=' . ($_SERVER['HTTP_USER_AGENT'] ?? '-'));
+}
 ?>
 <!DOCTYPE html>
 <html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
@@ -115,7 +127,8 @@ function showLockedModal(ex){
    <div style="font-size:11px;letter-spacing:0.12em;margin-bottom:10px">LOCKED PRACTICE</div>
    <h2 style="font-size:20px;margin-bottom:10px">${ex.title}</h2>
    <p style="font-size:14px;font-style:italic">Twenty practices from the work of Richard Moon 6th Dan</p>
-   <p style="font-size:12px;opacity:0.7;margin:14px 0">Free practices: DBSO, Wrist Grab Grounding, Ten to the Tenth. Unlock all 15+5 with Creator membership.</p>
+   <p style="font-size:12px;opacity:0.7;margin:14px 0">Free practices: DBSO, Wrist Grab Grounding, Ten to the Tenth. Unlock all 15+5 with a free AikiField account.</p>
+   <a href="/login.php?next=/games/exercises/" class="btn" style="display:inline-block;margin-bottom:10px">Sign in to unlock all</a><br>
    <button class="btn" id="lockClose">Back to free practices</button>
  </div>`;
  document.body.appendChild(overlay);
@@ -178,7 +191,7 @@ function renderPlayer(){
  const bodyParas=bodyText.split(/\n\n+/).map((p,i)=>`<div class="tp" data-p="p${i}">${esc(p).replace(/\n/g,'<br>')}</div>`).join('');
  document.getElementById('player').innerHTML=`
    <div style="display:flex;justify-content:space-between"><div><h2 style="font-size:22px">${esc(tr('ex'+ex.id+'.title', ex.title))}</h2><div class="meta">${esc(tr('ex'+ex.id+'.meta', ex.meta))} · ${esc(tr('ex'+ex.id+'.part', ex.part))}</div></div><span style="font-size:10px;border:1px solid #000;padding:3px 7px">Complexity ${ex.complexity}</span></div>
-   ${isWrist?`<div class="toggle"><button id="realB">Real Partner</button><button id="invB" class="active">Invisible Partner — "we say invisible"</button></div>`:''}
+   ${isWrist?`<div class="toggle"><button id="realB">Real Partner</button><button id="invB" class="active" title="Invisible partner means practicing by yourself." aria-describedby="invB-desc">Invisible Partner</button><span id="invB-desc" hidden>Invisible partner means practicing by yourself.</span></div>`:''}
    <div class="body">${bodyParas}</div>
    <div class="timer"><div id="phase">Phase: 50/50 — Resist less, ground more</div><div class="circle" id="circ">${Math.floor(timeLeft/60)}:${String(timeLeft%60).padStart(2,'0')}</div><div id="prompt" style="font-size:11px">${isWrist?'Push... feel where you are':'Breathe...'}</div>${isWrist?`<div class="ground"><div class="ground-fill" id="gfill" style="width:${groundPercent}%"></div></div><div style="font-size:10px">${groundPercent}% ground — goal 60% — DBSO</div>`:''}
    <div style="display:flex;gap:6px;margin-top:10px"><button class="btn" id="playB" style="flex:1">${isPlaying?'Pause':'Play Guided'}</button><button class="btn" id="resetB" style="flex:0.3;background:#fff;color:#000;border:1px solid #000">Reset</button></div></div>

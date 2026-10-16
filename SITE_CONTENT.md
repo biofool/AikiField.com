@@ -20,8 +20,8 @@
   - All experiences (`/digital-experience/` — hub)
   - Ride the Lucky Wave (`/digital-experience/lucky-wave.html#v1` → gated `/games/lucky-wave/RideTheLuckyWaveV1-legacy.php`)
   - Ride the Lucky Wave V2 (`/digital-experience/lucky-wave.html#v2` → gated `/games/lucky-wave/RideTheLuckyWaveV2.php`)
-  - Twenty Practices (`/digital-experience/practices.html` → gated `/games/exercises/`)
-  - Enter the Unified Field Chat (`/digital-experience/unified-field-chat.html` → gated `/members` — AI chat, sign-in required)
+  - Twenty Practices (direct to gated `/games/exercises/` — issue #106 removed the preview page; `/digital-experience/practices.html` 301s there)
+  - Enter the Unified Field Chat (direct to gated `/members` — AI chat, sign-in required; `/digital-experience/unified-field-chat.html` 301s there)
 - Verbal Aikido — Story Mode is not listed in the Digital Experience menu. Its review build is gated at `/for-review/games/verbal-aikido/`; the former `/games/verbal-aikido/` URL redirects there.
 - Free Services For Studios (`/somatic-studios/`) — audience pathway for somatic
   practitioners and studios (see "Somatic Studios" section below)
@@ -105,7 +105,7 @@ Four cards, each with a short description and a ghost button:
 - Heading: 20 exercises to begin your journey to personal mastery
 - Lead: Create a free account to open all twenty. Work through them in order or pick the one your day calls for.
 - Tiles (static list; titles from `games/exercises/data/collected_exercises_app_data.json`): Exercise 01 DropBackSinkOpen (DBSO) · 02 Listen to the impulse to breathe · 03 Feel / Locate / Align / Unify (Kamae) · 04 Tense & Release Body Scan · 05 Center of the Central Core Relaxation · 06 Wrist Grab Grounding · 07 Breathe Universal Harmony (Aiki Kokyu) · 08 Breathing the Whole System · 09 The O2 Continuum · 10 Ocean Breathing · 11 Infant Breathing · 12 Ten to the Tenth — State Shifting Scale · 13 Enjoy / Joy / Appreciate · 14 Shoulder Slap — Sensing Finer Dimensions · 15 Application Visualization · Interludes: Opening · After Part I · After Part II · After Part III · Closing
-- CTA: Start exercise 01 (→ /digital-experience/practices.html)
+- CTA: Start exercise 01 (→ /games/exercises/)
 
 ### Games (`#games`)
 

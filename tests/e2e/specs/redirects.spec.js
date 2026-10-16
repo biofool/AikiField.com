@@ -140,4 +140,24 @@ test.describe('old URL 301 redirects', () => {
     expect(resp.status()).toBe(301);
     expect(resp.headers()['location']).toBe('/beta/assessment.php');
   });
+
+  // Issue #106: the intermediate preview pages left the user flow; their old
+  // URLs redirect straight to the gated entry points.
+  for (const [from, to] of [
+    ['/digital-experience/unified-field-chat.html', '/members'],
+    ['/digital-experience/practices.html', '/games/exercises/'],
+    ['/digital-experience/moon-practices.html', '/games/exercises/'],
+  ]) {
+    test(`${from} 301-redirects to ${to}`, async ({ request }) => {
+      const resp = await request.get(from, NO_REDIRECT);
+      expect(resp.status()).toBe(301);
+      expect(resp.headers()['location']).toBe(to);
+    });
+  }
+
+  test('the legacy chat preview URL reaches /members through the auth gate in one hop', async ({ page }) => {
+    await page.goto('/digital-experience/unified-field-chat.html');
+    await expect(page).toHaveURL(/\/login\.php\?next=/);
+    expect(decodeURIComponent(page.url())).toContain('next=/members');
+  });
 });

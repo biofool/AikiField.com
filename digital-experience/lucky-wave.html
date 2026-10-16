@@ -65,8 +65,8 @@
             <ul class="af-nav__megalist">
           <li><a href="/digital-experience/lucky-wave.html#v1" class="af-nav__sublink">Ride the Lucky Wave</a></li>
           <li><a href="/digital-experience/lucky-wave.html#v2" class="af-nav__sublink">Ride the Lucky Wave V2</a></li>
-          <li><a href="/digital-experience/practices.html" class="af-nav__sublink">Twenty Practices</a></li>
-          <li class="af-nav__subsep"><a href="/digital-experience/unified-field-chat.html" class="af-nav__sublink af-nav__sublink--feature">Enter the Unified Field Chat</a></li>
+          <li><a href="/games/exercises/" class="af-nav__sublink">Twenty Practices</a></li>
+          <li class="af-nav__subsep"><a href="/members" class="af-nav__sublink af-nav__sublink--feature">Enter the Unified Field Chat</a></li>
               <li class="af-nav__subsep"><a href="/blog/index.html#social" class="af-nav__sublink" data-i18n="nav.social_media">Social Media</a></li>
             </ul>
           </li>
@@ -106,7 +106,7 @@
             <li>Session summary</li>
             <li>3-minute timer</li>
           </ul>
-          <p style="margin-top:16px;"><a class="af-btn af-btn--primary af-btn--sm" href="/games/lucky-wave/RideTheLuckyWaveV1-legacy.php">Sign in to play V1</a></p>
+          <p style="margin-top:16px;"><a class="af-btn af-btn--primary af-btn--sm" href="/games/lucky-wave/RideTheLuckyWaveV1-legacy.php" data-auth-label="Play V1">Sign in to play V1</a></p>
         </div>
         <div class="af-card" id="v2">
           <h3 class="af-card__title">Version 2 — R.Moon Edition</h3>
@@ -117,7 +117,7 @@
             <li>Colorblind-safe scoring</li>
             <li>Richer scoring detail</li>
           </ul>
-          <p style="margin-top:16px;"><a class="af-btn af-btn--primary af-btn--sm" href="/games/lucky-wave/RideTheLuckyWaveV2.php">Sign in to play V2</a></p>
+          <p style="margin-top:16px;"><a class="af-btn af-btn--primary af-btn--sm" href="/games/lucky-wave/RideTheLuckyWaveV2.php" data-auth-label="Play V2">Sign in to play V2</a></p>
         </div>
       </div>
       <p class="af-body" style="margin-top:24px;"><a href="/games/lucky-wave/about.html">About the Lucky Wave protocol →</a> · <a href="/digital-experience/">← All experiences</a></p>
@@ -125,12 +125,12 @@
   </section>
 
   <!-- MEMBERSHIP CTA -->
-  <section class="af-section af-section--lg">
+  <section class="af-section af-section--lg" data-auth-hide>
     <div class="af-container">
       <div class="af-callout">
         <h2 class="af-callout__title">Members only</h2>
         <p class="af-callout__body">Ride the Lucky Wave is included with a free AikiField account. Sign in — or create an account in under a minute — and the wave opens.</p>
-        <a href="/login.php" class="af-btn af-btn--light">Sign in or create an account</a>
+        <a href="/login.php?next=%2Fgames%2Flucky-wave%2FRideTheLuckyWaveV1-legacy.php" class="af-btn af-btn--light">Sign in or create an account</a>
       </div>
     </div>
   </section>
@@ -182,5 +182,6 @@
 <script src="/js/locale-utils.js?v=20261004-2"></script>
 <script src="/js/language-selector.js?v=20261004-2"></script>
 <script src="/js/nav-menu.js?v=20261002" defer></script>
+<script src="/js/digital-experience-auth.js?v=20261007" defer></script>
 </body>
 </html>
