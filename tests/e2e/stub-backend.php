@@ -229,6 +229,13 @@ if ($path === '/v1/chat-secure' && $method === 'POST') {
             ['chunkId' => 'c1', 'title' => 'Corpus note', 'path' => 'notes/x.md'],
             ['chunkId' => 'c2', 'title' => 'Blending practice', 'path' => 'videos/blend.md',
              'youtubeUrl' => 'https://www.youtube.com/watch?v=stubVideo01', 'startSeconds' => 42],
+            // Issue #106: a source titled by a bare YouTube ID must render the
+            // verified English title from data/youtube-titles.json.
+            ['chunkId' => 'c3', 'title' => '2MU3b6LUi6Y',
+             'youtubeUrl' => 'https://www.youtube.com/watch?v=2MU3b6LUi6Y'],
+            // A YouTube source whose title is an opaque hash falls back to YT.
+            ['chunkId' => 'c4', 'title' => 'a1b2c3d4e5f6a1b2c3d4',
+             'youtubeUrl' => 'https://www.youtube.com/watch?v=stubVideo02'],
         ],
     ]);
 }

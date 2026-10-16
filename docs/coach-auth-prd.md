@@ -67,14 +67,18 @@ points became session-gated PHP behind `includes/beta-gate.load.php`
 `games/verbal-aikido/index.php`, `games/exercises/index.php`; the old
 `.html` URLs 301 to the gated paths, and `/games/exercises/:slug` deep
 links still work — the gate preserves `REQUEST_URI` in `?next=`). In their
-place the nav's **Digital Experience** menu now links to a public preview
-surface at `/digital-experience/` (hub + one preview page per experience:
-`lucky-wave.html` covering V1 `#v1` and V2 `#v2`, `verbal-aikido.html`,
-`moon-practices.html`, `unified-field-chat.html`). Each preview describes
-the experience and points to the gated URL; unauthenticated clicks land on
-`/login.php?next=<experience>` and return to the game after sign-in.
-`/members` was already gated — its menu item now links to the chat preview
-instead. Supporting pages stay public: `games/lucky-wave/about.html`,
+place the nav's **Digital Experience** menu links to a public preview
+surface at `/digital-experience/` (hub + preview pages for
+`lucky-wave.html` covering V1 `#v1` and V2 `#v2`, and `verbal-aikido.html`).
+Each preview describes the experience and points to the gated URL;
+unauthenticated clicks land on `/login.php?next=<experience>` and return to
+the game after sign-in. **Issue #106:** the `practices.html` and
+`unified-field-chat.html` intermediate previews were removed from the user
+flow — the nav, hub cards, and `index.html` CTA now point **Twenty
+Practices** straight at `/games/exercises/` and **Enter the Unified Field
+Chat** straight at `/members`; the old preview URLs 301 to those gated
+entries (and the older `moon-practices.html` alias 301s to
+`/games/exercises/`). Supporting pages stay public: `games/lucky-wave/about.html`,
 `games/index.html` hub, `games/404.html`. The `games/exercises/` "unlock
 all practices for members" model is superseded — anonymous visitors no
 longer reach the app at all. **Triple-PRD note:** no change to the shared

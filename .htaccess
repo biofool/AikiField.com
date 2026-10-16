@@ -29,8 +29,15 @@
 RewriteEngine On
 
 # Issue #89: renamed product page — 'Moon — 20 Exclusive Practices' is now
-# 'Twenty Practices' at practices.html (author's name is not a product label).
-RewriteRule ^digital-experience/moon-practices\.html$ /digital-experience/practices.html [R=301,L]
+# 'Twenty Practices' (author's name is not a product label). Issue #106 moved
+# the destination straight to the gated exercises app.
+RewriteRule ^digital-experience/moon-practices\.html$ /games/exercises/ [R=301,L]
+
+# Issue #106: the intermediate preview pages are removed from the user flow —
+# chat enters /members directly and practices enter /games/exercises/ directly
+# (both session-gated; the gate preserves ?next=). Old inbound links redirect.
+RewriteRule ^digital-experience/unified-field-chat\.html$ /members [R=301,L]
+RewriteRule ^digital-experience/practices\.html$ /games/exercises/ [R=301,L]
 
 # ── Origin lock: only accept HTTP(S) from Cloudflare edge IPs (issue #46) ──
 # Without this, anyone who discovers the origin IP (e.g. via dig mail.aikifield.com)

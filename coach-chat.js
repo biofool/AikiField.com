@@ -913,6 +913,70 @@
         });
     }
 
+    // ── Source labels (issue #106) ───────────────────────────────────────
+    // Never surface internal identifiers as user-facing source names: bare
+    // YouTube IDs, corpus filenames/paths, or opaque hashes. Verified English
+    // video titles come from data/youtube-titles.json (generated from the
+    // ClipQuotes title audit); a YouTube source with no useful title shows
+    // "YT" — the embedded player still renders. The map loads once, eagerly,
+    // so it is resolved long before the first backend reply renders.
+    let ytTitles = null;
+    const pendingYtChips = [];
+    fetch("/data/youtube-titles.json", { credentials: "same-origin" })
+        .then(r => (r.ok ? r.json() : {}))
+        .then(map => {
+            ytTitles = (map && typeof map === "object") ? map : {};
+            // Re-label any chips that rendered before the map arrived.
+            pendingYtChips.forEach(entry => { entry.chip.textContent = sourceLabel(entry.s); });
+            pendingYtChips.length = 0;
+        })
+        .catch(err => {
+            ytTitles = {};
+            console.warn("coach-chat: could not load data/youtube-titles.json", err);
+        });
+
+    function isYouTubeId(v) {
+        return /^[A-Za-z0-9_-]{11}$/.test(v);
+    }
+
+    function firstYouTubeId(u) {
+        const m = (typeof u === "string")
+            && u.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([A-Za-z0-9_-]{11})/);
+        return m ? m[1] : null;
+    }
+
+    // True when a label is an internal identifier rather than a human title:
+    // a path, a filename with an extension, a bare YouTube ID, a hex digest,
+    // or a long single-token blob.
+    function looksOpaque(v) {
+        if (/[\/\\]/.test(v)) return true;
+        if (/\.[A-Za-z0-9]{1,6}$/.test(v)) return true;
+        if (isYouTubeId(v)) return true;
+        if (/^[0-9a-f]{12,}$/i.test(v)) return true;
+        if (!/\s/.test(v) && /^[A-Za-z0-9_-]{16,}$/.test(v)) return true;
+        return false;
+    }
+
+    function sourceLabel(s) {
+        const title = (s && typeof s.title === "string") ? s.title.trim() : "";
+        if (title && !looksOpaque(title)) return title;
+        // Title is missing or internal — treat as a video source when any
+        // field carries a YouTube URL or a bare video ID.
+        const fields = [s.videoUrl, s.youtubeUrl, s.url, s.link, s.sourceUrl, s.title, s.path];
+        let videoId = null;
+        for (const f of fields) {
+            videoId = firstYouTubeId(f) || (typeof f === "string" && isYouTubeId(f.trim()) ? f.trim() : null);
+            if (videoId) break;
+        }
+        if (videoId) {
+            const known = ytTitles && ytTitles[videoId];
+            return (typeof known === "string" && known.trim() && !looksOpaque(known.trim()))
+                ? known.trim()
+                : "YT";
+        }
+        return "Source";
+    }
+
     // A source is a link only when it carries an http(s) URL or a site-relative
     // path. Anything else (e.g. a corpus file path) is shown as plain text.
     function sourceHref(s) {
@@ -962,7 +1026,7 @@
             sources
                 .filter(s => s && typeof s === "object")
                 .forEach(s => {
-                    const label = s.title || s.path || "untitled";
+                    const label = sourceLabel(s);
                     const href = sourceHref(s);
                     const li = document.createElement("li");
                     let chip;
@@ -976,6 +1040,9 @@
                     }
                     chip.className = "coach-source-chip";
                     chip.textContent = label;
+                    // If the title map is still loading, queue this chip for
+                    // a re-label once it resolves (issue #106).
+                    if (ytTitles === null) pendingYtChips.push({ chip, s });
                     li.appendChild(chip);
                     list.appendChild(li);
                 });
