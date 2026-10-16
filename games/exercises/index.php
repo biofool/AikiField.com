@@ -19,15 +19,23 @@ if (!$afFreePreview) {
 }
 ?>
 <!DOCTYPE html>
-<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Twenty Practices — AikiField Games</title>
 <meta name="description" content="Twenty movement practices from the work of Richard Moon 6th Dan. Free: DBSO, Wrist Grab Grounding, Ten to the Tenth.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Public+Sans:wght@400;600;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Public+Sans:wght@400;600;700&display=swap" rel="stylesheet"></noscript>
+<link rel="stylesheet" href="/css/redesign.css?v=20261003">
 <style>
-*{box-sizing:border-box;margin:0;padding:0} body{font-family:-apple-system,Inter,Helvetica,sans-serif;background:#FAF6EF;color:#1A1A1A;line-height:1.65}
-header{padding:20px 28px;border-bottom:1px solid #E8E0D0;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:#FAF6EF;z-index:10}
-h1{font-size:26px;letter-spacing:-0.02em;line-height:1.1} h1 span{display:block;font-weight:400;font-size:12px;opacity:0.6;margin-top:4px}
+:where(.game),:where(.game) *{box-sizing:border-box;margin:0;padding:0}
+body{background:#FAF6EF}
+.game{font-family:-apple-system,Inter,Helvetica,sans-serif;font-size:16px;color:#1A1A1A;line-height:1.65}
+.game h1,.game h2,.game h3{font-family:inherit;font-weight:bold;color:inherit;letter-spacing:normal}
+.game-head{padding:20px 28px;border-bottom:1px solid #E8E0D0;display:flex;justify-content:space-between;align-items:center;background:#FAF6EF}
+.game h1{font-size:26px;letter-spacing:-0.02em;line-height:1.1} .game h1 span{display:block;font-weight:400;font-size:12px;opacity:0.6;margin-top:4px}
 .wrap{display:grid;grid-template-columns:300px 1fr 280px;min-height:100vh}
-.sidebar,.right{padding:20px;border-right:1px solid #E8E0D0;overflow-y:auto;max-height:calc(100vh - 70px);position:sticky;top:70px}
+.sidebar,.right{padding:20px;border-right:1px solid #E8E0D0;overflow-y:auto;max-height:calc(100vh - var(--site-header-h,76px));position:sticky;top:var(--site-header-h,76px)}
 .right{border-right:none;border-left:1px solid #E8E0D0}
 .center{padding:28px;max-width:820px}
 .studio{padding:10px 12px;margin:6px 0;border:1px solid #E8E0D0;background:#fff;cursor:pointer;font-size:12px}
@@ -47,7 +55,58 @@ img.hero{width:100%;max-width:300px;display:block;margin:10px auto;border:1px so
 .deploy{font-size:11px;background:#fff;border:1px solid #E8E0D0;padding:14px}
 @media(max-width:1050px){.wrap{grid-template-columns:1fr} .sidebar,.right{position:relative;max-height:none}}
 </style></head><body>
-<header><h1>TWENTY PRACTICES <span>Quantum Aikido — Book of Exercises & Practices — from the work of Richard Moon 6th Dan · Student of Robert Nadeau since '71</span></h1><a href="/games/" style="padding:7px 14px;border:1px solid #1A1A1A;background:#fff;color:#1A1A1A;text-decoration:none;font-size:12px">All games</a></header>
+<a href="#main" class="af-skip-link">Skip to main content</a>
+
+<header class="af-header">
+  <div class="af-header__inner">
+    <a href="/index.html" class="af-brand">
+      <span class="af-brand__icon" aria-hidden="true">A</span>
+      <span class="af-brand__text">AikiField</span>
+    </a>
+    <input type="checkbox" id="af-nav-check" class="af-nav-toggle-check">
+    <label for="af-nav-check" class="af-nav__toggle" aria-label="Menu">&#9776;</label>
+    <nav aria-label="Primary" class="af-nav">
+      <a href="/index.html" class="af-nav__link">Home</a>
+      <div class="af-nav__group">
+        <a href="/services.html" class="af-nav__link">Services</a>
+        <button type="button" class="af-nav__sub-toggle" aria-expanded="false" aria-controls="af-nav-sub-services" aria-label="Services pages"><span aria-hidden="true">&#9662;</span></button>
+        <ul class="af-nav__submenu" id="af-nav-sub-services">
+          <li><a href="/process.html" class="af-nav__sublink">Process</a></li>
+          <li><a href="/approach.html" class="af-nav__sublink">Approach</a></li>
+          <li><a href="/case-studies.html" class="af-nav__sublink" data-i18n="nav.case_studies">Case Studies</a></li>
+          <li><a href="/assessment.html" class="af-nav__sublink" data-i18n="nav.assessment">Assessment</a></li>
+        </ul>
+      </div>
+      <a href="/projects.php" class="af-nav__link">Demonstration Technologies</a>
+      <div class="af-nav__group">
+        <button type="button" class="af-nav__link af-nav__menu-btn af-nav__link--active" aria-expanded="false" aria-controls="af-nav-sub-uf" aria-current="page" data-i18n="nav.unified_field_studies">Studies in the Unified Field</button>
+        <ul class="af-nav__submenu af-nav__submenu--end af-nav__submenu--mega" id="af-nav-sub-uf">
+          <li class="af-nav__megacol">
+            <a href="/books.html" class="af-nav__colhead" data-i18n="nav.books">Books</a>
+            <ul class="af-nav__megalist">
+              <li><a href="/books.html" class="af-nav__sublink" data-i18n="nav.all_books">All Books</a></li>
+              <li><a href="/blog/" class="af-nav__sublink" data-i18n="nav.insights_blog">Author's Insights blog</a></li>
+            </ul>
+          </li>
+          <li class="af-nav__megacol">
+            <a href="/digital-experience/" class="af-nav__colhead" data-i18n="nav.digital_experience">Digital Experience</a>
+            <ul class="af-nav__megalist">
+          <li><a href="/digital-experience/lucky-wave.html#v1" class="af-nav__sublink">Ride the Lucky Wave</a></li>
+          <li><a href="/digital-experience/lucky-wave.html#v2" class="af-nav__sublink">Ride the Lucky Wave V2</a></li>
+          <li><a href="/games/exercises/" class="af-nav__sublink">Twenty Practices</a></li>
+          <li class="af-nav__subsep"><a href="/members" class="af-nav__sublink af-nav__sublink--feature">Enter the Unified Field Chat</a></li>
+              <li class="af-nav__subsep"><a href="/blog/index.html#social" class="af-nav__sublink" data-i18n="nav.social_media">Social Media</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+      <a href="/somatic-studios/" class="af-nav__link" data-i18n="nav.somatic_studios">Free Services For Studios</a>
+      <a href="/contact.html" class="af-nav__cta">Get Started</a>
+    </nav>
+  </div>
+</header>
+<main id="main" class="game">
+<div class="game-head"><h1>TWENTY PRACTICES <span>Quantum Aikido — Book of Exercises & Practices — from the work of Richard Moon 6th Dan · Student of Robert Nadeau since '71</span></h1><a href="/games/" style="padding:7px 14px;border:1px solid #1A1A1A;background:#fff;color:#1A1A1A;text-decoration:none;font-size:12px">All games</a></div>
 <div class="wrap">
 <div class="sidebar">
 <h3 style="font-size:11px;letter-spacing:0.12em">60 STUDIOS · PERSONALIZATION</h3>
@@ -81,6 +140,7 @@ studio_id personalizes the banner; exercise auto-opens the practice.
 </div>
 </div>
 </div>
+</main>
 <script>
 const exercises = [{"id": 1, "title": "DropBackSinkOpen (DBSO)", "meta": "Solo \u00b7 30 sec, repeated through the day", "body": "Whenever you notice tension, a fixed idea, or a reactive moment: drop back, sink, open. If you re-tighten, release again \u2014 in ever-finer increments, anywhere, any time.\n\nThis is the foundation everything else rests on. 'Calm the spirit. Return to the source.' Once in the morning is not enough \u2014 KeepDoingIt.", "complexity": 4, "type": "exercise", "part": "Part IV \u2014 dialogue & relationship"}, {"id": 2, "title": "listen to the impulse to breathe", "meta": "Solo \u00b7 2\u20134 min \u00b7 after DBSO \u00b7 the reverse movement of the five-stage breath", "body": "after dropping back, sinking, and opening, don't take the breath \u2014 wait for it. feel the impulse to breathe arise on its own, and let it breathe you.\n\nrather than running the breath, feel life activating it \u2014 the universal pulse breathing you. this is the reverse of Breathing the Whole System.", "complexity": 1, "type": "exercise", "part": "Part I \u2014 centering & grounding"}, {"id": 3, "title": "Feel / Locate / Align / Unify (Kamae)", "meta": "Solo \u00b7 3\u20135 min \u00b7 Create A Beautiful World in 3 Aikido Lessons", "body": "Feel and locate the central core of your being. Feel the 'glow of life' that is you. Apply DBSO in ever-finer alignment.\n\nNotice that each small shift in the location of attention creates a different experiential world.", "complexity": 1, "type": "exercise", "part": "Part I \u2014 centering & grounding"}, {"id": 4, "title": "Tense & Release Body Scan (Align, Allow, Appreciate)", "meta": "Solo \u00b7 5\u201315 min \u00b7 CABW 3 Aikido Lessons", "body": "Gently tense the whole body, then relax and feel. Re-tense the muscles progressively closer to the spine, head to hips, releasing each time.\n\nAs you relax, feel into the central core of being \u2014 align with gravity, allow the tension to release, appreciate the flow. How long? As long as you're enjoying it.", "complexity": 1, "type": "exercise", "part": "Part I \u2014 centering & grounding"}, {"id": 5, "title": "Center of the Central Core Relaxation", "meta": "Solo \u00b7 10\u201320 min \u00b7 CABW 3 Aikido Lessons", "body": "Move sequentially through the body's regions \u2014 mind, brain, forehead, eyes, jaw, throat, shoulders, abdomen, hips, legs, feet \u2014 sinking open into the 'gravity shadow' at each.\n\nNo fixed pace.", "complexity": 1, "type": "exercise", "part": "Part I \u2014 centering & grounding"}, {"id": 6, "title": "Wrist Grab Grounding", "meta": "Partner \u00b7 5 min \u00b7 Adventures in Aiki-land (R. Moon, 2010)", "body": "A partner grabs your extended wrist and gently pushes, then pulls. Resisting the push lets them pull you easily, resisting the pull lets them push you; relaxing and 'feeling where you are' produces an effortless presence that is harder to move.\n\nAt first 50/50 - resist less, ground more. After a while the resistance becomes hard to see from outside but you feel it inside. Eventually 50% \u2192 60% ground.\n\nDBSO KeepDoingIt. Real or invisible partner.", "complexity": 1, "type": "exercise", "part": "Part I \u2014 centering & grounding"}, {"id": 7, "title": "Lesson II \u2014 Breathe Universal Harmony (Aiki Kokyu)", "meta": "Solo \u00b7 3\u20135 min \u00b7 Create A Beautiful World in 3 Aikido Lessons", "body": "Breathe in harmony so each cell 'enjoys life's glow.'", "complexity": 2, "type": "exercise", "part": "Part II \u2014 breath & energy"}, {"id": 8, "title": "Breathing the Whole System (Five-Stage Breath)", "meta": "Solo \u00b7 5\u201310 min \u00b7 CABW 3 Aikido Lessons", "body": "Feel into each phase in turn:\n\nexternal breathing, air moving in and out of the lungs;\n\ntransfer, oxygen into the bloodstream;\n\ntransport, the blood carrying it to every cell;\n\nabsorption, each cell taking it in;\n\nlife, each cell burning oxygen into the glow of aliveness.\n\nThen reverse the imagery. Feel life activating the breath \u2014 the universal pulse breathing you. Listen to the impulse to breathe.", "complexity": 2, "type": "exercise", "part": "Part II \u2014 breath & energy"}, {"id": 9, "title": "The O2 Continuum", "meta": "Solo \u00b7 3\u20135 min \u00b7 CABW 3 Aikido Lessons", "body": "Feel where you are on the O2 continuum \u2014 from O2 debt, through perfect saturation, to reserve. Locate it consciously; sense which cells feel in balance and which don't.\n\nThen breathe exactly the way you want for two or three breaths, and feel your location shift. It usually takes fewer than three; it never takes seven. First your own oxygen mask on first\u2014 then you have the reserves\n\n-- create a beautiful world.", "complexity": 2, "type": "exercise", "part": "Part II \u2014 breath & energy"}, {"id": 10, "title": "Ocean Breathing", "meta": "Solo \u00b7 2\u20134 min \u00b7 Experiential Breathing Explorations", "body": "Remember, or imagine, the first deep breath of ocean air \u2014 every cell lights up, the glow of life increases, and a natural desire for another breath follows. Breathe at the ocean even when you can't be there; hold the feeling.", "complexity": 2, "type": "exercise", "part": "Part II \u2014 breath & energy"}, {"id": 11, "title": "Infant Breathing", "meta": "Solo \u00b7 3\u20135 min \u00b7 Experiential Breathing Explorations", "body": "Imagine breathing as an infant \u2014 oxygen equalized after birth, simply lying there breathing and enjoying the glow of life, no thought, no thing. A return to the purity of being before socialization.", "complexity": 2, "type": "exercise", "part": "Part II \u2014 breath & energy"}, {"id": 12, "title": "Ten to the Tenth \u2014 State Shifting Scale", "meta": "Solo (can be coached) \u00b7 10\u201330 min to learn, seconds once trained \u00b7 Ten to the Tenth", "body": "Rate your current state 1\u201310. Notice why, by felt sense. 'Square away'your posture, breath, and attention until the number plateaus higher, then 'call up' the next number and embody it, on up to 10.\n\n*Down the Scale (Contrast Step)*\n\n*Solo \u00b7 1\u20132 min \u00b7 Ten to the Tenth*\n\nAfter climbing to  4, briefly imagine and feel dropping a number back to 3 then go to 6 then drop back to 4 \u2014 6 to 5 to 4 \u2014 noticing the self-talk and physical contraction that come with it.\n\n*Getting to 10*\n\n7 should be feeling very capable.  10 will be your best operating place, entering flow state.\n\n8 Remember a day when everything went fine, even the hard stuff\n\n9 Remember one of those really great days that come back to you, good times with family, a great day at work\n\n10 Think back to the best day you can remember.  Really soak in it move, breathe.  Think again when did you enter flow state and were able to be there for longer than made sense.  You were laughing joyously as the unsolvable situation just melted away\n\n*Quantum Shift*\n\nRlabel 10 as a new '1' and climb again through octaves. Once trained, the whole move compresses to a near-instant cue.", "complexity": 3, "type": "exercise", "part": "Part III \u2014 attention & feeling"}, {"id": 13, "title": "Enjoy / Joy / Appreciate", "meta": "Solo \u00b7 3\u20135 min \u00b7 CABW 3 Aikido Lessons", "body": "Intentionally enjoy yourself \u2014 'enjoy yourSELF enjoying joy.' Bring attention to something you love, and treat the enjoyment as guidance: 'feeling better' signals a useful direction. Close with DBSO.", "complexity": 3, "type": "exercise", "part": "Part III \u2014 attention & feeling"}, {"id": 14, "title": "Shoulder Slap \u2014 Sensing Finer Dimensions", "meta": "Partner \u00b7 5\u201315 min \u00b7 Aikido class teaching (R. Moon)", "body": "A re-attacking slap on the shoulder in place of a shomen strike. Stance is flexible \u2014 natural stance (shizentai), a left- or right-foot lead all work; natural stance paired with the finger-snap is the simplest way in, and hanmi is fine in a dojo. Partners stand one step apart and agree on force: relaxed enough to sting a little, reality not fear, never to hurt.\n\n*Attacker***.** Don't telegraph. Go from nothing to the hit as fast as you can \u2014 a real attack carries a burst of ki, and a slow or sloppy approach gives a different, weaker feel. Vary the timing; never count \u201cone, two, three, slap.\u201d\n\n*Receiver***.** Start one step away. For the first few reps, snap your fingers the instant you sense the attack is about to come, then check \u2014 early, late, close? Come to center and face the attacker so you feel their attention. Give the most honest feedback you canProgress from one step to two.", "complexity": 3, "type": "exercise", "part": "Part III \u2014 attention & feeling"}, {"id": 15, "title": "Application Visualization", "meta": "Solo \u00b7 5\u201310 min \u00b7 Ten to the Tenth", "body": "Visualize how you'd normally handle an upcoming situation. Run Ten to the Tenth, climb several octaves, and re-visualize the situation from the new state. Repeat until a satisfying strategy emerges, then push past it for a quantum shift.", "complexity": 4, "type": "exercise", "part": "Part IV \u2014 dialogue & relationship"}];
 const interludes = [{"title": "INTERLUDE \u2014 OPENING", "text": "This second has passed\nas has this one\nThe moment is so fleeting\nyet\nthe now is eternal\n\nRichard Moon"}, {"title": "INTERLUDE \u2014 AFTER PART I", "text": "Feel\ninto the center\nof your central core\neven by drops\nin ever finer adjustments\n\nRichard Moon"}, {"title": "INTERLUDE \u2014 AFTER PART II", "text": "Listen to the impulse to breathe\nfollow the guidance\nbreathe exactly\nlike you want to\n\nRichard Moon"}, {"title": "INTERLUDE \u2014 AFTER PART III", "text": "I don't really study Aikido as a Martial art,\nan art in the realm of Mars, the god of war.\nI study Aikido as a Venusial art,\nan art in the realm of Venus, the goddess of love.\n\nRichard Moon"}, {"title": "INTERLUDE \u2014 CLOSING", "text": "joy is the greatest treasure\ndon't get mad\ndon't even get even\ncreate a beautiful world\n\nRichard Moon\n\n\u201cLove gives birth to harmony, harmony brings forth joy, and joy is the greatest treasure.\u201d \u2014 Morihei Ueshiba, O-Sensei."}];
@@ -121,8 +181,8 @@ function persistProgress(){
 function studioSlug(n){ return n.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,''); }
 function showLockedModal(ex){
  const overlay=document.createElement('div');
- overlay.id='lockModal';
- overlay.style.cssText='position:fixed;inset:0;background:rgba(26,26,26,0.55);display:flex;align-items:center;justify-content:center;z-index:50;padding:20px';
+ overlay.id='lockModal'; overlay.className='game';
+ overlay.style.cssText='position:fixed;inset:0;background:rgba(26,26,26,0.55);display:flex;align-items:center;justify-content:center;z-index:150;padding:20px';
  overlay.innerHTML=`<div style="background:#FAF6EF;border:2px solid #1A1A1A;padding:32px;max-width:420px;text-align:center">
    <div style="font-size:11px;letter-spacing:0.12em;margin-bottom:10px">LOCKED PRACTICE</div>
    <h2 style="font-size:20px;margin-bottom:10px">${ex.title}</h2>
@@ -331,4 +391,14 @@ window.AF_GAME = {
 </script>
 <script src="../translate.js"></script>
 
+<script>
+// Keep the sticky sidebars just below the site header, whatever height it wraps to.
+(function(){
+ var h=document.querySelector(".af-header"); if(!h) return;
+ function set(){ document.documentElement.style.setProperty("--site-header-h", h.offsetHeight+"px"); }
+ set(); window.addEventListener("resize", set);
+ if(window.ResizeObserver) new ResizeObserver(set).observe(h);
+})();
+</script>
+<script src="/js/nav-menu.js?v=20261002" defer></script>
 </body></html>

@@ -4,7 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>About - Ride the Lucky Wave</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Public+Sans:wght@400;600;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Public+Sans:wght@400;600;700&display=swap" rel="stylesheet"></noscript>
+  <link rel="stylesheet" href="/css/redesign.css?v=20261003">
   <style>
+    .af-header { align-self: stretch; width: 100%; }
     body {
       background: #070C1A;
       color: #E8EAF0;
@@ -77,7 +83,57 @@
   </style>
 </head>
 <body>
-  <div class="container">
+<a href="#main" class="af-skip-link">Skip to main content</a>
+
+<header class="af-header">
+  <div class="af-header__inner">
+    <a href="/index.html" class="af-brand">
+      <span class="af-brand__icon" aria-hidden="true">A</span>
+      <span class="af-brand__text">AikiField</span>
+    </a>
+    <input type="checkbox" id="af-nav-check" class="af-nav-toggle-check">
+    <label for="af-nav-check" class="af-nav__toggle" aria-label="Menu">&#9776;</label>
+    <nav aria-label="Primary" class="af-nav">
+      <a href="/index.html" class="af-nav__link">Home</a>
+      <div class="af-nav__group">
+        <a href="/services.html" class="af-nav__link">Services</a>
+        <button type="button" class="af-nav__sub-toggle" aria-expanded="false" aria-controls="af-nav-sub-services" aria-label="Services pages"><span aria-hidden="true">&#9662;</span></button>
+        <ul class="af-nav__submenu" id="af-nav-sub-services">
+          <li><a href="/process.html" class="af-nav__sublink">Process</a></li>
+          <li><a href="/approach.html" class="af-nav__sublink">Approach</a></li>
+          <li><a href="/case-studies.html" class="af-nav__sublink" data-i18n="nav.case_studies">Case Studies</a></li>
+          <li><a href="/assessment.html" class="af-nav__sublink" data-i18n="nav.assessment">Assessment</a></li>
+        </ul>
+      </div>
+      <a href="/projects.php" class="af-nav__link">Demonstration Technologies</a>
+      <div class="af-nav__group">
+        <button type="button" class="af-nav__link af-nav__menu-btn af-nav__link--active" aria-expanded="false" aria-controls="af-nav-sub-uf" aria-current="page" data-i18n="nav.unified_field_studies">Studies in the Unified Field</button>
+        <ul class="af-nav__submenu af-nav__submenu--end af-nav__submenu--mega" id="af-nav-sub-uf">
+          <li class="af-nav__megacol">
+            <a href="/books.html" class="af-nav__colhead" data-i18n="nav.books">Books</a>
+            <ul class="af-nav__megalist">
+              <li><a href="/books.html" class="af-nav__sublink" data-i18n="nav.all_books">All Books</a></li>
+              <li><a href="/blog/" class="af-nav__sublink" data-i18n="nav.insights_blog">Author's Insights blog</a></li>
+            </ul>
+          </li>
+          <li class="af-nav__megacol">
+            <a href="/digital-experience/" class="af-nav__colhead" data-i18n="nav.digital_experience">Digital Experience</a>
+            <ul class="af-nav__megalist">
+          <li><a href="/digital-experience/lucky-wave.html#v1" class="af-nav__sublink">Ride the Lucky Wave</a></li>
+          <li><a href="/digital-experience/lucky-wave.html#v2" class="af-nav__sublink">Ride the Lucky Wave V2</a></li>
+          <li><a href="/games/exercises/" class="af-nav__sublink">Twenty Practices</a></li>
+          <li class="af-nav__subsep"><a href="/members" class="af-nav__sublink af-nav__sublink--feature">Enter the Unified Field Chat</a></li>
+              <li class="af-nav__subsep"><a href="/blog/index.html#social" class="af-nav__sublink" data-i18n="nav.social_media">Social Media</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+      <a href="/somatic-studios/" class="af-nav__link" data-i18n="nav.somatic_studios">Free Services For Studios</a>
+      <a href="/contact.html" class="af-nav__cta">Get Started</a>
+    </nav>
+  </div>
+</header>
+  <main id="main" class="container">
     <div style="text-align: center; margin-bottom: 10px;"><svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5c2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/><path d="M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/><path d="M2 18c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/></svg></div>
     <h1>About the Game</h1>
     <p style="text-align: center; font-style: italic; font-family: Georgia, serif; font-size: 18px;">
@@ -107,6 +163,7 @@
       <br>
       <a href="https://quantumaikido.com/" class="back-link">← Back to Main Site</a>
     </div>
-  </div>
+  </main>
+  <script src="/js/nav-menu.js?v=20261002" defer></script>
 </body>
 </html>

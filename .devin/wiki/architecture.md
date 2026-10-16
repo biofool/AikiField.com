@@ -95,7 +95,11 @@ page layout, hero, or left column — keep it hidden until form submission.
   `includes/beta-gate.load.php`: `games/lucky-wave/*.php`,
   `for-review/games/verbal-aikido/index.php`, `games/exercises/index.php`, and
   `/members`. Submenu behaviour: `js/nav-menu.js` + `.af-nav__group` rules
-  in `css/redesign.css`.
+  in `css/redesign.css`. Every page under `/games/` (hub, `exercises/`,
+  `privacy/`, `terms/`, `404.html`, `lucky-wave/about.html`) carries the same
+  header (issue #109); `tests/e2e/specs/games-site-menu.spec.js` guards it.
+  Still without it: the full-screen Lucky Wave V1/V2 game pages. The `blog/`
+  pages use an older `<header role="banner">` nav, not this block.
 - **Games AI help:** `games/ai-coach.php` (+ `games/ai-coach.json`
   vocabulary) — members-only "Ask the AI Chat" button in Lucky Wave V1/V2
   and Verbal Aikido; composes the message server-side and calls the AI Chat
