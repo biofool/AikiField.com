@@ -2038,6 +2038,116 @@
         console.warn("coach-chat: could not attach visualViewport listener:", err);
     }
 
+    // NOTE (AF #124): this block must live in THIS IIFE. It uses API,
+    // authHeaders, fetchWithTimeout and the toast elements, which are private to
+    // this scope. It used to sit in initCoachUIEnhancements() below and threw
+    // ReferenceError, so "Register passkey" never appeared.
+    // --- Passkey (WebAuthn) registration — AIRichardMoon issue #650 ---
+    // "Register passkey" in the More menu. Hidden unless the browser supports
+    // WebAuthn AND the backend flag passkey_login is on (same gate as the
+    // login-page button — fail closed on any error). The backend resolves the
+    // RP from this request's Origin, so the passkey is bound to aikifield.com.
+    const passkeyRegBtn = document.getElementById("coach-passkey-register");
+
+    function b64urlToBytes(s) {
+        const b64 = s.replace(/-/g, "+").replace(/_/g, "/");
+        return Uint8Array.from(atob(b64), c => c.charCodeAt(0));
+    }
+    function bytesToB64url(buf) {
+        return btoa(String.fromCharCode(...new Uint8Array(buf)))
+            .replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+    }
+    function showPasskeyStatus(msg) {
+        // Reuse the chat toast without its Undo button.
+        if (!toastEl || !toastMsg) { console.warn("passkey:", msg); return; }
+        toastMsg.textContent = msg;
+        if (toastUndoBtn) toastUndoBtn.hidden = true;
+        toastEl.hidden = false;
+        setTimeout(function() {
+            toastEl.hidden = true;
+            if (toastUndoBtn) toastUndoBtn.hidden = false;
+        }, 6000);
+    }
+
+    if (passkeyRegBtn && window.PublicKeyCredential) {
+        fetchWithTimeout(API + "/v1/feature-flags", { method: "GET" })
+            .then(function(r) { return r.ok ? r.json() : null; })
+            .then(function(d) {
+                if (d && d.flags && d.flags.passkey_login) passkeyRegBtn.hidden = false;
+            })
+            .catch(function(err) { console.warn("feature_flags_fetch_failed — passkey registration stays hidden", err); });
+
+        passkeyRegBtn.addEventListener("click", async function() {
+            passkeyRegBtn.disabled = true;
+            showPasskeyStatus("Follow your browser's prompt to create a passkey…");
+            try {
+                const beginResp = await fetchWithTimeout(API + "/v1/auth/passkey/register/begin", {
+                    method: "POST",
+                    headers: authHeaders(),
+                });
+                const beginData = await beginResp.json();
+                if (!beginData.ok) {
+                    showPasskeyStatus(beginData.error || "Passkey registration could not start.");
+                    return;
+                }
+                const o = beginData.options;
+                const publicKey = {
+                    challenge: b64urlToBytes(o.challenge),
+                    rp: o.rp,
+                    user: {
+                        id: b64urlToBytes(o.user.id),
+                        name: o.user.name,
+                        displayName: o.user.displayName,
+                    },
+                    pubKeyCredParams: o.pubKeyCredParams,
+                    timeout: o.timeout,
+                    excludeCredentials: (o.excludeCredentials || []).map(function(c) {
+                        return { type: c.type, id: b64urlToBytes(c.id) };
+                    }),
+                    authenticatorSelection: o.authenticatorSelection,
+                    attestation: o.attestation,
+                };
+                const cred = await navigator.credentials.create({ publicKey: publicKey });
+                if (!cred) {
+                    showPasskeyStatus("Passkey registration was cancelled.");
+                    return;
+                }
+                const credJson = JSON.stringify({
+                    id: cred.id,
+                    rawId: cred.id,
+                    type: cred.type,
+                    response: {
+                        clientDataJSON: bytesToB64url(cred.response.clientDataJSON),
+                        attestationObject: bytesToB64url(cred.response.attestationObject),
+                    },
+                    clientExtensionResults: cred.getClientExtensionResults ? cred.getClientExtensionResults() : {},
+                    transports: cred.response.getTransports ? cred.response.getTransports() : [],
+                });
+                const finishResp = await fetchWithTimeout(API + "/v1/auth/passkey/register/finish", {
+                    method: "POST",
+                    headers: authHeaders(),
+                    body: JSON.stringify({
+                        credential: credJson,
+                        challengeKey: beginData.challengeKey,
+                    }),
+                });
+                const finishData = await finishResp.json();
+                showPasskeyStatus(finishData.ok
+                    ? "Passkey registered. You can sign in with it next time."
+                    : (finishData.error || "Passkey registration failed."));
+            } catch (err) {
+                if (err && err.name === "NotAllowedError") {
+                    showPasskeyStatus("Passkey registration was cancelled.");
+                } else {
+                    console.warn("passkey registration failed:", err);
+                    showPasskeyStatus("Passkey registration failed. Please try again.");
+                }
+            } finally {
+                passkeyRegBtn.disabled = false;
+            }
+        });
+    }
+
     // Issue #184: populate the language selector from the backend
     initLanguageSelector();
 
@@ -2162,112 +2272,6 @@
             if (moreMenu.hidden) return;
             if (!moreMenu.contains(e.target) && !moreBtn.contains(e.target)) {
                 setMenuOpen(false, false);
-            }
-        });
-    }
-
-    // --- Passkey (WebAuthn) registration — AIRichardMoon issue #650 ---
-    // "Register passkey" in the More menu. Hidden unless the browser supports
-    // WebAuthn AND the backend flag passkey_login is on (same gate as the
-    // login-page button — fail closed on any error). The backend resolves the
-    // RP from this request's Origin, so the passkey is bound to aikifield.com.
-    const passkeyRegBtn = document.getElementById("coach-passkey-register");
-
-    function b64urlToBytes(s) {
-        const b64 = s.replace(/-/g, "+").replace(/_/g, "/");
-        return Uint8Array.from(atob(b64), c => c.charCodeAt(0));
-    }
-    function bytesToB64url(buf) {
-        return btoa(String.fromCharCode(...new Uint8Array(buf)))
-            .replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
-    }
-    function showPasskeyStatus(msg) {
-        // Reuse the chat toast without its Undo button.
-        if (!toastEl || !toastMsg) { console.warn("passkey:", msg); return; }
-        toastMsg.textContent = msg;
-        if (toastUndoBtn) toastUndoBtn.hidden = true;
-        toastEl.hidden = false;
-        setTimeout(function() {
-            toastEl.hidden = true;
-            if (toastUndoBtn) toastUndoBtn.hidden = false;
-        }, 6000);
-    }
-
-    if (passkeyRegBtn && window.PublicKeyCredential) {
-        fetchWithTimeout(API + "/v1/feature-flags", { method: "GET" })
-            .then(function(r) { return r.ok ? r.json() : null; })
-            .then(function(d) {
-                if (d && d.flags && d.flags.passkey_login) passkeyRegBtn.hidden = false;
-            })
-            .catch(function(err) { console.warn("feature_flags_fetch_failed — passkey registration stays hidden", err); });
-
-        passkeyRegBtn.addEventListener("click", async function() {
-            passkeyRegBtn.disabled = true;
-            showPasskeyStatus("Follow your browser's prompt to create a passkey…");
-            try {
-                const beginResp = await fetchWithTimeout(API + "/v1/auth/passkey/register/begin", {
-                    method: "POST",
-                    headers: authHeaders(),
-                });
-                const beginData = await beginResp.json();
-                if (!beginData.ok) {
-                    showPasskeyStatus(beginData.error || "Passkey registration could not start.");
-                    return;
-                }
-                const o = beginData.options;
-                const publicKey = {
-                    challenge: b64urlToBytes(o.challenge),
-                    rp: o.rp,
-                    user: {
-                        id: b64urlToBytes(o.user.id),
-                        name: o.user.name,
-                        displayName: o.user.displayName,
-                    },
-                    pubKeyCredParams: o.pubKeyCredParams,
-                    timeout: o.timeout,
-                    excludeCredentials: (o.excludeCredentials || []).map(function(c) {
-                        return { type: c.type, id: b64urlToBytes(c.id) };
-                    }),
-                    authenticatorSelection: o.authenticatorSelection,
-                    attestation: o.attestation,
-                };
-                const cred = await navigator.credentials.create({ publicKey: publicKey });
-                if (!cred) {
-                    showPasskeyStatus("Passkey registration was cancelled.");
-                    return;
-                }
-                const credJson = JSON.stringify({
-                    id: cred.id,
-                    rawId: cred.id,
-                    type: cred.type,
-                    response: {
-                        clientDataJSON: bytesToB64url(cred.response.clientDataJSON),
-                        attestationObject: bytesToB64url(cred.response.attestationObject),
-                    },
-                    clientExtensionResults: cred.getClientExtensionResults ? cred.getClientExtensionResults() : {},
-                    transports: cred.response.getTransports ? cred.response.getTransports() : [],
-                });
-                const finishResp = await fetchWithTimeout(API + "/v1/auth/passkey/register/finish", {
-                    method: "POST",
-                    headers: authHeaders(),
-                    body: JSON.stringify({
-                        credential: credJson,
-                        challengeKey: beginData.challengeKey,
-                    }),
-                });
-                const finishData = await finishResp.json();
-                showPasskeyStatus(finishData.ok
-                    ? "Passkey registered. You can sign in with it next time."
-                    : (finishData.error || "Passkey registration failed."));
-            } catch (err) {
-                if (err && err.name === "NotAllowedError") {
-                    showPasskeyStatus("Passkey registration was cancelled.");
-                } else {
-                    console.warn("passkey registration failed:", err);
-                    showPasskeyStatus("Passkey registration failed. Please try again.");
-                }
-            } finally {
-                passkeyRegBtn.disabled = false;
             }
         });
     }
