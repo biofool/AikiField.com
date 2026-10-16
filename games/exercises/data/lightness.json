@@ -1,0 +1,1286 @@
+{
+  "version": 1,
+  "title": "Lightness: short kind lines shown after a logged session (AikiField issue #110)",
+  "status": "Draft. No line is approved yet.",
+  "written_by": "Claude (AI draft), in the style of the book-launch voice notes",
+  "license": "Original text written for AikiField. No line is copied from a joke site, forum or book.",
+  "approval": {
+    "required_before_wide_release": true,
+    "reviewer": "Richard Moon",
+    "how": "Send a one-way notice, then add a 10-minute 'lightness sign-off' block to the Richard Session agenda. He accepts, rewrites or rejects each line. Set approved to true on the keepers.",
+    "attribution": "Lines are shown unattributed. They are not quotes from Richard or from anyone else."
+  },
+  "display": {
+    "show_unapproved": true,
+    "note": "Set show_unapproved to false to hide every line that is not approved yet."
+  },
+  "guidelines": [
+    "Warm, and never at anyone's expense.",
+    "No jokes about pain, injury, trauma, bodies, age or illness. No health claims.",
+    "No invented quotes from real people, and no real person's name in a line.",
+    "Physics is only a playful echo of the practice: recognition, never derivation.",
+    "No Verbal Aikido terminology (registered mark).",
+    "Invitation, not instruction. Short bursts that circle back as questions.",
+    "Plain ASCII text, 220 characters or fewer."
+  ],
+  "voice_sources": [
+    "Book Launch project (Drive): 'Quotes by Richard Moon' (voice and vocabulary)",
+    "Book Launch project (Drive): 'The Aikido That Cannot Be Seen: Feature Treatment and Trailer Set' (voice rules: practice first, physics second; mischievous, self-mocking, short bursts that circle back as questions)",
+    "Book Launch project (Drive): Portuguese Translation Project meeting summary, section 5 (experiment, do not prescribe)",
+    "The exercise text itself (games/exercises/data/collected_exercises_app_data.json)"
+  ],
+  "kinds": {
+    "twist": "A short line with a turn in it.",
+    "question": "Circles back to the player as a question.",
+    "self-mock": "Laughs gently at the practitioner in all of us, never at one person.",
+    "scene": "A tiny scene or a personified thing (a guest, laundry, a tide).",
+    "echo": "A playful echo of physics. The practice came first; the physics is only a nod.",
+    "invite": "A gentle invitation with a smile."
+  },
+  "themes": [
+    "attention",
+    "beginner",
+    "breath",
+    "center",
+    "energy",
+    "ground",
+    "humility",
+    "joy",
+    "listening",
+    "partner",
+    "physics",
+    "practice",
+    "release",
+    "repeat",
+    "slowness",
+    "state",
+    "wobble",
+    "world"
+  ],
+  "items": [
+    {
+      "id": "lt-001",
+      "text": "DropBackSinkOpen takes thirty seconds. Remembering to do it takes a lifetime of thirty seconds.",
+      "kind": "twist",
+      "practices": [
+        1
+      ],
+      "themes": [
+        "practice",
+        "repeat"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-002",
+      "text": "The reactive moment arrives uninvited. You do not have to give it the good chair.",
+      "kind": "scene",
+      "practices": [
+        1
+      ],
+      "themes": [
+        "release",
+        "attention"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-003",
+      "text": "Re-tightened already? Wonderful. That is one more chance to let go, and it cost nothing.",
+      "kind": "twist",
+      "practices": [
+        1
+      ],
+      "themes": [
+        "release",
+        "practice"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-004",
+      "text": "Your shoulders will climb back up. Be polite and drop them again. They are persistent, not malicious.",
+      "kind": "scene",
+      "practices": [
+        1
+      ],
+      "themes": [
+        "release",
+        "wobble"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-005",
+      "text": "You cannot drop back from somewhere you are not. Have you checked where you are standing?",
+      "kind": "question",
+      "practices": [
+        1
+      ],
+      "themes": [
+        "center",
+        "attention"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-006",
+      "text": "A fixed idea is just tension with perfect attendance. Outlast it, one finer release at a time.",
+      "kind": "twist",
+      "practices": [
+        1
+      ],
+      "themes": [
+        "release",
+        "repeat"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-007",
+      "text": "Do not take the breath. Wait for it. It is the one thing in your day that has never once been late.",
+      "kind": "twist",
+      "practices": [
+        2
+      ],
+      "themes": [
+        "breath",
+        "listening"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-008",
+      "text": "Counting the seconds until the breath arrives is timing, not waiting. Different sport. Which one are you playing?",
+      "kind": "question",
+      "practices": [
+        2
+      ],
+      "themes": [
+        "breath",
+        "slowness"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-009",
+      "text": "Let it breathe you. It has done the job your whole life and never once asked for a review.",
+      "kind": "twist",
+      "practices": [
+        2
+      ],
+      "themes": [
+        "breath",
+        "humility"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-010",
+      "text": "The wait for the impulse teaches patience. The breath has been waiting for you to stop managing it.",
+      "kind": "twist",
+      "practices": [
+        2
+      ],
+      "themes": [
+        "breath",
+        "listening"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-011",
+      "text": "Locate your central core. Hint: it wandered off while you read the instructions. It comes back when asked nicely.",
+      "kind": "scene",
+      "practices": [
+        3
+      ],
+      "themes": [
+        "center",
+        "attention"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-012",
+      "text": "Move your attention one inch to the left and you live in a new neighborhood. No moving truck required.",
+      "kind": "twist",
+      "practices": [
+        3
+      ],
+      "themes": [
+        "attention",
+        "state"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-013",
+      "text": "Feel, locate, align, unify, stand there. Standing there turns out to be the advanced technique.",
+      "kind": "self-mock",
+      "practices": [
+        3
+      ],
+      "themes": [
+        "center",
+        "practice"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-014",
+      "text": "The glow of life has no off switch. It just has a lot of laundry piled in front of it.",
+      "kind": "scene",
+      "practices": [
+        3
+      ],
+      "themes": [
+        "center",
+        "joy"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-015",
+      "text": "Tense everything. Now release. Notice how much of 'everything' was optional.",
+      "kind": "twist",
+      "practices": [
+        4
+      ],
+      "themes": [
+        "release",
+        "attention"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-016",
+      "text": "Tensing the whole body on purpose: the one assignment where trying too hard counts as following directions.",
+      "kind": "self-mock",
+      "practices": [
+        4
+      ],
+      "themes": [
+        "release",
+        "practice"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-017",
+      "text": "How long should the scan take? As long as you are enjoying it. Overachievers, this is the trap. Walk in anyway.",
+      "kind": "self-mock",
+      "practices": [
+        4
+      ],
+      "themes": [
+        "slowness",
+        "joy"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-018",
+      "text": "Closer to the spine each time. When did anyone last ask the spine for its opinion?",
+      "kind": "question",
+      "practices": [
+        4
+      ],
+      "themes": [
+        "center",
+        "attention"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-019",
+      "text": "Mind comes first on the list. It assumes this is a promotion.",
+      "kind": "self-mock",
+      "practices": [
+        5
+      ],
+      "themes": [
+        "release",
+        "humility"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-020",
+      "text": "Forehead, eyes, jaw, throat, shoulders: so many places to set things down. Who packed all of this?",
+      "kind": "question",
+      "practices": [
+        5
+      ],
+      "themes": [
+        "release",
+        "attention"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-021",
+      "text": "Gravity has been holding you up all day for free. Sink into its shadow and say thanks.",
+      "kind": "twist",
+      "practices": [
+        5
+      ],
+      "themes": [
+        "ground",
+        "humility"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-022",
+      "text": "No fixed pace. Your feet, at the end of the list, have been patient since breakfast.",
+      "kind": "scene",
+      "practices": [
+        5
+      ],
+      "themes": [
+        "slowness",
+        "ground"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-023",
+      "text": "Resist the push and they pull you. Resist the pull and they push you. Resist nothing and, annoyingly, you are still standing.",
+      "kind": "twist",
+      "practices": [
+        6
+      ],
+      "themes": [
+        "partner",
+        "ground"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-024",
+      "text": "From fifty percent ground to sixty. The best news in the world, delivered in a very small number.",
+      "kind": "twist",
+      "practices": [
+        6
+      ],
+      "themes": [
+        "ground",
+        "practice"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-025",
+      "text": "Your partner pushes, you wobble, they smile. The wobble is the lesson. Say thank you.",
+      "kind": "invite",
+      "practices": [
+        6
+      ],
+      "themes": [
+        "partner",
+        "wobble"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-026",
+      "text": "Resist, and a wrist grab becomes an argument. Nobody has ever been grounded by an argument.",
+      "kind": "twist",
+      "practices": [
+        6
+      ],
+      "themes": [
+        "partner",
+        "listening"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-027",
+      "text": "If you can feel the resistance inside and they cannot see it outside, congratulations: you are getting worse at being obvious.",
+      "kind": "self-mock",
+      "practices": [
+        6
+      ],
+      "themes": [
+        "ground",
+        "humility"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-028",
+      "text": "An invisible partner never pushes too hard. This is also why they teach so little. Buy a real one lunch.",
+      "kind": "twist",
+      "practices": [
+        6
+      ],
+      "themes": [
+        "partner",
+        "practice"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-029",
+      "text": "All your cells are quietly enjoying the glow. Are you coming to the party?",
+      "kind": "question",
+      "practices": [
+        7
+      ],
+      "themes": [
+        "breath",
+        "joy"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-030",
+      "text": "Aiki Kokyu: the art of breathing with the room instead of at it.",
+      "kind": "twist",
+      "practices": [
+        7
+      ],
+      "themes": [
+        "breath",
+        "listening"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-031",
+      "text": "Breathing in harmony is mostly matching the tempo of everything else. The tide has never rushed.",
+      "kind": "scene",
+      "practices": [
+        7
+      ],
+      "themes": [
+        "breath",
+        "slowness"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-032",
+      "text": "Air in, oxygen across, blood onward, cells absorbing, life burning. Five stages, one breath, zero committee meetings.",
+      "kind": "self-mock",
+      "practices": [
+        8
+      ],
+      "themes": [
+        "breath",
+        "attention"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-033",
+      "text": "Reverse the imagery and you are promoted from breather to breathed. No extra paperwork.",
+      "kind": "twist",
+      "practices": [
+        8
+      ],
+      "themes": [
+        "breath",
+        "humility"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-034",
+      "text": "The lungs run the front desk. The cells do the actual work. Both deserve a thank-you note.",
+      "kind": "twist",
+      "practices": [
+        8
+      ],
+      "themes": [
+        "breath",
+        "humility"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-035",
+      "text": "Somewhere in there a tiny delivery service has run all day without a single tip. Breathe a little thanks.",
+      "kind": "scene",
+      "practices": [
+        8
+      ],
+      "themes": [
+        "breath",
+        "joy"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-036",
+      "text": "Debt, saturation, reserve. Not a bank statement, but where is your balance today?",
+      "kind": "question",
+      "practices": [
+        9
+      ],
+      "themes": [
+        "breath",
+        "state"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-037",
+      "text": "Two or three breaths, exactly the way you want. The only exam where you wrote the answer key.",
+      "kind": "twist",
+      "practices": [
+        9
+      ],
+      "themes": [
+        "breath",
+        "practice"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-038",
+      "text": "It usually takes fewer than three and never takes seven. If you are on breath eight, you have graduated to simply breathing.",
+      "kind": "twist",
+      "practices": [
+        9
+      ],
+      "themes": [
+        "breath",
+        "humility"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-039",
+      "text": "Your own mask first. This is not selfish. It is the only way anyone else's mask ever gets on.",
+      "kind": "invite",
+      "practices": [
+        9
+      ],
+      "themes": [
+        "breath",
+        "humility"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-040",
+      "text": "You can breathe at the ocean even when you cannot be there. The ocean is very understanding about this.",
+      "kind": "scene",
+      "practices": [
+        10
+      ],
+      "themes": [
+        "breath",
+        "joy"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-041",
+      "text": "The imaginary ocean has one great feature: no sand in the sandwiches.",
+      "kind": "twist",
+      "practices": [
+        10
+      ],
+      "themes": [
+        "breath",
+        "joy"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-042",
+      "text": "Remember the first breath of sea air. Your cells do, and they will happily do it again for free.",
+      "kind": "invite",
+      "practices": [
+        10
+      ],
+      "themes": [
+        "breath",
+        "joy"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-043",
+      "text": "An infant has never checked whether it was breathing correctly. Has anyone complained?",
+      "kind": "question",
+      "practices": [
+        11
+      ],
+      "themes": [
+        "breath",
+        "beginner"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-044",
+      "text": "Three minutes of breathing like someone who has never heard of an inbox.",
+      "kind": "twist",
+      "practices": [
+        11
+      ],
+      "themes": [
+        "breath",
+        "slowness"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-045",
+      "text": "Lie there, breathe, enjoy the glow. The one exercise where being hopeless at productivity is the whole assignment.",
+      "kind": "self-mock",
+      "practices": [
+        11
+      ],
+      "themes": [
+        "breath",
+        "beginner"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-046",
+      "text": "Rate your state from one to ten. Notice how often the honest answer is 'a five, but I will say fine.'",
+      "kind": "self-mock",
+      "practices": [
+        12
+      ],
+      "themes": [
+        "state",
+        "humility"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-047",
+      "text": "Call up the next number and embody it. Eight arrives faster when you ask politely. Did you say please?",
+      "kind": "question",
+      "practices": [
+        12
+      ],
+      "themes": [
+        "state",
+        "practice"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-048",
+      "text": "Dropping a number back is not rehearsing a bad day. It is a guided tour of the neighborhood you are moving out of.",
+      "kind": "twist",
+      "practices": [
+        12
+      ],
+      "themes": [
+        "state",
+        "wobble"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-049",
+      "text": "Ten is the number that does not take calls.",
+      "kind": "twist",
+      "practices": [
+        12
+      ],
+      "themes": [
+        "state",
+        "joy"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-050",
+      "text": "Plateau: the only kind of stuck where you get to choose the altitude. How high today?",
+      "kind": "question",
+      "practices": [
+        12
+      ],
+      "themes": [
+        "state",
+        "humility"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-051",
+      "text": "A ten with an agenda is a seven wearing a costume.",
+      "kind": "twist",
+      "practices": [
+        12
+      ],
+      "themes": [
+        "state",
+        "humility"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-052",
+      "text": "Enjoying yourself enjoying joy is a circle with no corners. Unless you start grading it.",
+      "kind": "twist",
+      "practices": [
+        13
+      ],
+      "themes": [
+        "joy",
+        "attention"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-053",
+      "text": "Feeling better is guidance, not a prize. You cannot lose it, only forget to check. Checked lately?",
+      "kind": "question",
+      "practices": [
+        13
+      ],
+      "themes": [
+        "joy",
+        "attention"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-054",
+      "text": "Joy does not need a meeting to get started. What happens when nobody schedules one?",
+      "kind": "question",
+      "practices": [
+        13
+      ],
+      "themes": [
+        "joy",
+        "practice"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-055",
+      "text": "Close with DBSO. Even joy appreciates a clean landing.",
+      "kind": "twist",
+      "practices": [
+        13
+      ],
+      "themes": [
+        "joy",
+        "release"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-056",
+      "text": "Early, late, or close? Your partner will answer with the honesty usually reserved for restaurant reviews.",
+      "kind": "twist",
+      "practices": [
+        14
+      ],
+      "themes": [
+        "partner",
+        "listening"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-057",
+      "text": "Do not telegraph. If your face announced it, the surprise left before you did.",
+      "kind": "twist",
+      "practices": [
+        14
+      ],
+      "themes": [
+        "partner",
+        "attention"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-058",
+      "text": "Snap your fingers the instant you sense it coming: the world's smallest applause for noticing in time.",
+      "kind": "invite",
+      "practices": [
+        14
+      ],
+      "themes": [
+        "partner",
+        "attention"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-059",
+      "text": "Face the attacker so you can feel their attention. Yes, staring is allowed. Yes, it is also practice.",
+      "kind": "invite",
+      "practices": [
+        14
+      ],
+      "themes": [
+        "partner",
+        "listening"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-060",
+      "text": "Climb a few octaves, then replay the meeting. Suddenly it has better manners. Whose, exactly?",
+      "kind": "question",
+      "practices": [
+        15
+      ],
+      "themes": [
+        "state",
+        "practice"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-061",
+      "text": "Push past the satisfying strategy for a quantum shift. Think of it as ordering dessert after you said you were full.",
+      "kind": "twist",
+      "practices": [
+        15
+      ],
+      "themes": [
+        "state",
+        "humility"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-062",
+      "text": "The upcoming situation has not read your visualization yet. Send it a gentle copy.",
+      "kind": "scene",
+      "practices": [
+        15
+      ],
+      "themes": [
+        "state",
+        "humility"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-063",
+      "text": "KeepDoingIt is not thrilling advice. That is the secret. Were you expecting fireworks?",
+      "kind": "question",
+      "practices": [],
+      "themes": [
+        "practice",
+        "repeat"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-064",
+      "text": "Nobody has ever finished breathing. Therefore: KeepDoingIt.",
+      "kind": "twist",
+      "practices": [],
+      "themes": [
+        "practice",
+        "repeat"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-065",
+      "text": "The art is not never wobbling. It is the speed of your 'oh, there I am.'",
+      "kind": "twist",
+      "practices": [],
+      "themes": [
+        "wobble",
+        "practice"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-066",
+      "text": "A wobble noticed is a wobble halfway home. Which half are you in?",
+      "kind": "question",
+      "practices": [],
+      "themes": [
+        "wobble",
+        "practice"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-067",
+      "text": "Energy follows attention. This explains where it goes at night: the refrigerator.",
+      "kind": "twist",
+      "practices": [],
+      "themes": [
+        "energy",
+        "attention"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-068",
+      "text": "Reactions are an inside job. The traffic is just the stage crew.",
+      "kind": "twist",
+      "practices": [],
+      "themes": [
+        "listening",
+        "state"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-069",
+      "text": "The pause before replying is a trainable skill. The reply-all button has not been informed.",
+      "kind": "twist",
+      "practices": [],
+      "themes": [
+        "listening",
+        "practice"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-070",
+      "text": "Presence is a practice, so you will be wonderfully bad at it on days that end in Y.",
+      "kind": "self-mock",
+      "practices": [],
+      "themes": [
+        "practice",
+        "humility"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-071",
+      "text": "The only way to be late for the present is to arrive early with a plan.",
+      "kind": "twist",
+      "practices": [],
+      "themes": [
+        "attention",
+        "slowness"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-072",
+      "text": "Thank your partner. They do all the falling and get none of the credit.",
+      "kind": "invite",
+      "practices": [],
+      "themes": [
+        "partner",
+        "humility"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-073",
+      "text": "Every partner is unwilling at least once. That is when the lesson pulls up a chair.",
+      "kind": "twist",
+      "practices": [],
+      "themes": [
+        "partner",
+        "practice"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-074",
+      "text": "Most arguments run on a lot of resistance and a little listening. Try the recipe the other way round, once, for fun.",
+      "kind": "invite",
+      "practices": [],
+      "themes": [
+        "listening",
+        "partner"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-075",
+      "text": "The floating bridge of heaven is easy to stand on. Finding the stairs is the practice.",
+      "kind": "twist",
+      "practices": [],
+      "themes": [
+        "center",
+        "world"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-076",
+      "text": "Waves do not ask whether you are ready. Surfers have simply stopped taking it personally.",
+      "kind": "scene",
+      "practices": [],
+      "themes": [
+        "wobble",
+        "humility"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-077",
+      "text": "Physics keeps finding new words for what the mat already knew.",
+      "kind": "echo",
+      "practices": [],
+      "themes": [
+        "physics",
+        "practice"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-078",
+      "text": "Everything is a wave until somebody checks. Consider checking a little less.",
+      "kind": "echo",
+      "practices": [],
+      "themes": [
+        "physics",
+        "attention"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-079",
+      "text": "Wave or particle? It depends who is watching. This is also true of your Tuesday.",
+      "kind": "echo",
+      "practices": [],
+      "themes": [
+        "physics",
+        "state"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-080",
+      "text": "A quantum leap is, technically, the smallest jump there is. Ever finer increments, everyone.",
+      "kind": "echo",
+      "practices": [],
+      "themes": [
+        "physics",
+        "practice"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-081",
+      "text": "The unified field: one big room, no assigned seating.",
+      "kind": "echo",
+      "practices": [],
+      "themes": [
+        "physics",
+        "world"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-082",
+      "text": "Joy, once noticed, tends to bring friends.",
+      "kind": "twist",
+      "practices": [],
+      "themes": [
+        "joy",
+        "world"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-083",
+      "text": "Beautiful world, small print: you go first.",
+      "kind": "twist",
+      "practices": [],
+      "themes": [
+        "world",
+        "humility"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-084",
+      "text": "You do not need more time to breathe. The next one is already on the calendar. Attending?",
+      "kind": "question",
+      "practices": [],
+      "themes": [
+        "breath",
+        "slowness"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-085",
+      "text": "Be a beginner on purpose. The view is better and nobody expects you to know where anything is.",
+      "kind": "invite",
+      "practices": [],
+      "themes": [
+        "beginner",
+        "humility"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-086",
+      "text": "Same notes, different smile. That is most of jazz, and most of practice.",
+      "kind": "twist",
+      "practices": [],
+      "themes": [
+        "practice",
+        "joy"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-087",
+      "text": "The unknown has excellent hospitality and terrible signage. Shall we go in anyway?",
+      "kind": "question",
+      "practices": [],
+      "themes": [
+        "beginner",
+        "humility"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-088",
+      "text": "Take yourself lightly. It is the one weight you get to choose. What did you pick today?",
+      "kind": "question",
+      "practices": [],
+      "themes": [
+        "humility",
+        "joy"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-089",
+      "text": "Practice report: showed up, forgot everything, remembered. That is the whole syllabus.",
+      "kind": "self-mock",
+      "practices": [],
+      "themes": [
+        "practice",
+        "repeat"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-090",
+      "text": "Your attention gets lent out all day. Calling it home counts as practice. Where is it right now?",
+      "kind": "question",
+      "practices": [],
+      "themes": [
+        "attention",
+        "practice"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-091",
+      "text": "Gravity is the original teacher. Zero tuition, perfect attendance.",
+      "kind": "twist",
+      "practices": [],
+      "themes": [
+        "ground",
+        "humility"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-092",
+      "text": "A deep breath is just an ordinary breath that finally got noticed.",
+      "kind": "twist",
+      "practices": [],
+      "themes": [
+        "breath",
+        "attention"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-093",
+      "text": "The center is not far. It is merely excellent at hide-and-seek and terrible at hiding. Getting warmer?",
+      "kind": "question",
+      "practices": [],
+      "themes": [
+        "center",
+        "attention"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-094",
+      "text": "Missed a day? The practice kept your seat. It is not the sort to take attendance.",
+      "kind": "twist",
+      "practices": [],
+      "themes": [
+        "practice",
+        "repeat"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-095",
+      "text": "The progress dots fill in only when you do. A fair system, and a patient one.",
+      "kind": "twist",
+      "practices": [],
+      "themes": [
+        "practice",
+        "repeat"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-096",
+      "text": "Mr. Hyde has one weakness. He cannot stand a good pause.",
+      "kind": "twist",
+      "practices": [],
+      "themes": [
+        "listening",
+        "state"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-097",
+      "text": "Energy is the price of admission to anything new. Lunch is a perfectly respectable ticket booth.",
+      "kind": "twist",
+      "practices": [],
+      "themes": [
+        "energy",
+        "state"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-098",
+      "text": "Aiki-land has no border guards. The only sign says, 'You are already here.'",
+      "kind": "scene",
+      "practices": [],
+      "themes": [
+        "center",
+        "world"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-099",
+      "text": "The original character for ki is a picture of steam. This explains why the best ideas keep arriving in the shower.",
+      "kind": "echo",
+      "practices": [],
+      "themes": [
+        "energy",
+        "attention"
+      ],
+      "approved": false
+    },
+    {
+      "id": "lt-100",
+      "text": "Learning out loud: being wrong, with better acoustics.",
+      "kind": "self-mock",
+      "practices": [],
+      "themes": [
+        "humility",
+        "beginner"
+      ],
+      "approved": false
+    }
+  ]
+}

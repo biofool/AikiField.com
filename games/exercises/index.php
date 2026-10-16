@@ -17,6 +17,11 @@ if (!$afFreePreview) {
 } else {
     error_log('exercises: li-landing free preview ua=' . ($_SERVER['HTTP_USER_AGENT'] ?? '-'));
 }
+
+// Issue #110: short kind lines shown after a logged session. A missing or
+// broken data file is logged and the page works without them.
+require dirname(__DIR__, 2) . '/includes/lightness.php';
+$afLightnessJson = af_lightness_json(__DIR__ . '/data/lightness.json');
 ?>
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
@@ -53,6 +58,10 @@ body{background:#FAF6EF}
 .ground{height:8px;background:#E8E0D0;margin:10px 0} .ground-fill{height:100%;background:#1A1A1A;transition:width .5s}
 img.hero{width:100%;max-width:300px;display:block;margin:10px auto;border:1px solid #E8E0D0}
 .deploy{font-size:11px;background:#fff;border:1px solid #E8E0D0;padding:14px}
+.lightness-opt{display:block;margin-top:8px;font-size:11px;opacity:0.75;cursor:pointer}
+.lightness-opt input{margin-right:6px;vertical-align:middle}
+.lightness{margin-top:10px;padding:10px 12px;background:#F5F0E6;border-left:3px solid #1A1A1A;font-size:13px;font-style:italic;line-height:1.5}
+.lightness:empty{display:none}
 @media(max-width:1050px){.wrap{grid-template-columns:1fr} .sidebar,.right{position:relative;max-height:none}}
 </style></head><body>
 <a href="#main" class="af-skip-link">Skip to main content</a>
@@ -178,6 +187,55 @@ function persistProgress(){
  try{ localStorage.setItem('moon_completed', JSON.stringify(Array.from(completed)));
       localStorage.setItem('moon_session_log', JSON.stringify(sessionLog)); }catch(e){ console.error('KeepDoingIt persist failed', e); }
 }
+// Lightness (issue #110): one short kind line after a logged session. The lines
+// come from data/lightness.json via includes/lightness.php; the player can turn
+// them off and the choice is remembered. Lines are never attributed to anyone.
+const LIGHTNESS=<?= $afLightnessJson ?>;
+const LIGHTNESS_KEY='moon_lightness', LIGHTNESS_LAST_KEY='moon_lightness_last';
+let lightnessShown=null;
+function lightnessOn(){
+ try{ return localStorage.getItem(LIGHTNESS_KEY)!=='0'; }
+ catch(e){ console.warn('lightness setting unreadable; showing lines', e); return true; }
+}
+function setLightness(on){
+ try{ localStorage.setItem(LIGHTNESS_KEY, on?'1':'0'); }
+ catch(e){ console.error('lightness setting not saved', e); }
+}
+function lastLightnessId(){
+ try{ return localStorage.getItem(LIGHTNESS_LAST_KEY); }
+ catch(e){ console.warn('last lightness line unreadable', e); return null; }
+}
+function rememberLightnessId(id){
+ try{ localStorage.setItem(LIGHTNESS_LAST_KEY, id); }
+ catch(e){ console.warn('last lightness line not saved', e); }
+}
+// Lines tagged to this practice come first, then the general ones. The nth
+// logged session of a practice shows the nth line, so every line gets its turn
+// and none repeats back to back.
+function pickLightness(pid){
+ const pool=LIGHTNESS.filter(l=>l.practices.includes(pid)).concat(LIGHTNESS.filter(l=>!l.practices.length));
+ if(!pool.length) return null;
+ const n=sessionLog.filter(s=>s.id===pid).length;
+ let i=Math.max(n-1,0)%pool.length;
+ if(pool.length>1&&pool[i].id===lastLightnessId()) i=(i+1)%pool.length;
+ rememberLightnessId(pool[i].id);
+ return pool[i];
+}
+function paintLightness(){
+ const el=document.getElementById('lightness'); if(!el) return;
+ el.textContent=(lightnessShown&&lightnessShown.practiceId===currentId)?lightnessShown.text:'';
+}
+function showLightness(pid){
+ if(!LIGHTNESS.length||!lightnessOn()) return;
+ const line=pickLightness(pid); if(!line) return;
+ lightnessShown={practiceId:pid,text:line.text};
+ paintLightness();
+}
+function bindLightness(){
+ const cb=document.getElementById('lightnessToggle'); if(!cb) return;
+ cb.onchange=()=>{ setLightness(cb.checked); if(!cb.checked) lightnessShown=null; paintLightness(); };
+ paintLightness();
+}
 function studioSlug(n){ return n.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,''); }
 function showLockedModal(ex){
  const overlay=document.createElement('div');
@@ -256,6 +314,7 @@ function renderPlayer(){
    <div class="timer"><div id="phase">Phase: 50/50 — Resist less, ground more</div><div class="circle" id="circ">${Math.floor(timeLeft/60)}:${String(timeLeft%60).padStart(2,'0')}</div><div id="prompt" style="font-size:11px">${isWrist?'Push... feel where you are':'Breathe...'}</div>${isWrist?`<div class="ground"><div class="ground-fill" id="gfill" style="width:${groundPercent}%"></div></div><div style="font-size:10px">${groundPercent}% ground — goal 60% — DBSO</div>`:''}
    <div style="display:flex;gap:6px;margin-top:10px"><button class="btn" id="playB" style="flex:1">${isPlaying?'Pause':'Play Guided'}</button><button class="btn" id="resetB" style="flex:0.3;background:#fff;color:#000;border:1px solid #000">Reset</button></div></div>
    <button class="btn" id="keepB">KeepDoingIt — Log Session</button>
+   ${LIGHTNESS.length?`<label class="lightness-opt"><input type="checkbox" id="lightnessToggle" ${lightnessOn()?'checked':''}> A little smile after logging</label><div id="lightness" class="lightness" role="status" aria-live="polite"></div>`:''}
    <div id="pdots" style="margin-top:10px;font-size:10px"></div>
    ${inter?`<div class="poem"><b>${esc(tr('int'+interludes.indexOf(inter)+'.title', inter.title))}</b>
 
@@ -269,7 +328,8 @@ ${esc(tr('int'+interludes.indexOf(inter)+'.text', inter.text))}</div>`:''}
  }
  document.getElementById('playB').onclick=togglePlay;
  document.getElementById('resetB').onclick=reset;
- document.getElementById('keepB').onclick=()=>{completed.add(currentId); sessionLog.push({id:currentId,at:new Date().toISOString()}); persistProgress(); renderProgress(); alert('Logged! KeepDoingIt');};
+ document.getElementById('keepB').onclick=()=>{completed.add(currentId); sessionLog.push({id:currentId,at:new Date().toISOString()}); persistProgress(); renderProgress(); showLightness(currentId); alert('Logged! KeepDoingIt');};
+ bindLightness();
  if(isWrist){
    document.getElementById('realB').onclick=(e)=>{e.target.parentElement.querySelectorAll('button').forEach(b=>b.classList.remove('active')); e.target.classList.add('active')};
    document.getElementById('invB').onclick=(e)=>{e.target.parentElement.querySelectorAll('button').forEach(b=>b.classList.remove('active')); e.target.classList.add('active')};

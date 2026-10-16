@@ -106,6 +106,7 @@ Four cards, each with a short description and a ghost button:
 - Lead: Create a free account to open all twenty. Work through them in order or pick the one your day calls for.
 - Tiles (static list; titles from `games/exercises/data/collected_exercises_app_data.json`): Exercise 01 DropBackSinkOpen (DBSO) · 02 Listen to the impulse to breathe · 03 Feel / Locate / Align / Unify (Kamae) · 04 Tense & Release Body Scan · 05 Center of the Central Core Relaxation · 06 Wrist Grab Grounding · 07 Breathe Universal Harmony (Aiki Kokyu) · 08 Breathing the Whole System · 09 The O2 Continuum · 10 Ocean Breathing · 11 Infant Breathing · 12 Ten to the Tenth — State Shifting Scale · 13 Enjoy / Joy / Appreciate · 14 Shoulder Slap — Sensing Finer Dimensions · 15 Application Visualization · Interludes: Opening · After Part I · After Part II · After Part III · Closing
 - CTA: Start exercise 01 (→ /games/exercises/)
+- Not copied here: the 100 short lines the player sees after logging a session in `/games/exercises/` live only in `games/exercises/data/lightness.json` (issue #110). They are unattributed drafts until the author signs them off.
 
 ### Games (`#games`)
 

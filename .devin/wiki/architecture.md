@@ -110,6 +110,18 @@ page layout, hero, or left column — keep it hidden until form submission.
   `games/results.php` → AI Chat backend `POST /v1/game-results/sync`
   (Firestore). Deploy the backend first; until then sync falls back to
   browser-only storage.
+- **Twenty Practices post-log lines (issue #110):** after "KeepDoingIt — Log
+  Session" the player shows one short, unattributed line from
+  `games/exercises/data/lightness.json` (100 lines, each with `practices`,
+  `kind`, `themes`, `approved`). `includes/lightness.php` loads and validates
+  the file server-side and logs any problem; a missing or broken file just
+  means no lines. The nth logged session of a practice shows the nth line of
+  [lines tagged to it, then the general ones]; a checkbox opts out
+  (`localStorage` `moon_lightness`). All lines start `approved: false`;
+  `display.show_unapproved: false` in the file hides every unapproved line.
+  Tests: `tests/unit/test_lightness_data.py` (rules in
+  `tests/unit/data/lightness_rules.json`), `tests/unit/test-lightness-loader.php`,
+  `tests/e2e/specs/exercises-lightness.spec.js`.
 - **Content source of truth:** `SITE_CONTENT.md` -- update this alongside HTML
   when any site copy changes.
 - **Binary assets:** `AikiField.pdf` and redesign zips are DVC-tracked
