@@ -22,6 +22,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 PRIVATE_DIR = ROOT / "data" / "exercises"
 PRACTICES = PRIVATE_DIR / "practices.json"
+STUDIOS = PRIVATE_DIR / "studios.json"
 HTACCESS = PRIVATE_DIR / ".htaccess"
 FREE_IDS = {1, 6, 12}
 PART_RE = re.compile(r"^Part (I|II|III|IV) — \S")
@@ -65,6 +66,37 @@ class PracticeDataTests(unittest.TestCase):
         for p in self.practices:
             if "free" in p:
                 self.assertIs(p["free"], True, f"practice {p['id']}: free is true or absent")
+
+
+class StudioDataTests(unittest.TestCase):
+    """The studio list is third-party business data: name and area only (issue #112)."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.doc = json.loads(STUDIOS.read_text(encoding="utf-8"))
+        cls.studios = cls.doc["studios"]
+
+    def test_header(self):
+        for key in ("title", "note"):
+            self.assertTrue(isinstance(self.doc[key], str) and self.doc[key].strip(), key)
+        self.assertIsInstance(self.doc["version"], int)
+
+    def test_twenty_studios_with_unique_names(self):
+        names = [s["name"] for s in self.studios]
+        self.assertEqual(len(names), 20)
+        self.assertEqual(len(names), len(set(names)))
+
+    def test_only_name_and_region_are_stored(self):
+        for studio in self.studios:
+            with self.subTest(name=studio.get("name")):
+                self.assertEqual(set(studio), {"name", "region"})
+                for key in ("name", "region"):
+                    self.assertTrue(isinstance(studio[key], str) and studio[key].strip(), key)
+
+    def test_no_street_address_or_blurb_is_left(self):
+        text = STUDIOS.read_text(encoding="utf-8")
+        for fragment in ("University Ave", "Thorndon Quay", "Customhouse Quay", "remedial", "Movement is Medicine", "Shihan"):
+            self.assertNotIn(fragment, text)
 
 
 class OneCopyTests(unittest.TestCase):

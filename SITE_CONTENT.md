@@ -124,6 +124,39 @@ Four cards, each with a short description and a ghost button:
 
 ---
 
+## Games pages (`/games/`)
+
+Player-facing copy only. No price, revenue share, route string or planning
+note belongs on these pages (issue #112);
+`tests/e2e/specs/games-public-copy.spec.js` fails if one comes back.
+
+### Hub (`games/index.html`)
+
+- Heading: AikiField Games
+- Sub: Movement practices by Richard Moon 6th Dan - Student of Robert Nadeau since '71 - Members-only experiences
+- Card (LIVE): Twenty Practices — Twenty practices from the work of Richard Moon to improve physical performance + creativity. Members only — open →
+- Cards (COMING SOON, no description or route shown): Dojo Tycoon · Ten to the Tenth Challenge (State shifting scale 1-10, quantum shift.) · Slow Your Roll (Record phone IMU + video of mae ukemi, get numerical analysis and AI coaching on your roll.)
+- Footer: By Richard Moon 6th Dan - Create A Beautiful World
+
+### Twenty Practices (`games/exercises/index.php`)
+
+- Title for an anonymous `?src=li` visitor: Twenty Practices: a short preview — AikiField Games. For a signed-in member: Twenty Practices — AikiField Games.
+- Meta description for the preview: A short preview of Twenty Practices, movement practices from the work of Richard Moon 6th Dan. Sign in free to unlock all N. (N is the number of practices in `data/exercises/practices.json`; every count on the page comes from the data.)
+- Sign-in modal: lists the free practices by title from the data (`"free": true`) and says "Unlock all N with a free AikiField account."
+- Studio list (`data/exercises/studios.json`): name and area only. The owner confirms that each studio agreed to appear.
+- Not shown to players: prices or plans, deep-link examples, image-copy notes, developer labels, the completed-IDs debug line.
+
+### Terms (`games/terms/index.html`) — placeholder; the owner must approve real text
+
+- Heading: Terms - AikiField Games
+- Body: These terms are being finalised. Questions: use the contact form.
+
+### Privacy (`games/privacy/index.html`)
+
+- Heading: Privacy Policy - AikiField Games. The legal text is the owner's to review and was not edited.
+
+---
+
 ## Approach (`approach.html`)
 
 **Meta title:** AikiField — Our Approach

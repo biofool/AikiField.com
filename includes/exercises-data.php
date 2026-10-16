@@ -19,6 +19,10 @@
  * The page shows a plain message when the file is missing or broken, so every
  * failure is logged and an empty list comes back. Nothing here ever throws.
  *
+ * The studio list (data/exercises/studios.json, issue #112) is loaded the same
+ * way. Only a studio's name and region are ever sent to the page: anything else
+ * in the file (an address, a description) stays on the server.
+ *
  * Tests: tests/unit/test-exercises-data.php (loader and visibility),
  *        tests/unit/test_exercises_data.py (data rules),
  *        tests/e2e/specs/exercises-preview.spec.js (every route).
@@ -152,4 +156,51 @@ function af_exercises_json(array $practices): string
         return '[]';
     }
     return $json;
+}
+
+/**
+ * The studios the page may list: name and region only, in file order. A studio
+ * without a name is skipped and logged; a missing region is left out. Anything
+ * else in the file is dropped here on purpose.
+ *
+ * @return list<array{name:string,region?:string}>
+ */
+function af_exercises_studios(string $path): array
+{
+    if (!is_file($path) || !is_readable($path)) {
+        error_log("exercises: studio file missing or unreadable: $path");
+        return [];
+    }
+    $raw = file_get_contents($path);
+    if ($raw === false) {
+        error_log("exercises: could not read studio file: $path");
+        return [];
+    }
+    try {
+        $data = json_decode($raw, true, 8, JSON_THROW_ON_ERROR);
+    } catch (JsonException $e) {
+        error_log("exercises: invalid JSON in $path: " . $e->getMessage());
+        return [];
+    }
+    if (!is_array($data) || !isset($data['studios']) || !is_array($data['studios'])) {
+        error_log("exercises: no studios list in $path");
+        return [];
+    }
+
+    $studios = [];
+    foreach ($data['studios'] as $index => $item) {
+        if (!is_array($item) || !isset($item['name']) || !is_string($item['name']) || trim($item['name']) === '') {
+            error_log("exercises: skipping studio #$index in $path: missing name");
+            continue;
+        }
+        $studio = ['name' => trim($item['name'])];
+        if (isset($item['region']) && is_string($item['region']) && trim($item['region']) !== '') {
+            $studio['region'] = trim($item['region']);
+        }
+        $studios[] = $studio;
+    }
+    if ($studios === []) {
+        error_log("exercises: no usable studios in $path");
+    }
+    return $studios;
 }

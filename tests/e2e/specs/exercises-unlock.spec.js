@@ -4,8 +4,15 @@
 // Signed-in members get every practice unlocked; auth-state.php still
 // reports the same PHP session login.php establishes (AF_GATE_NO_REDIRECT).
 
+const fs = require('fs');
+const path = require('path');
 const { test, expect } = require('@playwright/test');
 const { TEST_EMAIL, PASSWORD, browserLogin } = require('../helpers');
+
+// Counts on the page come from the data (issue #112), so the spec does too.
+const PRACTICE_COUNT = JSON.parse(
+  fs.readFileSync(path.join(__dirname, '..', '..', '..', 'data', 'exercises', 'practices.json'), 'utf8')
+).practices.length;
 
 test.describe('exercises gate (issue #71)', () => {
   test('anonymous: redirected to the blind login with ?next=', async ({ page }) => {
@@ -39,8 +46,8 @@ test.describe('exercises gate (issue #71)', () => {
     await browserLogin(page, { email: TEST_EMAIL, password: PASSWORD, next: '/games/exercises/' });
 
     await expect(page.locator('#authBadge')).toBeVisible();
-    await expect(page.locator('#authBadge')).toContainText('all 20 practices unlocked');
-    await expect(page.locator('.ex-chip')).toHaveCount(15);
+    await expect(page.locator('#authBadge')).toContainText(`all ${PRACTICE_COUNT} practices unlocked`);
+    await expect(page.locator('.ex-chip')).toHaveCount(PRACTICE_COUNT);
     await expect(page.locator('.ex-chip.locked')).toHaveCount(0);
 
     // A normally-locked exercise renders its content — no modal.

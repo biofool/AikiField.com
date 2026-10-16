@@ -40,6 +40,22 @@ if ($afMember) {
     header('Cache-Control: private, no-store');
 }
 
+// Issue #112: the studio list (name and region only) comes from data too, so the
+// heading count can never drift from the list.
+$afStudios = af_exercises_studios(dirname(__DIR__, 2) . '/data/exercises/studios.json');
+$afStudiosJson = af_exercises_json($afStudios);
+
+// Issue #112: say what the visitor sees. Every count comes from the data.
+$afCount = count($afExercises);
+$afAll = $afCount > 0 ? 'all ' . $afCount : 'all of them';
+if ($afMember) {
+    $afTitle = 'Twenty Practices — AikiField Games';
+    $afDescription = 'Twenty movement practices from the work of Richard Moon 6th Dan.';
+} else {
+    $afTitle = 'Twenty Practices: a short preview — AikiField Games';
+    $afDescription = 'A short preview of Twenty Practices, movement practices from the work of Richard Moon 6th Dan. Sign in free to unlock ' . $afAll . '.';
+}
+
 // Issue #110: short kind lines shown after a logged session. A missing or
 // broken data file is logged and the page works without them.
 require dirname(__DIR__, 2) . '/includes/lightness.php';
@@ -47,8 +63,8 @@ $afLightnessJson = af_lightness_json(dirname(__DIR__, 2) . '/data/exercises/ligh
 ?>
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Twenty Practices — AikiField Games</title>
-<meta name="description" content="Twenty movement practices from the work of Richard Moon 6th Dan. Free: DBSO, Wrist Grab Grounding, Ten to the Tenth.">
+<title><?= htmlspecialchars($afTitle, ENT_QUOTES) ?></title>
+<meta name="description" content="<?= htmlspecialchars($afDescription, ENT_QUOTES) ?>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Public+Sans:wght@400;600;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
@@ -79,7 +95,7 @@ body{background:#FAF6EF}
 .toggle{display:flex;gap:6px;margin:10px 0} .toggle button{flex:1;padding:7px;border:1px solid #1A1A1A;background:#fff;cursor:pointer;font-size:12px} .toggle button.active{background:#1A1A1A;color:#fff}
 .ground{height:8px;background:#E8E0D0;margin:10px 0} .ground-fill{height:100%;background:#1A1A1A;transition:width .5s}
 img.hero{width:100%;max-width:300px;display:block;margin:10px auto;border:1px solid #E8E0D0}
-.deploy{font-size:11px;background:#fff;border:1px solid #E8E0D0;padding:14px}
+#exList{margin-top:10px}
 .lightness-opt{display:block;margin-top:8px;font-size:11px;opacity:0.75;cursor:pointer}
 .lightness-opt input{margin-right:6px;vertical-align:middle}
 .lightness{margin-top:10px;padding:10px 12px;background:#F5F0E6;border-left:3px solid #1A1A1A;font-size:13px;font-style:italic;line-height:1.5}
@@ -140,35 +156,24 @@ img.hero{width:100%;max-width:300px;display:block;margin:10px auto;border:1px so
 <div class="game-head"><h1>TWENTY PRACTICES <span>Quantum Aikido — Book of Exercises & Practices — from the work of Richard Moon 6th Dan · Student of Robert Nadeau since '71</span></h1><a href="/games/" style="padding:7px 14px;border:1px solid #1A1A1A;background:#fff;color:#1A1A1A;text-decoration:none;font-size:12px">All games</a></div>
 <div class="wrap">
 <div class="sidebar">
-<h3 style="font-size:11px;letter-spacing:0.12em">60 STUDIOS · PERSONALIZATION</h3>
-<input id="search" placeholder="Search studios..." style="width:100%;padding:8px;border:1px solid #1A1A1A;margin:10px 0">
+<div id="studioBlock"<?= $afStudios === [] ? ' hidden' : '' ?>>
+<h3 id="studioHeading" style="font-size:11px;letter-spacing:0.12em"><?= count($afStudios) ?> STUDIOS · PERSONALIZATION</h3>
+<input id="search" placeholder="Search studios..." aria-labelledby="studioHeading" style="width:100%;padding:8px;border:1px solid #1A1A1A;margin:10px 0">
 <div id="studioList"></div>
+</div>
 <img class="hero" src="images/image_20260919_144743.webp">
 <img class="hero" src="images/image_20260919_144742.webp">
 <img class="hero" src="images/image_20260919_144741.webp">
-<p style="font-size:10px;opacity:0.5;margin-top:6px">Simple image copy: ≤7 words, black on washi, sub "By Richard Moon 6th Dan"</p>
 </div>
 <div class="center">
 <div id="banner" style="display:none;padding:12px;background:#1A1A1A;color:#fff;font-size:12px;margin-bottom:14px"></div>
 <div id="authBadge" style="display:none;padding:8px 12px;background:#F5F0E6;border:1px solid #E8E0D0;font-size:12px;margin-bottom:10px"></div>
-<div style="font-size:11px;letter-spacing:0.1em">PART NAVIGATION — AUTO-LOADED FROM MARKDOWN</div>
-<div id="partTabs"></div>
-<div style="font-size:11px;letter-spacing:0.1em;margin-top:14px">EXERCISES — 15 FROM YOUR PDF</div>
-<div id="exList"></div>
+<div id="partTabs" role="group" aria-label="Parts"></div>
+<div id="exList" role="group" aria-label="Practices"></div>
 <div class="player" id="player"></div>
 </div>
 <div class="right">
-<h3 style="font-size:11px;letter-spacing:0.1em">FREEMIUM MODEL</h3>
-<div style="border:1px solid #1A1A1A;padding:10px;margin:8px 0;background:#fff"><strong>FREE</strong> — DBSO, Wrist Grab, Ten to the Tenth<br><span style="font-size:10px">3 practices always free + log + reminder</span></div>
-<div style="border:2px solid #1A1A1A;padding:10px;margin:8px 0;background:#1A1A1A;color:#fff"><strong>CREATOR $12/mo $96/yr</strong><br><span style="font-size:10px">All 15+5 exclusive, 21-day Challenge, offline audio, progress</span></div>
-<div style="border:1px solid #1A1A1A;padding:10px;margin:8px 0"><strong>DOJO $49/mo</strong><br><span style="font-size:10px">White-label for 60 studios, 30% rev share, analytics, student invites via 180 CTAs</span></div>
 <div id="progress"></div>
-<div class="deploy">
-<b>AikiField deep links</b><br>
-Query: /games/exercises/?studio_id=city-aikido&amp;exercise=wrist-grab-grounding<br>
-Path: /games/exercises/wrist-grab-grounding?studio_id=city-aikido<br>
-studio_id personalizes the banner; exercise auto-opens the practice.
-</div>
 </div>
 </div>
 </main>
@@ -179,28 +184,9 @@ studio_id personalizes the banner; exercise auto-opens the practice.
 const AF_MEMBER = <?= $afMember ? 'true' : 'false' ?>;
 const exercises = <?= $afExercisesJson ?>;
 const interludes = [{"title": "INTERLUDE \u2014 OPENING", "text": "This second has passed\nas has this one\nThe moment is so fleeting\nyet\nthe now is eternal\n\nRichard Moon"}, {"title": "INTERLUDE \u2014 AFTER PART I", "text": "Feel\ninto the center\nof your central core\neven by drops\nin ever finer adjustments\n\nRichard Moon"}, {"title": "INTERLUDE \u2014 AFTER PART II", "text": "Listen to the impulse to breathe\nfollow the guidance\nbreathe exactly\nlike you want to\n\nRichard Moon"}, {"title": "INTERLUDE \u2014 AFTER PART III", "text": "I don't really study Aikido as a Martial art,\nan art in the realm of Mars, the god of war.\nI study Aikido as a Venusial art,\nan art in the realm of Venus, the goddess of love.\n\nRichard Moon"}, {"title": "INTERLUDE \u2014 CLOSING", "text": "joy is the greatest treasure\ndon't get mad\ndon't even get even\ncreate a beautiful world\n\nRichard Moon\n\n\u201cLove gives birth to harmony, harmony brings forth joy, and joy is the greatest treasure.\u201d \u2014 Morihei Ueshiba, O-Sensei."}];
-const studios = [
-{name:"City Aikido", region:"SF Bay", cat:"Aikido dojo", about:"Home dojo of Robert Nadeau Shihan, Richard Moon's teacher since 1971. Friends of City Aikido and O-Sensei's teachings."},
-{name:"Aikido San Francisco", region:"SF Bay", cat:"Aikido dojo", about:"Opened 1986 in SOMA, positive supportive environment."},
-{name:"Aikido of Berkeley", region:"East Bay", cat:"Aikido dojo", about:"1514 University Ave, progressive dojo, Free Aiki Dojo, peace practices."},
-{name:"Aikido Institute", region:"East Bay", cat:"Aikido dojo", about:"California non-profit Emeryville, Takemusu Aikido Association."},
-{name:"Alameda Aikikai", region:"East Bay", cat:"Aikido dojo", about:"Non-profit 501c3 established 1991 Alameda, family-friendly."},
-{name:"Aikido Of Montclair Village", region:"East Bay", cat:"Aikido dojo", about:"Essential teachings of Morihei Ueshiba as taught by Saito Shihan."},
-{name:"The Omni Movement", region:"East Bay", cat:"Dance", about:"Growing social dance as healthy accessible expression, Brazilian Zouk."},
-{name:"In the Groove Studios", region:"East Bay", cat:"Dance", about:"Sanctuary to become person you aspire to be."},
-{name:"Atomic Allure", region:"East Bay", cat:"Pole/Aerial", about:"Beauty stems from within, body-positive pole and aerial."},
-{name:"Shawl-Anderson Dance Center", region:"East Bay", cat:"Dance school", about:"Premier non-profit dance education Berkeley since 1958."},
-{name:"Movement For Everyone", region:"SF Bay", cat:"Pilates", about:"Body neutral movement studio using Pilates and GYROTONIC."},
-{name:"The City Waves 5Rhythms SF", region:"SF Bay", cat:"Movement", about:"Gabrielle Roth's 5Rhythms dynamic dance & movement meditation."},
-{name:"Wellington Dance Academy", region:"Wellington NZ", cat:"Dance school", about:"Community dance school 182 Thorndon Quay."},
-{name:"WIDance Inclusive", region:"Wellington NZ", cat:"Dance", about:"Inclusive dance Saturday classes open to all abilities."},
-{name:"The Pilates Studio Wellington", region:"Wellington NZ", cat:"Pilates", about:"Fully equipped pilates studio 107 Customhouse Quay."},
-{name:"NowYoga / Yogallery", region:"Wellington NZ", cat:"Yoga", about:"Yoga studio blending yoga and art."},
-{name:"Empire Aerial Arts", region:"Wellington NZ", cat:"Aerial", about:"Open timetable without term-based courses."},
-{name:"Body Electric Pole", region:"Wellington NZ", cat:"Pole", about:"Beautiful art of pole dancing."},
-{name:"Aikido Shinryukan Burnside", region:"Christchurch NZ", cat:"Aikido", about:"South Island's largest Aikido club."},
-{name:"Movement Studio Rolleston", region:"Canterbury NZ", cat:"Pilates", about:"Movement is Medicine, remedial massage reformer pilates."}
-];
+// Issue #112: the studio list comes from data/exercises/studios.json; only name and
+// region are sent (no street address, no blurb).
+const studios = <?= $afStudiosJson ?>;
 let currentId = 6;
 let groundPercent=50, timeLeft=300, isPlaying=false, timer=null;
 let currentPart='all';
@@ -220,7 +206,7 @@ function persistProgress(){
       localStorage.setItem('moon_session_log', JSON.stringify(sessionLog)); }catch(e){ console.error('KeepDoingIt persist failed', e); }
 }
 // Lightness (issue #110): one short kind line after a logged session. The lines
-// come from data/lightness.json via includes/lightness.php; the player can turn
+// come from data/exercises/lightness.json via includes/lightness.php; the player can turn
 // them off and the choice is remembered. Lines are never attributed to anyone.
 const LIGHTNESS=<?= $afLightnessJson ?>;
 const LIGHTNESS_KEY='moon_lightness', LIGHTNESS_LAST_KEY='moon_lightness_last';
@@ -270,14 +256,15 @@ function bindLightness(){
 }
 function studioSlug(n){ return n.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,''); }
 function showLockedModal(ex){
+ const freeNames=exercises.filter(e=>e.free===true).map(e=>e.title).join(', ');
  const overlay=document.createElement('div');
  overlay.id='lockModal'; overlay.className='game';
  overlay.style.cssText='position:fixed;inset:0;background:rgba(26,26,26,0.55);display:flex;align-items:center;justify-content:center;z-index:150;padding:20px';
  overlay.innerHTML=`<div style="background:#FAF6EF;border:2px solid #1A1A1A;padding:32px;max-width:420px;text-align:center">
    <div style="font-size:11px;letter-spacing:0.12em;margin-bottom:10px">LOCKED PRACTICE</div>
-   <h2 style="font-size:20px;margin-bottom:10px">${ex.title}</h2>
+   <h2 style="font-size:20px;margin-bottom:10px">${esc(ex.title)}</h2>
    <p style="font-size:14px;font-style:italic">Twenty practices from the work of Richard Moon 6th Dan</p>
-   <p style="font-size:12px;opacity:0.7;margin:14px 0">Free practices: DBSO, Wrist Grab Grounding, Ten to the Tenth. Unlock all 15+5 with a free AikiField account.</p>
+   <p style="font-size:12px;opacity:0.7;margin:14px 0">${freeNames?`Free practices: ${esc(freeNames)}. `:''}Unlock all ${exercises.length} with a free AikiField account.</p>
    <a href="/login.php?next=/games/exercises/" class="btn" style="display:inline-block;margin-bottom:10px">Sign in to unlock all</a><br>
    <button class="btn" id="lockClose">Back to free practices</button>
  </div>`;
@@ -288,18 +275,31 @@ function showLockedModal(ex){
 }
 function renderStudios(f=""){
  const list=document.getElementById('studioList');
- list.innerHTML=studios.filter(s=>s.name.toLowerCase().includes(f.toLowerCase())).map(s=>`<div class="studio" data-n="${s.name}"><strong>${s.name}</strong><br><span style="font-size:10px;opacity:0.7">${s.region} · ${s.cat}</span></div>`).join('');
- list.querySelectorAll('.studio').forEach(el=>{
-   el.onclick=()=>{
-     document.querySelectorAll('.studio').forEach(x=>x.classList.remove('active')); el.classList.add('active');
-     const st=studios.find(x=>x.name===el.dataset.n);
-     showStudioBanner(st);
+ list.replaceChildren();
+ studios.filter(st=>st.name.toLowerCase().includes(f.toLowerCase())).forEach(st=>{
+   const el=document.createElement('div');
+   el.className='studio';
+   const name=document.createElement('strong');
+   name.textContent=st.name;
+   el.appendChild(name);
+   if(st.region){
+     const region=document.createElement('span');
+     region.style.cssText='font-size:10px;opacity:0.7';
+     region.textContent=st.region;
+     el.append(document.createElement('br'), region);
    }
+   el.onclick=()=>{
+     list.querySelectorAll('.studio').forEach(x=>x.classList.remove('active')); el.classList.add('active');
+     showStudioBanner(st);
+   };
+   list.appendChild(el);
  });
 }
 function showStudioBanner(st){
  const b=document.getElementById('banner'); b.style.display='block';
- b.innerHTML=`Practicing for <strong>${st.name}</strong> students — ${st.about} — Twenty practices from the work of Richard Moon to improve physical performance + creativity.`;
+ const name=document.createElement('strong');
+ name.textContent=st.name;
+ b.replaceChildren('Practicing for ', name, ' students — Twenty practices from the work of Richard Moon to improve physical performance + creativity.');
 }
 function selectStudioBySlug(slug){
  const st=studios.find(x=>studioSlug(x.name)===slug.toLowerCase());
@@ -355,7 +355,6 @@ function renderPlayer(){
    <div style="display:flex;gap:6px;margin-top:10px"><button class="btn" id="playB" style="flex:1">${isPlaying?'Pause':'Play Guided'}</button><button class="btn" id="resetB" style="flex:0.3;background:#fff;color:#000;border:1px solid #000">Reset</button></div></div>
    <button class="btn" id="keepB">KeepDoingIt — Log Session</button>
    ${LIGHTNESS.length?`<label class="lightness-opt"><input type="checkbox" id="lightnessToggle" ${lightnessOn()?'checked':''}> A little smile after logging</label><div id="lightness" class="lightness" role="status" aria-live="polite"></div>`:''}
-   <div id="pdots" style="margin-top:10px;font-size:10px"></div>
    ${inter?`<div class="poem"><b>${esc(tr('int'+interludes.indexOf(inter)+'.title', inter.title))}</b>
 
 ${esc(tr('int'+interludes.indexOf(inter)+'.text', inter.text))}</div>`:''}
@@ -380,7 +379,6 @@ function renderProgress(){
  const el=document.getElementById('progress'); if(!el) return;
  const dots=exercises.map(e=>completed.has(e.id)?'●':'○').join(' ');
  el.innerHTML=`<div style="font-size:10px">Progress: ${completed.size}/${exercises.length}<br>${dots}</div>`;
- const pd=document.getElementById('pdots'); if(pd) pd.innerHTML=`Completed IDs: ${Array.from(completed).join(', ')}`;
 }
 function togglePlay(){
  isPlaying=!isPlaying;
@@ -420,7 +418,7 @@ function checkSignedIn(){
   })
   .catch(e=>console.error('auth-state check failed',e));
 }
-if(AF_MEMBER) showAuthBadge('Signed in — <strong>all 20 practices unlocked</strong>.');
+if(AF_MEMBER) showAuthBadge(`Signed in — <strong>all ${exercises.length} practices unlocked</strong>.`);
 else checkSignedIn();
 </script>
 

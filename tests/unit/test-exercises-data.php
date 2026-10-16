@@ -236,6 +236,51 @@ foreach ($real as $practice) {
 ex_check('real file, anonymous: no sentence of a locked body or meta is in the payload', [], $leaks);
 ex_check('real file, member: all 15 carry text', 15, count(array_filter(af_exercises_visible($real, true), fn ($p) => isset($p['body']))));
 
+// --- the studio list (issue #112) ------------------------------------------------
+function ex_studio_file(array $studios): string
+{
+    return ex_file((string) json_encode(['studios' => $studios]));
+}
+
+$studios = af_exercises_studios(ex_studio_file([
+    ['name' => 'City Aikido', 'region' => 'SF Bay', 'cat' => 'Aikido dojo', 'about' => '1514 University Ave, a blurb', 'address' => '182 Thorndon Quay'],
+    ['name' => '  Padded Name  ', 'region' => ''],
+    ['name' => 'No Region'],
+    ['name' => '', 'region' => 'Nowhere'],
+    ['region' => 'No name'],
+    'just a string',
+    ['name' => 42, 'region' => 'Bad name'],
+    ['name' => 'Bad Region', 'region' => ['x']],
+]));
+ex_check('studios: usable studios survive in order', ['City Aikido', 'Padded Name', 'No Region', 'Bad Region'], array_column($studios, 'name'));
+ex_check('studios: only name and region are kept', ['name', 'region'], array_keys($studios[0]));
+ex_check('studios: nothing but the name and region is in the payload', false, str_contains((string) json_encode($studios), 'University') || str_contains((string) json_encode($studios), 'Thorndon') || str_contains((string) json_encode($studios), 'blurb') || str_contains((string) json_encode($studios), 'Aikido dojo'));
+ex_check('studios: an empty or missing region leaves the key out', [['name' => 'Padded Name'], ['name' => 'No Region'], ['name' => 'Bad Region']], array_slice($studios, 1));
+$log = ex_log();
+ex_check('studios: four bad entries are logged', 4, substr_count($log, 'exercises: skipping studio #'));
+ex_check('studios: missing file is logged and empty', [[], true], [af_exercises_studios('/nonexistent/studios.json'), str_contains(ex_log(), 'exercises: studio file missing or unreadable: /nonexistent/studios.json')]);
+ex_check('studios: invalid JSON is empty', [], af_exercises_studios(ex_file('{"studios": [')));
+ex_check('studios: invalid JSON is logged', true, str_contains(ex_log(), 'exercises: invalid JSON in'));
+ex_check('studios: no list is empty', [], af_exercises_studios(ex_file('{"version": 1}')));
+ex_check('studios: no list is logged', true, str_contains(ex_log(), 'exercises: no studios list in'));
+ex_check('studios: only bad entries is empty', [], af_exercises_studios(ex_studio_file(['x'])));
+ex_check('studios: only bad entries logs the empty result', true, str_contains(ex_log(), 'exercises: no usable studios in'));
+
+$realStudios = af_exercises_studios(__DIR__ . '/../../data/exercises/studios.json');
+ex_check('real studios: 20 load', 20, count($realStudios));
+ex_check('real studios: nothing logged', '', ex_log());
+ex_check('real studios: every one has a name and a region and nothing else', true, (function () use ($realStudios) {
+    foreach ($realStudios as $studio) {
+        $keys = array_keys($studio);
+        sort($keys);
+        if ($keys !== ['name', 'region']) {
+            return false;
+        }
+    }
+    return true;
+})());
+ex_check('real studios: names are unique', 20, count(array_unique(array_column($realStudios, 'name'))));
+
 unlink($logFile);
 echo "\n$passed passed, $failures failed\n";
 exit($failures === 0 ? 0 : 1);

@@ -122,7 +122,11 @@ page layout, hero, or left column — keep it hidden until form submission.
   `AF_EXERCISES_STUB_KEYS`). The member copy is sent `Cache-Control: private,
   no-store`. `games/exercises/auth-state.php` is now only used by a preview
   page to notice a later sign-in (it then offers a reload). The old
-  `games/exercises/data/` directory and its three dead copies are gone. Tests:
+  `games/exercises/data/` directory and its three dead copies are gone.
+  `data/exercises/studios.json` (issue #112) holds the studio list; only
+  `name` and `region` ever reach the page (the loader drops every other
+  field), and the heading count, the sign-in modal count and the free
+  practice names all come from the data, never from typed text. Tests:
   `tests/unit/test-exercises-data.php`, `tests/unit/test_exercises_data.py`
   (reads the real `.htaccess`), `tests/e2e/specs/exercises-preview.spec.js`
   (every route that can serve practice text); `tests/e2e/router.php` reads the
