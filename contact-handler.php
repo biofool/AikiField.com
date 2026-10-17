@@ -29,6 +29,10 @@ require __DIR__ . '/includes/coach-config.load.php';
 // the Cloudflare edge PoP's address (see contact_client_ip() below).
 require __DIR__ . '/includes/cloudflare-ips.php';
 
+// Input hygiene for the mail forms (AF #125): one Reply-To address, no NUL,
+// encoded Subject, length limits.
+require __DIR__ . '/includes/form-input.php';
+
 /**
  * The address to key rate limiting (and the notification email's "IP:" line)
  * on. REMOTE_ADDR is the real, unspoofable TCP peer — but for traffic that
@@ -86,21 +90,23 @@ function redirect_with_status(string $status, string $msg = ''): void
 }
 
 // --- Extract and sanitize fields ---
-// strip_header_injection: trim() only removes leading/trailing whitespace,
-// not embedded CR/LF - a scripted (non-browser) POST can smuggle
-// "\r\nBcc: victim@example.com" into any of these fields. They all end up
-// either in a raw mail() header (name, via Reply-To) or in the body, so
-// strip control characters from all of them for defense in depth (CWE-93).
-function strip_header_injection(string $value): string
-{
-    return trim(str_replace(["\r", "\n"], '', $value));
+// Everything a visitor types ends up in an email: some of it in a header
+// (Reply-To, Subject), the rest in the body. A scripted (non-browser) POST can
+// send anything, so see includes/form-input.php: a NUL byte is refused (it made
+// mail() throw, HTTP 500), arrays count as empty, control characters are
+// removed (CWE-93), and every field has a length limit.
+if (af_form_has_nul($_POST)) {
+    error_log('contact-handler.php: refused a submission containing a NUL byte');
+    http_response_code(400);
+    header('Content-Type: text/html; charset=utf-8');
+    exit('<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>400 Bad Request</title></head><body><h1>Bad Request</h1><p>The form contained characters we cannot accept. Please go back and try again.</p><p><a href="/contact.html">Back to the contact form</a></p></body></html>');
 }
 
-$name = strip_header_injection($_POST['name'] ?? '');
-$email = trim($_POST['email'] ?? '');
-$organization = strip_header_injection($_POST['organization'] ?? '');
-$interest = strip_header_injection($_POST['interest'] ?? '');
-$message = trim($_POST['message'] ?? '');
+$name = af_form_line($_POST['name'] ?? null);
+$email = af_form_line($_POST['email'] ?? null);
+$organization = af_form_line($_POST['organization'] ?? null);
+$interest = af_form_line($_POST['interest'] ?? null);
+$message = af_form_text($_POST['message'] ?? null);
 
 // --- Rate limiting ---
 // Turnstile CAPTCHA verification lives further down (after the honeypot
@@ -218,12 +224,16 @@ if ($name === '') {
 }
 if ($email === '') {
     $errors[] = 'Email is required.';
-} elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+} elseif (af_reply_to_address($email) === null) {
     $errors[] = 'Please enter a valid email address.';
 }
 if ($message === '') {
     $errors[] = 'Message is required.';
 }
+$errors = array_merge($errors, af_form_too_long(
+    ['name' => $name, 'email' => $email, 'organization' => $organization, 'interest' => $interest, 'message' => $message],
+    ['name' => 'Name', 'email' => 'Email', 'organization' => 'Organization', 'interest' => 'Area of interest', 'message' => 'Message']
+));
 
 if (count($errors) > 0) {
     redirect_with_status('error', implode(' ', $errors));
@@ -247,9 +257,13 @@ $body .= "Submitted: " . date('Y-m-d H:i:s') . " (server time)\n";
 $clientIpForLog = contact_client_ip();
 $body .= "IP: " . ($clientIpForLog !== '' ? $clientIpForLog : 'unknown') . "\n";
 
+// Reply-To is the bare, validated address. It used to be "<name> <address>"
+// with the typed name, so a name like "Kenneth <ceo@aikifield.com>, Mallory"
+// made the owner's reply go to the attacker as well.
 $headers = [
     'From: AikiField Contact <' . $FROM_EMAIL . '>',
-    'Reply-To: ' . $name . ' <' . $email . '>',
+    'Reply-To: ' . af_reply_to_address($email),
+    'MIME-Version: 1.0',
     'X-Mailer: PHP/' . phpversion(),
     'Content-Type: text/plain; charset=UTF-8',
 ];
@@ -270,7 +284,7 @@ if ($IS_STAGING) {
     redirect_with_status('success');
 }
 
-$sent = mail($RECIPIENT_EMAIL, $subject, $body, implode("\r\n", $headers));
+$sent = mail($RECIPIENT_EMAIL, af_mime_subject($subject), $body, implode("\r\n", $headers));
 
 if ($sent) {
     redirect_with_status('success');

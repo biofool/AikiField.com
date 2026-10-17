@@ -1,0 +1,5 @@
+{
+  "_comment": "What games/translate-api.php will relay to the backend's /v1/games/translate (AF #125). games: the ids pages set as window.AF_GAME.id. languages: the codes games/translate.js offers in its picker (LANGS); tests/e2e/specs/translate-api.spec.js fails if the two lists differ. A request outside these lists is a 400 and nothing is forwarded.",
+  "games": ["exercises", "lucky-wave"],
+  "languages": ["es", "fr", "de", "pt", "it", "nl", "pl", "sv", "ja", "zh-Hans", "ko", "hi", "ar", "he", "ru"]
+}

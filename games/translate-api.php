@@ -16,6 +16,12 @@ declare(strict_types=1);
  *
  * Signed out / expired session → 401 {"ok":false}; the page keeps working in
  * English. Never exposes session credentials to browser JS.
+ *
+ * The relay only forwards what the pages can legitimately send (AF #125): the
+ * game ids and picker languages in games/translate-config.json, at most
+ * TA_MAX_ITEMS items and TA_MAX_TOTAL_CHARS characters. Without that, any
+ * signed-in account could make the backend run Gemini and email the review
+ * recipients with a game id, a language and text of its own choosing.
  */
 
 define('AF_GATE_NO_REDIRECT', true);
@@ -25,7 +31,13 @@ require_once dirname(__DIR__) . '/includes/coach-backend.php';
 
 const TA_MAX_ITEMS = 200;      // backend GameTranslateRequest max_length
 const TA_MAX_ITEM_CHARS = 4000;
+// The games send about 12 KB today (exercises 11,355 bytes, Lucky Wave 11,890).
+// The backend refuses bodies over its own limit for this route (65,536 bytes
+// by default, AIR#946), so 24,000 characters leaves room to grow and stays
+// well inside it.
+const TA_MAX_TOTAL_CHARS = 24000;
 const TA_ALLOWED_LABELS = ['translation_up', 'translation_down'];
+const TA_CONFIG_FILE = __DIR__ . '/translate-config.json';
 
 header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store');
@@ -35,6 +47,26 @@ function ta_respond(int $status, array $body): void
     http_response_code($status);
     echo json_encode($body, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     exit;
+}
+
+/**
+ * The allow-lists from games/translate-config.json. A missing or broken file
+ * is a server fault (logged, 500), never "allow everything".
+ *
+ * @return array{games: list<string>, languages: list<string>}
+ */
+function ta_load_config(): array
+{
+    $raw = @file_get_contents(TA_CONFIG_FILE);
+    $cfg = $raw === false ? null : json_decode($raw, true);
+    if (!is_array($cfg) || !is_array($cfg['games'] ?? null) || !is_array($cfg['languages'] ?? null)) {
+        error_log('translate-api: ' . TA_CONFIG_FILE . ' is missing or not valid; refusing every request');
+        ta_respond(500, ['ok' => false, 'error' => 'Translation is not available.']);
+    }
+    return [
+        'games' => array_values(array_filter($cfg['games'], 'is_string')),
+        'languages' => array_values(array_filter($cfg['languages'], 'is_string')),
+    ];
 }
 
 if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
@@ -56,24 +88,40 @@ if (empty($betaAuthed) || empty($qaEmail) || empty($qaSessionToken)) {
 }
 
 if ($action === 'translate') {
+    $cfg = ta_load_config();
     $gameId = $in['gameId'] ?? null;
     $lang = $in['targetLang'] ?? null;
     $items = $in['items'] ?? [];
-    if (!is_string($gameId) || $gameId === '' || strlen($gameId) > 64
-        || !is_string($lang) || strlen($lang) < 2 || strlen($lang) > 16
+    if (!is_string($gameId) || !in_array($gameId, $cfg['games'], true)
+        || !is_string($lang) || !in_array($lang, $cfg['languages'], true)
         || !is_array($items) || $items === [] || count($items) > TA_MAX_ITEMS) {
+        error_log('translate-api: refused a translate request (gameId='
+            . (is_string($gameId) ? substr($gameId, 0, 40) : gettype($gameId)) . ' targetLang='
+            . (is_string($lang) ? substr($lang, 0, 20) : gettype($lang)) . ')');
         ta_respond(400, ['ok' => false, 'error' => 'Invalid translate request.']);
     }
     $fwd = [];
+    $dropped = 0;
+    $totalChars = 0;
     foreach ($items as $it) {
         if (is_array($it) && is_string($it['id'] ?? null) && is_string($it['text'] ?? null)
             && $it['id'] !== '' && strlen($it['id']) <= 128 && $it['text'] !== ''
             && mb_strlen($it['text']) <= TA_MAX_ITEM_CHARS) {
             $fwd[] = ['id' => $it['id'], 'text' => $it['text']];
+            $totalChars += mb_strlen($it['text']);
+        } else {
+            $dropped++;
         }
+    }
+    if ($dropped > 0) {
+        error_log('translate-api: dropped ' . $dropped . ' invalid item(s) of ' . count($items) . ' for game ' . $gameId);
     }
     if ($fwd === []) {
         ta_respond(400, ['ok' => false, 'error' => 'No translatable items.']);
+    }
+    if ($totalChars > TA_MAX_TOTAL_CHARS) {
+        error_log('translate-api: refused ' . $totalChars . ' characters (limit ' . TA_MAX_TOTAL_CHARS . ') for game ' . $gameId);
+        ta_respond(400, ['ok' => false, 'error' => 'Too much text in one request.']);
     }
     $res = af_backend_post('/v1/games/translate', [
         'gameId' => $gameId, 'targetLang' => $lang, 'items' => $fwd,

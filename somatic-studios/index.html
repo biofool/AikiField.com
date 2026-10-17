@@ -372,7 +372,11 @@
       script.defer = true;
       document.head.appendChild(script);
     })
-    .catch(function () { /* no captcha configured — form still submits */ });
+    .catch(function (err) {
+      // Without the widget the server (secret set) rejects every submission with a
+      // CAPTCHA error, so leave a trace for whoever debugs it.
+      console.error('form: could not load the CAPTCHA configuration', err);
+    });
 })();
 </script>
 </body>

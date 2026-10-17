@@ -73,7 +73,9 @@ module.exports = defineConfig({
   webServer: [
     stubServer(STUB_PORT),
     {
-      command: `php -S 0.0.0.0:${APP_PORT} -t ${WEB_ROOT} ${path.join(E2E_DIR, 'router.php')}`,
+      // mail() is pointed at a script that saves each message to .mail-capture/
+      // (forms.spec.js reads it back); nothing is ever sent.
+      command: `php -d sendmail_path=${path.join(E2E_DIR, 'capture-sendmail.sh')} -S 0.0.0.0:${APP_PORT} -t ${WEB_ROOT} ${path.join(E2E_DIR, 'router.php')}`,
       url: `${BASE_URL}/login.php`,
       cwd: WEB_ROOT,
       env: {

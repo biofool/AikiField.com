@@ -134,6 +134,7 @@ for cmd in "${COMMANDS[@]}"; do
             run_step "unit:lightness-loader" php tests/unit/test-lightness-loader.php
             run_step "unit:client-ip-signing" php tests/unit/test-client-ip-signing.php
             run_step "unit:coach-session" php tests/unit/test-coach-session.php
+            run_step "unit:form-input" php tests/unit/test-form-input.php
             ;;
         e2e)
             if [[ ! -d "$WT/tests/e2e/node_modules/@playwright/test" ]]; then

@@ -26,6 +26,10 @@ require __DIR__ . '/includes/coach-config.load.php';
 // limiter and notification email key on the real visitor address.
 require __DIR__ . '/includes/cloudflare-ips.php';
 
+// Input hygiene for the mail forms (AF #125): one Reply-To address, no NUL,
+// encoded Subject, length limits.
+require __DIR__ . '/includes/form-input.php';
+
 function studio_client_ip(): string
 {
     $remoteAddr = (string) ($_SERVER['REMOTE_ADDR'] ?? '');
@@ -61,21 +65,24 @@ function redirect_with_error(string $msg): void
 }
 
 // --- Extract and sanitize fields ---
-// strip CR/LF from every field — they land in Reply-To and the body, so
-// strip control characters for defense in depth (CWE-93).
-function strip_header_injection(string $value): string
-{
-    return trim(str_replace(["\r", "\n"], '', $value));
+// See includes/form-input.php: a NUL byte is refused (it made mail() throw,
+// HTTP 500), arrays count as empty, control characters are removed (CWE-93),
+// and every field has a length limit.
+if (af_form_has_nul($_POST)) {
+    error_log('studio-review-handler.php: refused a submission containing a NUL byte');
+    http_response_code(400);
+    header('Content-Type: text/html; charset=utf-8');
+    exit('<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>400 Bad Request</title></head><body><h1>Bad Request</h1><p>The form contained characters we cannot accept. Please go back and try again.</p><p><a href="/somatic-studios/">Back to Free Services For Studios</a></p></body></html>');
 }
 
-$name = strip_header_injection($_POST['name'] ?? '');
-$email = trim($_POST['email'] ?? '');
-$studio = strip_header_injection($_POST['studio'] ?? '');
-$website = strip_header_injection($_POST['website'] ?? '');
-$location = strip_header_injection($_POST['location'] ?? '');
-$practice = strip_header_injection($_POST['practice'] ?? '');
-$help = strip_header_injection($_POST['help'] ?? '');
-$message = trim($_POST['message'] ?? '');
+$name = af_form_line($_POST['name'] ?? null);
+$email = af_form_line($_POST['email'] ?? null);
+$studio = af_form_line($_POST['studio'] ?? null);
+$website = af_form_line($_POST['website'] ?? null);
+$location = af_form_line($_POST['location'] ?? null);
+$practice = af_form_line($_POST['practice'] ?? null);
+$help = af_form_line($_POST['help'] ?? null);
+$message = af_form_text($_POST['message'] ?? null);
 $consentListing = ($_POST['consent_listing'] ?? '') === 'yes';
 $consentUpdates = ($_POST['consent_updates'] ?? '') === 'yes';
 
@@ -184,12 +191,18 @@ if ($name === '') {
 }
 if ($email === '') {
     $errors[] = 'Email is required.';
-} elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+} elseif (af_reply_to_address($email) === null) {
     $errors[] = 'Please enter a valid email address.';
 }
 if ($website !== '' && !filter_var($website, FILTER_VALIDATE_URL)) {
     $errors[] = 'Please enter a valid website URL (including https://).';
 }
+$errors = array_merge($errors, af_form_too_long(
+    ['name' => $name, 'email' => $email, 'studio' => $studio, 'website' => $website, 'location' => $location,
+     'practice' => $practice, 'help' => $help, 'message' => $message],
+    ['name' => 'Name', 'email' => 'Email', 'studio' => 'Studio', 'website' => 'Website', 'location' => 'Location',
+     'practice' => 'Practice type', 'help' => 'Help wanted', 'message' => 'Message']
+));
 
 if (count($errors) > 0) {
     redirect_with_error(implode(' ', $errors));
@@ -226,9 +239,11 @@ $body .= "Submitted: " . date('Y-m-d H:i:s') . " (server time)\n";
 $clientIpForLog = studio_client_ip();
 $body .= "IP: " . ($clientIpForLog !== '' ? $clientIpForLog : 'unknown') . "\n";
 
+// Reply-To is the bare, validated address (see contact-handler.php).
 $headers = [
     'From: AikiField Contact <' . $FROM_EMAIL . '>',
-    'Reply-To: ' . $name . ' <' . $email . '>',
+    'Reply-To: ' . af_reply_to_address($email),
+    'MIME-Version: 1.0',
     'X-Mailer: PHP/' . phpversion(),
     'Content-Type: text/plain; charset=UTF-8',
 ];
@@ -247,7 +262,7 @@ if ($IS_STAGING) {
     exit;
 }
 
-$sent = mail($RECIPIENT_EMAIL, $subject, $body, implode("\r\n", $headers));
+$sent = mail($RECIPIENT_EMAIL, af_mime_subject($subject), $body, implode("\r\n", $headers));
 
 if ($sent) {
     header('Location: ' . $SUCCESS_URL);

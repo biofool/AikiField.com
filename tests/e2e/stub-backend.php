@@ -563,6 +563,29 @@ if ($path === '/v1/game-results/sync' && $method === 'POST') {
     stub_json(200, ['ok' => true, 'results' => $list, 'skipped' => $skipped]);
 }
 
+// ── Games translate (AikiField games/translate-api.php → /v1/games/translate) ──
+// Same request/response shape and auth as AIRichardMoon's route: a member
+// session, {gameId, targetLang, items:[{id,text}]} in, {ok, gameId, lang,
+// items:[{id, source, translated}], emailed} out. "Translating" prefixes the
+// language code, so a test sees what was forwarded.
+
+if ($path === '/v1/games/translate' && $method === 'POST') {
+    $email = strtolower(trim((string) ($_SERVER['HTTP_X_AUTH_EMAIL'] ?? '')));
+    $token = (string) ($_SERVER['HTTP_X_AUTH_SESSION'] ?? '');
+    if (!isset($USERS[$email]) || !hash_equals(stub_token($email), $token)) {
+        stub_json(401, ['detail' => 'Invalid, inactive, or expired session. Please log in.']);
+    }
+    $body = stub_body($rawBody);
+    $lang = (string) ($body['targetLang'] ?? '');
+    $items = [];
+    foreach (($body['items'] ?? []) as $it) {
+        if (is_array($it) && is_string($it['id'] ?? null) && is_string($it['text'] ?? null)) {
+            $items[] = ['id' => $it['id'], 'source' => $it['text'], 'translated' => '[' . $lang . '] ' . $it['text']];
+        }
+    }
+    stub_json(200, ['ok' => true, 'gameId' => (string) ($body['gameId'] ?? ''), 'lang' => $lang, 'items' => $items, 'emailed' => false]);
+}
+
 if ($path === '/v1/auth/register-with-password' && $method === 'POST') {
     $body  = stub_body($rawBody);
     $email = strtolower(trim((string) ($body['email'] ?? '')));

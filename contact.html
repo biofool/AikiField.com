@@ -280,7 +280,10 @@
       script.defer = true;
       document.head.appendChild(script);
     })
-    .catch(function() { /* no widget - contact-handler.php fails open too */ });
+    .catch(function(err) {
+      // Without the widget a handler with a secret set rejects every submission with a CAPTCHA error.
+      console.error('form: could not load the CAPTCHA configuration', err);
+    });
 })();
 </script>
 

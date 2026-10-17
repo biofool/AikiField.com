@@ -85,3 +85,17 @@ path. (DECLARED: `AGENTS.md:193-201`, `CLAUDE.md:89-93`)
 ## Known risks
 
 See `../debt/register.yaml`.
+
+## Input hygiene (AF #125)
+
+`includes/form-input.php` is shared by `contact-handler.php` and
+`studio-review-handler.php`: Reply-To is the bare validated address (never the
+typed name), a NUL byte gives HTTP 400, arrays count as empty, control
+characters are removed, every field has a limit (`AF_FORM_LIMITS`, refused with a
+message, not truncated), and the Subject is RFC 2047 encoded. Tests:
+`tests/unit/test-form-input.php` and `tests/e2e/specs/forms.spec.js` (mail()
+goes to `tests/e2e/capture-sendmail.sh`).
+
+`games/translate-api.php` relays only game ids and languages listed in
+`games/translate-config.json` (kept equal to the picker in `games/translate.js` by
+`translate-api.spec.js`), at most 200 items and 24,000 characters.
