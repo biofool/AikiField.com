@@ -57,23 +57,31 @@ section() { echo; echo "=== $1 ==="; }
 ALLOWLIST_IDS=""
 if [ -f vulnerability-allowlist.json ]; then
   if have python3; then
-    _al_eval=$(python3 - <<'PY'
+    # No eval: python prints plain lines, the shell only reads them. An id like
+    # `x"; touch F #` used to run as a command (AF #126).
+    _al_lines=$(python3 - <<'PY'
 import json, datetime
 try:
     entries = json.load(open("vulnerability-allowlist.json")).get("entries", [])
 except Exception as e:
-    print('echo "!! vulnerability-allowlist.json is invalid JSON: %s"' % e)
+    print("ERR\t%s" % e)
     raise SystemExit
 today = datetime.date.today().isoformat()
-active, expired = [], []
 for e in entries:
-    (expired if e.get("expires") and e["expires"] < today else active).append(e.get("id", ""))
-print('ALLOWLIST_IDS="%s"' % " ".join(i for i in active if i))
-for i in expired:
-    print('echo "!! allowlist entry %s is EXPIRED — ignored (renew the issue or fix the dep)"' % i)
+    i = str(e.get("id", ""))
+    if not i or any(c.isspace() for c in i):
+        continue
+    expired = bool(e.get("expires")) and e["expires"] < today
+    print("%s\t%s" % ("EXPIRED" if expired else "ACTIVE", i))
 PY
 )
-    eval "$_al_eval"
+    while IFS=$'\t' read -r _kind _id; do
+      case "$_kind" in
+        ACTIVE) ALLOWLIST_IDS="${ALLOWLIST_IDS:+$ALLOWLIST_IDS }$_id" ;;
+        EXPIRED) echo "!! allowlist entry $_id is EXPIRED — ignored (renew the issue or fix the dep)" ;;
+        ERR) echo "!! vulnerability-allowlist.json is invalid JSON: $_id" ;;
+      esac
+    done <<< "$_al_lines"
   else
     echo "!! vulnerability-allowlist.json present but python3 unavailable — allowlist ignored."
   fi
@@ -87,12 +95,19 @@ fi
 npm_json_audit() {
   local dir="$1" tmp rc
   tmp=$(mktemp)
+  # npm exits non-zero when it finds vulnerabilities, so the exit code alone
+  # says nothing; the JSON decides, and an error object (registry unreachable)
+  # fails the gate instead of passing it (AF #126).
   (cd "$dir" && npm audit --audit-level=high --json >"$tmp" 2>/dev/null || true)
   ALLOWLIST="$ALLOWLIST_IDS" node - "$tmp" <<'JS'
 const fs = require("fs");
 const al = new Set((process.env.ALLOWLIST || "").split(" ").filter(Boolean));
 let d; try { d = JSON.parse(fs.readFileSync(process.argv[2], "utf8")); }
 catch { console.log("npm audit produced no JSON — cannot verify findings"); process.exit(1); }
+if (d.error || !d.vulnerabilities || typeof d.vulnerabilities !== "object") {
+  console.log("npm audit did not report vulnerabilities (" + ((d.error && (d.error.summary || d.error.code)) || "no 'vulnerabilities' key") + ") — cannot verify findings");
+  process.exit(1);
+}
 const bad = new Set();
 const gated = new Set(["high", "critical"]);
 for (const [name, v] of Object.entries(d.vulnerabilities || {}))

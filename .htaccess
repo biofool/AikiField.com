@@ -5,6 +5,14 @@
 # /login.php page that gates the /beta/ assessment pages. See
 # docs/coach-auth-prd.md.
 
+# ── Hidden files (AF #126) ──────────────────────────────────────────────────
+# Anything under a dot-path (.ai-context/, .github/, .dvcignore, ...) answers
+# 404, except /.well-known/ (ACME, security.txt). sync.sh also keeps these out
+# of the upload; this is the second lock.
+<IfModule mod_alias.c>
+  RedirectMatch 404 "/\.(?!well-known/)"
+</IfModule>
+
 # ── Security headers ────────────────────────────────────────────────────────
 # Suppress X-Powered-By (leaks PHP version on dynamic pages)
 <IfModule mod_headers.c>

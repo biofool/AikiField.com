@@ -114,6 +114,7 @@ show_help() {
     echo "  --no-pull          - Skip auto-pull of staging branch (deploy local HEAD as-is)"
     echo "  --skip-ci          - Skip the parallel local-CI run during staging deploys"
     echo "  --skip-audit       - Skip the dependency-audit deploy gate (emergencies only; warns + logs)"
+    echo "  --allow-dirty      - Deploy with uncommitted or untracked files (the gates check the commit, rsync ships the files; logs)"
     echo "                       (scripts/ci-local.sh; override steps via CI_LOCAL_ARGS)"
     echo ""
     echo "Environment:"
@@ -181,7 +182,18 @@ RSYNC_REMOTE="${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_PATH}"
 EXCLUDES=(
     --exclude='.git/'
     --exclude='.dvc/'
+    --exclude='.dvcignore'
     --exclude='.devin/'
+    # Internal notes, CI definitions, local test output and logs are not web
+    # content (AF #126). .ai-context/ lists the site's own weaknesses with file
+    # and line; .deploy-audit-skip.log records who skipped the audit and when.
+    --exclude='.ai-context/'
+    --exclude='.github/'
+    --exclude='docs/'
+    --exclude='test-results/'
+    --exclude='*.log'
+    --exclude='LICENSE'
+    --exclude='/AikiField.pdf'
     --exclude='.well-known/'
     --exclude='cgi-bin/'
     --exclude='input/'
@@ -369,6 +381,7 @@ YES=0
 NO_PULL=0
 SKIP_CI=${SKIP_CI:-0}
 SKIP_AUDIT=0
+ALLOW_DIRTY=0
 REMOTE_PATH_FLAG=""
 REMOTE_HOST_ARG=""
 _next_p=0
@@ -389,6 +402,7 @@ for arg in "$@"; do
         --no-pull)   NO_PULL=1 ;;
         --skip-ci)   SKIP_CI=1 ;;
         --skip-audit) SKIP_AUDIT=1 ;;
+        --allow-dirty) ALLOW_DIRTY=1 ;;
         -y|--yes) YES=1 ;;
         upload|download|dryrun|deploy|deploy-all|sftp|ftp|logs|report|help)
             [ -z "$CMD" ] && CMD="$arg"
@@ -664,8 +678,28 @@ audit_preflight() {
     }
     echo "  ✓ Dependency audit passed"
 }
+# The audit and the CI clearance check the committed tree, but rsync ships the
+# working tree, so uncommitted or untracked files would reach production
+# unchecked (AF #126). Refuse unless --allow-dirty, which is logged.
+require_clean_tree() {
+    local script_dir dirty
+    script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    dirty="$(git -C "$script_dir" status --porcelain 2>/dev/null || true)"
+    [[ -z "$dirty" ]] && return 0
+    if [[ $ALLOW_DIRTY -eq 1 ]]; then
+        echo "  ⚠⚠ DEPLOYING A DIRTY TREE (--allow-dirty): the audit and CI did not see these files ⚠⚠" >&2
+        echo "$dirty" | head -20 >&2
+        echo "$(date -u +%FT%TZ) allow-dirty CMD=${CMD:-?} user=${USER:-?} files=$(echo "$dirty" | wc -l)" >> "$script_dir/.deploy-audit-skip.log"
+        return 0
+    fi
+    echo "  ✗ DEPLOY BLOCKED — uncommitted or untracked files would ship unchecked:" >&2
+    echo "$dirty" | head -20 >&2
+    echo "  Commit or remove them, or pass --allow-dirty (logged)." >&2
+    return 1
+}
 case "$CMD" in
     deploy|deploy-all)
+        require_clean_tree || exit 1
         audit_preflight || exit 1 ;;
 esac
 
@@ -811,6 +845,8 @@ case "$CMD" in
         echo ""
         echo "Pulling from remote..."
         git -C "$(dirname "$0")" pull --no-rebase || { echo "ERROR: git pull failed — resolve conflicts before deploying."; exit 1; }
+        # The pull can bring in new lockfiles: audit the tree that will ship.
+        audit_preflight || exit 1
         echo ""
         echo "Pushing to git remote..."
         git -C "$(dirname "$0")" push
