@@ -32,8 +32,10 @@ redirect), `coach-proxy.php`, `coach-login.js` (loaded by `login.php`),
 `/beta/*.html` → `/beta/*.php` 301s), `includes/beta-gate.load.php`
 (redirects unauthed `/beta/` requests to `/login.php?next=…`; also usable in
 `AF_GATE_NO_REDIRECT` mode for status endpoints),
-`games/exercises/auth-state.php` (`{"authed":bool}` — unlocks all practices
-for signed-in members in the public exercises app). Full design:
+`games/exercises/auth-state.php` (`{"authed":bool}` — since issue #114 the
+exercises page decides on the server which practices a visitor gets, from the
+same gate; the endpoint now only lets an anonymous preview page notice that
+the visitor signed in elsewhere). Full design:
 `docs/coach-auth-prd.md`.
 
 **Sister repos:**

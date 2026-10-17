@@ -110,15 +110,60 @@ page layout, hero, or left column — keep it hidden until form submission.
   `games/results.php` → AI Chat backend `POST /v1/game-results/sync`
   (Firestore). Deploy the backend first; until then sync falls back to
   browser-only storage.
+- **Twenty Practices data (issue #114, 2026-10-16):** the practice text lives
+  ONCE, in `data/exercises/practices.json`. `data/exercises/` has its own
+  `.htaccess` (`Require all denied`), so no file in it is served; the same
+  directory holds `lightness.json`. `games/exercises/index.php` reads the file
+  on the server through `includes/exercises-data.php` and sends each visitor
+  only what they may see: a signed-in member (passed
+  `includes/beta-gate.load.php`) gets all 15 practices; an anonymous `?src=li`
+  visitor gets the practices flagged `"free": true` (1, 6, 12) in full and the
+  other 12 as stubs (`id`, `title`, `part` only, built from the allowlist
+  `AF_EXERCISES_STUB_KEYS`). The member copy is sent `Cache-Control: private,
+  no-store`. `games/exercises/auth-state.php` is now only used by a preview
+  page to notice a later sign-in (it then offers a reload). The old
+  `games/exercises/data/` directory and its three dead copies are gone.
+  `data/exercises/studios.json` (issue #112) holds the studio list; only
+  `name` and `region` ever reach the page (the loader drops every other
+  field), and the heading count, the sign-in modal count and the free
+  practice names all come from the data, never from typed text.
+  **Play Guided (issue #113):** each practice has a `guide` in
+  `practices.json`: `duration_sec` (the low end of the practice's own time
+  range; editable per practice, kept inside that range by
+  `tests/unit/test_exercises_data.py`) and optional `phase`, `prompt`,
+  `meter` and timed `steps`. Only Wrist Grab Grounding has prompts and the
+  ground meter; every other practice gets a quiet timer. The timer belongs to
+  one practice: showing another practice stops and resets it. The end of a
+  session shows an inline "Done" state with "Log session" and "Reset"; there
+  is no `alert()`. Spec: `tests/e2e/specs/exercises-guided.spec.js` (fake
+  clock, `page.clock.runFor`).
+  **Wording and tabs (issue #111):** `inlineMarkup()` in the page renders
+  `*emphasis*` and `**strong**` in practice text after escaping it (a star
+  with no partner stays a star). The part tabs are built from the practices'
+  own `part` tags ("Part II — breath & energy" gives "Part II · breath"), in
+  numeral order, and a tab lists exactly the practices that carry its tag, so
+  a count cannot drift from the list. A cached translation holds no number
+  (ids `tab.<part>`); the count is added after it. Spec:
+  `tests/e2e/specs/exercises-wording.spec.js`. Left for the author's yes or no
+  (issue #111): the O2 Continuum lines, the run-on lines in practice 12, the
+  lowercase title of practice 2, "Venusial", the CABW spellings and the DBSO
+  part tag. Tests:
+  `tests/unit/test-exercises-data.php`, `tests/unit/test_exercises_data.py`
+  (reads the real `.htaccess`), `tests/e2e/specs/exercises-preview.spec.js`
+  (every route that can serve practice text); `tests/e2e/router.php` reads the
+  real `.htaccess` files so the e2e server denies what Apache denies.
 - **Twenty Practices post-log lines (issue #110):** after "KeepDoingIt — Log
   Session" the player shows one short, unattributed line from
-  `games/exercises/data/lightness.json` (100 lines, each with `practices`,
+  `data/exercises/lightness.json` (100 lines, each with `practices`,
   `kind`, `themes`, `approved`). `includes/lightness.php` loads and validates
   the file server-side and logs any problem; a missing or broken file just
   means no lines. The nth logged session of a practice shows the nth line of
   [lines tagged to it, then the general ones]; a checkbox opts out
   (`localStorage` `moon_lightness`). All lines start `approved: false`;
-  `display.show_unapproved: false` in the file hides every unapproved line.
+  only an explicit `display.show_unapproved: true` shows unapproved lines
+  (the file ships with `true` until the owner decides). `false`, a missing
+  key or a non-boolean value hides every unapproved line, and a missing or
+  non-boolean key logs a warning (fail safe, issue #127).
   Tests: `tests/unit/test_lightness_data.py` (rules in
   `tests/unit/data/lightness_rules.json`), `tests/unit/test-lightness-loader.php`,
   `tests/e2e/specs/exercises-lightness.spec.js`.

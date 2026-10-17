@@ -2,10 +2,11 @@
 /**
  * Post-log "lightness" lines for Twenty Practices (issue #110).
  *
- * games/exercises/data/lightness.json holds short, kind lines. The page shows
- * one after a member logs a session. The page must keep working when the file
- * is missing or broken, so every failure is logged and an empty list comes
- * back. Nothing here ever throws.
+ * data/exercises/lightness.json holds short, kind lines (that directory is
+ * denied to the web, issue #114). The page shows one after a member logs a
+ * session. The page must keep working when the file is missing or broken, so
+ * every failure is logged and an empty list comes back. Nothing here ever
+ * throws.
  *
  * Tests: tests/unit/test-lightness-loader.php (loader),
  *        tests/unit/test_lightness_data.py (data rules).
@@ -43,8 +44,10 @@ function af_lightness_problem($item): ?string
 /**
  * The lines the page may show.
  *
- * Honors display.show_unapproved in the data file: when it is false, only
- * items with approved === true come back.
+ * Honors display.show_unapproved in the data file. Only an explicit `true`
+ * shows lines that are not approved. When the key is false, missing or not a
+ * boolean, only items with approved === true come back (fail safe, issue #127);
+ * a missing or non-boolean key is also logged as a warning.
  *
  * @return list<array{id:string,text:string,practices:list<int>}>
  */
@@ -70,7 +73,11 @@ function af_lightness_items(string $path): array
         return [];
     }
 
-    $showUnapproved = ($data['display']['show_unapproved'] ?? true) !== false;
+    $flag = is_array($data['display'] ?? null) ? ($data['display']['show_unapproved'] ?? null) : null;
+    if (!is_bool($flag)) {
+        error_log("lightness: WARNING: display.show_unapproved is missing or not true/false in $path; hiding lines that are not approved");
+    }
+    $showUnapproved = $flag === true;
     $items = [];
     foreach ($data['items'] as $index => $item) {
         $problem = af_lightness_problem($item);

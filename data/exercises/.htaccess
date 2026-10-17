@@ -1,0 +1,5 @@
+# Twenty Practices data (issue #114). The practice text, the studio list and the
+# post-log lines are read from disk by games/exercises/index.php, which sends a
+# visitor only what that visitor may see. Nothing in this directory is a public
+# asset, so nothing in this directory is served.
+Require all denied

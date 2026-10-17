@@ -1,7 +1,8 @@
 # /games/exercises/:slug — path-based exercise deep links.
-# /games/exercises/wrist-grab-grounding serves index.html; the JS router
-# reads the slug from location.pathname. Real files/dirs (images/, data/,
-# index.html) are untouched.
+# /games/exercises/wrist-grab-grounding serves index.php; the JS router
+# reads the slug from location.pathname. Real files/dirs (images/, index.php)
+# are untouched. The practice data is not here: it lives in the denied
+# directory data/exercises/ (issue #114).
 # Inherit keeps the root .htaccess rules (HTTPS redirect etc.) in force —
 # without it a per-dir RewriteEngine On would replace them.
 RewriteEngine On

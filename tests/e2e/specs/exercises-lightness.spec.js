@@ -1,21 +1,24 @@
 // Issue #110: one small kind line after "KeepDoingIt — Log Session".
 //
-// The lines live in games/exercises/data/lightness.json. For a practice, the
+// The lines live in data/exercises/lightness.json (a directory the web server
+// denies since issue #114, so this spec reads the file from disk). For a practice, the
 // nth logged session shows the nth line of [lines tagged to that practice,
 // then the general ones], so the order is predictable here. The player can
 // switch the lines off and the choice survives a reload. A missing or broken
 // data file is covered by tests/unit/test-lightness-loader.php.
 
+const fs = require('fs');
+const path = require('path');
 const { test, expect } = require('@playwright/test');
 const { establishSession } = require('../helpers');
+
+const LIGHTNESS_FILE = path.join(__dirname, '..', '..', '..', 'data', 'exercises', 'lightness.json');
 
 const DBSO = 1;
 const AIKI_KOKYU = 7; // three tagged lines, so the fourth log reaches the general ones
 
-async function loadItems(request) {
-  const resp = await request.get('/games/exercises/data/lightness.json');
-  expect(resp.ok()).toBe(true);
-  return (await resp.json()).items;
+function loadItems() {
+  return JSON.parse(fs.readFileSync(LIGHTNESS_FILE, 'utf8')).items;
 }
 
 function playlist(items, practiceId) {
@@ -38,7 +41,7 @@ test.describe('post-log lightness line (issue #110)', () => {
   });
 
   test('logging a session shows one line tagged to that practice, then the next', async ({ page }) => {
-    const items = await loadItems(page.request);
+    const items = loadItems();
     const lines = playlist(items, DBSO);
     expect(lines[0].practices).toContain(DBSO);
 
@@ -54,7 +57,7 @@ test.describe('post-log lightness line (issue #110)', () => {
   });
 
   test('after the tagged lines, general lines follow', async ({ page }) => {
-    const items = await loadItems(page.request);
+    const items = loadItems();
     const lines = playlist(items, AIKI_KOKYU);
     const tagged = items.filter((l) => l.practices.includes(AIKI_KOKYU)).length;
     expect(lines[tagged].practices).toEqual([]);
@@ -107,7 +110,7 @@ test.describe('post-log lightness line (issue #110)', () => {
   });
 
   test('a line is never the same one twice running, even across practices', async ({ page }) => {
-    const items = await loadItems(page.request);
+    const items = loadItems();
     const general = items.filter((l) => l.practices.length === 0);
     const dbso = items.filter((l) => l.practices.includes(DBSO));
     const wrist = items.filter((l) => l.practices.includes(6));

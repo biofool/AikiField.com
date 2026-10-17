@@ -12,7 +12,7 @@
   },
   "display": {
     "show_unapproved": true,
-    "note": "Set show_unapproved to false to hide every line that is not approved yet."
+    "note": "Set show_unapproved to false to hide every line that is not approved yet. Only an explicit true shows them: if this key is missing or is not true/false, lines that are not approved stay hidden and a warning is logged."
   },
   "guidelines": [
     "Warm, and never at anyone's expense.",
@@ -27,7 +27,7 @@
     "Book Launch project (Drive): 'Quotes by Richard Moon' (voice and vocabulary)",
     "Book Launch project (Drive): 'The Aikido That Cannot Be Seen: Feature Treatment and Trailer Set' (voice rules: practice first, physics second; mischievous, self-mocking, short bursts that circle back as questions)",
     "Book Launch project (Drive): Portuguese Translation Project meeting summary, section 5 (experiment, do not prescribe)",
-    "The exercise text itself (games/exercises/data/collected_exercises_app_data.json)"
+    "The exercise text itself (data/exercises/practices.json)"
   ],
   "kinds": {
     "twist": "A short line with a turn in it.",

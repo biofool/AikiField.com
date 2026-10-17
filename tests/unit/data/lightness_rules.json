@@ -1,5 +1,5 @@
 {
-  "_comment": "Rules for games/exercises/data/lightness.json (AikiField issue #110). Patterns are case-insensitive regular expressions.",
+  "_comment": "Rules for data/exercises/lightness.json (AikiField issue #110). Patterns are case-insensitive regular expressions.",
   "expected_item_count": 100,
   "min_chars": 20,
   "max_chars": 220,

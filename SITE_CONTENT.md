@@ -104,9 +104,9 @@ Four cards, each with a short description and a ghost button:
 - Eyebrow: Free with an AikiField account
 - Heading: 20 exercises to begin your journey to personal mastery
 - Lead: Create a free account to open all twenty. Work through them in order or pick the one your day calls for.
-- Tiles (static list; titles from `games/exercises/data/collected_exercises_app_data.json`): Exercise 01 DropBackSinkOpen (DBSO) · 02 Listen to the impulse to breathe · 03 Feel / Locate / Align / Unify (Kamae) · 04 Tense & Release Body Scan · 05 Center of the Central Core Relaxation · 06 Wrist Grab Grounding · 07 Breathe Universal Harmony (Aiki Kokyu) · 08 Breathing the Whole System · 09 The O2 Continuum · 10 Ocean Breathing · 11 Infant Breathing · 12 Ten to the Tenth — State Shifting Scale · 13 Enjoy / Joy / Appreciate · 14 Shoulder Slap — Sensing Finer Dimensions · 15 Application Visualization · Interludes: Opening · After Part I · After Part II · After Part III · Closing
+- Tiles (static list; titles from `data/exercises/practices.json`): Exercise 01 DropBackSinkOpen (DBSO) · 02 Listen to the impulse to breathe · 03 Feel / Locate / Align / Unify (Kamae) · 04 Tense & Release Body Scan · 05 Center of the Central Core Relaxation · 06 Wrist Grab Grounding · 07 Breathe Universal Harmony (Aiki Kokyu) · 08 Breathing the Whole System · 09 The O2 Continuum · 10 Ocean Breathing · 11 Infant Breathing · 12 Ten to the Tenth — State Shifting Scale · 13 Enjoy / Joy / Appreciate · 14 Shoulder Slap — Sensing Finer Dimensions · 15 Application Visualization · Interludes: Opening · After Part I · After Part II · After Part III · Closing
 - CTA: Start exercise 01 (→ /games/exercises/)
-- Not copied here: the 100 short lines the player sees after logging a session in `/games/exercises/` live only in `games/exercises/data/lightness.json` (issue #110). They are unattributed drafts until the author signs them off.
+- Not copied here: the 100 short lines the player sees after logging a session in `/games/exercises/` live only in `data/exercises/lightness.json` (issue #110). They are unattributed drafts until the author signs them off.
 
 ### Games (`#games`)
 
@@ -121,6 +121,41 @@ Four cards, each with a short description and a ghost button:
 **Heading:** Ready to practise leadership as a discipline?
 **Body:** Begin with the free exercises, or talk with Kenneth about coaching for you or your team.
 **Buttons:** Book a conversation (→ contact.html) | Try the exercises (→ #exercises)
+
+---
+
+## Games pages (`/games/`)
+
+Player-facing copy only. No price, revenue share, route string or planning
+note belongs on these pages (issue #112);
+`tests/e2e/specs/games-public-copy.spec.js` fails if one comes back.
+
+### Hub (`games/index.html`)
+
+- Heading: AikiField Games
+- Sub: Movement practices by Richard Moon 6th Dan - Student of Robert Nadeau since '71 - Members-only experiences
+- Card (LIVE): Twenty Practices — Twenty practices from the work of Richard Moon to improve physical performance + creativity. Members only — open →
+- Cards (COMING SOON, no description or route shown): Dojo Tycoon · Ten to the Tenth Challenge (State shifting scale 1-10, quantum shift.) · Slow Your Roll (Record phone IMU + video of mae ukemi, get numerical analysis and AI coaching on your roll.)
+- Footer: By Richard Moon 6th Dan - Create A Beautiful World
+
+### Twenty Practices (`games/exercises/index.php`)
+
+- Title for an anonymous `?src=li` visitor: Twenty Practices: a short preview — AikiField Games. For a signed-in member: Twenty Practices — AikiField Games.
+- Meta description for the preview: A short preview of Twenty Practices, movement practices from the work of Richard Moon 6th Dan. Sign in free to unlock all N. (N is the number of practices in `data/exercises/practices.json`; every count on the page comes from the data.)
+- Sign-in modal: lists the free practices by title from the data (`"free": true`) and says "Unlock all N with a free AikiField account."
+- Play Guided: a timer per practice, starting at the practice's own duration (`guide.duration_sec` in the data). Only Wrist Grab Grounding shows prompts (Push, Pull, ...) and the ground meter; the other practices show a quiet timer. At the end the timer shows "Done" with "Log session" and "Reset" buttons; logging confirms with "Logged! KeepDoingIt". No alert box opens.
+- Part tabs: All N, then one tab per part, built from the practices' part tags with the count of practices that carry the tag (for example "Part I · centering (5)").
+- Studio list (`data/exercises/studios.json`): name and area only. The owner confirms that each studio agreed to appear.
+- Not shown to players: prices or plans, deep-link examples, image-copy notes, developer labels, the completed-IDs debug line.
+
+### Terms (`games/terms/index.html`) — placeholder; the owner must approve real text
+
+- Heading: Terms - AikiField Games
+- Body: These terms are being finalised. Questions: use the contact form.
+
+### Privacy (`games/privacy/index.html`)
+
+- Heading: Privacy Policy - AikiField Games. The legal text is the owner's to review and was not edited.
 
 ---
 

@@ -1,0 +1,87 @@
+{
+  "version": 1,
+  "title": "Twenty Practices: studio list (AikiField issue #112)",
+  "note": "Shown in the left column of games/exercises/index.php so a visitor can pick a studio (or arrive with ?studio_id=<slug>) and see the studio's name in the page banner. Players see only the name and the area. Street addresses, descriptions and categories were removed on purpose (issue #112); the page sends nothing but these two fields. Each studio must have agreed to appear: the owner confirms this before launch. This is a third-party business list, so add a studio only with its consent.",
+  "studios": [
+    {
+      "name": "City Aikido",
+      "region": "SF Bay"
+    },
+    {
+      "name": "Aikido San Francisco",
+      "region": "SF Bay"
+    },
+    {
+      "name": "Aikido of Berkeley",
+      "region": "East Bay"
+    },
+    {
+      "name": "Aikido Institute",
+      "region": "East Bay"
+    },
+    {
+      "name": "Alameda Aikikai",
+      "region": "East Bay"
+    },
+    {
+      "name": "Aikido Of Montclair Village",
+      "region": "East Bay"
+    },
+    {
+      "name": "The Omni Movement",
+      "region": "East Bay"
+    },
+    {
+      "name": "In the Groove Studios",
+      "region": "East Bay"
+    },
+    {
+      "name": "Atomic Allure",
+      "region": "East Bay"
+    },
+    {
+      "name": "Shawl-Anderson Dance Center",
+      "region": "East Bay"
+    },
+    {
+      "name": "Movement For Everyone",
+      "region": "SF Bay"
+    },
+    {
+      "name": "The City Waves 5Rhythms SF",
+      "region": "SF Bay"
+    },
+    {
+      "name": "Wellington Dance Academy",
+      "region": "Wellington NZ"
+    },
+    {
+      "name": "WIDance Inclusive",
+      "region": "Wellington NZ"
+    },
+    {
+      "name": "The Pilates Studio Wellington",
+      "region": "Wellington NZ"
+    },
+    {
+      "name": "NowYoga / Yogallery",
+      "region": "Wellington NZ"
+    },
+    {
+      "name": "Empire Aerial Arts",
+      "region": "Wellington NZ"
+    },
+    {
+      "name": "Body Electric Pole",
+      "region": "Wellington NZ"
+    },
+    {
+      "name": "Aikido Shinryukan Burnside",
+      "region": "Christchurch NZ"
+    },
+    {
+      "name": "Movement Studio Rolleston",
+      "region": "Canterbury NZ"
+    }
+  ]
+}

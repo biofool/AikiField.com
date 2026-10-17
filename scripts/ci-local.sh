@@ -136,6 +136,8 @@ for cmd in "${COMMANDS[@]}"; do
             run_step "unit:coach-session" php tests/unit/test-coach-session.php
             run_step "unit:form-input" php tests/unit/test-form-input.php
             run_step "unit:sync-excludes" bash scripts/test-sync-excludes.sh
+            run_step "unit:exercises-data" python3 tests/unit/test_exercises_data.py
+            run_step "unit:exercises-loader" php tests/unit/test-exercises-data.php
             ;;
         e2e)
             if [[ ! -d "$WT/tests/e2e/node_modules/@playwright/test" ]]; then
