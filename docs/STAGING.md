@@ -78,7 +78,10 @@ Notes:
   Manager `PROXY_SECRET_STAGING` (not the production `PROXY_SECRET`). It is
   a full copy of `coach-config.staging.php` with those two values changed,
   because only the first config file found is loaded. The staging backend
-  uses the `staging` Firestore database and the LinkedIn callback
+  may use the `staging` Firestore database for chats and other env-specific
+  data. The account list (`auth_users`) always comes from the production
+  `(default)` database, so a production account can sign in on staging.
+  The LinkedIn callback is
   `https://staging.peec.biz/coach-api/v1/auth/linkedin/callback`.
 
 - **Contact form is safe by default on staging.** `contact-handler.php`
