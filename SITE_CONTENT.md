@@ -18,7 +18,6 @@
 - Digital Experience — submenu (links point at public preview pages; the
   experiences themselves require sign-in — issue #71):
   - All experiences (`/digital-experience/` — hub)
-  - Ride the Lucky Wave (`/digital-experience/lucky-wave.html#v1` → gated `/games/lucky-wave/RideTheLuckyWaveV1-legacy.php`)
   - Ride the Lucky Wave V2 (`/digital-experience/lucky-wave.html#v2` → gated `/games/lucky-wave/RideTheLuckyWaveV2.php`)
   - Twenty Practices (direct to gated `/games/exercises/` — issue #106 removed the preview page; `/digital-experience/practices.html` 301s there)
   - Enter the Unified Field Chat (direct to gated `/members` — AI chat, sign-in required; `/digital-experience/unified-field-chat.html` 301s there)

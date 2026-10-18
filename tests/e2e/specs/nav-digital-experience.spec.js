@@ -12,7 +12,6 @@ const { establishSession, TEST_EMAIL } = require('../helpers');
 
 const DX_LINKS = [
   ['Digital Experience', '/digital-experience/'],
-  ['Ride the Lucky Wave', '/digital-experience/lucky-wave.html#v1'],
   ['Ride the Lucky Wave V2', '/digital-experience/lucky-wave.html#v2'],
   ['Twenty Practices', '/games/exercises/'],
   ['Enter the Unified Field Chat', '/members'],
