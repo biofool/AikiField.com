@@ -122,7 +122,7 @@ three does NOT fix the others. Full detail:
 mechanisms".
 
 AikiField.com remains a **third frontend surface** for the shared coaching
-auth flow (same backend user store, same session contract), alongside
+auth flow (same production account list, same session contract), alongside
 `quantumaikido.com` (PHP frontend) and the `AIRichardMoon/frontend`
 (backend-served static pages) — but the surface is now minimal (beta gating
 only), not a public chat.
