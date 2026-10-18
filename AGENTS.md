@@ -138,7 +138,7 @@ scope, or audience-facing impact changes.
 
 ## Cross-repo coordination (when applicable)
 
-Some projects span two repos with a shared flow (e.g. the Quantum Aikido
+Some projects span two repos with a shared flow (e.g. the Creative Unified Field
 coaching system: `quantumaikido.com` frontend + `AIRichardMoon` backend). If
 this project is part of such a pair, document the sister repo here and the
 coordination rule (e.g. "auth changes MUST update both PRDs and deploy both
@@ -177,7 +177,7 @@ coach-proxy.php → Cloud Run backend.
 
 ### Responsive layout / UI regression prevention
 
-Lessons from the Quantum Aikido Books & Resources page right-hand TOC rail
+Lessons from the Creative Unified Field Books & Resources page right-hand TOC rail
 overflow (2026-09) — apply to this static site as well:
 
 1. **Never rely on `overflow-x: hidden` to hide layout bugs.** A global

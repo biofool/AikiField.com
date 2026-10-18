@@ -56,7 +56,7 @@ New copy has no `data-i18n` keys yet, so it shows in English in every locale.
 
 ### JSON-LD structured data (`<head>`)
 
-`ProfessionalService` with `@id` `https://aikifield.com/#organization` (kept), `areaServed: Global`, `knowsAbout` (Leadership Coaching, Executive Presence, Aikido, Quantum Aikido, Fractional CISO, vCISO, DevSecOps), and an `OfferCatalog` with three `Offer` items:
+`ProfessionalService` with `@id` `https://aikifield.com/#organization` (kept), `areaServed: Global`, `knowsAbout` (Leadership Coaching, Executive Presence, Aikido, the Creative Unified Field, Fractional CISO, vCISO, DevSecOps), and an `OfferCatalog` with three `Offer` items:
 - **Aikido-Based Leadership Coaching** — Coaching in presence under pressure: centre, blend, and lead, practised on the job.
 - **Fractional CISO Leadership** — Executive security leadership, compliance roadmap execution, and enterprise sales unblocking.
 - **AI-Assisted DevSecOps Triage** — Automated application and cloud vulnerability triage reducing mitigation time from 21 days to 3 days using Aikido.dev integration.
@@ -85,8 +85,8 @@ Four cards, each with a short description and a ghost button:
 - Eyebrow: Your coach
 - Heading: Security accountability and a lifetime of practice.
 - Para 1: Kenneth Kron is a virtual CISO with more than twenty years in cybersecurity, most recently in the IoT space, where leaders answer for products that live in the physical world.
-- Para 2: He has also practised Quantum Aikido for over forty years. Coaching here joins the two: the calm, decisive posture of Aikido applied to board rooms, incidents and hard conversations.
-- Para 3: His practice comes through the lineage of Quantum Aikido founder Richard Moon.
+- Para 2: He has also practised the Creative Unified Field for over forty years. Coaching here joins the two: the calm, decisive posture of Aikido applied to board rooms, incidents and hard conversations.
+- Para 3: His practice comes through the lineage of the Creative Unified Field founder Richard Moon.
 - Para 4: His clients are founders, security leads and product teams at Series A–C startups and SaaS companies who carry enterprise security expectations.
 
 ### How the coaching works (`#coaching`)

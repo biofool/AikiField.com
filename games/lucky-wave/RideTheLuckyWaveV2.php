@@ -756,7 +756,7 @@ require dirname(__DIR__, 2) . '/includes/beta-gate.load.php';
               </p>
               <ul style={{ fontSize: 14, color: T.primary, lineHeight: 1.6, paddingLeft: 20, margin: 0 }}>
                 <li style={{ marginBottom: 6 }}>
-                  <strong style={{ color: "#D4B8F0" }}>Harmony:</strong> Uses native Moonisms and the vocabulary of Quantum Aikido (Ki, Unified-Field, Kami).
+                  <strong style={{ color: "#D4B8F0" }}>Harmony:</strong> Uses native Moonisms and the vocabulary of the Creative Unified Field (Ki, Unified-Field, Kami).
                 </li>
                 <li>
                   <strong style={{ color: "#9CA8BC" }}>Standard:</strong> A plain vanilla, secular framing focused on nervous system activation and psychology.

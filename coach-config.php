@@ -3,7 +3,7 @@
  * AikiField coaching auth — production config template.
  *
  * This file is committed with NON-SECRET defaults. The coaching backend URL
- * below is the public Quantum Aikido Wisdom Cloud Run service (the same one
+ * below is the public the Creative Unified Field Wisdom Cloud Run service (the same one
  * quantumaikido.com proxies to). It is not a secret — direct access to
  * non-auth endpoints is rejected by the backend's X-Proxy-Secret check.
  *
@@ -18,7 +18,7 @@
  *   - this repo                         (docs/coach-auth-prd.md)
  */
 
-// Public Quantum Aikido Wisdom backend (Cloud Run, aiqa-coaching project).
+// Public the Creative Unified Field Wisdom backend (Cloud Run, aiqa-coaching project).
 define('COACH_BACKEND_URL', 'https://aiqa-coach-uj5nyskptq-uc.a.run.app');
 // Staging backend, used when COACH_FORCE_STAGING is set or a request carries
 // X-Target-Environment: staging.

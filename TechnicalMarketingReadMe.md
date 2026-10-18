@@ -41,7 +41,7 @@ capacity to sustain them.
   categories) and leadership presence (seven dimensions), with scoring
   guidance and a five-step practice design framework (`assessment.html`).
 - **Sponsored projects showcase** — Describes the AI coaching backend
-  (Quantum Aikido / AIRichardMoon) and the world studio discovery pipeline
+  (The Creative Unified Field / AIRichardMoon) and the world studio discovery pipeline
   (WorldStudioFinder), connecting the consultancy's phronesis philosophy to
   real engineering projects (`projects.html`).
 - **Inquiry form** — Contact form with organization details and needs

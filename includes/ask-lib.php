@@ -4,7 +4,7 @@
  *
  * Ported from quantumaikido.com includes/ask-richard-moon-lib.php.
  * Two corpora share one pipeline:
- *   - records with "attribution": "richard-moon" are the Quantum Aikido /
+ *   - records with "attribution": "richard-moon" are the Creative Unified Field /
  *     Richard Moon Q&A ported from quantumaikido.com (their sources stay
  *     cited to quantumaikido.com public pages)
  *   - records with "attribution": "aikifield" (or absent) are AikiField's
@@ -385,7 +385,7 @@ function ask_jsonld(array $meta, string $canonical): array
         return ['@context' => 'https://schema.org', '@graph' => $graph];
     }
 
-    $collectionDesc = 'Ask AikiField is a sourced Q&A knowledge layer covering AikiField services and Richard Moon&rsquo;s public Quantum Aikido teachings. It is an AI-assisted editorial interface, not a live person speaking.';
+    $collectionDesc = 'Ask AikiField is a sourced Q&A knowledge layer covering AikiField services and Richard Moon&rsquo;s public the Creative Unified Field teachings. It is an AI-assisted editorial interface, not a live person speaking.';
     $graph = [
         $org,
         $crumbs,
@@ -684,7 +684,7 @@ function ask_render_hub(string $hub): string
     if ($hub === 'about') {
         return '<h1>About ' . ask_h(ask_layer_name()) . '</h1>'
             . '<p class="ask-direct-answer"><strong>AikiField</strong> is the B2B cybersecurity consulting practice behind this site. <strong>' . ask_h(ask_layer_name()) . '</strong> is this sourced Q&amp;A knowledge layer. The <strong>Unified Field chat</strong> is the signed-in conversational product.</p>'
-            . '<p>These pages are AI-assisted editorial work grounded in already-public site copy. AikiField records cite public aikifield.com pages; Quantum Aikido records are attributed to Richard Moon and cite public quantumaikido.com pages.</p>'
+            . '<p>These pages are AI-assisted editorial work grounded in already-public site copy. AikiField records cite public aikifield.com pages; the Creative Unified Field records are attributed to Richard Moon and cite public quantumaikido.com pages.</p>'
             . '<p>Quotes must be verbatim substrings of a cited source before a record can publish — the validator rejects anything else.</p>';
     }
     if ($hub === 'how-it-works') {
@@ -780,7 +780,7 @@ function ask_render_document(string $path): void
     if (($meta['type'] ?? '') === 'record' && !empty($meta['record']['short_answer'])) {
         $desc = (string) $meta['record']['short_answer'];
     } elseif (($meta['hub'] ?? '') === 'overview') {
-        $desc = 'Browse sourced Q&A from AikiField and Richard Moon\u2019s public Quantum Aikido work — questions, books, and videos.';
+        $desc = 'Browse sourced Q&A from AikiField and Richard Moon\u2019s public the Creative Unified Field work — questions, books, and videos.';
     } else {
         $desc = ($meta['title'] ?? ask_layer_name()) . ' — sourced Q&A on aikifield.com.';
     }
