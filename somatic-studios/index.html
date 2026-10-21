@@ -371,7 +371,13 @@
       script.defer = true;
       document.head.appendChild(script);
     })
-    .catch(function () { /* no captcha configured — form still submits */ });
+    .catch(function () {
+      // Issue #125: a failed sitekey fetch silently hid the widget while
+      // the server still rejected every submission — surface it instead.
+      container.innerHTML =
+        '<p style="color:#a00;font-size:.9em">Captcha failed to load — ' +
+        'submissions may be rejected. Please reload and try again.</p>';
+    });
 })();
 </script>
 </body>
