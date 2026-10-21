@@ -8,7 +8,9 @@
  * but focused on Cloudflare edge logs rather than Apache access logs.
  *
  * Access: requires DASHBOARD_ADMIN_KEY (defined in coach-config.local.php,
- * gitignored). Sent via ?key= query param or X-Dashboard-Key header.
+ * gitignored). Sent via X-Dashboard-Key header, or once via ?key= which is
+ * exchanged for an HttpOnly cookie — keeping the key in the URL leaked it
+ * into access logs, CF edge logs and browser history (issue #100).
  * The page is blind — not linked from public nav.
  *
  * See docs/coach-auth-prd.md §Operations Dashboard.
@@ -19,17 +21,52 @@ require __DIR__ . '/includes/cloudflare-logs.class.php';
 
 // --- Auth ---
 $adminKey = defined('DASHBOARD_ADMIN_KEY') ? DASHBOARD_ADMIN_KEY : '';
-$provided = $_GET['key'] ?? ($_SERVER['HTTP_X_DASHBOARD_KEY'] ?? '');
 
 if ($adminKey === '') {
     http_response_code(503);
     echo '<p>Dashboard not configured: DASHBOARD_ADMIN_KEY is not set in coach-config.local.php</p>';
     exit;
 }
-if ($provided === '' || !hash_equals($adminKey, $provided)) {
-    http_response_code(401);
-    echo '<p>Unauthorized. Provide ?key= or X-Dashboard-Key header.</p>';
-    exit;
+
+// Issue #100: a valid key is exchanged once for an HttpOnly cookie holding an
+// HMAC of the key — after that the URL never carries the secret again, so it
+// stays out of access logs, CF edge logs, browser history and Referer
+// headers. The cookie stores a derived value, not the key itself.
+$cookieName = 'af_dashboard_auth';
+$cookieExpected = hash_hmac('sha256', $adminKey, 'aikifield-dashboard-v1');
+$cookieSecure = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+    || (($_SERVER['SERVER_PORT'] ?? '') == 443)
+    || strtolower((string) ($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '')) === 'https'
+    || str_contains((string) ($_SERVER['HTTP_CF_VISITOR'] ?? ''), '"https"');
+
+$provided    = (string) ($_GET['key'] ?? '');
+$providedHdr = (string) ($_SERVER['HTTP_X_DASHBOARD_KEY'] ?? '');
+$viaCookie   = isset($_COOKIE[$cookieName])
+    && hash_equals($cookieExpected, (string) $_COOKIE[$cookieName]);
+
+if (!$viaCookie) {
+    if ($provided !== '' && hash_equals($adminKey, $provided)) {
+        // Valid ?key= — set the cookie and strip the key from the URL so it
+        // never appears twice in logs/history.
+        setcookie($cookieName, $cookieExpected, [
+            'expires'  => time() + 8 * 3600,
+            'path'     => '/dashboard.php',
+            'secure'   => $cookieSecure,
+            'httponly' => true,
+            'samesite' => 'Strict',
+        ]);
+        $qs = $_GET;
+        unset($qs['key']);
+        $target = ($_SERVER['SCRIPT_NAME'] ?? '/dashboard.php')
+            . ($qs ? '?' . http_build_query($qs) : '');
+        header('Location: ' . $target);
+        exit;
+    }
+    if ($providedHdr === '' || !hash_equals($adminKey, $providedHdr)) {
+        http_response_code(401);
+        echo '<p>Unauthorized. Provide X-Dashboard-Key header, or ?key= once to establish a session.</p>';
+        exit;
+    }
 }
 
 // --- Config ---
@@ -173,10 +210,10 @@ header('X-Robots-Tag: noindex, nofollow');
       </div>
     </div>
     <div class="cf-controls">
-      <a href="?key=<?php echo rawurlencode($provided); ?>&hours=24">24h</a>
-      <a href="?key=<?php echo rawurlencode($provided); ?>&hours=48">48h</a>
-      <a href="?key=<?php echo rawurlencode($provided); ?>&hours=168">7d</a>
-      <a href="?key=<?php echo rawurlencode($provided); ?>&format=json">JSON</a>
+      <a href="?hours=24">24h</a>
+      <a href="?hours=48">48h</a>
+      <a href="?hours=168">7d</a>
+      <a href="?format=json">JSON</a>
     </div>
   </div>
 

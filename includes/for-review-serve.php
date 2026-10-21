@@ -18,7 +18,15 @@
 
 require_once __DIR__ . '/beta-gate.load.php'; // redirects to /login.php when unauthed
 
+// Issue #122: any active account used to pass the gate — LinkedIn sign-in
+// creates `free` accounts, and unreleased review material is members-only.
+af_require_member_tier('for-review-serve');
+
 $uriPath = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?? '/';
+// The locale rewrite (^(en|es)/(.+)$ → /$2) is internal, so REQUEST_URI
+// still carries the /es/ or /en/ prefix when the request had one —
+// /es/for-review/* used to 404 here (issue #100). Normalize it away.
+$uriPath = preg_replace('#^/(en|es)(?=/|$)#', '', $uriPath);
 if ($uriPath !== '/for-review' && strpos($uriPath, '/for-review/') !== 0) {
     http_response_code(404);
     exit;

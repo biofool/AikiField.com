@@ -42,6 +42,16 @@ if (str_contains($path, '..')) {
     exit;
 }
 
+// ── Locale prefix (issue #100) — /en|es/<path> serves the underlying path.
+// Like Apache's internal rewrite, REQUEST_URI keeps the original
+// locale-prefixed path; for-review-serve.php normalizes it itself.
+if (preg_match('#^/(en|es)(/.*)$#', $path, $_lm)) {
+    $path = $_lm[2];
+    if ($path === '/') {
+        $path = '/index.html';
+    }
+}
+
 // ── 301 redirects for old static URLs ──────────────────────────────────────
 
 $redirects = [

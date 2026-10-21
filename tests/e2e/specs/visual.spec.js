@@ -25,12 +25,17 @@ const { AxeBuilder } = require('@axe-core/playwright');
 const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
-const { TEST_EMAIL, PASSWORD, stubToken } = require('../helpers');
+const { TEST_EMAIL, PASSWORD, stubToken, BASE_URL, STUB_URL } = require('../helpers');
 
 // Gated pages need a PHP session. page.request shares the browser context's
 // cookie jar, so posting backend-login here authenticates the page too.
 async function login(page) {
+  // Fresh login must work even if an earlier test signed out (issue #123
+  // stub revocation); then post with the same-origin signal a browser sends
+  // (issues #100/#121 login-CSRF check in login.php).
+  await page.request.delete(`${STUB_URL}/__stub/revoked`);
   const resp = await page.request.post('/login.php', {
+    headers: { Origin: BASE_URL, 'Sec-Fetch-Site': 'same-origin' },
     form: {
       action: 'backend-login',
       email: TEST_EMAIL,

@@ -37,12 +37,23 @@ $USERS = [
         'username'          => 'testuser',
         'admin'             => false,
         'active'            => true,
+        'tier'              => 'member',
         'targetEnvironment' => 'both',
     ],
     'admin@example.com' => [
         'username'          => 'admin',
         'admin'             => true,
         'active'            => true,
+        'tier'              => 'member',
+        'targetEnvironment' => 'both',
+    ],
+    // Issue #122: free-tier account (the kind LinkedIn sign-in auto-creates)
+    // for member-gate tests.
+    'free@example.com' => [
+        'username'          => 'freebie',
+        'admin'             => false,
+        'active'            => true,
+        'tier'              => 'free',
         'targetEnvironment' => 'both',
     ],
 ];
@@ -152,6 +163,27 @@ if ($path === '/__stub/game-results/missing' && $method === 'POST') {
     stub_json(200, ['ok' => true, 'missing' => $on]);
 }
 
+// Revoked session tokens (issue #123 logout-revocation tests).
+$REVOKE_FILE = dirname($LOG_FILE) . '/af-e2e-stub-revoked.json';
+if ($path === '/__stub/revoked' && $method === 'DELETE') {
+    @unlink($REVOKE_FILE);
+    stub_json(200, ['ok' => true]);
+}
+function stub_revoked_tokens(string $file): array
+{
+    $raw = @file_get_contents($file);
+    $list = $raw === false ? [] : (json_decode($raw, true) ?: []);
+    return is_array($list) ? $list : [];
+}
+function stub_unrevoke(string $file, string $token): void
+{
+    $revoked = array_values(array_filter(
+        stub_revoked_tokens($file),
+        static fn ($t) => $t !== $token
+    ));
+    @file_put_contents($file, json_encode($revoked), LOCK_EX);
+}
+
 // ── Proxy-secret enforcement (mirrors backend/app/main.py) ───────────────────
 
 $isExempt = str_starts_with($path, '/v1/auth/')
@@ -170,8 +202,9 @@ if ($SECRET !== '' && !$isExempt && !hash_equals($SECRET, $sent)) {
 // ── Auth endpoints ──────────────────────────────────────────────────────────
 
 if ($path === '/v1/auth/providers') {
-    // No social providers in tests — coach-login.js hides the social block.
-    stub_json(200, ['providers' => []]);
+    // LinkedIn is the only social provider, and coach-login.js only renders
+    // its button for ?src=li visitors — returning it unconditionally is safe.
+    stub_json(200, ['providers' => [['id' => 'linkedin', 'label' => 'LinkedIn']]]);
 }
 
 if ($path === '/v1/auth/verify' && $method === 'POST') {
@@ -182,11 +215,17 @@ if ($path === '/v1/auth/verify' && $method === 'POST') {
         stub_json(200, ['ok' => false, 'error' => 'Invalid email or password.']);
     }
     $user = $USERS[$email];
+    // A successful sign-in supersedes any earlier sign-out — the real
+    // backend mints a fresh token; our token is deterministic per email so
+    // lift the email's prior revocation or a logout test would poison every
+    // later login for that user.
+    stub_unrevoke($REVOKE_FILE, stub_token($email));
     stub_json(200, [
         'ok'                => true,
         'email'             => $email,
         'sessionToken'      => stub_token($email),
         'admin'             => $user['admin'],
+        'tier'              => $user['tier'],
         'targetEnvironment' => $user['targetEnvironment'],
     ]);
 }
@@ -195,8 +234,10 @@ if ($path === '/v1/auth/check-session' && $method === 'POST') {
     $body  = stub_body($rawBody);
     $email = strtolower(trim((string) ($body['email'] ?? '')));
     $token = (string) ($body['sessionToken'] ?? '');
-    if (!isset($USERS[$email]) || !hash_equals(stub_token($email), $token)) {
-        error_log('stub-backend: check-session rejected email=' . $email);
+    $revoked = in_array($token, stub_revoked_tokens($REVOKE_FILE), true);
+    if ($revoked || !isset($USERS[$email]) || !hash_equals(stub_token($email), $token)) {
+        error_log('stub-backend: check-session rejected email=' . $email
+            . ($revoked ? ' (revoked)' : ''));
         stub_json(200, ['ok' => false, 'error' => 'Session is not valid.']);
     }
     $user = $USERS[$email];
@@ -204,8 +245,28 @@ if ($path === '/v1/auth/check-session' && $method === 'POST') {
         'ok'                => true,
         'email'             => $email,
         'admin'             => $user['admin'],
+        'tier'              => $user['tier'],
         'targetEnvironment' => $user['targetEnvironment'],
     ]);
+}
+
+// Sign-out — mirrors /v1/auth/logout: the token stops working immediately.
+if ($path === '/v1/auth/logout' && $method === 'POST') {
+    $body  = stub_body($rawBody);
+    $email = strtolower(trim((string) ($body['email'] ?? '')));
+    $token = (string) ($body['sessionToken'] ?? '');
+    if (!isset($USERS[$email]) || !hash_equals(stub_token($email), $token)) {
+        stub_json(200, ['ok' => false, 'error' => 'Session is not valid.']);
+    }
+    $revoked = stub_revoked_tokens($REVOKE_FILE);
+    if (!in_array($token, $revoked, true)) {
+        $revoked[] = $token;
+        if (@file_put_contents($REVOKE_FILE, json_encode($revoked), LOCK_EX) === false) {
+            error_log('stub-backend: could not write revoke file ' . $REVOKE_FILE);
+            stub_json(500, ['detail' => 'revoke store unavailable']);
+        }
+    }
+    stub_json(200, ['ok' => true]);
 }
 
 // ── AI Chat (games/ai-coach.php → /v1/chat-secure) ──────────────────────────

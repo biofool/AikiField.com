@@ -8,6 +8,9 @@
 
 require dirname(__DIR__) . '/includes/beta-gate.load.php';
 
+// Issue #122: gated JSON is members-only — a `free` account must not read it.
+af_require_member_tier('beta/data.php');
+
 $allowed = ['crossview.json', 'practices.json', 'questions.json', 'scenarios.json'];
 $file = $_GET['f'] ?? '';
 

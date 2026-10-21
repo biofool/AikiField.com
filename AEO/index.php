@@ -26,6 +26,16 @@ if ($email !== '' && $token !== '') {
     if (defined('COACH_PROXY_SECRET') && COACH_PROXY_SECRET !== '') {
         $reqHeaders[] = 'X-Proxy-Secret: ' . COACH_PROXY_SECRET;
     }
+    // Forward the trust-checked client IP so the backend's rate limiting is
+    // keyed on the real visitor, not the shared-host egress IP (issue #100).
+    require_once $root . '/includes/cloudflare-ips.php';
+    foreach (qa_resolve_client_ip_headers(
+        (string) ($_SERVER['REMOTE_ADDR'] ?? ''),
+        isset($_SERVER['HTTP_CF_CONNECTING_IP']) ? (string) $_SERVER['HTTP_CF_CONNECTING_IP'] : null,
+        isset($_SERVER['HTTP_X_FORWARDED_FOR']) ? (string) $_SERVER['HTTP_X_FORWARDED_FOR'] : null
+    ) as $hName => $hValue) {
+        $reqHeaders[] = "$hName: $hValue";
+    }
     $ch = curl_init($verifyUrl);
     curl_setopt_array($ch, [
         CURLOPT_POST => true,

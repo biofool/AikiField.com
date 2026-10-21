@@ -385,7 +385,7 @@ function ask_jsonld(array $meta, string $canonical): array
         return ['@context' => 'https://schema.org', '@graph' => $graph];
     }
 
-    $collectionDesc = 'Ask AikiField is a sourced Q&A knowledge layer covering AikiField services and Richard Moon&rsquo;s public the Creative Unified Field teachings. It is an AI-assisted editorial interface, not a live person speaking.';
+    $collectionDesc = 'Ask AikiField is a sourced Q&A knowledge layer covering AikiField services and Richard Moon’s public the Creative Unified Field teachings. It is an AI-assisted editorial interface, not a live person speaking.';
     $graph = [
         $org,
         $crumbs,
@@ -772,7 +772,9 @@ function ask_render_document(string $path): void
         }
         $body .= ask_disclosure();
     }
-    $jsonld = json_encode(ask_jsonld($meta, $canonical), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+    // JSON_HEX_TAG stops a </script> inside any string value from breaking
+    // out of the JSON-LD block (issue #100).
+    $jsonld = json_encode(ask_jsonld($meta, $canonical), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT | JSON_HEX_TAG);
     $current = trim($path, '/');
     if ($current === 'index') {
         $current = '';
@@ -780,7 +782,7 @@ function ask_render_document(string $path): void
     if (($meta['type'] ?? '') === 'record' && !empty($meta['record']['short_answer'])) {
         $desc = (string) $meta['record']['short_answer'];
     } elseif (($meta['hub'] ?? '') === 'overview') {
-        $desc = 'Browse sourced Q&A from AikiField and Richard Moon\u2019s public the Creative Unified Field work — questions, books, and videos.';
+        $desc = 'Browse sourced Q&A from AikiField and Richard Moon’s public the Creative Unified Field work — questions, books, and videos.';
     } else {
         $desc = ($meta['title'] ?? ask_layer_name()) . ' — sourced Q&A on aikifield.com.';
     }

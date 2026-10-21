@@ -27,7 +27,17 @@ function stubToken(email) {
  * @param {{email?: string}} opts
  */
 async function establishSession(request, { email = TEST_EMAIL } = {}) {
+  // A fresh login must always work: the stub revokes tokens on
+  // /v1/auth/logout (issue #123) and stub tokens are deterministic per
+  // email, so clear any prior revocation or one sign-out test would break
+  // every later session for that user. /__stub/ calls aren't request-logged.
+  await request.delete(`${STUB_URL}/__stub/revoked`);
   const resp = await request.post('/login.php', {
+    // login.php rejects backend-login POSTs with no same-origin signal
+    // (issues #100/#121 login-CSRF). A real browser always sends Origin on a
+    // cross-origin POST and Sec-Fetch-Site on every fetch — send both so the
+    // helper mimics browser traffic.
+    headers: { Origin: BASE_URL, 'Sec-Fetch-Site': 'same-origin' },
     form: {
       action: 'backend-login',
       email,

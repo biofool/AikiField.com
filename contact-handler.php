@@ -116,8 +116,14 @@ function contact_rate_limited(string $ip, int $maxRequests = 5, int $windowSecon
         return false; // nothing to key on - fail open rather than block everyone
     }
     $dir = __DIR__ . '/data/ratelimit';
-    if (!is_dir($dir) && !@mkdir($dir, 0700, true) && !is_dir($dir)) {
-        return false; // fail open if local storage isn't available
+    if (!is_dir($dir)) {
+        if (!@mkdir($dir, 0700, true) && !is_dir($dir)) {
+            return false; // fail open if local storage isn't available
+        }
+        // data/ratelimit/ is gitignored, so the deny file isn't deployed —
+        // write it when the dir is created or the hashed per-IP files are
+        // web-readable on Apache (issue #100).
+        @file_put_contents($dir . '/.htaccess', "Require all denied\n");
     }
     $file = $dir . '/' . hash('sha256', $ip) . '.json';
     $fh = @fopen($file, 'c+');

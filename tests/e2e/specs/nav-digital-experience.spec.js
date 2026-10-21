@@ -74,7 +74,7 @@ test.describe('primary nav submenus', () => {
 test.describe('Digital Experience auth-aware actions', () => {
   const PAGES = [
     ['/digital-experience/lucky-wave.html', [
-      ['/games/lucky-wave/RideTheLuckyWaveV1-legacy.php', 'Sign in to play V1', 'Play V1'],
+      // V1 was retired (the page carries only the V2 link now).
       ['/games/lucky-wave/RideTheLuckyWaveV2.php', 'Sign in to play V2', 'Play V2'],
     ]],
     ['/digital-experience/verbal-aikido.html', [
