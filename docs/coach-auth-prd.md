@@ -380,7 +380,16 @@ IP-based rate limiting. When a request is rate-limited, the backend returns
 concrete thresholds remain in server logs and admin alerts only.
 AikiField's `coach-proxy.php` forwards `CF-Connecting-IP` and
 X-Forwarded-For so the backend rate-limits per real visitor IP rather than
-the shared proxy IP.
+the shared proxy IP. Since issue #130 / AIRichardMoon#943 the proxy also
+sends a signed visitor-IP triple — `X-AF-Client-IP`, `X-AF-Client-Ts`,
+`X-AF-Client-Sig` (HMAC-SHA256 of `"<ip>|<ts>"` under `COACH_PROXY_SECRET`,
+built by `qa_signed_client_ip_headers()` in `includes/cloudflare-ips.php`).
+The visitor IP is the trusted `CF-Connecting-IP` when REMOTE_ADDR is a
+genuine Cloudflare edge IP, else REMOTE_ADDR; nothing is signed when the
+resolved value is not a literal IP or the secret is unset. The backend
+verifies the signature only alongside a valid `X-Proxy-Secret` and a
+timestamp within 300 s, and falls back to the unsigned-header logic
+otherwise — so the proxy can deploy before or after the backend.
 
 ### Cold-start notice (biofool/AIRichardMoon#817)
 

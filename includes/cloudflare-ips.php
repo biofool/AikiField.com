@@ -176,3 +176,57 @@ function qa_resolve_client_ip_headers(
         'X-Forwarded-For' => $remoteAddr,
     ];
 }
+
+/**
+ * Build the signed visitor-IP headers (X-AF-Client-IP / -Ts / -Sig) that
+ * coach-proxy.php attaches so the backend can rate-limit per visitor
+ * instead of per proxy — the proxy is the last X-Forwarded-For hop, so
+ * without a signed value every AikiField visitor shares one rate-limit key
+ * (AikiField issue #130, AIRichardMoon issue #943).
+ *
+ * The visitor IP is resolved with the same trust rules as
+ * qa_resolve_client_ip_headers(): CF-Connecting-IP only counts when
+ * REMOTE_ADDR is a genuine Cloudflare edge IP; otherwise REMOTE_ADDR
+ * itself is the visitor. The signature is
+ * hex(HMAC-SHA256($proxySecret, "<ip>|<ts>")) — the backend verifies it
+ * only when X-Proxy-Secret is also valid and the timestamp is fresh
+ * (300 s), and falls back to untrusted-header logic otherwise, so this is
+ * safe to deploy before or after the backend side.
+ *
+ * Returns an empty array (no headers sent) when the secret is empty or the
+ * resolved visitor IP is not a literal IP — the backend's unsigned-request
+ * fallback then applies, matching pre-signing behavior.
+ *
+ * Pure function except for the clock, which is injectable for tests.
+ *
+ * @param string      $remoteAddr           $_SERVER['REMOTE_ADDR'] — the real, unspoofable TCP peer.
+ * @param string|null $clientCfConnectingIp The client-supplied CF-Connecting-IP header value, or null if the client didn't send one.
+ * @param string      $proxySecret          Shared secret (COACH_PROXY_SECRET) the backend also knows.
+ * @param int|null    $now                  Unix timestamp to sign; defaults to time() (injectable for tests).
+ * @return array<string,string> Header name => value pairs, or [] when signing is impossible.
+ */
+function qa_signed_client_ip_headers(
+    string $remoteAddr,
+    ?string $clientCfConnectingIp,
+    string $proxySecret,
+    ?int $now = null
+): array {
+    if ($proxySecret === '') {
+        return [];
+    }
+
+    $visitorIp = $remoteAddr;
+    if ($remoteAddr !== '' && qa_is_cloudflare_ip($remoteAddr) && $clientCfConnectingIp !== null) {
+        $visitorIp = trim($clientCfConnectingIp);
+    }
+    if (!filter_var($visitorIp, FILTER_VALIDATE_IP)) {
+        return [];
+    }
+
+    $ts = (string) ($now ?? time());
+    return [
+        'X-AF-Client-IP' => $visitorIp,
+        'X-AF-Client-Ts' => $ts,
+        'X-AF-Client-Sig' => hash_hmac('sha256', $visitorIp . '|' . $ts, $proxySecret),
+    ];
+}

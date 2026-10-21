@@ -163,6 +163,34 @@ if ($path === '/__stub/game-results/missing' && $method === 'POST') {
     stub_json(200, ['ok' => true, 'missing' => $on]);
 }
 
+// Feature flags (issue #124 passkey-registration tests). The real
+// GET /v1/feature-flags is public and returns only {key: bool} for registry
+// keys; here the flags live in a control-plane file so a spec can turn
+// passkey_login on without affecting the other specs' pages (the login
+// visual baselines must keep the passkey button hidden).
+$FLAGS_FILE = dirname($LOG_FILE) . '/af-e2e-stub-flags.json';
+function stub_flags(string $file): array
+{
+    $raw = @file_get_contents($file);
+    $flags = $raw === false ? [] : (json_decode($raw, true) ?: []);
+    return is_array($flags) ? $flags : [];
+}
+if ($path === '/__stub/feature-flags') {
+    if ($method === 'DELETE') {
+        @unlink($FLAGS_FILE);
+        stub_json(200, ['ok' => true]);
+    }
+    if ($method === 'POST') {
+        $flags = stub_flags($FLAGS_FILE);
+        foreach (stub_body($rawBody) as $k => $v) {
+            $flags[(string) $k] = (bool) $v;
+        }
+        @file_put_contents($FLAGS_FILE, json_encode($flags), LOCK_EX);
+        stub_json(200, ['ok' => true, 'flags' => $flags]);
+    }
+    stub_json(200, ['flags' => stub_flags($FLAGS_FILE)]);
+}
+
 // Revoked session tokens (issue #123 logout-revocation tests).
 $REVOKE_FILE = dirname($LOG_FILE) . '/af-e2e-stub-revoked.json';
 if ($path === '/__stub/revoked' && $method === 'DELETE') {
@@ -191,6 +219,7 @@ $isExempt = str_starts_with($path, '/v1/auth/')
     || str_ends_with($path, '.css')
     || str_ends_with($path, '.js')
     || $path === '/'
+    || $path === '/v1/feature-flags'   // public in the real backend (issue #657)
     || $path === '/healthz'
     || $path === '/health';
 
@@ -360,6 +389,72 @@ if ($path === '/v1/auth/confirm-email' && $method === 'POST') {
 
 if ($path === '/v1/auth/rate-limit-status') {
     stub_json(200, ['recentHits' => []]);
+}
+
+// Public feature flags — same shape as the real GET /v1/feature-flags
+// ({flags: {key: bool}} only, no environment/actor). Values come from the
+// /__stub/feature-flags control plane; empty by default so every flag reads
+// as off unless a spec turns one on.
+if ($path === '/v1/feature-flags' && $method === 'GET') {
+    stub_json(200, ['flags' => stub_flags($FLAGS_FILE)]);
+}
+
+// ── Passkey registration (issue #124, AIR #650) ─────────────────────────────
+// Same shapes as the real /v1/auth/passkey/register/{begin,finish}: begin is
+// session-gated and returns {ok, challengeKey, options} where options mirrors
+// PublicKeyCredentialCreationOptions; finish takes {credential, challengeKey}
+// and returns {ok}. The challenge itself is fixed — the spec stubs
+// navigator.credentials.create, so no real attestation is verified.
+
+if ($path === '/v1/auth/passkey/register/begin' && $method === 'POST') {
+    $email = strtolower(trim((string) ($_SERVER['HTTP_X_AUTH_EMAIL'] ?? '')));
+    $token = (string) ($_SERVER['HTTP_X_AUTH_SESSION'] ?? '');
+    if (!isset($USERS[$email]) || !hash_equals(stub_token($email), $token)) {
+        stub_json(401, ['detail' => 'Session expired.']);
+    }
+    stub_json(200, [
+        'ok'           => true,
+        'challengeKey' => 'stub-challenge-key',
+        'options'      => [
+            'rp'         => ['name' => 'AikiField', 'id' => 'aikifield.com'],
+            'user'       => [
+                'id'          => 'c3R1Yi11c2VyLWlk',
+                'name'        => $email,
+                'displayName' => $email,
+            ],
+            'challenge'  => 'c3R1Yi1jaGFsbGVuZ2U',
+            'pubKeyCredParams' => [
+                ['type' => 'public-key', 'alg' => -7],
+                ['type' => 'public-key', 'alg' => -257],
+            ],
+            'timeout'        => 60000,
+            'excludeCredentials' => [],
+            'attestation'    => 'none',
+            'authenticatorSelection' => [
+                'authenticatorAttachment' => 'platform',
+                'userVerification'        => 'preferred',
+                'residentKey'             => 'preferred',
+                'requireResidentKey'      => false,
+            ],
+        ],
+    ]);
+}
+
+if ($path === '/v1/auth/passkey/register/finish' && $method === 'POST') {
+    $email = strtolower(trim((string) ($_SERVER['HTTP_X_AUTH_EMAIL'] ?? '')));
+    $token = (string) ($_SERVER['HTTP_X_AUTH_SESSION'] ?? '');
+    if (!isset($USERS[$email]) || !hash_equals(stub_token($email), $token)) {
+        stub_json(401, ['detail' => 'Session expired.']);
+    }
+    $body = stub_body($rawBody);
+    if (($body['challengeKey'] ?? '') !== 'stub-challenge-key' || ($body['credential'] ?? '') === '') {
+        stub_json(200, ['ok' => false, 'error' => 'Registration challenge expired or invalid. Please try again.']);
+    }
+    stub_json(200, [
+        'ok'           => true,
+        'credentialId' => 'stub-cred-id',
+        'message'      => 'Passkey registered.',
+    ]);
 }
 
 // ── Health endpoints ────────────────────────────────────────────────────────

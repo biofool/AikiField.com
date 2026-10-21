@@ -156,6 +156,15 @@ foreach (qa_resolve_client_ip_headers($remoteAddr, $clientCfConnectingIp, $clien
 // Add proxy secret header so the backend knows this came through the proxy
 if (COACH_PROXY_SECRET !== '') {
     $headers[] = 'X-Proxy-Secret: ' . COACH_PROXY_SECRET;
+
+    // Issue #130 / AIR#943: also sign the resolved visitor IP so the backend
+    // can rate-limit per visitor instead of per proxy. The backend verifies
+    // these only when X-Proxy-Secret is valid; clients cannot forge them —
+    // X-AF-Client-* is not in $FORWARD_REQ_HEADERS, so any client-supplied
+    // copies are dropped above.
+    foreach (qa_signed_client_ip_headers($remoteAddr, $clientCfConnectingIp, COACH_PROXY_SECRET) as $name => $value) {
+        $headers[] = "$name: $value";
+    }
 }
 
 // For any OAuth authorize endpoint, pass the local redirect_uri to the
