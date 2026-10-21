@@ -226,6 +226,23 @@ EXCLUDES=(
     --exclude='.venv/'
     --exclude='node_modules/'
     --exclude='tests/'
+    # Issue #126: internal-only paths that the deny-list used to publish —
+    # .ai-context/*.yaml includes the site's own weakness register
+    # (debt/register.yaml with file+line of every finding).
+    --exclude='.ai-context/'
+    --exclude='.github/'
+    --exclude='.cursor/'
+    --exclude='.vscode/'
+    --exclude='docs/'
+    --exclude='test-results/'
+    --exclude='*.log'
+    --exclude='.dvcignore'
+    --exclude='LICENSE'
+    --exclude='AikiField.pdf'
+    --exclude='composer.json'
+    --exclude='composer.lock'
+    --exclude='package.json'
+    --exclude='package-lock.json'
     # Server-only secrets file (gitignored). Excluding it also stops
     # `rsync --delete` from removing it on the remote.
     --exclude='coach-config.local.php'

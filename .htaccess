@@ -5,6 +5,11 @@
 # /login.php page that gates the /beta/ assessment pages. See
 # docs/coach-auth-prd.md.
 
+# ── Deny dot-paths (issue #126) ─────────────────────────────────────────────
+# Block any /.foo path (dotfiles, .ai-context, .github, .env*) while still
+# allowing /.well-known/ (required by ACME certificate challenges).
+RedirectMatch 404 ^/(?!\.well-known(?:/|$))\..*$
+
 # ── Security headers ────────────────────────────────────────────────────────
 # Suppress X-Powered-By (leaks PHP version on dynamic pages)
 <IfModule mod_headers.c>
