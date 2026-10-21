@@ -96,35 +96,22 @@ img.hero{width:100%;max-width:300px;display:block;margin:10px auto;border:1px so
 <header><h1>TWENTY PRACTICES <span>The Creative Unified Field — Book of Exercises & Practices — from the work of Richard Moon 6th Dan · Student of Robert Nadeau since '71</span></h1><a href="/games/" style="padding:7px 14px;border:1px solid #1A1A1A;background:#fff;color:#1A1A1A;text-decoration:none;font-size:12px">All games</a></header>
 <div class="wrap">
 <div class="sidebar">
-<h3 style="font-size:11px;letter-spacing:0.12em">60 STUDIOS · PERSONALIZATION</h3>
+<h3 id="studioHead" style="font-size:11px;letter-spacing:0.12em"></h3>
 <input id="search" placeholder="Search studios..." style="width:100%;padding:8px;border:1px solid #1A1A1A;margin:10px 0">
 <div id="studioList"></div>
 <img class="hero" src="images/image_20260919_144743.webp">
 <img class="hero" src="images/image_20260919_144742.webp">
 <img class="hero" src="images/image_20260919_144741.webp">
-<p style="font-size:10px;opacity:0.5;margin-top:6px">Simple image copy: ≤7 words, black on washi, sub "By Richard Moon 6th Dan"</p>
 </div>
 <div class="center">
 <div id="banner" style="display:none;padding:12px;background:#1A1A1A;color:#fff;font-size:12px;margin-bottom:14px"></div>
 <div id="authBadge" style="display:none;padding:8px 12px;background:#F5F0E6;border:1px solid #E8E0D0;font-size:12px;margin-bottom:10px"></div>
-<div style="font-size:11px;letter-spacing:0.1em">PART NAVIGATION — AUTO-LOADED FROM MARKDOWN</div>
 <div id="partTabs"></div>
-<div style="font-size:11px;letter-spacing:0.1em;margin-top:14px">EXERCISES — 15 FROM YOUR PDF</div>
-<div id="exList"></div>
+<div id="exList" style="margin-top:14px"></div>
 <div class="player" id="player"></div>
 </div>
 <div class="right">
-<h3 style="font-size:11px;letter-spacing:0.1em">FREEMIUM MODEL</h3>
-<div style="border:1px solid #1A1A1A;padding:10px;margin:8px 0;background:#fff"><strong>FREE</strong> — DBSO, Wrist Grab, Ten to the Tenth<br><span style="font-size:10px">3 practices always free + log + reminder</span></div>
-<div style="border:2px solid #1A1A1A;padding:10px;margin:8px 0;background:#1A1A1A;color:#fff"><strong>CREATOR $12/mo $96/yr</strong><br><span style="font-size:10px">All 15+5 exclusive, 21-day Challenge, offline audio, progress</span></div>
-<div style="border:1px solid #1A1A1A;padding:10px;margin:8px 0"><strong>DOJO $49/mo</strong><br><span style="font-size:10px">White-label for 60 studios, 30% rev share, analytics, student invites via 180 CTAs</span></div>
 <div id="progress"></div>
-<div class="deploy">
-<b>AikiField deep links</b><br>
-Query: /games/exercises/?studio_id=city-aikido&amp;exercise=wrist-grab-grounding<br>
-Path: /games/exercises/wrist-grab-grounding?studio_id=city-aikido<br>
-studio_id personalizes the banner; exercise auto-opens the practice.
-</div>
 </div>
 </div>
 <script>
@@ -150,10 +137,11 @@ const studios = [
 {name:"Empire Aerial Arts", region:"Wellington NZ", cat:"Aerial", about:"Open timetable without term-based courses."},
 {name:"Body Electric Pole", region:"Wellington NZ", cat:"Pole", about:"Beautiful art of pole dancing."},
 {name:"Aikido Shinryukan Burnside", region:"Christchurch NZ", cat:"Aikido", about:"South Island's largest Aikido club."},
-{name:"Movement Studio Rolleston", region:"Canterbury NZ", cat:"Pilates", about:"Movement is Medicine, remedial massage reformer pilates."}
+{name:"Movement Studio Rolleston", region:"Canterbury NZ", cat:"Pilates", about:"Pilates and movement studio in Rolleston."}
 ];
 let currentId = 6;
-let groundPercent=50, timeLeft=300, isPlaying=false, timer=null;
+let groundPercent=50, isPlaying=false, timer=null, justFinished=false;
+let timeLeft=practiceSeconds(currentEx());
 const FREE_IDS=[1,6,12];
 let freeIds=new Set(FREE_IDS);
 let currentPart='all';
@@ -165,15 +153,30 @@ function persistProgress(){
       localStorage.setItem('moon_session_log', JSON.stringify(sessionLog)); }catch(e){ console.error('KeepDoingIt persist failed', e); }
 }
 function studioSlug(n){ return n.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,''); }
+// Issue #113: each practice carries a guide block — guide.seconds is the
+// low end of its own duration range; guide.segments (only Wrist Grab
+// Grounding today) drives timed prompts and the ground meter. A practice
+// with no segments gets a quiet timer.
+function currentEx(){ return exercises.find(e=>e.id===currentId); }
+function practiceSeconds(ex){ const s=ex&&ex.guide&&ex.guide.seconds; return (typeof s==='number'&&s>0)?s:300; }
+function stopTimer(){ clearInterval(timer); isPlaying=false; }
+// Switch practice: always stop and reset the timer for the new practice's
+// own duration (issue #113 — the old page-wide timer kept running).
+function setPractice(id){
+ if(id!==currentId){ stopTimer(); justFinished=false; groundPercent=50; currentId=id; }
+ timeLeft=practiceSeconds(currentEx());
+ renderPlayer();
+}
 function showLockedModal(ex){
+ const freeNames=exercises.filter(e=>freeIds.has(e.id)).map(e=>e.title).join(', ');
  const overlay=document.createElement('div');
  overlay.id='lockModal';
  overlay.style.cssText='position:fixed;inset:0;background:rgba(26,26,26,0.55);display:flex;align-items:center;justify-content:center;z-index:50;padding:20px';
  overlay.innerHTML=`<div style="background:#FAF6EF;border:2px solid #1A1A1A;padding:32px;max-width:420px;text-align:center">
    <div style="font-size:11px;letter-spacing:0.12em;margin-bottom:10px">LOCKED PRACTICE</div>
    <h2 style="font-size:20px;margin-bottom:10px">${ex.title}</h2>
-   <p style="font-size:14px;font-style:italic">Twenty practices from the work of Richard Moon 6th Dan</p>
-   <p style="font-size:12px;opacity:0.7;margin:14px 0">Free practices: DBSO, Wrist Grab Grounding, Ten to the Tenth. Unlock all 15+5 with a free AikiField account.</p>
+   <p style="font-size:14px;font-style:italic">Practices from the work of Richard Moon 6th Dan</p>
+   <p style="font-size:12px;opacity:0.7;margin:14px 0">Free practices: ${esc(freeNames)}. Unlock all ${exercises.length} practices with a free AikiField account.</p>
    <a href="/login.php?src=li&next=/games/exercises/" class="btn" style="display:inline-block;margin-bottom:10px">Sign in to unlock all</a><br>
    <button class="btn" id="lockClose">Back to free practices</button>
  </div>`;
@@ -223,7 +226,7 @@ function renderExList(part="all"){
    el.onclick=()=>{
      const ex=exercises.find(e=>e.id===parseInt(el.dataset.id));
      if(!freeIds.has(ex.id)){ showLockedModal(ex); return; }
-     currentId=parseInt(el.dataset.id); renderPlayer(); renderExList(part);
+     setPractice(parseInt(el.dataset.id)); renderExList(part);
    }
  });
 }
@@ -231,6 +234,10 @@ function renderPlayer(){
  const ex=exercises.find(e=>e.id===currentId);
  if(!freeIds.has(ex.id)){ showLockedModal(ex); return; }
  const isWrist=ex.title.includes('Wrist Grab');
+ // Guide-driven prompts: only practices with guide.segments get timed
+ // prompts/phase/ground meter — everyone else gets a quiet timer (#113).
+ const guide=ex.guide||{};
+ const segments=Array.isArray(guide.segments)?guide.segments:null;
  const interMap={'Part I — centering & grounding':interludes[1],'Part II — breath & energy':interludes[2],'Part III — attention & feeling':interludes[3],'Part IV — dialogue & relationship':interludes[4]};
  const inter=interMap[ex.part]||null;
  const bodyText=tr('ex'+ex.id+'.body', ex.body);
@@ -239,8 +246,9 @@ function renderPlayer(){
    <div style="display:flex;justify-content:space-between"><div><h2 style="font-size:22px">${esc(tr('ex'+ex.id+'.title', ex.title))}</h2><div class="meta">${esc(tr('ex'+ex.id+'.meta', ex.meta))} · ${esc(tr('ex'+ex.id+'.part', ex.part))}</div></div><span style="font-size:10px;border:1px solid #000;padding:3px 7px">Complexity ${ex.complexity}</span></div>
    ${isWrist?`<div class="toggle"><button id="realB">Real Partner</button><button id="invB" class="active" title="Invisible partner means practicing by yourself." aria-describedby="invB-desc">Invisible Partner</button><span id="invB-desc" hidden>Invisible partner means practicing by yourself.</span></div>`:''}
    <div class="body">${bodyParas}</div>
-   <div class="timer"><div id="phase">Phase: 50/50 — Resist less, ground more</div><div class="circle" id="circ">${Math.floor(timeLeft/60)}:${String(timeLeft%60).padStart(2,'0')}</div><div id="prompt" style="font-size:11px">${isWrist?'Push... feel where you are':'Breathe...'}</div>${isWrist?`<div class="ground"><div class="ground-fill" id="gfill" style="width:${groundPercent}%"></div></div><div style="font-size:10px">${groundPercent}% ground — goal 60% — DBSO</div>`:''}
+   <div class="timer">${segments?`<div id="phase">Phase: ${esc(segments[0].phase||'')}</div>`:''}<div class="circle" id="circ">${Math.floor(timeLeft/60)}:${String(timeLeft%60).padStart(2,'0')}</div><div id="prompt" style="font-size:11px">${segments?esc(guide.initialPrompt||''):''}</div>${segments?`<div class="ground"><div class="ground-fill" id="gfill" style="width:${groundPercent}%"></div></div><div id="glabel" style="font-size:10px">${groundPercent}% ground — goal 60% — DBSO</div>`:''}
    <div style="display:flex;gap:6px;margin-top:10px"><button class="btn" id="playB" style="flex:1">${isPlaying?'Pause':'Play Guided'}</button><button class="btn" id="resetB" style="flex:0.3;background:#fff;color:#000;border:1px solid #000">Reset</button></div></div>
+   ${justFinished?`<div id="doneNote" style="text-align:center;padding:20px;background:#F5F0E6;margin:22px 0;border:1px solid #E8E0D0">Session complete — nicely done.<br><span style="font-size:12px;opacity:0.7">Log it below to KeepDoingIt.</span></div>`:''}
    <button class="btn" id="keepB">KeepDoingIt — Log Session</button>
    <div id="pdots" style="margin-top:10px;font-size:10px"></div>
    ${inter?`<div class="poem"><b>${esc(tr('int'+interludes.indexOf(inter)+'.title', inter.title))}</b>
@@ -255,7 +263,7 @@ ${esc(tr('int'+interludes.indexOf(inter)+'.text', inter.text))}</div>`:''}
  }
  document.getElementById('playB').onclick=togglePlay;
  document.getElementById('resetB').onclick=reset;
- document.getElementById('keepB').onclick=()=>{completed.add(currentId); sessionLog.push({id:currentId,at:new Date().toISOString()}); persistProgress(); renderProgress(); alert('Logged! KeepDoingIt');};
+ document.getElementById('keepB').onclick=()=>{completed.add(currentId); sessionLog.push({id:currentId,at:new Date().toISOString()}); persistProgress(); justFinished=false; renderProgress(); const pd=document.getElementById('pdots'); if(pd) pd.textContent='Logged — KeepDoingIt.';};
  if(isWrist){
    document.getElementById('realB').onclick=(e)=>{e.target.parentElement.querySelectorAll('button').forEach(b=>b.classList.remove('active')); e.target.classList.add('active')};
    document.getElementById('invB').onclick=(e)=>{e.target.parentElement.querySelectorAll('button').forEach(b=>b.classList.remove('active')); e.target.classList.add('active')};
@@ -266,27 +274,38 @@ function renderProgress(){
  const el=document.getElementById('progress'); if(!el) return;
  const dots=exercises.map(e=>completed.has(e.id)?'●':'○').join(' ');
  el.innerHTML=`<div style="font-size:10px">Progress: ${completed.size}/${exercises.length}<br>${dots}</div>`;
- const pd=document.getElementById('pdots'); if(pd) pd.innerHTML=`Completed IDs: ${Array.from(completed).join(', ')}`;
 }
 function togglePlay(){
  isPlaying=!isPlaying;
+ if(isPlaying) justFinished=false;
  document.getElementById('playB').textContent=isPlaying?'Pause':'Play Guided';
  if(isPlaying){
    timer=setInterval(()=>{
      timeLeft--; const c=document.getElementById('circ'); if(c) c.textContent=`${Math.floor(timeLeft/60)}:${String(timeLeft%60).padStart(2,'0')}`;
-     if(timeLeft%15===0){
-       const prompt=document.getElementById('prompt'), phase=document.getElementById('phase'), fill=document.getElementById('gfill');
-       if(timeLeft>180){ if(prompt) prompt.textContent=timeLeft%30===0?'Push — resisting lets them pull you easily — relax & feel where you are':'Pull — resisting lets them push — relax & feel where you are'; if(phase) phase.textContent='50/50 — Resist less, ground more'; groundPercent=50; }
-       else if(timeLeft>60){ if(prompt) prompt.textContent='Resistance hard to see from outside but you feel it inside'; if(phase) phase.textContent='Inside feel'; groundPercent=55; }
-       else{ if(prompt) prompt.textContent='DBSO — 60% ground — KeepDoingIt'; if(phase) phase.textContent='60% ground'; groundPercent=60; }
-       if(fill) fill.style.width=groundPercent+'%';
+     // Timed prompts come from the practice's own guide.segments (#113) —
+     // each segment applies while timeLeft >= its minLeft.
+     const segs=(currentEx().guide&&currentEx().guide.segments)||null;
+     if(timeLeft%15===0 && segs){
+       const seg=segs.find(s=>timeLeft>=s.minLeft);
+       if(seg){
+         const prompt=document.getElementById('prompt'), phase=document.getElementById('phase');
+         if(prompt) prompt.textContent=seg.alternate?seg.alternate[Math.floor(timeLeft/15)%2]:(seg.prompt||'');
+         if(phase) phase.textContent=seg.phase||'';
+         if(typeof seg.ground==='number'){
+           groundPercent=seg.ground;
+           const fill=document.getElementById('gfill'), label=document.getElementById('glabel');
+           if(fill) fill.style.width=groundPercent+'%';
+           if(label) label.textContent=groundPercent+'% ground — goal 60% — DBSO';
+         }
+       }
      }
-     if(timeLeft<=0){ clearInterval(timer); isPlaying=false; timeLeft=300; alert(interludes[1].text); renderPlayer(); }
+     if(timeLeft<=0){ clearInterval(timer); isPlaying=false; justFinished=true; timeLeft=practiceSeconds(currentEx()); renderPlayer(); }
    },1000);
  } else { clearInterval(timer); }
 }
-function reset(){ clearInterval(timer); isPlaying=false; timeLeft=300; groundPercent=50; renderPlayer(); }
+function reset(){ clearInterval(timer); isPlaying=false; justFinished=false; timeLeft=practiceSeconds(currentEx()); groundPercent=50; renderPlayer(); }
 document.getElementById('search').oninput=(e)=>renderStudios(e.target.value);
+document.getElementById('studioHead').textContent=studios.length+' STUDIOS · PERSONALIZATION';
 renderStudios(); renderPartTabs(); renderExList(); renderPlayer(); renderProgress();
 // Signed-in members get every practice free — check the shared site session.
 fetch('auth-state.php',{credentials:'same-origin'})
@@ -301,7 +320,7 @@ fetch('auth-state.php',{credentials:'same-origin'})
    document.getElementById('lockModal')?.remove();
    const b=document.getElementById('authBadge');
    b.style.display='block';
-   b.innerHTML='Signed in — <strong>all 20 practices unlocked</strong>.';
+   b.innerHTML='Signed in — <strong>all '+exercises.length+' practices unlocked</strong>.';
    renderExList(currentPart); renderPlayer();
  })
  .catch(e=>console.error('auth-state check failed',e));
@@ -332,7 +351,7 @@ fetch('auth-state.php',{credentials:'same-origin'})
   if(studioParam) { try { selectStudioBySlug(studioParam); } catch(e){ console.error('studio banner', e); } }
   const exSlug = (params.get('exercise')||'').toLowerCase();
   if(slugMap[exSlug]) {
-    try { currentId = slugMap[exSlug]; if(typeof renderPlayer==='function') renderPlayer(); } catch(e){ console.error('exercise slug route', e); }
+    try { if(typeof setPractice==='function') setPractice(slugMap[exSlug]); } catch(e){ console.error('exercise slug route', e); }
   }
   // Support path-based /games/exercises/:slug
   const pathParts = location.pathname.split('/').filter(Boolean);
@@ -340,7 +359,7 @@ fetch('auth-state.php',{credentials:'same-origin'})
   if(pathParts.length>=3 && pathParts[0]==='games' && pathParts[1]==='exercises') {
     const last = pathParts[pathParts.length-1].toLowerCase();
     if(slugMap[last]) {
-      try { currentId = slugMap[last]; if(typeof renderPlayer==='function') renderPlayer(); } catch(e){ console.error('exercise path route', e); }
+      try { if(typeof setPractice==='function') setPractice(slugMap[last]); } catch(e){ console.error('exercise path route', e); }
     }
   }
 })();

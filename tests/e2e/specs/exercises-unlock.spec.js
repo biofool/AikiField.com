@@ -39,7 +39,7 @@ test.describe('exercises gate (issue #71)', () => {
     await browserLogin(page, { email: TEST_EMAIL, password: PASSWORD, next: '/games/exercises/' });
 
     await expect(page.locator('#authBadge')).toBeVisible();
-    await expect(page.locator('#authBadge')).toContainText('all 20 practices unlocked');
+    await expect(page.locator('#authBadge')).toContainText('all 15 practices unlocked');
     await expect(page.locator('.ex-chip')).toHaveCount(15);
     await expect(page.locator('.ex-chip.locked')).toHaveCount(0);
 
