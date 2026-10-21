@@ -42,3 +42,4 @@ tests/e2e/.stub-*.jsonl
 # Runtime player data (game results, review comments) — never commit.
 data/private/*.json
 .deploy-audit-skip.log
+input.tar.zst
