@@ -93,14 +93,17 @@ function redirect_with_status(string $status, string $msg = ''): void
 // strip control characters from all of them for defense in depth (CWE-93).
 function strip_header_injection(string $value): string
 {
-    return trim(str_replace(["\r", "\n"], '', $value));
+    // Strip ALL control chars — not just CR/LF. A NUL byte in a mail()
+    // argument throws a ValueError (HTTP 500) (issue #125).
+    return trim((string) preg_replace('/[\x00-\x1F\x7F]/', '', $value));
 }
 
-$name = strip_header_injection($_POST['name'] ?? '');
-$email = trim($_POST['email'] ?? '');
-$organization = strip_header_injection($_POST['organization'] ?? '');
-$interest = strip_header_injection($_POST['interest'] ?? '');
-$message = trim($_POST['message'] ?? '');
+// Length caps — unbounded fields were accepted verbatim (issue #125).
+$name = strip_header_injection(substr($_POST['name'] ?? '', 0, 100));
+$email = trim(substr($_POST['email'] ?? '', 0, 200));
+$organization = strip_header_injection(substr($_POST['organization'] ?? '', 0, 150));
+$interest = strip_header_injection(substr($_POST['interest'] ?? '', 0, 200));
+$message = trim(substr($_POST['message'] ?? '', 0, 5000));
 
 // --- Rate limiting ---
 // Turnstile CAPTCHA verification lives further down (after the honeypot
@@ -231,6 +234,10 @@ if (count($errors) > 0) {
 
 // --- Build email ---
 $subject = 'AikiField Inquiry: ' . ($interest !== '' ? $interest : 'General');
+// RFC 2047-encode non-ASCII — raw 8-bit subjects are invalid (issue #125).
+if (function_exists('mb_encode_mimeheader')) {
+    $subject = mb_encode_mimeheader($subject, 'UTF-8');
+}
 
 $body = "New inquiry from aikifield.com contact form:\n\n";
 $body .= "Name: " . $name . "\n";
@@ -247,9 +254,14 @@ $body .= "Submitted: " . date('Y-m-d H:i:s') . " (server time)\n";
 $clientIpForLog = contact_client_ip();
 $body .= "IP: " . ($clientIpForLog !== '' ? $clientIpForLog : 'unknown') . "\n";
 
+// Reply-To display-name must not carry , < > " or \ — those let an
+// attacker append recipient addresses so the owner's reply also reaches
+// them (issue #125).
+$replyToName = str_replace(['<', '>', '"', ',', "'"], '', $name);
 $headers = [
     'From: AikiField Contact <' . $FROM_EMAIL . '>',
-    'Reply-To: ' . $name . ' <' . $email . '>',
+    'Reply-To: ' . ($replyToName !== '' ? $replyToName . ' <' . $email . '>' : $email),
+    'MIME-Version: 1.0',
     'X-Mailer: PHP/' . phpversion(),
     'Content-Type: text/plain; charset=UTF-8',
 ];

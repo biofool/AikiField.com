@@ -65,17 +65,21 @@ function redirect_with_error(string $msg): void
 // strip control characters for defense in depth (CWE-93).
 function strip_header_injection(string $value): string
 {
-    return trim(str_replace(["\r", "\n"], '', $value));
+    // Strip ALL control chars — not just CR/LF. A NUL byte in a mail()
+    // argument throws a ValueError (HTTP 500); other C0s corrupt headers
+    // and bodies (issue #125).
+    return trim((string) preg_replace('/[\x00-\x1F\x7F]/', '', $value));
 }
 
-$name = strip_header_injection($_POST['name'] ?? '');
-$email = trim($_POST['email'] ?? '');
-$studio = strip_header_injection($_POST['studio'] ?? '');
-$website = strip_header_injection($_POST['website'] ?? '');
-$location = strip_header_injection($_POST['location'] ?? '');
-$practice = strip_header_injection($_POST['practice'] ?? '');
-$help = strip_header_injection($_POST['help'] ?? '');
-$message = trim($_POST['message'] ?? '');
+// Length caps — unbounded fields were accepted verbatim (issue #125).
+$name = strip_header_injection(substr($_POST['name'] ?? '', 0, 100));
+$email = trim(substr($_POST['email'] ?? '', 0, 200));
+$studio = strip_header_injection(substr($_POST['studio'] ?? '', 0, 150));
+$website = strip_header_injection(substr($_POST['website'] ?? '', 0, 200));
+$location = strip_header_injection(substr($_POST['location'] ?? '', 0, 100));
+$practice = strip_header_injection(substr($_POST['practice'] ?? '', 0, 100));
+$help = strip_header_injection(substr($_POST['help'] ?? '', 0, 200));
+$message = trim(substr($_POST['message'] ?? '', 0, 5000));
 $consentListing = ($_POST['consent_listing'] ?? '') === 'yes';
 $consentUpdates = ($_POST['consent_updates'] ?? '') === 'yes';
 
@@ -197,6 +201,11 @@ if (count($errors) > 0) {
 
 // --- Build email ---
 $subject = 'Studio Visibility Review request: ' . ($studio !== '' ? $studio : $name);
+// RFC 2047-encode non-ASCII names — raw 8-bit subjects are invalid
+// (issue #125) and some relays mangle or reject them.
+if (function_exists('mb_encode_mimeheader')) {
+    $subject = mb_encode_mimeheader($subject, 'UTF-8');
+}
 
 $body = "New Studio Visibility Review request from aikifield.com/somatic-studios/:\n\n";
 $body .= "Name: " . $name . "\n";
@@ -226,9 +235,14 @@ $body .= "Submitted: " . date('Y-m-d H:i:s') . " (server time)\n";
 $clientIpForLog = studio_client_ip();
 $body .= "IP: " . ($clientIpForLog !== '' ? $clientIpForLog : 'unknown') . "\n";
 
+// Reply-To display-name must not carry , < > " or \ — those let an
+// attacker append recipient addresses so the owner's reply also reaches
+// them (issue #125 — CR/LF was stripped but not address syntax).
+$replyToName = str_replace(['<', '>', '"', ',', "'"], '', $name);
 $headers = [
     'From: AikiField Contact <' . $FROM_EMAIL . '>',
-    'Reply-To: ' . $name . ' <' . $email . '>',
+    'Reply-To: ' . ($replyToName !== '' ? $replyToName . ' <' . $email . '>' : $email),
+    'MIME-Version: 1.0',
     'X-Mailer: PHP/' . phpversion(),
     'Content-Type: text/plain; charset=UTF-8',
 ];
