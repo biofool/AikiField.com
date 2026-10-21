@@ -168,6 +168,20 @@ if ($method === 'GET' && preg_match('#/v1/auth/([^/]+)/authorize$#', $path, $pro
     $backendUrl .= $sep . 'redirect_uri=' . urlencode($redirectUri);
 }
 
+// Issue #129 / AIR#941: forward the browser's Cookie header on the OAuth
+// authorize/callback routes so the backend's oauth_state_nonce HttpOnly
+// cookie round-trips through this proxy. Scoped to those two routes only —
+// nothing else needs the browser's cookie jar at the backend. Response
+// Set-Cookie is already forwarded via $FORWARD_RESP_HEADERS.
+if (preg_match('#/v1/auth/[^/]+/(authorize|callback)$#', $path)) {
+    foreach (getallheaders() as $name => $value) {
+        if (strtolower($name) === 'cookie' && $value !== '') {
+            $headers[] = "Cookie: $value";
+            break;
+        }
+    }
+}
+
 // Get request body
 $body = '';
 if (in_array($method, ['POST', 'PUT', 'PATCH', 'DELETE'])) {
