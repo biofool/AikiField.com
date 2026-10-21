@@ -405,7 +405,8 @@ for arg in "$@"; do
         --purge-all) PURGE_ALL=1 ;;
         --no-pull)   NO_PULL=1 ;;
         --skip-ci)   SKIP_CI=1 ;;
-        --skip-audit) SKIP_AUDIT=1 ;;
+                --skip-audit) SKIP_AUDIT=1 ;;
+        --allow-dirty) ALLOW_DIRTY=1 ;;
         -y|--yes) YES=1 ;;
         upload|download|dryrun|deploy|deploy-all|sftp|ftp|logs|report|help)
             [ -z "$CMD" ] && CMD="$arg"
@@ -457,7 +458,15 @@ else
 fi
 unset -f _apply_known_remote
 
-[[ -n "$REMOTE_PATH_FLAG" ]] && REMOTE_PATH="$REMOTE_PATH_FLAG"
+# Issue #126: -p PATH feeds rsync --delete — reject paths that could wipe
+# the wrong remote dir (root, home, traversal, missing site prefix).
+if [[ -n "$REMOTE_PATH_FLAG" ]]; then
+    if [[ "$REMOTE_PATH_FLAG" =~ \.\. || "$REMOTE_PATH_FLAG" =~ ^/ || "$REMOTE_PATH_FLAG" =~ ^~ || "$REMOTE_PATH_FLAG" != *aikifield* ]]; then
+        echo "ERROR: refusing -p remote path '$REMOTE_PATH_FLAG' with --delete (must be relative, contain 'aikifield', no .. / ~ / leading /)" >&2
+        exit 1
+    fi
+    REMOTE_PATH="$REMOTE_PATH_FLAG"
+fi
 RSYNC_REMOTE="${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_PATH}"
 
 # coach-config.staging.php points the coaching-auth proxy at a placeholder,
@@ -687,6 +696,17 @@ case "$CMD" in
 esac
 
 case "$CMD" in
+    selftest)
+        # Issue #126: dry-run the upload and fail if any denied internal
+        # path would be published. Extend the pattern as new internals land.
+        RSYNC_OUT=$(do_rsync -avz --dry-run --delete "${EXCLUDES[@]}" -e "$RSYNC_SSH_CMD" "$RSYNC_LOCAL" "$RSYNC_REMOTE" 2>/dev/null || true)
+        if printf '%s\n' "$RSYNC_OUT" | grep -E '(^|/)(\.ai-context|\.github|\.cursor|\.vscode|\.env|test-results|ci-results|docs|\.git)/|\.(log|dvcignore)$|(^|/)LICENSE$|AikiField\.pdf' ; then
+            echo "SELF-TEST FAIL — internal paths would be published (above)" >&2
+            exit 1
+        fi
+        echo "SELF-TEST OK — dry-run publishes no internal paths"
+        exit 0
+        ;;
     upload)
         log_v "Upload (dry-run preview then confirm) to ${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_PATH}"
         echo ""
@@ -793,6 +813,19 @@ case "$CMD" in
         ;;
 
     deploy)
+        # Issue #126: gates audit committed code but rsync ships the working
+        # tree — refuse to deploy uncommitted/untracked files so what CI
+        # cleared is what ships. --allow-dirty overrides (logged).
+        if [[ "${ALLOW_DIRTY:-0}" != "1" && -n "$(git -C "$LOCAL_PATH" status --porcelain 2>/dev/null)" ]]; then
+            echo "ERROR: refusing deploy — working tree has uncommitted/untracked files." >&2
+            echo "  The audit/CI gate covers committed code; rsync ships the working tree." >&2
+            echo "  Commit first, or rerun with --allow-dirty (logs an override)." >&2
+            exit 1
+        fi
+        if [[ "${ALLOW_DIRTY:-0}" == "1" && -n "$(git -C "$LOCAL_PATH" status --porcelain 2>/dev/null)" ]]; then
+            echo "  ⚠ DEPLOYING DIRTY TREE (--allow-dirty) — rsync ships uncommitted files the gate never saw" >&2
+            echo "$(date -u +%FT%TZ) allow-dirty deploy user=${USER:-?}" >> "${LOCAL_PATH}logs/.deploy-audit-skip.log" 2>/dev/null || true
+        fi
         log_v "Deploying to ${REMOTE_NAME:-prod} (${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_PATH})"
         echo "========================================"
         echo "  DEPLOY — git pull + push + rsync to peec.biz"
