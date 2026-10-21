@@ -408,7 +408,7 @@ for arg in "$@"; do
                 --skip-audit) SKIP_AUDIT=1 ;;
         --allow-dirty) ALLOW_DIRTY=1 ;;
         -y|--yes) YES=1 ;;
-        upload|download|dryrun|deploy|deploy-all|sftp|ftp|logs|report|help)
+        upload|download|dryrun|deploy|deploy-all|sftp|ftp|logs|report|selftest|help)
             [ -z "$CMD" ] && CMD="$arg"
             ;;
         *)
