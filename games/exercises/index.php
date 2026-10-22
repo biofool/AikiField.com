@@ -76,8 +76,6 @@ h1{font-size:26px;letter-spacing:-0.02em;line-height:1.1} h1 span{display:block;
 .sidebar,.right{padding:20px;border-right:1px solid #E8E0D0;overflow-y:auto;max-height:calc(100vh - 70px);position:sticky;top:70px}
 .right{border-right:none;border-left:1px solid #E8E0D0}
 .center{padding:28px;max-width:820px}
-.studio{padding:10px 12px;margin:6px 0;border:1px solid #E8E0D0;background:#fff;cursor:pointer;font-size:12px}
-.studio.active{background:#1A1A1A;color:#fff}
 .chip{display:inline-block;padding:6px 10px;border:1px solid #1A1A1A;font-size:11px;cursor:pointer;background:#fff;margin:4px}
 .chip.active{background:#1A1A1A;color:#fff} .chip.locked{opacity:0.35}
 .player{background:#fff;border:1.5px solid #1A1A1A;padding:26px;margin-top:18px}
@@ -96,9 +94,6 @@ img.hero{width:100%;max-width:300px;display:block;margin:10px auto;border:1px so
 <header><h1>TWENTY PRACTICES <span>Creativity in the Unified Field — Book of Exercises & Practices — from the work of Richard Moon 6th Dan · Student of Robert Nadeau since '71</span></h1><a href="/games/" style="padding:7px 14px;border:1px solid #1A1A1A;background:#fff;color:#1A1A1A;text-decoration:none;font-size:12px">All games</a></header>
 <div class="wrap">
 <div class="sidebar">
-<h3 id="studioHead" style="font-size:11px;letter-spacing:0.12em"></h3>
-<input id="search" placeholder="Search studios..." style="width:100%;padding:8px;border:1px solid #1A1A1A;margin:10px 0">
-<div id="studioList"></div>
 <img class="hero" src="images/image_20260919_144743.webp">
 <img class="hero" src="images/image_20260919_144742.webp">
 <img class="hero" src="images/image_20260919_144741.webp">
@@ -184,17 +179,6 @@ function showLockedModal(ex){
  const close=()=>{ overlay.remove(); };
  overlay.onclick=(e)=>{ if(e.target===overlay) close(); };
  document.getElementById('lockClose').onclick=close;
-}
-function renderStudios(f=""){
- const list=document.getElementById('studioList');
- list.innerHTML=studios.filter(s=>s.name.toLowerCase().includes(f.toLowerCase())).map(s=>`<div class="studio" data-n="${s.name}"><strong>${s.name}</strong><br><span style="font-size:10px;opacity:0.7">${s.region} · ${s.cat}</span></div>`).join('');
- list.querySelectorAll('.studio').forEach(el=>{
-   el.onclick=()=>{
-     document.querySelectorAll('.studio').forEach(x=>x.classList.remove('active')); el.classList.add('active');
-     const st=studios.find(x=>x.name===el.dataset.n);
-     showStudioBanner(st);
-   }
- });
 }
 function showStudioBanner(st){
  const b=document.getElementById('banner'); b.style.display='block';
@@ -304,9 +288,7 @@ function togglePlay(){
  } else { clearInterval(timer); }
 }
 function reset(){ clearInterval(timer); isPlaying=false; justFinished=false; timeLeft=practiceSeconds(currentEx()); groundPercent=50; renderPlayer(); }
-document.getElementById('search').oninput=(e)=>renderStudios(e.target.value);
-document.getElementById('studioHead').textContent=studios.length+' STUDIOS · PERSONALIZATION';
-renderStudios(); renderPartTabs(); renderExList(); renderPlayer(); renderProgress();
+renderPartTabs(); renderExList(); renderPlayer(); renderProgress();
 // Signed-in members get every practice free — check the shared site session.
 fetch('auth-state.php',{credentials:'same-origin'})
  .then(r=>r.ok?r.json():Promise.reject(new Error('auth-state HTTP '+r.status)))
