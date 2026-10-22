@@ -355,6 +355,17 @@ dashboard to send a user a token-based password-reset email. It is gated by
 admin session and is not consumed by AikiField's blind `login.php` / `/beta/`
 surface, so no frontend change is required here.
 
+**Backend auth hardening (AIRichardMoon issue #880, 2026-10-14):**
+`POST /v1/auth/reset-password` no longer self-activates pending accounts —
+accounts without a registration code keep `active=false` and the response is
+`{ok, active:false, pending:true}` with no session token. AikiField's blind
+`login.php` does not consume the reset-password flow (its users reset via the
+QA frontend or admin), so no frontend change is required here — recorded per
+the triple-PRD rule. The same backend change also makes `change-email`
+preserve all privileges/flags and strips CR/LF from mail subjects
+(`email-coach` path included — it is in AikiField's endpoint list above, and
+`coach-proxy.php` passes the subject through unchanged).
+
 `projects.php` is no longer in this diagram — it is a static marketing page
 with no auth surface. The invitation card on `projects.php` links to
 `contact.html`, not to `login.php`.
