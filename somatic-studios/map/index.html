@@ -1,0 +1,3010 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Worldwide Studio Map — AikiField</title>
+    <link rel="canonical" href="https://aikifield.com/somatic-studios/map/">
+    <!-- Self-hosted map stack — no external providers (#316). jQuery,
+         bootstrap, glyphicons, fontawesome and awesome-markers were folium
+         boilerplate this map never used; dropped rather than vendored. -->
+    <script src="/js/vendor/leaflet/leaflet.js"></script>
+    <link rel="stylesheet" href="/js/vendor/leaflet/leaflet.css"/>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600;700&family=Noto+Sans+JP:wght@400;700&family=Noto+Sans+Arabic:wght@400;700&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!--
+      All map assets are first-party (/js/vendor/*, /data/*.json). The only
+      remaining third-party request is Google Fonts — cosmetic with graceful
+      fallback; tracking-prevention storage warnings may still appear for it.
+    -->
+    <script>
+        L_NO_TOUCH = false;
+        L_DISABLE_3D = false;
+    </script>
+    <script src="/js/vendor/markercluster/leaflet.markercluster.js"></script>
+    <link rel="stylesheet" href="/js/vendor/markercluster/MarkerCluster.css"/>
+    <link rel="stylesheet" href="/js/vendor/markercluster/MarkerCluster.Default.css"/>
+
+<style>
+/* ════════════════════════════════════════════════════════════════════
+   studios-map.css — Worldwide Studio Map
+   Source file for the map's custom styles. Built into data/studios-map.html
+   by scripts/build-map.sh. Do not edit the generated file directly.
+   ════════════════════════════════════════════════════════════════════ */
+
+:root {
+  /* ── Map panel semantic tokens — "living atlas" dark theme (#320) ── */
+  --map-bg:           #0D1321;
+  --map-surface:      #101a2b;
+  --map-surface-hover: #1a2740;
+  --map-surface-alt:  #16202f;
+  --map-border:       #2a3a55;
+  --map-text:         #F4F7FB;
+  --map-text-muted:   #A9B7D0;
+  --map-text-faint:   #6b7c98;
+  --map-text-strong:  #ffffff;
+  --map-accent:       #F6C453; /* amber */
+  --map-font-family:  'Noto Sans', 'Noto Sans JP', 'Noto Sans Arabic', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+html, body {
+  width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden;
+}
+
+/*
+  Flex layout: the page is a horizontal flex container with the filter
+  panel on the left and the map filling the remaining space. This replaces
+  the old position:fixed + 272px !important inset hack, which fought with
+  Leaflet's inline styles and required manual invalidateSize() calls.
+  On narrow screens (<700px) the panel becomes a slide-in overlay.
+*/
+#map-layout {
+  display: flex;
+  width: 100%; height: 100%;
+}
+.folium-map {
+  flex: 1 1 auto;
+  width: 100%; height: 100%;
+  margin: 0; padding: 0; border: none;
+  z-index: 0;
+}
+#map-slot {
+  flex: 1 1 auto;
+  position: relative;
+  height: 100%;
+}
+#map-slot > .folium-map {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important; height: 100% !important;
+}
+
+/* ── Zoom controls ── */
+.leaflet-control-zoom a.reset-zoom-btn {
+  font-size: 18px !important;
+  font-weight: 700 !important;
+  text-decoration: none;
+}
+.leaflet-control-zoom {
+  position: absolute !important; top: 12px !important; left: 10px !important;
+  right: auto !important; z-index: 1000 !important;
+}
+.leaflet-control-zoom a {
+  width: 32px !important; height: 32px !important; line-height: 32px !important;
+  font-size: 20px !important; font-weight: 700 !important; color: var(--map-text) !important;
+  background: var(--map-surface) !important; border: 1px solid var(--map-border) !important; border-radius: 4px !important;
+  margin-bottom: 4px !important; box-shadow: 0 2px 6px rgba(0,0,0,.4) !important;
+}
+.leaflet-control-zoom a:hover { background: var(--map-surface-hover) !important; color: #fff !important; }
+.leaflet-control-zoom a:focus-visible { outline: 2px solid var(--map-accent, #38a9db); outline-offset: 2px; }
+
+/* ── Title overlay ── */
+#clean-title {
+  position: fixed; top: 14px; right: 14px; z-index: 1000;
+  font-family: var(--map-font-family);
+  pointer-events: none; max-width: calc(100vw - 292px); text-align: right;
+}
+#clean-title h1 {
+  margin: 0; font-size: 22px; font-weight: 700; color: var(--map-text);
+  text-shadow: 0 1px 6px rgba(0,0,0,.8), 0 0 14px rgba(0,0,0,.6);
+}
+#clean-title p {
+  margin: 2px 0 0; font-size: 12px; color: var(--map-text-muted);
+  text-shadow: 0 1px 5px rgba(0,0,0,.8);
+}
+
+/* ── Nearest-states notice bar ── */
+.nearest-notice {
+  position: fixed; top: 14px; left: 50%; transform: translateX(-50%);
+  z-index: 1000;
+  font-family: var(--map-font-family);
+  background: var(--map-surface, #fff);
+  border: 1px solid var(--map-accent, #38a9db);
+  border-radius: 8px;
+  padding: 6px 14px;
+  display: flex; align-items: center; gap: 10px;
+  box-shadow: 0 2px 12px rgba(0,0,0,.12);
+  font-size: 13px; color: var(--map-text, #333);
+  max-width: calc(100vw - 40px);
+}
+.nearest-notice #nearest-notice-text { white-space: nowrap; }
+.nearest-show-all-btn {
+  border: none; background: var(--map-accent, #38a9db); color: #fff;
+  font: inherit; font-size: 12px; font-weight: 600;
+  padding: 3px 10px; border-radius: 4px; cursor: pointer;
+  white-space: nowrap;
+}
+.nearest-show-all-btn:hover { opacity: 0.85; }
+@media (max-width: 700px) {
+  .nearest-notice { top: 6px; font-size: 12px; padding: 4px 10px; gap: 6px; }
+  .nearest-notice #nearest-notice-text { max-width: 160px; overflow: hidden; text-overflow: ellipsis; }
+}
+
+/* ── Filter panel ── */
+#clean-panel {
+  flex: 0 0 272px;
+  background: var(--map-surface, #fff); border-right: 1px solid var(--map-border, #ddd);
+  font-family: var(--map-font-family);
+  display: flex; flex-direction: column;
+  box-shadow: 2px 0 8px rgba(0,0,0,.08);
+  z-index: 1001;
+}
+#clean-panel-header {
+  position: relative;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--map-border, #eee);
+  display: flex; align-items: flex-start; gap: 10px;
+}
+.panel-header-text { flex: 1; min-width: 0; }
+.panel-header-text h2 { margin: 0; font-size: 16px; font-weight: 700; color: var(--map-text, #333); }
+.panel-header-text p { margin: 2px 0 0; font-size: 12px; color: var(--map-text-muted, #888); }
+.icon-btn {
+  width: 28px; height: 28px; border-radius: 50%;
+  border: 1px solid var(--map-border, #ddd); background: var(--map-surface, #fff);
+  color: var(--map-text-muted, #666); font-size: 14px; font-weight: 700;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.icon-btn:hover { color: var(--map-text-strong, #fff); border-color: #5a6d8f; }
+.icon-btn:focus-visible { outline: 2px solid var(--map-accent, #38a9db); outline-offset: 2px; }
+#panel-help-tip {
+  display: none; position: absolute; top: 100%; margin-top: 8px; left: 16px; right: 16px;
+  background: #1a1a2e; color: #e0e0e0; padding: 10px 14px; border-radius: 8px;
+  font-size: 12px; line-height: 1.5; z-index: 1002;
+  box-shadow: 0 4px 16px rgba(0,0,0,.25);
+}
+#panel-help-tip.show { display: block; }
+#panel-help-tip::before {
+  content: ''; position: absolute; top: -6px; right: 18px;
+  border: 6px solid transparent; border-bottom-color: #1a1a2e; border-top: none;
+}
+#clean-panel-body {
+  padding: 14px 16px; flex: 1; display: flex; flex-direction: column; gap: 16px;
+  overflow-y: auto;
+}
+.panel-section { display: flex; flex-direction: column; gap: 6px; }
+.panel-section-header {
+  display: flex; justify-content: space-between; align-items: center; gap: 8px;
+}
+.panel-section-label {
+  font-size: 11px; font-weight: 700; color: var(--map-text-muted, #888);
+  text-transform: uppercase; letter-spacing: .5px;
+}
+.text-btn {
+  background: transparent; border: none; padding: 0;
+  color: var(--map-accent, #38a9db); font-size: 12px; font-weight: 600;
+  cursor: pointer;
+}
+.text-btn:hover { text-decoration: underline; }
+.text-btn:focus-visible { outline: 2px solid var(--map-accent, #38a9db); outline-offset: 2px; }
+
+/* ── Search input ── */
+.input-wrap { position: relative; display: flex; align-items: center; }
+#clean-search-input {
+  width: 100%; padding: 8px 28px 8px 12px; border: 1px solid var(--map-border, #ccc); border-radius: 8px;
+  font-size: 13px; box-shadow: inset 0 1px 2px rgba(0,0,0,.05); box-sizing: border-box;
+}
+#clean-search-input:focus { outline: none; border-color: var(--map-accent, #38a9db); box-shadow: 0 0 0 2px rgba(56,169,219,.15); }
+.input-clear {
+  position: absolute; right: 6px; top: 50%; transform: translateY(-50%);
+  width: 20px; height: 20px; border-radius: 50%;
+  border: none; background: transparent; color: var(--map-text-faint);
+  font-size: 16px; line-height: 1; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+}
+.input-clear:hover { color: var(--map-text); }
+
+/* ── Geography drilldown selects ── */
+.stacked-selects { display: flex; flex-direction: column; gap: 6px; }
+.stacked-selects select,
+#clean-admin1-filter, #clean-city-filter {
+  width: 100%; padding: 7px 10px; border: 1px solid var(--map-border, #ccc); border-radius: 8px;
+  font-size: 12px; font-family: inherit; background: var(--map-surface, #fff);
+  box-shadow: inset 0 1px 2px rgba(0,0,0,.05); cursor: pointer;
+}
+.stacked-selects select:focus,
+#clean-admin1-filter:focus, #clean-city-filter:focus { outline: none; border-color: var(--map-accent, #38a9db); box-shadow: 0 0 0 2px rgba(56,169,219,.15); }
+#clean-city-filter, #clean-admin1-filter { display: none; }
+
+/* ── Category pills ── */
+.cat-pill {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 7px 12px; border: 1px solid var(--pill-color, #ddd);
+  border-radius: 20px; background: var(--map-surface, #fff); cursor: pointer;
+  font-size: 13px; font-weight: 600; color: var(--map-text, #333);
+  transition: all .15s; user-select: none;
+}
+.cat-pill:hover { background: var(--map-surface-hover, #f8f8f8); border-color: var(--pill-color, #bbb); }
+.cat-pill:focus-visible { outline: 2px solid var(--map-accent, #38a9db); outline-offset: 2px; }
+.cat-pill.active {
+  background: var(--pill-color, #ddd); color: #fff; border-color: var(--pill-color, #ddd);
+}
+.cat-pill.active .cat-pill-dot { background: #fff; }
+.cat-pill-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.cat-pill-count { font-size: 11px; opacity: .7; font-weight: 400; }
+.cat-group { display: flex; flex-direction: column; gap: 6px; }
+.cat-group-header { display: flex; align-items: center; gap: 4px; }
+.cat-group-header .cat-pill { flex: 1; }
+.cat-group-arrow {
+  cursor: pointer; font-size: 10px; color: var(--map-text-faint); padding: 4px 6px;
+  user-select: none; transition: transform .15s;
+}
+.cat-group-arrow:hover { color: var(--map-text-muted); }
+.cat-group-arrow:focus-visible { outline: 2px solid var(--map-accent, #38a9db); outline-offset: 2px; }
+.cat-group-arrow.collapsed { transform: rotate(-90deg); }
+.cat-group-children {
+  display: flex; flex-direction: column; gap: 6px; padding-left: 18px;
+}
+.cat-group-children.collapsed { display: none; }
+.cat-pill-child { font-size: 12px; padding: 5px 10px; }
+.toggle-others-btn, .show-all-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 7px 14px; border: 1px dashed #4a5d80; border-radius: 20px;
+  background: rgba(16,26,43,.92); cursor: pointer;
+  font-size: 13px; font-weight: 500; color: var(--map-text-muted);
+  transition: all .15s; user-select: none;
+  width: 100%;
+}
+.show-all-btn { margin-top: 8px; }
+.toggle-others-btn:hover, .show-all-btn:hover { border-color: #6b7c98; color: var(--map-text); background: var(--map-surface-hover); }
+.toggle-others-btn:focus-visible, .show-all-btn:focus-visible { outline: 2px solid var(--map-accent, #F6C453); outline-offset: 2px; }
+.toggle-others-btn.active { border-style: solid; border-color: #6b7c98; color: var(--map-text); background: var(--map-surface-hover); }
+
+/* ── Status bar ── */
+.status-bar {
+  display: flex; flex-direction: column; gap: 6px;
+  font-size: 12px; color: var(--map-text-muted, #666);
+}
+#clean-stats {
+  background: var(--map-surface-alt, #f5f5f5); padding: 6px 10px; border-radius: 6px;
+}
+#clean-loading {
+  color: var(--map-accent, #38a9db); background: var(--map-surface-alt, #f5f5f5); padding: 6px 10px;
+  border-radius: 6px; display: none;
+}
+#clean-cat-list { display: flex; flex-direction: column; gap: 6px; }
+
+/* ── Youth readiness filters ── */
+.youth-segment-pills { display: flex; gap: 6px; flex-wrap: wrap; }
+.youth-segment-pill {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 6px 10px; border: 1px solid var(--seg-color, #ddd);
+  border-radius: 20px; background: var(--map-surface, #fff); cursor: pointer;
+  font-size: 13px; font-weight: 600; color: var(--seg-color, #555);
+  transition: all .15s; user-select: none;
+}
+.youth-segment-pill:hover { background: var(--map-surface-hover, #f8f8f8); }
+.youth-segment-pill.active {
+  background: var(--seg-color, #ddd); color: #fff; border-color: var(--seg-color, #ddd);
+}
+.youth-segment-pill .seg-count { font-size: 11px; opacity: .7; font-weight: 400; }
+.youth-slider-row { display: flex; flex-direction: column; gap: 4px; margin-top: 6px; }
+.youth-slider-row label { font-size: 12px; color: var(--map-text-muted, #666); }
+.youth-slider-row input[type="range"] { width: 100%; cursor: pointer; }
+.youth-select-row { margin-top: 6px; }
+.youth-check {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 12px; color: var(--map-text, #333); cursor: pointer; margin-top: 6px;
+}
+.youth-check input { cursor: pointer; }
+
+/* ── Panel footer ── */
+#clean-panel-footer {
+  padding: 12px 16px 14px; border-top: 1px solid var(--map-border, #eee);
+}
+#export-request-btn {
+  display: block; width: 100%; padding: 9px 16px;
+  border: 1px solid var(--map-border, #ddd); border-radius: 8px;
+  background: var(--map-surface-alt, #f5f5f5); color: var(--map-text, #333);
+  font-size: 13px; font-weight: 600;
+  cursor: pointer; text-align: center; text-decoration: none;
+  font-family: var(--map-font-family);
+  transition: all .15s; margin-bottom: 8px;
+}
+#export-request-btn:hover { background: var(--map-border, #e5e5e5); }
+#export-request-btn:focus-visible { outline: 2px solid var(--map-accent, #38a9db); outline-offset: 2px; }
+#export-request-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+#export-request-btn:disabled:hover { background: var(--map-surface-alt, #f5f5f5); }
+#data-badge {
+  font-size: 10px; color: var(--map-text-faint, #aaa); text-align: center; line-height: 1.4;
+  font-family: var(--map-font-family);
+}
+#data-badge .data-badge-date { font-weight: 600; color: var(--map-text-muted, #888); }
+#data-badge .data-badge-crc { font-family: monospace; color: var(--map-border, #bbb); }
+
+/* ── Entrance animations ── */
+@keyframes panelSlideIn {
+  from { transform: translateX(-272px); opacity: 0; }
+  to   { transform: translateX(0);      opacity: 1; }
+}
+@keyframes titleFadeIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes zoomBtnFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes footerFadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+#clean-panel {
+  animation: panelSlideIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+#clean-title {
+  animation: titleFadeIn 0.6s ease 0.2s both;
+}
+.leaflet-control-zoom {
+  animation: zoomBtnFadeIn 0.5s ease 0.4s both;
+}
+#clean-panel-footer {
+  animation: footerFadeIn 0.5s ease 0.6s both;
+}
+@media (prefers-reduced-motion: reduce) {
+  #clean-panel, #clean-title, .leaflet-control-zoom, #clean-panel-footer {
+    animation: none !important;
+  }
+}
+
+/* ── Narrow-screen layout (< 700px): bottom sheet (issue #320) ── */
+/*
+  The panel becomes a bottom sheet over a full-width map (was a left-edge
+  slide-in). Category pills flatten into a horizontally scrollable chip
+  row. The profile card docks to the sheet top; the list view stays
+  full-pane.
+*/
+#panel-toggle-btn { display: none; }
+#panel-backdrop { display: none; }
+@media (max-width: 700px) {
+  #clean-title { display: none; }
+  #panel-toggle-btn {
+    display: flex; position: fixed; top: 12px; right: 10px; z-index: 1003;
+    align-items: center; gap: 6px; padding: 8px 12px;
+    background: var(--map-surface, #fff); border: 1px solid var(--map-border, #ddd);
+    border-radius: 20px; box-shadow: 0 2px 6px rgba(0,0,0,.4);
+    font-family: var(--map-font-family);
+    font-size: 13px; font-weight: 600; color: var(--map-text, #333); cursor: pointer;
+  }
+  #panel-toggle-btn:focus-visible { outline: 2px solid var(--map-accent, #F6C453); outline-offset: 2px; }
+  #map-layout { display: block; }
+  .folium-map { width: 100% !important; }
+  #clean-panel {
+    position: fixed; left: 0; right: 0; bottom: 0; top: auto;
+    width: 100%; max-height: 62vh;
+    border-right: none; border-top: 1px solid var(--map-border);
+    border-radius: 16px 16px 0 0;
+    transform: translateY(calc(100% - 46px)); /* peek: header stays visible */
+    transition: transform .25s ease;
+    animation: none !important;
+  }
+  #clean-panel.open { transform: translateY(0); }
+  #clean-panel::before {
+    content: ''; display: block; width: 38px; height: 4px;
+    border-radius: 2px; background: var(--map-border);
+    margin: 7px auto 0;
+  }
+  #panel-backdrop.open {
+    display: block; position: fixed; inset: 0; z-index: 1000;
+    background: rgba(0,0,0,.45);
+  }
+  /* Category chips: flatten the group hierarchy into one scroll row */
+  #clean-cat-list {
+    flex-direction: row; flex-wrap: nowrap;
+    overflow-x: auto; padding-bottom: 4px;
+    -webkit-overflow-scrolling: touch;
+  }
+  #clean-cat-list .cat-group,
+  #clean-cat-list .cat-group-header,
+  #clean-cat-list .cat-group-children { display: contents; }
+  #clean-cat-list .cat-group-children.collapsed { display: contents; }
+  #clean-cat-list .cat-group-arrow { display: none; }
+  #clean-cat-list .cat-pill { flex: 0 0 auto; white-space: nowrap; }
+  #school-card {
+    top: auto; bottom: 0; right: 0; left: 0;
+    width: 100%; max-height: 55vh;
+    border-radius: 16px 16px 0 0; border-left: none; border-right: none;
+  }
+  #world-back-btn { top: auto; bottom: 14px; left: 12px; }
+  #empty-notice { bottom: auto; top: 58px; max-width: calc(100vw - 24px); }
+}
+
+/* ── Continent summary markers (issue #319) ── */
+/*
+  World-scale stand-in for a continent's markers: name, filtered count,
+  and a stacked per-category color bar. Rendered as divIcons on a
+  dedicated layerGroup (not through markercluster, which would collapse
+  the pills into each other). The icon itself is a zero-size point; the
+  pill centers on it via translate(-50%,-50%).
+*/
+.cont-summary-icon {
+  background: transparent;
+  border: none;
+}
+.cont-summary {
+  transform: translate(-50%, -50%);
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+  min-width: 104px;
+  padding: 5px 10px 7px;
+  background: var(--map-surface, #fff);
+  border: 1px solid var(--map-border, #ddd);
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0,0,0,.28);
+  font-family: var(--map-font-family);
+  color: var(--map-text, #333);
+  cursor: pointer;
+  pointer-events: auto;
+  white-space: nowrap;
+}
+.cont-summary:hover { border-color: var(--map-accent, #38a9db); }
+.cont-summary-name {
+  font-size: 10px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .4px; color: var(--map-text-muted, #666);
+}
+.cont-summary-count { font-size: 15px; font-weight: 700; line-height: 1.1; }
+.cont-summary-bar {
+  display: flex; width: 100%; height: 5px; border-radius: 3px;
+  overflow: hidden; background: var(--map-surface-alt, #eee);
+}
+.cont-summary-seg { display: block; height: 100%; min-width: 1px; }
+
+/* ── Folium-generated base styles (kept for compatibility) ── */
+#map_363fa43554c25f1504b1cb6cc0f58051 {
+  position: relative;
+  width: 100.0%;
+  height: 100.0%;
+  left: 0.0%;
+  top: 0.0%;
+}
+.leaflet-container { font-size: 1rem; width: 100% !important; height: 100% !important; background: #08111F; /* water — living atlas dark theme (#316/#320) */ }
+.cat-block-empty { opacity: 0.45; }
+.cat-block-empty .cat-count { background: var(--map-surface-alt); color: var(--map-text-faint); }
+.term-row-empty { opacity: 0.4; }
+
+/* ── Map v2 components (issue #320) ─────────────────────────────── */
+
+/* Category glyph markers — one outer disc, category glyph inside,
+   "+N" badge for multi-category studios. */
+.sm-marker-icon { background: transparent; border: none; }
+.sm-marker {
+  width: 26px; height: 26px; border-radius: 50%;
+  background: var(--mc, #4E75C9);
+  border: 1.5px solid rgba(255,255,255,.75);
+  box-shadow: 0 1px 5px rgba(0,0,0,.55), 0 0 8px color-mix(in srgb, var(--mc, #4E75C9) 45%, transparent);
+  color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  position: relative;
+}
+.sm-marker svg { width: 15px; height: 15px; display: block; }
+.sm-badge {
+  position: absolute; top: -6px; right: -7px;
+  min-width: 15px; height: 15px; padding: 0 3px;
+  border-radius: 8px; background: var(--map-accent, #F6C453);
+  color: #0D1321; font-size: 9px; font-weight: 800; line-height: 15px;
+  text-align: center; font-family: var(--map-font-family);
+  border: 1px solid #0D1321;
+}
+
+/* Density tooltip on country hover */
+.density-tip {
+  background: var(--map-surface) !important;
+  border: 1px solid var(--map-border) !important;
+  color: var(--map-text) !important;
+  font-family: var(--map-font-family) !important;
+  font-size: 12px !important;
+  box-shadow: 0 2px 10px rgba(0,0,0,.5) !important;
+}
+.density-tip::before { border-top-color: var(--map-border) !important; }
+
+/* Density legend (panel section) */
+#density-legend {
+  display: flex; flex-wrap: wrap; gap: 4px 10px;
+  font-size: 11px; color: var(--map-text-muted);
+}
+#density-legend .dl-item { display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; }
+#density-legend .dl-item i {
+  display: inline-block; width: 12px; height: 12px; border-radius: 3px;
+  border: 1px solid rgba(255,255,255,.18);
+}
+
+/* "← World view" chip — appears whenever a region is focused */
+#world-back-btn {
+  position: fixed; top: 14px; left: 52px; z-index: 1000;
+  font-family: var(--map-font-family);
+  background: var(--map-surface); color: var(--map-text);
+  border: 1px solid var(--map-accent); border-radius: 20px;
+  padding: 7px 14px; font-size: 13px; font-weight: 600;
+  cursor: pointer; box-shadow: 0 2px 10px rgba(0,0,0,.4);
+}
+#world-back-btn:hover { background: var(--map-surface-hover); }
+#world-back-btn:focus-visible { outline: 2px solid var(--map-accent); outline-offset: 2px; }
+
+/* Empty state on the map surface */
+#empty-notice {
+  position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+  z-index: 1000; display: flex; align-items: center; gap: 12px;
+  font-family: var(--map-font-family); font-size: 13px;
+  background: var(--map-surface); color: var(--map-text);
+  border: 1px solid var(--map-border); border-radius: 10px;
+  padding: 10px 16px; box-shadow: 0 4px 16px rgba(0,0,0,.5);
+}
+#empty-notice button {
+  border: none; background: var(--map-accent); color: #0D1321;
+  font: inherit; font-weight: 700; padding: 4px 12px; border-radius: 6px;
+  cursor: pointer;
+}
+
+/* School profile card */
+#school-card {
+  position: fixed; top: 60px; right: 14px; z-index: 1002;
+  width: min(320px, calc(100vw - 28px));
+  max-height: calc(100% - 120px); overflow-y: auto;
+  background: var(--map-surface); color: var(--map-text);
+  border: 1px solid var(--map-border); border-radius: 14px;
+  box-shadow: 0 8px 30px rgba(0,0,0,.6);
+  font-family: var(--map-font-family);
+  padding: 16px;
+}
+#school-card-close { position: absolute; top: 10px; right: 10px; }
+#school-card-body h3 {
+  margin: 0 30px 8px 0; font-size: 16px; font-weight: 700; line-height: 1.3;
+}
+.sc-cats { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 8px; }
+.sc-chip {
+  font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 11px;
+  background: var(--chip, #4E75C9); color: #fff;
+}
+.sc-chip-alt {
+  background: transparent; border: 1px solid var(--chip, #4E75C9);
+  color: var(--chip, #A9B7D0);
+}
+.sc-loc { font-size: 13px; color: var(--map-text-muted); margin-bottom: 4px; }
+.sc-addr { font-size: 12px; color: var(--map-text-faint); margin-bottom: 8px; }
+.sc-links { display: flex; flex-direction: column; gap: 4px; margin: 8px 0; }
+.sc-link {
+  color: var(--map-accent); font-size: 12.5px; text-decoration: none;
+  word-break: break-all;
+}
+.sc-link:hover { text-decoration: underline; }
+.sc-link:focus-visible { outline: 2px solid var(--map-accent); outline-offset: 2px; }
+.sc-plain { font-size: 12.5px; color: var(--map-text-muted); word-break: break-all; }
+.sc-meta { font-size: 12px; color: var(--map-text-faint); margin-top: 8px; }
+.sc-altnames { font-size: 12px; color: var(--map-text-muted); margin-top: 6px; }
+.sc-altnames summary { cursor: pointer; color: var(--map-accent); }
+.sc-youth {
+  display: flex; flex-wrap: wrap; gap: 6px; align-items: center;
+  margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--map-border);
+  font-size: 12px; color: var(--map-text-muted);
+}
+.sc-seg { color: #0D1321; font-weight: 700; padding: 2px 8px; border-radius: 10px; font-size: 11px; }
+.sc-kg { color: var(--map-accent); font-weight: 600; }
+.sc-loading, .sc-note { font-size: 12px; color: var(--map-text-faint); margin-top: 8px; font-style: italic; }
+
+/* List view — replaces the map pane */
+#studio-list {
+  position: absolute; inset: 0; z-index: 5;
+  background: var(--map-bg); overflow-y: auto;
+  font-family: var(--map-font-family);
+  padding: 12px 14px 60px;
+}
+#map-layout.list-mode #map-slot { visibility: hidden; }
+#studio-list-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 4px 2px 10px; position: sticky; top: 0;
+  background: var(--map-bg); border-bottom: 1px solid var(--map-border);
+}
+#studio-list-count { font-size: 13px; font-weight: 700; color: var(--map-text); }
+.sl-row {
+  display: flex; flex-direction: column; gap: 2px;
+  width: 100%; text-align: left;
+  background: transparent; border: none; border-bottom: 1px solid var(--map-surface-alt);
+  padding: 9px 4px; cursor: pointer; font-family: inherit;
+}
+.sl-row:hover, .sl-row:focus-visible { background: var(--map-surface-hover); outline: none; }
+.sl-name { font-size: 13.5px; font-weight: 600; color: var(--map-text); }
+.sl-meta { font-size: 11.5px; color: var(--map-text-muted); text-transform: capitalize; }
+.sl-cat { font-size: 10.5px; color: var(--map-text-faint); text-transform: uppercase; letter-spacing: .4px; }
+#studio-list-more { display: block; margin: 14px auto; font-size: 13px; }
+
+/* `hidden` must win over the flex/absolute display rules above — the UA
+   stylesheet's [hidden]{display:none} loses to any explicit display. */
+#world-back-btn[hidden], #empty-notice[hidden], #school-card[hidden],
+#studio-list[hidden], #studio-list-more[hidden] { display: none !important; }
+
+/* Screen-reader only */
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+/* Leaflet popup (submitted studios) — dark */
+.leaflet-popup-content-wrapper {
+  background: var(--map-surface) !important; color: var(--map-text) !important;
+  border: 1px solid var(--map-border) !important; border-radius: 10px !important;
+}
+.leaflet-popup-tip { background: var(--map-surface) !important; }
+.leaflet-popup-content { font-family: var(--map-font-family) !important; }
+.leaflet-popup-content a { color: var(--map-accent) !important; }
+</style>
+
+</head>
+<body>
+<!-- ════════════════════════════════════════════════════════════════════
+     studios-map.body.html — HTML body for the studio map
+     Source file. Built into data/studios-map.html by scripts/build-map.sh.
+     ════════════════════════════════════════════════════════════════════ -->
+
+<div id="clean-title">
+  <h1>Worldwide Studio Map</h1>
+  <p id="clean-title-count">Loading studios…</p>
+</div>
+
+<div id="nearest-notice" class="nearest-notice" style="display:none" role="status">
+  <span id="nearest-notice-text">Showing the 4 nearest states…</span>
+  <button type="button" class="nearest-show-all-btn" id="nearest-show-all-btn" onclick="showAllStudios()">Show all studios</button>
+</div>
+
+<button id="panel-toggle-btn" aria-label="Show studio filters" aria-expanded="false" aria-controls="clean-panel" onclick="togglePanel()">☰ Filters</button>
+<div id="panel-backdrop" onclick="closePanel()"></div>
+
+<!-- Map v2 chrome (issue #320): world-view back chip, empty state,
+     school profile card, list view, screen-reader live region. -->
+<button id="world-back-btn" type="button" hidden onclick="showAllStudios()">← World view</button>
+<div id="empty-notice" hidden role="status">
+  <span>No studios match the current filters.</span>
+  <button type="button" onclick="resetFilters()">Reset filters</button>
+</div>
+<div id="school-card" role="dialog" aria-label="School details" hidden>
+  <button id="school-card-close" type="button" class="icon-btn" aria-label="Close school details" onclick="closeSchoolCard()">×</button>
+  <div id="school-card-body"></div>
+</div>
+<div id="studio-list" role="region" aria-label="Studio list" hidden>
+  <div id="studio-list-head">
+    <span id="studio-list-count"></span>
+    <button id="studio-list-map-btn" type="button" class="text-btn" onclick="toggleListView(false)">← Back to map</button>
+  </div>
+  <div id="studio-list-rows"></div>
+  <button id="studio-list-more" type="button" class="text-btn" hidden onclick="loadMoreList()">Show more</button>
+</div>
+<div id="map-sr-status" class="sr-only" aria-live="polite"></div>
+
+<div id="map-layout">
+<div id="clean-panel" aria-label="Studio filters">
+  <div id="clean-panel-header">
+    <div class="panel-header-text">
+      <h2>Studio filters</h2>
+      <p>Find dojos and movement studios</p>
+    </div>
+    <button id="list-view-btn" class="icon-btn" aria-label="Toggle list view" aria-pressed="false" title="List view" onclick="toggleListView()">☷</button>
+    <button id="panel-help-btn" class="icon-btn" aria-label="How to use filters" aria-expanded="false" onclick="togglePanelHelp()">?</button>
+    <div id="panel-help-tip">Search by name or pick a region and category to narrow the map. The numbers show how many studios match each filter.</div>
+  </div>
+  <div id="clean-panel-body">
+    <div class="panel-section">
+      <label class="panel-section-label" for="clean-search-input">Search by name</label>
+      <div class="input-wrap">
+        <input type="search" id="clean-search-input" placeholder="e.g. Aikikai, Tokyo…" oninput="filterMarkers()">
+        <button class="input-clear" aria-label="Clear search" onclick="clearSearch()">×</button>
+      </div>
+    </div>
+    <div class="panel-section" id="geo-panel">
+      <div class="panel-section-header">
+        <span class="panel-section-label">Filter by region</span>
+      </div>
+      <div id="geo-list-view">
+        <div class="stacked-selects">
+          <select id="clean-continent-filter" aria-label="Continent" onchange="onContinentChange()">
+            <option value="">All Continents</option>
+          </select>
+          <select id="clean-country-filter" aria-label="Country" onchange="onCountryChange()">
+            <option value="">All Countries</option>
+          </select>
+          <select id="clean-admin1-filter" aria-label="State / Province / Region" onchange="onAdmin1Change()">
+            <option value="">All States / Provinces / Regions</option>
+          </select>
+          <select id="clean-city-filter" aria-label="City" onchange="onCityChange()">
+            <option value="">All Cities</option>
+          </select>
+        </div>
+        <button type="button" class="show-all-btn" id="show-all-btn" onclick="showAllStudios()">Show all studios</button>
+      </div>
+    </div>
+    <div class="panel-section">
+      <div class="panel-section-header">
+        <span class="panel-section-label">Categories</span>
+        <button class="text-btn" id="reset-filters-btn" onclick="resetFilters()">Reset filters</button>
+      </div>
+      <div id="clean-cat-list"></div>
+      <button class="toggle-others-btn" id="toggle-others-btn" onclick="toggleOthers()">All arts</button>
+    </div>
+    <div class="panel-section" id="youth-filters" style="display:none">
+      <div class="panel-section-header">
+        <span class="panel-section-label">Youth readiness</span>
+        <button class="text-btn" id="reset-youth-btn" onclick="resetYouthFilters()">Reset</button>
+      </div>
+      <div id="youth-segment-pills" class="youth-segment-pills"></div>
+      <div class="youth-slider-row">
+        <label for="clean-youth-score">Min youth score: <span id="clean-youth-score-val">0</span></label>
+        <input type="range" id="clean-youth-score" min="0" max="100" value="0" oninput="onYouthScoreChange()">
+      </div>
+      <div class="stacked-selects youth-select-row">
+        <select id="clean-somatic-select" aria-label="Somatic orientation" onchange="onSomaticChange()">
+          <option value="">All somatic orientations</option>
+          <option value="ima">Internal Martial Arts</option>
+          <option value="mb">Mind Body</option>
+          <option value="ma">Movement Arts</option>
+          <option value="cs">Combat Sports</option>
+          <option value="mx">Mixed</option>
+          <option value="un">Unknown</option>
+        </select>
+      </div>
+      <label class="youth-check">
+        <input type="checkbox" id="clean-kindergarten-check" onchange="onKindergartenChange()">
+        Kindergarten ready only
+      </label>
+    </div>
+    <div class="panel-section" id="legend-section">
+      <div class="panel-section-header">
+        <span class="panel-section-label">Density — schools per country</span>
+      </div>
+      <div id="density-legend" aria-hidden="false"></div>
+    </div>
+    <div class="status-bar">
+      <div id="clean-stats"></div>
+      <div id="clean-loading">Loading…</div>
+      <button id="clean-retry-btn" type="button" class="text-btn" style="display:none;align-self:flex-start;margin-top:2px;" onclick="retryInitialLoad()">Retry loading data</button>
+    </div>
+  </div>
+  <div id="clean-panel-footer">
+    <button id="export-request-btn" onclick="requestStudioList()" disabled title="Export temporarily disabled">Request studio list</button>
+    <div id="data-badge">
+      <time class="data-badge-date" id="data-badge-date">—</time>
+      <span class="data-badge-crc" id="data-badge-crc"></span>
+    </div>
+  </div>
+</div>
+<div id="map-slot"></div>
+</div><!-- /#map-layout -->
+
+<script>
+/* ════════════════════════════════════════════════════════════════════
+   studios-map.js — Worldwide Studio Map
+   Source file for the map's client-side logic. Built into
+   data/studios-map.html by scripts/build-map.sh.
+
+   Architecture (issue #116):
+   - Single filter function: matchesFilters()
+   - Single dedup key: coordKey()
+   - Single counting function: computeFilteredMarkers()
+   - Lazy marker rendering: only markers within the current viewport
+     bounds are added to the cluster group. Markers are created once per
+     category load but only attached to the map layer when in bounds.
+     applyGeoFilter() culls and never moves the map; flying to a region is
+     applyGeoFilterAndFly(), driven by the geo dropdowns. Keeping those
+     separate is what stops moveend → fly → moveend from looping.
+   - No SVG continent map: geography filtering uses the drilldown
+     dropdown tree (continent → country → admin1 → city) exclusively.
+   ════════════════════════════════════════════════════════════════════ */
+(function() {
+  var MANIFEST_URL = "manifest.json";
+  var GEO_TREE_URL = "studios-geo-tree.json";
+  var CACHE_BUST = '?v=' + Date.now();
+  var totalMapped = 0;
+  var categories = [];
+  var catByName = {};
+  var manifestData = null;
+
+  var HTML_ESCAPE_RE = /[&<>"']/g;
+  var HTML_ESCAPE_MAP = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
+  function escapeHtml(s) {
+    return String(s == null ? '' : s).replace(HTML_ESCAPE_RE, function(c) { return HTML_ESCAPE_MAP[c]; });
+  }
+
+  // fetchWithRetry: wraps fetch() with automatic retry + exponential backoff.
+  var RETRY_DELAYS = [1000, 2000, 4000];
+  function fetchWithRetry(url, label, maxAttempts) {
+    maxAttempts = maxAttempts || 3;
+    function attempt(n) {
+      return fetch(url).then(function(r) {
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        return r.json();
+      }).catch(function(err) {
+        if (n >= maxAttempts) {
+          console.error('[' + label + '] fetch failed after ' + n + ' attempt(s): ' + (err && err.message ? err.message : err));
+          throw err;
+        }
+        var delay = RETRY_DELAYS[n - 1] !== undefined ? RETRY_DELAYS[n - 1] : RETRY_DELAYS[RETRY_DELAYS.length - 1];
+        console.warn('[' + label + '] fetch attempt ' + n + ' of ' + maxAttempts + ' failed (' + (err && err.message ? err.message : err) + '); retrying in ' + delay + 'ms');
+        return new Promise(function(resolve) {
+          setTimeout(function() { resolve(attempt(n + 1)); }, delay);
+        });
+      });
+    }
+    console.log('[' + label + '] starting fetch (up to ' + maxAttempts + ' attempts)');
+    return attempt(1);
+  }
+
+  function boot() {
+    var leafletMap = map_363fa43554c25f1504b1cb6cc0f58051;
+    var manifestPromise = null;
+    var geoTreeData = null;
+    var geoTreePromise = null;
+    var catLayers = {};
+    var catMarkers = {};          // catName → [all markers], used by applyGeoFilter
+    var loadedCats = {};
+    var loadingPromises = {};     // prevents duplicate loads
+    var activeCats = new Set();
+    var searchQuery = "";
+    var activeContinent = "";
+    var activeCountry = "";
+    var activeAdmin1 = "";
+    var activeCity = "";
+    var countryToContinent = {};
+    var aikidoCountByCode = {};   // ISO-2 → Aikido coord-dedup count
+    var countryNameByCode = {};   // ISO-2 → display name for popups
+    var othersShown = false;
+    var globalInitialCount = 0;
+    var mapMinZoom = 2;
+    var mapFitZoom = 2;
+    var youthAvailable = false;
+    var selectedSegments = new Set();
+    var minYouthScore = 0;
+    var selectedSomatic = "";
+    var kindergartenOnly = false;
+
+    // ── Nearest-admin1 filter (geo-IP) ───────────────────────────────
+    // On boot we resolve the viewer's approximate location via a free
+    // Geo-IP is an initial-view hint only (#320): it picks which continent
+    // to focus on boot. It never filters records out — the rest of the
+    // world remains on the summary pills and "Show all studios" returns
+    // to the world view.
+    var userSubmittedMarkers = [];     // markers added via submit form / localStorage
+
+    // ── Continent-scoped detail rendering (issue #319) ───────────────
+    // Rendering every marker worldwide no longer scales, so at most ONE
+    // continent renders marker detail at a time. Every other continent
+    // collapses to a summary pill — filtered count plus a stacked
+    // per-category color bar — and clicking a pill flies in to focus it.
+    var CONTINENT_DETAIL_MIN_ZOOM = 4;  // viewport zoom that earns a continent focus
+    var CONTINENT_KEEP_MIN_ZOOM = 3;    // focus survives down to this zoom
+    var focusedContinent = '';          // '' = no focus — summaries only
+    var summaryLayer = null;            // dedicated layerGroup (never clustered)
+    var summaryMarkers = {};            // continent code → L.marker
+
+    // ── Map v2 (issue #320): density layer, profile card, list view ──
+    var choroLayer = null;              // interactive country density fills
+    var countryCounts = {};             // iso2 → filtered coord-deduped count
+    var contCounts = {};                // continent code → filtered count
+    var detailCache = {};               // continent code → Promise<{id→rec}>
+    var cardMarker = null;              // marker whose profile card is open
+    var listMode = false;               // true while the list view replaces the map
+    var listShown = 0;                  // rows rendered so far in list view
+    var LIST_PAGE = 150;
+    var REDUCED_MOTION = !!(window.matchMedia
+      && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+
+    // Density scale for the choropleth — sqrt bins over the current max
+    // filtered country count, so the full palette always has contrast.
+    // Colors: issue #320 palette (low → max density).
+    var DENSITY_COLORS = ['#245B73', '#4E75C9', '#8B5CF6', '#F97316'];
+    var DENSITY_LAND = '#1C2940';       // land with zero matching studios
+    var DENSITY_INACTIVE = '#141c2b';   // no continent attribution
+
+    // Map mode: 'adult' (default) or 'youth'.
+    var mapMode = 'adult';
+    (function readMapMode() {
+      try {
+        var p = new URLSearchParams(window.location.search);
+        var m = p.get('map_mode');
+        if (m === 'youth' || m === 'adult') mapMode = m;
+      } catch (e) {}
+    })();
+
+    function youthMarkerColor(ps) {
+      switch (ps) {
+        case 'A': return '#3fb950';
+        case 'B': return '#58a6ff';
+        case 'C': return '#d29922';
+        case 'D': return '#bc8cff';
+        default:  return '#8b949e';
+      }
+    }
+    function youthMarkerRadius(yr) {
+      return Math.min(10, 5 + Math.floor((yr || 0) / 20));
+    }
+    function somaticFullName(code) {
+      var map = {
+        ima: 'Internal Martial Arts',
+        mb: 'Mind Body',
+        ma: 'Movement Arts',
+        cs: 'Combat Sports',
+        mx: 'Mixed',
+        un: 'Unknown'
+      };
+      return map[code] || code;
+    }
+    var bboxLayer = null;
+    var BBOX_STYLE = {
+      color: '#38a9db',
+      weight: 2,
+      opacity: 0.8,
+      fillColor: '#38a9db',
+      fillOpacity: 0.05,
+      dashArray: '5, 5',
+      interactive: false
+    };
+
+    // Fit the world inside the map container. With the flex layout, the
+    // map's clientWidth already excludes the sidebar panel width.
+    //
+    // Both zooms are floored at z2: below that the world shrinks to a
+    // stamp with markers floating on it — what a phone-width container
+    // computes to (log2(390/256) → 0), and what the zoom-out button
+    // reached from the desktop default. The GeoJSON basemap renders at
+    // any zoom, but z2 stays the sensible floor.
+    var TILE_MIN_ZOOM = 2;
+    function updateMinZoom() {
+      var width = leafletMap.getContainer().clientWidth;
+      var z = Math.log2(width / 256);
+      mapFitZoom = Math.max(TILE_MIN_ZOOM, Math.min(Math.floor(z), 5));
+      mapMinZoom = Math.max(TILE_MIN_ZOOM, Math.min(mapFitZoom - 1, 5));
+      leafletMap.setMinZoom(mapMinZoom);
+      if (leafletMap.getZoom() < mapMinZoom) {
+        leafletMap.setView([0, 150], mapMinZoom);
+      }
+    }
+
+    leafletMap.invalidateSize();
+    updateMinZoom();
+    leafletMap.setView([0, 150], mapFitZoom);
+
+    // Add a reset-view button inside Leaflet's zoom bar.
+    (function addResetZoomButton() {
+      var zoomControl = document.querySelector('.leaflet-control-zoom');
+      if (!zoomControl || zoomControl.querySelector('.reset-zoom-btn')) return;
+      var resetLink = document.createElement('a');
+      resetLink.className = 'reset-zoom-btn';
+      resetLink.href = '#';
+      resetLink.title = 'Reset view';
+      resetLink.setAttribute('role', 'button');
+      resetLink.setAttribute('aria-label', 'Reset view');
+      resetLink.innerHTML = '&#x27F2;';
+      resetLink.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        resetZoom();
+      });
+      zoomControl.appendChild(resetLink);
+    })();
+
+    var resizeDebounceTimer = null;
+    window.addEventListener('resize', function() {
+      clearTimeout(resizeDebounceTimer);
+      resizeDebounceTimer = setTimeout(function() {
+        leafletMap.invalidateSize();
+        updateMinZoom();
+        applyGeoFilter();
+      }, 150);
+    });
+
+    // ── Lazy marker rendering (issue #116) ──────────────────────────
+    // On map move/zoom, re-evaluate which markers are within the viewport
+    // bounds and only keep those in the cluster group. This avoids having
+    // thousands of live DOM objects for off-screen markers.
+    //
+    // This handler culls only — it must never move the map. Moving the map
+    // from here fires another moveend, which re-enters this handler: the
+    // map locks onto the filtered region and cannot be panned or zoomed.
+    // Flying is driven by the geo dropdown handlers instead.
+    var lazyUpdateTimer = null;
+    leafletMap.on('moveend zoomend', function() {
+      clearTimeout(lazyUpdateTimer);
+      lazyUpdateTimer = setTimeout(function() {
+        applyGeoFilter();
+        // Refreshes the "N in view" suffix, which changes with the viewport.
+        updateStats();
+      }, 100);
+    });
+
+    var loadingEl = document.getElementById('clean-loading');
+    var statsEl = document.getElementById('clean-stats');
+    var continentSelect = document.getElementById('clean-continent-filter');
+    var countrySelect = document.getElementById('clean-country-filter');
+    var admin1Select = document.getElementById('clean-admin1-filter');
+    var citySelect = document.getElementById('clean-city-filter');
+    var titleCountEl = document.getElementById('clean-title-count');
+    var youthFiltersEl = document.getElementById('youth-filters');
+    var youthScoreInput = document.getElementById('clean-youth-score');
+    var youthScoreValEl = document.getElementById('clean-youth-score-val');
+    var somaticSelect = document.getElementById('clean-somatic-select');
+    var kindergartenCheck = document.getElementById('clean-kindergarten-check');
+    var youthSegmentPillsEl = document.getElementById('youth-segment-pills');
+
+    function setStatus(msg) {
+      loadingEl.style.display = msg ? 'block' : 'none';
+      loadingEl.textContent = msg || '';
+    }
+
+    // ── Unified filter + dedup (issue #114) ───────────────────────────
+    function coordKey(l) {
+      var ll = l.getLatLng();
+      if (!ll) return null;
+      return ll.lat.toFixed(6) + ',' + ll.lng.toFixed(6);
+    }
+
+    function matchesFilters(l, opts) {
+      opts = opts || {};
+      if (mapMode === 'youth') {
+        if (!l._cleanYy) return false;
+      } else {
+        if (l._cleanAa === 0) return false;
+      }
+      if (searchQuery && (!l._cleanName || l._cleanName.indexOf(searchQuery) < 0))
+        return false;
+      if (activeCity && l._cleanCi !== activeCity) return false;
+      if (activeAdmin1 && l._cleanAdmin1 !== activeAdmin1) return false;
+      if (activeCountry && l._cleanCo !== activeCountry) return false;
+      // opts.skipContinent: summary counts ignore the continent clause —
+      // a continent selection restricts detail rendering, not the
+      // worldwide totals shown on the summary pills.
+      if (activeContinent && !opts.skipContinent) {
+        var cont = countryToContinent[l._cleanCo];
+        if (cont !== activeContinent) return false;
+      }
+      if (youthAvailable) {
+        if (!opts.skipSegment && selectedSegments.size > 0 && !selectedSegments.has(l._cleanPs || ''))
+          return false;
+        if (minYouthScore > 0 && (l._cleanYr || 0) < minYouthScore)
+          return false;
+        if (selectedSomatic && l._cleanSo !== selectedSomatic)
+          return false;
+        if (kindergartenOnly && !l._cleanKg)
+          return false;
+      }
+      return true;
+    }
+
+    function isVisible(l) {
+      return matchesFilters(l);
+    }
+
+    // Active categories in manifest order. Dedup keeps the first marker seen
+    // at a coordinate, so iteration order decides which record represents a
+    // shared location — its popup, its segment, its exported id. Object key
+    // order follows whichever category's fetch landed first, which made the
+    // segment breakdown and the export differ between loads of the same map.
+    function activeCatNamesInOrder() {
+      return categories.map(function(c) { return c.name; })
+        .filter(function(n) { return activeCats.has(n) && catMarkers[n]; });
+    }
+
+    // computeFilteredMarkers: the SINGLE counting function.
+    function computeFilteredMarkers(opts) {
+      opts = opts || {};
+      var markers = [];
+      var seenCoords = new Set();
+      var segmentCounts = { A: 0, B: 0, C: 0, D: 0 };
+      var kgCount = 0;
+      activeCatNamesInOrder().forEach(function(cn) {
+        (catMarkers[cn] || []).forEach(function(l) {
+          if (!matchesFilters(l, opts)) return;
+          var key = coordKey(l);
+          if (!key || seenCoords.has(key)) return;
+          seenCoords.add(key);
+          markers.push(l);
+          if (youthAvailable) {
+            var ps = l._cleanPs;
+            if (ps && segmentCounts.hasOwnProperty(ps)) segmentCounts[ps]++;
+            if (l._cleanKg) kgCount++;
+          }
+        });
+      });
+      return { markers: markers, count: markers.length, segmentCounts: segmentCounts, kgCount: kgCount };
+    }
+
+    function computeSegmentCounts() {
+      if (!youthAvailable) return { A: 0, B: 0, C: 0, D: 0 };
+      return computeFilteredMarkers({ skipSegment: true }).segmentCounts;
+    }
+
+    function updateStats() {
+      var result = computeFilteredMarkers();
+      var visible = result.count;
+      var segmentCounts = result.segmentCounts;
+      var kgCount = result.kgCount;
+      var activeCatCount = activeCats.size;
+      var youthFiltered = youthAvailable && (selectedSegments.size > 0 || minYouthScore > 0 || selectedSomatic || kindergartenOnly);
+      var isFiltered = !!(activeCity || activeAdmin1 || activeCountry || activeContinent || searchQuery || youthFiltered);
+      var modeLabel = mapMode === 'youth' ? 'Youth' : 'Adult';
+      if (activeCatCount === 0) {
+        titleCountEl.textContent = modeLabel + ' map · ' + totalMapped.toLocaleString() + ' unique locations worldwide';
+      } else if (visible === 0 && isFiltered) {
+        titleCountEl.textContent = 'No dojos match current filter';
+      } else if (isFiltered) {
+        titleCountEl.textContent = visible.toLocaleString() + ' dojos match current filter';
+      } else {
+        titleCountEl.textContent = visible.toLocaleString() + (mapMode === 'youth' ? ' youth dojos mapped' : ' dojos mapped');
+      }
+      // Lazy rendering only attaches markers inside the viewport, so the
+      // match count can exceed what is drawn. Name the difference rather
+      // than letting the map look like it lost studios; the suffix drops
+      // away by itself once everything that matches is on screen.
+      // The suffix only makes sense while a continent is focused — at
+      // world view there is no marker detail, the summary pills carry
+      // the counts, and "0 in view" would sit there permanently (#319).
+      if (activeCatCount > 0 && focusedContinent) {
+        var renderedNow = renderedMarkerCount();
+        if (renderedNow < visible) {
+          titleCountEl.textContent += ' · ' + renderedNow.toLocaleString() + ' in view';
+        }
+      }
+      var baseMsg;
+      if (activeCatCount === 0) {
+        baseMsg = modeLabel + ' map · Select a category to show studios · ' + totalMapped.toLocaleString() + ' total locations';
+      } else if (visible === 0 && isFiltered) {
+        baseMsg = 'No dojos match current filter · ' + modeLabel + ' map · ' + totalMapped.toLocaleString() + ' total locations';
+      } else if (isFiltered) {
+        baseMsg = visible.toLocaleString() + ' match · ' + modeLabel + ' map · filtered from ' + totalMapped.toLocaleString() + ' total locations';
+      } else {
+        baseMsg = visible.toLocaleString() + ' match · ' + modeLabel + ' map · ' + totalMapped.toLocaleString() + ' total locations';
+      }
+      // Segment/kindergarten breakdown is youth-map reporting; the adult map
+      // neither shows nor applies those filters.
+      if (youthAvailable && mapMode === 'youth' && activeCatCount > 0) {
+        var segParts = ['A', 'B', 'C', 'D'].map(function(s) {
+          return s + ':' + segmentCounts[s];
+        });
+        baseMsg += ' · ' + segParts.join(' ') + ' · KG:' + kgCount;
+      }
+      statsEl.textContent = baseMsg;
+
+      // "← World view" chip whenever a continent/region is focused (#320)
+      var backBtn = document.getElementById('world-back-btn');
+      if (backBtn) {
+        var focused = !!(focusedContinent || activeContinent || activeCountry
+          || activeAdmin1 || activeCity);
+        backBtn.hidden = !focused;
+      }
+      // Empty state on the map itself — the stats line is easy to miss.
+      var emptyEl = document.getElementById('empty-notice');
+      if (emptyEl) {
+        emptyEl.hidden = !(activeCatCount > 0 && visible === 0 && isFiltered);
+      }
+      announce(baseMsg);
+      if (listMode) renderList(true);
+    }
+
+    function fetchManifest() {
+      if (manifestData) return Promise.resolve(manifestData);
+      if (!manifestPromise) {
+        setStatus('Loading manifest…');
+        manifestPromise = fetchWithRetry(MANIFEST_URL + CACHE_BUST, 'manifest')
+          .then(function(data) {
+            manifestData = data;
+            categories = data.categories || [];
+            totalMapped = data.totalUniqueCoords || data.totalUnique || totalMapped;
+            categories.forEach(function(c) { catByName[c.name] = c; });
+            renderCategoryPills();
+            if (data.youthFields && data.youthFields.available) {
+              youthAvailable = true;
+              syncYouthPanel();
+              renderSegmentPills(computeSegmentCounts());
+            }
+            var aikidoCat = categories.find(function(c) { return c.name === 'Aikido'; });
+            if (aikidoCat && aikidoCat.aikidoPerCountry) {
+              aikidoCountByCode = aikidoCat.aikidoPerCountry;
+            }
+            globalInitialCount = aikidoCat ? aikidoCat.count : 0;
+            // Placeholder until the categories finish attaching and
+            // updateStats() writes the real figure.
+            titleCountEl.textContent = totalMapped.toLocaleString() + ' locations worldwide';
+            if (data.generatedAt) {
+              var dateEl = document.getElementById('data-badge-date');
+              if (dateEl) {
+                try {
+                  var parsed = new Date(data.generatedAt);
+                  if (!isNaN(parsed)) {
+                    dateEl.textContent = new Intl.DateTimeFormat(undefined, {
+                      year: 'numeric', month: 'short', day: 'numeric'
+                    }).format(parsed);
+                    dateEl.setAttribute('datetime', parsed.toISOString());
+                    dateEl.setAttribute('title', parsed.toISOString());
+                  } else {
+                    dateEl.textContent = data.generatedAt;
+                  }
+                } catch (e) {
+                  dateEl.textContent = data.generatedAt;
+                }
+              }
+            }
+            if (data.crc) {
+              var crcEl = document.getElementById('data-badge-crc');
+              if (crcEl) crcEl.textContent = 'crc:' + data.crc;
+            }
+            setStatus('');
+            return data;
+          })
+          .catch(function(err) {
+            setStatus('Failed to load manifest: ' + err.message);
+            manifestPromise = null;
+            throw err;
+          });
+      }
+      return manifestPromise;
+    }
+
+    function fetchGeoTree() {
+      if (geoTreeData) return Promise.resolve(geoTreeData);
+      if (!geoTreePromise) {
+        geoTreePromise = fetchWithRetry(GEO_TREE_URL + CACHE_BUST, 'geo-tree')
+          .then(function(data) {
+            geoTreeData = data;
+            populateGeoDropdowns(data);
+            // countryToContinent only exists from this point — re-run the
+            // cull so the continent summaries (#319) can be computed and
+            // the focus check can see marker continents.
+            applyGeoFilter();
+            updateStats();
+            return data;
+          })
+          .catch(function(err) {
+            console.warn('[geo-tree] unavailable after retries: ' + (err && err.message ? err.message : err) + ' — geo dropdowns disabled');
+            geoTreePromise = null;
+          });
+      }
+      return geoTreePromise;
+    }
+
+    function bboxCenter(bbox) {
+      var b = toBounds(bbox);
+      if (!b) return null;
+      var c = b.getCenter();
+      return [c.lat, c.lng];
+    }
+
+    // Geo-IP is an initial-view hint only (#320): pick the continent whose
+    // bbox center is nearest the viewer, focus it, and show the notice.
+    // Nothing is filtered out — every other continent stays on its summary
+    // pill and "Show all studios" returns to the world view. The old
+    // nearest-admin1 record filter was removed; restricting what the map
+    // can show is the geo dropdowns' job now.
+    function applyGeoipInitialFocus(lat, lng) {
+      if (!geoTreeData) return;
+      var conts = geoTreeData.continents || [];
+      var cosLat = Math.cos(lat * Math.PI / 180);
+      var best = null;
+      var bestD = Infinity;
+      conts.forEach(function(c) {
+        if (c.code === 'XX') return;
+        var ctr = bboxCenter(c.bbox);
+        if (!ctr) return;
+        var dLat = ctr[0] - lat;
+        var dLng = (ctr[1] - lng) * cosLat;
+        var d = dLat * dLat + dLng * dLng;
+        if (d < bestD) { bestD = d; best = c; }
+      });
+      if (!best) {
+        console.warn('[geoip] no continent resolved — staying worldwide');
+        return;
+      }
+      var noticeEl = document.getElementById('nearest-notice');
+      var noticeText = document.getElementById('nearest-notice-text');
+      if (noticeEl) noticeEl.style.display = 'flex';
+      if (noticeText) noticeText.textContent = 'Showing studios near you — ' + best.name;
+      applyGeoFilter(best.bbox);
+      flyToBbox(best.bbox, false);
+      updateStats();
+    }
+
+    // Resolve an approximate viewer location from geo-IP on boot — no
+    // browser permission prompt. Silent failure if unavailable — the map
+    // just stays worldwide.
+    var GEOIP_PROVIDERS = [
+      'https://ipwho.is/?fields=success,latitude,longitude,country_code',
+      'https://ipapi.co/json/'
+    ];
+    function geoipLookup(idx) {
+      idx = idx || 0;
+      if (idx >= GEOIP_PROVIDERS.length) {
+        console.log('[geoip] all providers failed — showing worldwide');
+        return;
+      }
+      fetch(GEOIP_PROVIDERS[idx])
+        .then(function(r) { return r.json(); })
+        .then(function(d) {
+          var lat = d && (d.latitude !== undefined ? d.latitude : d.lat);
+          var lng = d && (d.longitude !== undefined ? d.longitude : (d.lon !== undefined ? d.lon : d.lng));
+          if (d && d.success === false || lat === undefined || lng === undefined) {
+            geoipLookup(idx + 1);
+            return;
+          }
+          // Wait for the geo tree so continent bboxes exist.
+          fetchGeoTree().then(function() {
+            applyGeoipInitialFocus(Number(lat), Number(lng));
+          });
+        })
+        .catch(function() { geoipLookup(idx + 1); });
+    }
+    function requestGeolocation() {
+      geoipLookup(0);
+    }
+
+    // "Show all studios" — clears any geo dropdown selection and the
+    // geo-IP initial focus, hides the notice, and flies back to the full
+    // dataset. Category/search/youth filters keep their own controls.
+    window.showAllStudios = function() {
+      var noticeEl = document.getElementById('nearest-notice');
+      if (noticeEl) noticeEl.style.display = 'none';
+      restoreGeoSelection({continent: '', country: '', admin1: '', city: ''});
+      applyGeoFilter();
+      updateStats();
+      var bounds = getVisibleBounds();
+      if (bounds) flyToBbox(bounds, false);
+    };
+    // Notice-bar shortcut; same action.
+    window.showWorldwide = window.showAllStudios;
+
+    // ── User-submitted studio markers ────────────────────────────────
+    // Markers added via the submit form (postMessage from the parent page)
+    // or restored from localStorage. They use a distinct style (green star)
+    // and bypass geo filters so the submitter always sees them.
+    var SUBMIT_MARKER_COLOR = '#22c55e';
+    var submittedLayer = null;
+    var SUBMIT_STORAGE_KEY = 'qa_submitted_studios';
+
+    function ensureSubmittedLayer() {
+      if (submittedLayer) return submittedLayer;
+      submittedLayer = L.layerGroup();
+      leafletMap.addLayer(submittedLayer);
+      return submittedLayer;
+    }
+
+    function addSubmittedStudio(studio) {
+      if (!studio || typeof studio.lat !== 'number' || typeof studio.lng !== 'number') return;
+      var marker = L.circleMarker([studio.lat, studio.lng], {
+        radius: 8, fillColor: SUBMIT_MARKER_COLOR, color: '#fff',
+        weight: 2, opacity: 0.9, fillOpacity: 0.85
+      });
+      var popupHtml = '<div style="font-family:var(--map-font-family);min-width:200px">'
+        + '<strong style="font-size:14px">' + escapeHtml(studio.name || 'Submitted studio') + '</strong>'
+        + '<span style="display:inline-block;background:' + SUBMIT_MARKER_COLOR + ';color:#fff;padding:1px 6px;border-radius:10px;font-size:10px;font-weight:700;margin-left:6px">YOUR SUBMISSION</span>';
+      if (studio.website) {
+        // Scheme-validate like schoolCardHtml does — studio data arrives via
+        // postMessage, so a javascript: URL would otherwise execute on click.
+        const w = String(studio.website);
+        const href = /^https?:\/\//i.test(w) ? w
+          : (/^[\w.-]+\.[a-z]{2,}/i.test(w) ? 'https://' + w : '');
+        if (href) {
+          popupHtml += '<br><a href="' + escapeHtml(href) + '" target="_blank" rel="noopener" style="color:#38a9db;font-size:12px">' + escapeHtml(w) + '</a>';
+        }
+      }
+      if (studio.email) popupHtml += '<br><span style="font-size:12px;color:#666">' + escapeHtml(studio.email) + '</span>';
+      if (studio.address) popupHtml += '<br><span style="font-size:12px;color:#888">' + escapeHtml(studio.address) + '</span>';
+      popupHtml += '</div>';
+      marker.bindPopup(popupHtml);
+      marker._cleanName = (studio.name || '').toLowerCase();
+      marker._cleanCat = '__submitted__';
+      marker._cleanCo = studio.countryCode || '';
+      marker._cleanAdmin1 = studio.admin1Code || '';
+      marker._cleanCi = '';
+      marker._cleanYy = 1;
+      marker._cleanAa = 1;
+      marker._cleanUserSubmitted = true;
+      marker._studioId = studio.id || ('user-' + Date.now() + '-' + Math.random().toString(36).slice(2, 6));
+      ensureSubmittedLayer();
+      submittedLayer.addLayer(marker);
+      userSubmittedMarkers.push(marker);
+      return marker;
+    }
+
+    function loadSubmittedFromStorage() {
+      try {
+        var raw = localStorage.getItem(SUBMIT_STORAGE_KEY);
+        if (!raw) return;
+        var list = JSON.parse(raw);
+        if (!Array.isArray(list)) return;
+        list.forEach(function(s) { addSubmittedStudio(s); });
+      } catch (e) {
+        console.warn('[submitted-studios] failed to load from localStorage: ' + e.message);
+      }
+    }
+
+    function saveSubmittedToStorage(studio) {
+      try {
+        var raw = localStorage.getItem(SUBMIT_STORAGE_KEY);
+        var list = raw ? JSON.parse(raw) : [];
+        if (!Array.isArray(list)) list = [];
+        list.push(studio);
+        localStorage.setItem(SUBMIT_STORAGE_KEY, JSON.stringify(list));
+      } catch (e) {
+        console.warn('[submitted-studios] failed to save to localStorage: ' + e.message);
+      }
+    }
+
+    function countLabel(code, fallback) {
+      return aikidoCountByCode[code] !== undefined
+        ? aikidoCountByCode[code].toLocaleString()
+        : fallback.toLocaleString();
+    }
+
+    function pillHtml(cat, isChild) {
+      return '<button type="button" class="cat-pill' + (isChild ? ' cat-pill-child' : '') + '" data-cat="'
+        + cat.name + '" style="--pill-color:' + cat.color + '" onclick="toggleCat(this)" aria-pressed="false">'
+        + '<span class="cat-pill-dot" style="background:' + cat.color + '" aria-hidden="true"></span>'
+        + '<span class="cat-pill-name">' + cat.name + '</span>'
+        + '<span class="cat-pill-count">' + cat.count.toLocaleString() + '</span>'
+        + '</button>';
+    }
+
+    function renderCategoryPills() {
+      var listEl = document.getElementById('clean-cat-list');
+      var childrenByParent = {};
+      categories.forEach(function(c) {
+        if (c.parent) (childrenByParent[c.parent] = childrenByParent[c.parent] || []).push(c);
+      });
+      var html = '';
+      categories.filter(function(c) { return !c.parent; }).forEach(function(cat) {
+        var children = childrenByParent[cat.name];
+        if (children && children.length) {
+          html += '<div class="cat-group">'
+            + '<div class="cat-group-header">' + pillHtml(cat, false)
+            + '<button type="button" class="cat-group-arrow collapsed" aria-label="Expand ' + cat.name + ' subcategories" onclick="toggleCatGroup(this)">▾</button>'
+            + '</div>'
+            + '<div class="cat-group-children collapsed">'
+            + children.map(function(c) { return pillHtml(c, true); }).join('')
+            + '</div></div>';
+        } else {
+          html += pillHtml(cat, false);
+        }
+      });
+      listEl.innerHTML = html;
+    }
+
+    window.toggleCatGroup = function(arrow) {
+      var childrenEl = arrow.parentElement.nextElementSibling;
+      var collapsed = childrenEl.classList.toggle('collapsed');
+      arrow.classList.toggle('collapsed', collapsed);
+      var catName = arrow.previousElementSibling ? arrow.previousElementSibling.dataset.cat : '';
+      arrow.setAttribute('aria-expanded', String(!collapsed));
+      arrow.setAttribute('aria-label', (collapsed ? 'Expand ' : 'Collapse ') + catName + ' subcategories');
+    };
+
+    function renderSegmentPills(counts) {
+      if (!youthSegmentPillsEl) return;
+      var segments = [
+        { key: 'A', color: '#3fb950', label: 'A — high somatic + youth' },
+        { key: 'B', color: '#58a6ff', label: 'B — somatic adult + education' },
+        { key: 'C', color: '#d29922', label: 'C — martial arts + camps' },
+        { key: 'D', color: '#bc8cff', label: 'D — arts & movement' }
+      ];
+      youthSegmentPillsEl.innerHTML = segments.map(function(seg) {
+        var active = selectedSegments.has(seg.key);
+        var count = counts[seg.key] || 0;
+        return '<button type="button" class="youth-segment-pill' + (active ? ' active' : '') + '" data-seg="' + seg.key + '" '
+          + 'style="--seg-color:' + seg.color + '" onclick="toggleSegment(this)" title="' + seg.label + '">'
+          + seg.key + '<span class="seg-count">' + count.toLocaleString() + '</span></button>';
+      }).join('');
+    }
+
+    window.toggleSegment = function(btn) {
+      var seg = btn.dataset.seg;
+      if (selectedSegments.has(seg)) selectedSegments.delete(seg);
+      else selectedSegments.add(seg);
+      btn.classList.toggle('active', selectedSegments.has(seg));
+      applyGeoFilter();
+      updateStats();
+    };
+
+    window.onYouthScoreChange = function() {
+      if (!youthScoreInput) return;
+      minYouthScore = parseInt(youthScoreInput.value, 10) || 0;
+      if (youthScoreValEl) youthScoreValEl.textContent = minYouthScore;
+      applyGeoFilter();
+      updateStats();
+    };
+
+    window.onSomaticChange = function() {
+      selectedSomatic = somaticSelect ? somaticSelect.value : '';
+      applyGeoFilter();
+      updateStats();
+    };
+
+    window.onKindergartenChange = function() {
+      kindergartenOnly = kindergartenCheck ? kindergartenCheck.checked : false;
+      applyGeoFilter();
+      updateStats();
+    };
+
+    window.resetYouthFilters = function() {
+      selectedSegments.clear();
+      minYouthScore = 0;
+      selectedSomatic = '';
+      kindergartenOnly = false;
+      if (youthScoreInput) { youthScoreInput.value = 0; }
+      if (youthScoreValEl) youthScoreValEl.textContent = '0';
+      if (somaticSelect) somaticSelect.value = '';
+      if (kindergartenCheck) kindergartenCheck.checked = false;
+      if (youthAvailable) {
+        renderSegmentPills(computeSegmentCounts());
+      }
+      applyGeoFilter();
+      updateStats();
+    };
+
+    function activateCat(catName) {
+      activeCats.add(catName);
+      var btn = document.querySelector('.cat-pill[data-cat="' + catName + '"]');
+      if (btn) { btn.classList.add('active'); btn.setAttribute('aria-pressed', 'true'); }
+      return loadCategory(catName).then(function() {
+        if (!activeCats.has(catName)) return;
+        leafletMap.addLayer(catLayers[catName]);
+        applyGeoFilter();
+        updateStats();
+      });
+    }
+
+    function deactivateCat(catName) {
+      activeCats.delete(catName);
+      var btn = document.querySelector('.cat-pill[data-cat="' + catName + '"]');
+      if (btn) { btn.classList.remove('active'); btn.setAttribute('aria-pressed', 'false'); }
+      if (catLayers[catName]) leafletMap.removeLayer(catLayers[catName]);
+    }
+
+    // Loads and attaches a set of categories in one pass, leaving the cull
+    // and the stats recompute to the caller. activateCat() does both per
+    // call, which is fine for a single pill click but not for the ~10
+    // categories a mode default switches on at once.
+    function activateCats(names) {
+      return Promise.all(names.map(function(name) {
+        if (!catByName[name]) return Promise.resolve();
+        activeCats.add(name);
+        var pill = document.querySelector('.cat-pill[data-cat="' + name + '"]');
+        if (pill) { pill.classList.add('active'); pill.setAttribute('aria-pressed', 'true'); }
+        return loadCategory(name).then(function() {
+          if (activeCats.has(name) && catLayers[name]) leafletMap.addLayer(catLayers[name]);
+        });
+      }));
+    }
+
+    // ── Per-mode state: adult and youth are separate maps ──────────────
+    // The two modes share the loaded marker objects (catMarkers/catLayers),
+    // so switching never refetches or re-parses anything. Everything the
+    // user selects, though, belongs to one mode only. Previously a single
+    // set of globals backed both: switching to youth ran loadAllCategories()
+    // and switching back left those categories active and their pills
+    // visible, so working the toggle was the only way to see the full
+    // category list — and it never came back to the map you left.
+    var modeState = { adult: null, youth: null };
+
+    function defaultCatsFor(mode) {
+      if (mode === 'youth') return categories.map(function(c) { return c.name; });
+      // "All arts": every top-level art switched on. Aikido stands in for
+      // its parent group (Japanese Martial Arts), which stays off so the
+      // group and its children are not both active.
+      var names = categories.filter(function(c) {
+        return !c.parent && c.name !== 'Japanese Martial Arts';
+      }).map(function(c) { return c.name; });
+      if (catByName['Aikido']) names.push('Aikido');
+      return names;
+    }
+
+    function defaultModeState(mode) {
+      return {
+        activeCats: defaultCatsFor(mode),
+        othersShown: true,
+        searchQuery: '',
+        continent: '', country: '', admin1: '', city: '',
+        segments: [], minYouthScore: 0, somatic: '', kindergartenOnly: false
+      };
+    }
+
+    function captureModeState() {
+      return {
+        activeCats: Array.from(activeCats),
+        othersShown: othersShown,
+        searchQuery: searchQuery,
+        continent: activeContinent, country: activeCountry,
+        admin1: activeAdmin1, city: activeCity,
+        segments: Array.from(selectedSegments),
+        minYouthScore: minYouthScore,
+        somatic: selectedSomatic,
+        kindergartenOnly: kindergartenOnly
+      };
+    }
+
+    // Youth readiness controls belong to the youth map.
+    function syncYouthPanel() {
+      if (!youthFiltersEl) return;
+      youthFiltersEl.style.display = (youthAvailable && mapMode === 'youth') ? '' : 'none';
+    }
+
+    function syncOthersButton() {
+      var btn = document.getElementById('toggle-others-btn');
+      if (!btn) return;
+      btn.textContent = othersShown ? 'Aikido only' : 'All arts';
+      btn.classList.toggle('active', othersShown);
+    }
+
+    // Which pills are on screen at all. With othersShown the whole taxonomy
+    // is listed; without it only Aikido, with its parent group expanded and
+    // that group's arrow hidden so no empty arrow buttons are left behind.
+    function syncPillVisibility() {
+      categories.forEach(function(cat) {
+        var pill = document.querySelector('.cat-pill[data-cat="' + cat.name + '"]');
+        if (!pill) return;
+        var show = othersShown || cat.name === 'Aikido';
+        pill.style.display = show ? '' : 'none';
+        var arrow = pill.parentElement && pill.parentElement.querySelector('.cat-group-arrow');
+        if (arrow && arrow.previousElementSibling === pill) arrow.style.display = show ? '' : 'none';
+      });
+      // A group collapsed by default hides its children with display:none,
+      // so an active child (Aikido lives under Japanese Martial Arts) would
+      // be switched on but absent from the panel. Expansion is derived from
+      // what is active rather than toggled, so a group opened in one mode
+      // does not stay open in the other.
+      document.querySelectorAll('.cat-group-children').forEach(function(group) {
+        var expand = !!group.querySelector('.cat-pill.active');
+        group.classList.toggle('collapsed', !expand);
+        var arrow = group.previousElementSibling
+          && group.previousElementSibling.querySelector('.cat-group-arrow');
+        if (arrow) arrow.classList.toggle('collapsed', !expand);
+      });
+      // With only Aikido on show, its parent group's arrow would collapse the
+      // one visible pill, so it is hidden rather than left as a trap.
+      if (!othersShown) {
+        var aikidoPill = document.querySelector('.cat-pill[data-cat="Aikido"]');
+        var aikidoChildren = aikidoPill && aikidoPill.closest('.cat-group-children');
+        var jmaArrow = aikidoChildren && aikidoChildren.previousElementSibling
+          && aikidoChildren.previousElementSibling.querySelector('.cat-group-arrow');
+        if (jmaArrow) jmaArrow.style.display = 'none';
+      }
+    }
+
+    // Replays a stored geo selection into both the globals and the four
+    // dropdowns, repopulating each level's options as it descends.
+    function restoreGeoSelection(st) {
+      activeContinent = st.continent;
+      activeCountry = ''; activeAdmin1 = ''; activeCity = '';
+      if (continentSelect) continentSelect.value = st.continent;
+      populateCountrySelect(st.continent);
+      resetAdmin1AndCity();
+      if (!geoTreeData || !st.country) {
+        if (countrySelect) countrySelect.value = '';
+        return;
+      }
+      activeCountry = st.country;
+      countrySelect.value = st.country;
+      var ctry = findCountryNode(st.country);
+      if (!ctry) return;
+      if (ctry.states && ctry.states.length > 0) {
+        populateAdmin1Select(ctry.states);
+        if (st.admin1) {
+          activeAdmin1 = st.admin1;
+          admin1Select.value = st.admin1;
+          var state = findStateNode(ctry, st.admin1);
+          populateCitySelect(state ? state.cities : []);
+        }
+      } else {
+        populateCitySelect(ctry.cities);
+      }
+      // populateCitySelect clears activeCity, so the city is restored last.
+      if (st.city) { activeCity = st.city; citySelect.value = st.city; }
+    }
+
+    function applyModeState(st) {
+      Array.from(activeCats).forEach(deactivateCat);
+
+      othersShown = st.othersShown;
+      searchQuery = st.searchQuery;
+      selectedSegments = new Set(st.segments);
+      minYouthScore = st.minYouthScore;
+      selectedSomatic = st.somatic;
+      kindergartenOnly = st.kindergartenOnly;
+
+      var searchInput = document.getElementById('clean-search-input');
+      if (searchInput) searchInput.value = st.searchQuery;
+      if (youthScoreInput) youthScoreInput.value = st.minYouthScore;
+      if (youthScoreValEl) youthScoreValEl.textContent = st.minYouthScore;
+      if (somaticSelect) somaticSelect.value = st.somatic;
+      if (kindergartenCheck) kindergartenCheck.checked = st.kindergartenOnly;
+
+      syncYouthPanel();
+      syncOthersButton();
+      syncPillVisibility();
+      restoreGeoSelection(st);
+
+      return activateCats(st.activeCats).then(function() {
+        // Re-run now that the active classes exist: group expansion depends
+        // on which pills ended up active.
+        syncPillVisibility();
+        applyGeoFilter();
+        updateStats();
+      });
+    }
+
+    // The single entry point for changing mode: the URL parameter on cold
+    // load and the parent page's toggle both come through here, so a deep
+    // link and a click produce the same state.
+    function setMapMode(mode) {
+      if (mode !== 'adult' && mode !== 'youth') return Promise.resolve();
+      if (mode === mapMode) return Promise.resolve();
+      modeState[mapMode] = captureModeState();
+      mapMode = mode;
+      return applyModeState(modeState[mode] || defaultModeState(mode));
+    }
+
+    function populateGeoDropdowns(tree) {
+      if (!tree || !tree.continents) return;
+      tree.continents.forEach(function(cont) {
+        if (cont.code === 'XX' || cont.name === 'Unknown') return;
+        var contAikidoCount = 0, hasAikidoCounts = false;
+        (cont.countries || []).forEach(function(ctry) {
+          countryToContinent[ctry.code] = cont.code;
+          countryNameByCode[ctry.code] = ctry.name;
+          if (aikidoCountByCode[ctry.code] !== undefined) {
+            contAikidoCount += aikidoCountByCode[ctry.code];
+            hasAikidoCounts = true;
+          }
+        });
+        var opt = document.createElement('option');
+        opt.value = cont.code;
+        opt.textContent = cont.name + ' (' + (hasAikidoCounts ? contAikidoCount : cont.count).toLocaleString() + ')';
+        continentSelect.appendChild(opt);
+      });
+    }
+
+    // Finds a country node anywhere in the tree by code.
+    function findCountryNode(code) {
+      var found = null, matches = 0;
+      for (var i = 0; i < (geoTreeData.continents || []).length; i++) {
+        var ctry = (geoTreeData.continents[i].countries || []).find(function(c) { return c.code === code; });
+        if (ctry) {
+          matches++;
+          if (!found) found = ctry;
+        }
+      }
+      if (matches > 1 && window.console) console.warn('Duplicate country code across continents: ' + code);
+      return found;
+    }
+
+    function findStateNode(ctry, code) {
+      return (ctry.states || []).find(function(s) { return s.code === code; });
+    }
+
+    function populateAdmin1Select(states) {
+      admin1Select.innerHTML = '<option value="">All States / Provinces / Regions</option>';
+      if (states && states.length > 0) {
+        states.slice().sort(function(a, b) { return b.count - a.count; }).forEach(function(state) {
+          var opt = document.createElement('option');
+          opt.value = state.code;
+          opt.textContent = state.name + ' (' + state.count.toLocaleString() + ')';
+          admin1Select.appendChild(opt);
+        });
+        admin1Select.style.display = 'block';
+      } else {
+        admin1Select.style.display = 'none';
+      }
+      admin1Select.value = '';
+    }
+
+    function populateCitySelect(cities) {
+      activeCity = '';
+      citySelect.innerHTML = '<option value="">All Cities</option>';
+      if (cities && cities.length > 0) {
+        cities.slice().sort(function(a, b) { return b.count - a.count; }).forEach(function(city) {
+          var opt = document.createElement('option');
+          opt.value = city.code;
+          opt.textContent = city.name + ' (' + city.count.toLocaleString() + ')';
+          citySelect.appendChild(opt);
+        });
+        citySelect.style.display = 'block';
+      } else {
+        citySelect.style.display = 'none';
+      }
+      citySelect.value = '';
+    }
+
+    function resetAdmin1AndCity() {
+      activeAdmin1 = '';
+      admin1Select.innerHTML = '<option value="">All States / Provinces / Regions</option>';
+      admin1Select.style.display = 'none';
+      admin1Select.value = '';
+      activeCity = '';
+      citySelect.innerHTML = '<option value="">All Cities</option>';
+      citySelect.style.display = 'none';
+    }
+
+    function clearBbox() {
+      if (bboxLayer) {
+        leafletMap.removeLayer(bboxLayer);
+        bboxLayer = null;
+      }
+    }
+
+    // Normalizes the several bbox shapes used by the geo tree
+    // ([[sw],[ne]] or [s, w, n, e]) into an L.LatLngBounds. Returns null
+    // for anything it doesn't recognise.
+    function toBounds(boundsOrBbox) {
+      if (!boundsOrBbox) return null;
+      if (boundsOrBbox instanceof L.LatLngBounds) return boundsOrBbox;
+      if (!Array.isArray(boundsOrBbox)) return null;
+      if (Array.isArray(boundsOrBbox[0]) && boundsOrBbox.length >= 2) {
+        return L.latLngBounds(boundsOrBbox[0], boundsOrBbox[1]);
+      }
+      if (boundsOrBbox.length === 4) {
+        return L.latLngBounds(
+          [boundsOrBbox[0], boundsOrBbox[1]],
+          [boundsOrBbox[2], boundsOrBbox[3]]
+        );
+      }
+      return null;
+    }
+
+    function drawBbox(boundsOrBbox) {
+      var bounds = toBounds(boundsOrBbox);
+      if (!bounds) return;
+      clearBbox();
+      bboxLayer = L.rectangle(bounds, BBOX_STYLE).addTo(leafletMap);
+    }
+
+    function getVisibleBounds() {
+      var result = computeFilteredMarkers();
+      if (result.markers.length === 0) return null;
+      var bounds = L.latLngBounds();
+      result.markers.forEach(function(l) { bounds.extend(l.getLatLng()); });
+      return bounds;
+    }
+
+    function flyToBbox(bbox, draw) {
+      if (!bbox) return;
+      if (draw !== false) drawBbox(bbox);
+      var isNarrow = window.matchMedia('(max-width: 700px)').matches;
+      var leftPad = isNarrow ? Math.min(320, window.innerWidth * 0.88) + 20 : 40;
+      var fitOptions = { padding: [40, 40], paddingTopLeft: [leftPad, 40],
+                         animate: !REDUCED_MOTION };
+      var bounds;
+      if (bbox instanceof L.LatLngBounds) {
+        bounds = bbox;
+      } else if (Array.isArray(bbox[0])) {
+        var sw = bbox[0], ne = bbox[1];
+        if (sw[0] === ne[0] && sw[1] === ne[1]) {
+          leafletMap.flyTo([sw[0], sw[1]], 13);
+          return;
+        }
+        bounds = L.latLngBounds(sw, ne);
+      } else {
+        bounds = L.latLngBounds([bbox[0], bbox[1]], [bbox[2], bbox[3]]);
+      }
+      var ne2 = bounds.getNorthEast();
+      var sw2 = bounds.getSouthWest();
+      if (ne2.lat === sw2.lat && ne2.lng === sw2.lng) {
+        leafletMap.flyTo([sw2.lat, sw2.lng], 13);
+      } else {
+        leafletMap.flyToBounds(bounds, fitOptions);
+      }
+    }
+
+    // Fills the country dropdown from one continent, or from all of them
+    // when no continent is selected.
+    function populateCountrySelect(continentCode) {
+      countrySelect.innerHTML = '<option value="">All Countries</option>';
+      if (!geoTreeData) return;
+      var conts = continentCode
+        ? (geoTreeData.continents || []).filter(function(c) { return c.code === continentCode; })
+        : (geoTreeData.continents || []);
+      conts.forEach(function(cont) {
+        (cont.countries || []).forEach(function(ctry) {
+          var opt = document.createElement('option');
+          opt.value = ctry.code;
+          opt.textContent = ctry.name + ' (' + countLabel(ctry.code, ctry.count) + ')';
+          countrySelect.appendChild(opt);
+        });
+      });
+    }
+
+    window.onContinentChange = function() {
+      activeContinent = continentSelect.value;
+      populateCountrySelect(activeContinent);
+      activeCountry = '';
+      countrySelect.value = '';
+      resetAdmin1AndCity();
+      applyGeoFilterAndFly();
+      updateStats();
+    };
+
+    window.onCountryChange = function() {
+      activeCountry = countrySelect.value;
+      resetAdmin1AndCity();
+      if (geoTreeData && activeCountry) {
+        var ctry = findCountryNode(activeCountry);
+        if (ctry && ctry.states && ctry.states.length > 0) {
+          populateAdmin1Select(ctry.states);
+        } else if (ctry) {
+          populateCitySelect(ctry.cities);
+        }
+      }
+      applyGeoFilterAndFly();
+      updateStats();
+    };
+
+    window.onAdmin1Change = function() {
+      activeAdmin1 = admin1Select.value;
+      var ctry = activeCountry ? findCountryNode(activeCountry) : null;
+      var state = (ctry && activeAdmin1) ? findStateNode(ctry, activeAdmin1) : null;
+      populateCitySelect(state ? state.cities : []);
+      applyGeoFilterAndFly();
+      updateStats();
+    };
+
+    window.onCityChange = function() {
+      activeCity = citySelect.value;
+      applyGeoFilterAndFly();
+      updateStats();
+    };
+
+    // ── Continent focus + summary markers (issue #319) ────────────
+    // First continent whose geo-tree bbox contains the point, or '' over
+    // the open ocean. 'XX' is evaluated last: its bbox covers most of the
+    // world and would swallow every center before a real continent could
+    // claim it.
+    function continentAtPoint(latlng) {
+      if (!geoTreeData) return '';
+      var pt = leafletMap.wrapLatLng(latlng);
+      var conts = geoTreeData.continents || [];
+      var xxHit = false;
+      for (var i = 0; i < conts.length; i++) {
+        var b = toBounds(conts[i].bbox);
+        if (!b || !b.contains(pt)) continue;
+        if (conts[i].code === 'XX') { xxHit = true; continue; }
+        return conts[i].code;
+      }
+      return xxHit ? 'XX' : '';
+    }
+
+    // The one continent allowed to render marker detail right now, or ''
+    // when nothing is focused (world view — summaries only).
+    //
+    // Priority:
+    //   1. A geo dropdown selection — activeContinent directly, or the
+    //      continent implied by a selected country/admin1/city.
+    //   2. An explicit fly-to destination (boundsOverride): summary-pill
+    //      clicks, the geo-IP nearest-states fly, and the geo dropdowns
+    //      all pass their target bounds so the destination is focused
+    //      before the flight lands.
+    //   3. The continent under the viewport center — acquired at
+    //      CONTINENT_DETAIL_MIN_ZOOM or deeper, but kept down to
+    //      CONTINENT_KEEP_MIN_ZOOM. A whole-continent flyToBounds lands
+    //      between the two (~z3-4 depending on screen width); without the
+    //      gap, focus would drop the moment the flight ended. Dropping
+    //      below KEEP_MIN (the world view) always clears focus.
+    function computeFocusedContinent(boundsOverride) {
+      if (activeContinent) return activeContinent;
+      if (activeCountry) return countryToContinent[activeCountry] || 'XX';
+      var overrideBounds = toBounds(boundsOverride);
+      if (overrideBounds) {
+        return continentAtPoint(overrideBounds.getCenter());
+      }
+      var zoom = leafletMap.getZoom();
+      if (zoom < CONTINENT_KEEP_MIN_ZOOM) return '';
+      var under = continentAtPoint(leafletMap.getCenter());
+      if (!under) return '';
+      if (under === focusedContinent) return focusedContinent;
+      return zoom >= CONTINENT_DETAIL_MIN_ZOOM ? under : '';
+    }
+
+    // Filtered marker counts per continent, with a per-category breakdown
+    // for the stacked color bar. Uses the same coordKey dedup as
+    // computeFilteredMarkers() — each unique coordinate counts once,
+    // attributed to whichever active category wins the dedup in manifest
+    // order — so summary totals match the "match" count semantics.
+    // matchesFilters runs with skipContinent so the continent clause does
+    // not zero out every other continent's pill; all other filters
+    // (category, search, country/admin1/city, nearest-states, youth)
+    // still apply. User-submitted markers live on submittedLayer outside
+    // catMarkers and are not counted.
+    function computeContinentSummary() {
+      var out = {};   // continent code → { total, cats: {catName: n} }
+      var ctry = {};  // iso2 → filtered count (drives the choropleth, #320)
+      var seenCoords = new Set();
+      activeCatNamesInOrder().forEach(function(cn) {
+        (catMarkers[cn] || []).forEach(function(l) {
+          if (!matchesFilters(l, { skipContinent: true })) return;
+          var key = coordKey(l);
+          if (!key || seenCoords.has(key)) return;
+          seenCoords.add(key);
+          var code = countryToContinent[l._cleanCo] || 'XX';
+          var entry = out[code] || (out[code] = { total: 0, cats: {} });
+          entry.total++;
+          entry.cats[cn] = (entry.cats[cn] || 0) + 1;
+          if (l._cleanCo) ctry[l._cleanCo] = (ctry[l._cleanCo] || 0) + 1;
+        });
+      });
+      countryCounts = ctry;
+      contCounts = {};
+      Object.keys(out).forEach(function(k) { contCounts[k] = out[k].total; });
+      return out;
+    }
+
+    function ensureSummaryLayer() {
+      if (!summaryLayer) {
+        summaryLayer = L.layerGroup();
+        leafletMap.addLayer(summaryLayer);
+      }
+      return summaryLayer;
+    }
+
+    // divIcon content: continent name, filtered total, and a horizontal
+    // stacked bar with one flex-proportional segment per active category
+    // in its manifest color. The title attribute doubles as the hover
+    // legend (top categories by count).
+    function summaryMarkerHtml(cont, entry) {
+      var bar = '';
+      var legend = [];
+      activeCatNamesInOrder().forEach(function(cn) {
+        var n = entry.cats[cn] || 0;
+        if (!n) return;
+        var cat = catByName[cn];
+        legend.push({ name: cn, n: n });
+        bar += '<span class="cont-summary-seg" style="background:'
+          + ((cat && cat.color) || '#999999') + ';flex-grow:' + n + '"></span>';
+      });
+      legend.sort(function(a, b) { return b.n - a.n; });
+      var title = cont.name + ' — ' + entry.total.toLocaleString() + ' studios\n'
+        + legend.slice(0, 5).map(function(t) {
+            return t.name + ' ' + t.n.toLocaleString();
+          }).join('\n');
+      return '<div class="cont-summary" title="' + escapeHtml(title) + '">'
+        + '<span class="cont-summary-name">' + escapeHtml(cont.name) + '</span>'
+        + '<span class="cont-summary-count">' + entry.total.toLocaleString() + '</span>'
+        + '<span class="cont-summary-bar">' + bar + '</span>'
+        + '</div>';
+    }
+
+    // One summary marker per non-focused continent with a nonzero filtered
+    // count, at the continent's bbox center. Rebuilt from applyGeoFilter —
+    // every filter/mode/category path funnels through it — so the counts
+    // always reflect the current filter state. The dedicated layerGroup
+    // keeps the pills out of markercluster, which would collapse them
+    // into each other.
+    function updateContinentSummaries() {
+      ensureSummaryLayer();
+      var counts = computeContinentSummary();
+      var wanted = {};
+      ((geoTreeData && geoTreeData.continents) || []).forEach(function(cont) {
+        if (cont.code === focusedContinent) return;
+        var entry = counts[cont.code];
+        if (!entry || entry.total <= 0) return;
+        var bounds = toBounds(cont.bbox);
+        if (!bounds) return;   // XX without a usable bbox — skip silently
+        wanted[cont.code] = { cont: cont, entry: entry, center: bounds.getCenter() };
+      });
+      Object.keys(summaryMarkers).forEach(function(code) {
+        if (!wanted[code]) {
+          summaryLayer.removeLayer(summaryMarkers[code]);
+          delete summaryMarkers[code];
+        }
+      });
+      Object.keys(wanted).forEach(function(code) {
+        var w = wanted[code];
+        // Zero-size icon anchored exactly on the point; the pill centers
+        // itself with a CSS transform so width never has to be predicted.
+        var icon = L.divIcon({
+          className: 'cont-summary-icon',
+          html: summaryMarkerHtml(w.cont, w.entry),
+          iconSize: [0, 0],
+          iconAnchor: [0, 0]
+        });
+        var m = summaryMarkers[code];
+        if (m) {
+          m.setLatLng(w.center);
+          m.setIcon(icon);
+        } else {
+          m = L.marker(w.center, { icon: icon, interactive: true });
+          (function(cont) {
+            m.on('click', function() {
+              // Focus via boundsOverride + attach destination markers
+              // before the flight, then fly — same pattern as the geo
+              // dropdowns' applyGeoFilterAndFly.
+              applyGeoFilter(cont.bbox);
+              flyToBbox(cont.bbox, false);
+            });
+          })(w.cont);
+          summaryLayer.addLayer(m);
+          summaryMarkers[code] = m;
+        }
+      });
+      restyleChoropleth();
+    }
+
+    // ── Density choropleth (issue #320, P1) ─────────────────────────
+    // continents.geo.json carries Natural Earth country polygons with
+    // properties {name, iso2, cont}. Each country is shaded by its
+    // filtered, coord-deduped studio count on a shared sqrt scale — the
+    // same counting semantics as the summary pills. Clicking a country
+    // focuses its continent (same path as a pill click); countries with
+    // no continent attribution render inactive. The pills stay: they are
+    // the keyboard/touch path and carry the per-category breakdown.
+    function densityBreaks() {
+      var max = 0;
+      Object.keys(countryCounts).forEach(function(k) {
+        if (countryCounts[k] > max) max = countryCounts[k];
+      });
+      if (max <= 0) max = 1;
+      // Four sqrt-spaced bins: breaks at sqrt fractions of the max.
+      return [0.06, 0.22, 0.5, 1.0].map(function(f) {
+        return Math.max(1, Math.round(max * Math.sqrt(f)));
+      });
+    }
+
+    function choroStyle(feature) {
+      var p = feature.properties || {};
+      if (!p.cont) {
+        return { color: '#2a3a55', weight: 0.5, fillColor: DENSITY_INACTIVE,
+                 fillOpacity: 0.9 };
+      }
+      var n = countryCounts[p.iso2] || 0;
+      if (p.cont === focusedContinent) {
+        // Focused continent: shading recedes so markers/clusters carry it.
+        return { color: '#3a4a63', weight: 0.6, fillColor: DENSITY_LAND,
+                 fillOpacity: 0.35 };
+      }
+      if (n <= 0) {
+        return { color: '#2a3a55', weight: 0.6, fillColor: DENSITY_LAND,
+                 fillOpacity: 0.85 };
+      }
+      var br = densityBreaks();
+      var idx = n <= br[0] ? 0 : n <= br[1] ? 1 : n <= br[2] ? 2 : 3;
+      return { color: '#0d1321', weight: 0.5, fillColor: DENSITY_COLORS[idx],
+               fillOpacity: 0.55 };
+    }
+
+    function focusContinentByCode(code) {
+      var conts = (geoTreeData && geoTreeData.continents) || [];
+      for (var i = 0; i < conts.length; i++) {
+        if (conts[i].code !== code) continue;
+        applyGeoFilter(conts[i].bbox);
+        flyToBbox(conts[i].bbox, false);
+        return;
+      }
+    }
+
+    function initChoropleth(geo) {
+      if (choroLayer || !geo) return;
+      choroLayer = L.geoJSON(geo, {
+        style: choroStyle,
+        onEachFeature: function(feature, layer) {
+          var p = feature.properties || {};
+          if (!p.cont) return;
+          layer.bindTooltip('', { sticky: true, direction: 'top',
+                                  className: 'density-tip' });
+          layer.on('mouseover', function() {
+            var n = countryCounts[p.iso2] || 0;
+            layer.setTooltipContent(
+              escapeHtml(p.name) + ' — ' + n.toLocaleString()
+              + ' studio' + (n === 1 ? '' : 's'));
+            layer.setStyle({ weight: 1.6, fillOpacity: 0.75 });
+          });
+          layer.on('mouseout', function() {
+            layer.setStyle(choroStyle(feature));
+          });
+          layer.on('click', function() { focusContinentByCode(p.cont); });
+        }
+      }).addTo(leafletMap);
+      // Fills sit between the country outlines (pane default) and markers.
+      if (choroLayer.bringToBack) choroLayer.bringToBack();
+      restyleChoropleth();
+    }
+
+    function restyleChoropleth() {
+      if (!choroLayer) return;
+      choroLayer.eachLayer(function(l) { l.setStyle(choroStyle(l.feature)); });
+      var el = document.getElementById('density-legend');
+      if (el) {
+        var br = densityBreaks();
+        var fmt = function(x) { return x >= 1000 ? (x / 1000).toFixed(1).replace(/\.0$/, '') + 'k' : String(x); };
+        el.innerHTML = '<span class="dl-item"><i style="background:' + DENSITY_LAND + '"></i>0</span>'
+          + '<span class="dl-item"><i style="background:' + DENSITY_COLORS[0] + '"></i>1–' + fmt(br[0]) + '</span>'
+          + '<span class="dl-item"><i style="background:' + DENSITY_COLORS[1] + '"></i>' + fmt(br[0] + 1) + '–' + fmt(br[1]) + '</span>'
+          + '<span class="dl-item"><i style="background:' + DENSITY_COLORS[2] + '"></i>' + fmt(br[1] + 1) + '–' + fmt(br[2]) + '</span>'
+          + '<span class="dl-item"><i style="background:' + DENSITY_COLORS[3] + '"></i>' + fmt(br[2] + 1) + '+</span>';
+      }
+    }
+
+    // The GeoJSON arrives via the page template's fetch (window.__continentsGeo)
+    // or — if that fetch ran before boot or failed — we fetch it here.
+    function ensureChoropleth() {
+      if (choroLayer) return;
+      if (window.__continentsGeo) {
+        initChoropleth(window.__continentsGeo);
+        return;
+      }
+      // The template's basemap fetch is almost always in flight when boot
+      // runs — give it a beat to stash the GeoJSON before fetching a
+      // second copy of the ~430KB file.
+      if (!ensureChoropleth._waited) {
+        ensureChoropleth._waited = true;
+        setTimeout(ensureChoropleth, 800);
+        return;
+      }
+      fetch('continents.geo.json' + CACHE_BUST)
+        .then(function(r) { return r.ok ? r.json() : null; })
+        .then(function(geo) { if (geo) initChoropleth(geo); })
+        .catch(function(err) {
+          console.warn('[choropleth] continents.geo.json unavailable:', err);
+        });
+    }
+
+    // ── applyGeoFilter with lazy marker rendering (issue #116) ──────
+    // Only markers that pass the filter AND are within the viewport are
+    // attached to the cluster group, so the number of live DOM objects is
+    // proportional to what's on screen rather than to the dataset size.
+    //
+    // This function culls only; it never moves the map (see the moveend
+    // handler above). Callers that change the region pass the destination
+    // bounds as `boundsOverride` so the markers for the region being flown
+    // to are attached before the animation lands — correctness does not
+    // depend on a moveend arriving afterwards.
+    //
+    // Markers already in the group are left in place: markercluster
+    // rebuilds every cluster on clearLayers(), which made each pan flicker.
+    var catRendered = {};   // catName → Set of markers currently in the group
+
+    function applyGeoFilter(boundsOverride) {
+      var seenCoords = new Set();
+      // Pad the bounds slightly so markers at the edge aren't cut off.
+      var mapBounds = (toBounds(boundsOverride) || leafletMap.getBounds()).pad(0.1);
+
+      // Continent-scoped detail (#319): at most one continent renders
+      // markers; every other continent collapses to a summary pill.
+      // Without the geo tree there is no continent mapping — skip the
+      // cull entirely so a failed geo-tree fetch degrades to the old
+      // render-everything behavior instead of a blank map.
+      focusedContinent = computeFocusedContinent(boundsOverride);
+      var continentCull = !!geoTreeData;
+
+      activeCatNamesInOrder().forEach(function(cn) {
+        var cg = catLayers[cn];
+        if (!cg) return;
+        var rendered = catRendered[cn] || (catRendered[cn] = new Set());
+        var wanted = [];
+        (catMarkers[cn] || []).forEach(function(l) {
+          if (!isVisible(l)) return;
+          // Detail is continent-scoped: outside the focused continent —
+          // or everywhere when nothing is focused — only summary pills
+          // show. User-submitted markers bypass the cull.
+          if (continentCull && !l._cleanUserSubmitted) {
+            var markerCont = countryToContinent[l._cleanCo] || 'XX';
+            if (markerCont !== focusedContinent) return;
+          }
+          var key = coordKey(l);
+          if (!key || seenCoords.has(key)) return;
+          seenCoords.add(key);
+          // Lazy rendering: only markers within the current viewport.
+          // wrapLatLng keeps the test correct if the view ever straddles
+          // the antimeridian.
+          if (!mapBounds.contains(leafletMap.wrapLatLng(l.getLatLng()))) return;
+          wanted.push(l);
+        });
+
+        var wantedSet = new Set(wanted);
+        var toRemove = [];
+        rendered.forEach(function(l) { if (!wantedSet.has(l)) toRemove.push(l); });
+        var toAdd = wanted.filter(function(l) { return !rendered.has(l); });
+        if (toRemove.length) cg.removeLayers(toRemove);
+        if (toAdd.length) cg.addLayers(toAdd);
+        catRendered[cn] = wantedSet;
+      });
+      if (youthAvailable) renderSegmentPills(computeSegmentCounts());
+
+      // Refresh the continent summary pills — this is the single choke
+      // point every filter, mode, and category-load path funnels through.
+      updateContinentSummaries();
+
+      // The dashed region outline belongs to a geo selection; drop it once
+      // the selection is cleared (e.g. by resetFilters).
+      if (!activeCity && !activeAdmin1 && !activeCountry && !activeContinent) clearBbox();
+    }
+
+    // Bbox of the most specific active geo filter, or null if none.
+    function activeGeoBbox() {
+      if (!geoTreeData) return null;
+      var ctry = activeCountry ? findCountryNode(activeCountry) : null;
+      var state = (ctry && activeAdmin1) ? findStateNode(ctry, activeAdmin1) : null;
+      if (activeCity && ctry) {
+        var cityParent = state ? state.cities : ctry.cities;
+        var city = (cityParent || []).find(function(ci) { return ci.code === activeCity; });
+        return city ? city.bbox : null;
+      }
+      if (activeAdmin1 && state) return state.bbox;
+      if (activeCountry && ctry) return ctry.bbox;
+      if (activeContinent) {
+        for (var i = 0; i < (geoTreeData.continents || []).length; i++) {
+          if (geoTreeData.continents[i].code === activeContinent) return geoTreeData.continents[i].bbox;
+        }
+      }
+      return null;
+    }
+
+    // How many markers are actually attached to the map right now, as
+    // opposed to how many match the filters (computeFilteredMarkers).
+    function renderedMarkerCount() {
+      var n = 0;
+      Object.keys(catRendered).forEach(function(cn) {
+        if (activeCats.has(cn)) n += catRendered[cn].size;
+      });
+      return n;
+    }
+
+    // With lazy rendering, a filter that matches only off-screen studios
+    // leaves the map empty while the sidebar reports matches. Non-geo
+    // filters (search) don't move the map on their own, so bring the
+    // matches into view when nothing is rendered. `false` suppresses the
+    // dashed outline — that belongs to a geo selection, not a search.
+    function ensureMatchesVisible() {
+      if (renderedMarkerCount() > 0) return;
+      var bounds = getVisibleBounds();
+      if (bounds) flyToBbox(bounds, false);
+    }
+
+    // Called by the geo dropdown handlers: render the destination region,
+    // then fly to it. Splitting this out of applyGeoFilter is what keeps
+    // the moveend handler from re-triggering a flight.
+    function applyGeoFilterAndFly() {
+      var bbox = activeGeoBbox();
+      applyGeoFilter(bbox);
+      if (bbox) flyToBbox(bbox);
+    }
+
+    // ── Category glyph markers (issue #320, P2) ─────────────────────
+    // Every school shares one outer marker shape; the category glyph
+    // inside gives the non-color distinction. Keys come from the
+    // manifest's `icon` field; unknown keys fall back to 'dot'.
+    var GLYPH_PATHS = {
+      dot: '<circle cx="12" cy="12" r="4"/>',
+      fist: '<rect x="6" y="10" width="12" height="8" rx="3"/><path d="M8 10V7a1.5 1.5 0 013 0v3M11 10V6a1.5 1.5 0 013 0v4M14 10V7a1.5 1.5 0 013 0v3"/>',
+      gi: '<path d="M8 4l4 4 4-4 3 3-3 13H8L5 7z"/>',
+      kick: '<path d="M7 21l5-8 6-9"/><circle cx="18" cy="4" r="2"/><path d="M7 21l-2-1"/>',
+      grapple: '<circle cx="8" cy="9" r="3"/><circle cx="16" cy="9" r="3"/><path d="M5 14q7 6 14 0"/>',
+      sword: '<path d="M6 18L18 6"/><path d="M13 9l5 5"/><path d="M4 20l4-4"/>',
+      mask: '<path d="M5 6q7-2 14 0l-1 9q-6 5-12 0z"/><circle cx="9.5" cy="10" r="1.2"/><circle cx="14.5" cy="10" r="1.2"/>',
+      sumo: '<circle cx="12" cy="7" r="3"/><ellipse cx="12" cy="15" rx="6" ry="4.5"/>',
+      stick: '<path d="M5 19L17 5"/><path d="M9 20L20 8"/><circle cx="19" cy="6" r="1.4"/>',
+      blade: '<path d="M4 20L16 8l3-4 1 1-7 13z"/><path d="M12 12l2 2"/>',
+      glove: '<rect x="7" y="9" width="11" height="9" rx="4"/><rect x="10" y="4" width="7" height="7" rx="3"/>',
+      lotus: '<path d="M12 5q4 5 0 10-4-5 0-10"/><path d="M5 9q4 5 7 6"/><path d="M19 9q-4 5-7 6"/><path d="M4 17q8 4 16 0"/>',
+      spine: '<path d="M12 3q3 4.5 0 9t0 9"/><circle cx="12" cy="6" r="1.1"/><circle cx="12" cy="10" r="1.1"/><circle cx="12" cy="14" r="1.1"/><circle cx="12" cy="18" r="1.1"/>',
+      ring: '<circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2"/>',
+      spiral: '<path d="M12 12a2 2 0 012 2 4 4 0 01-6 1 6 6 0 018-6 8 8 0 01-10 9"/>',
+      flow: '<path d="M4 8q4-4 8 0t8 0"/><path d="M4 13q4-4 8 0t8 0"/><path d="M4 18q4-4 8 0t8 0"/>',
+      dance: '<circle cx="12" cy="4.5" r="2"/><path d="M12 8v7M6 9q6 3 12 0M12 15l-4 6M12 15l4 6"/>',
+      masks: '<path d="M3 5q4-1 8 1l-1 7q-4 2-6-1z"/><path d="M13 6q4-1 8-1l-1 7q-4 2-7-1z"/>',
+      note: '<path d="M9 18a3 3 0 100-.01M9 18V5l9-2v11"/><circle cx="15" cy="14" r="3"/>'
+    };
+    function glyphSvg(key) {
+      var inner = GLYPH_PATHS[key] || GLYPH_PATHS.dot;
+      return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"'
+        + ' stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"'
+        + ' aria-hidden="true">' + inner + '</svg>';
+    }
+
+    function studioMarkerIcon(cat, rec) {
+      var badge = (rec.cn && rec.cn > 1)
+        ? '<span class="sm-badge" aria-hidden="true">+' + (rec.cn - 1) + '</span>'
+        : '';
+      var color = youthAvailable ? youthMarkerColor(rec.ps) : cat.color;
+      var html = '<div class="sm-marker" style="--mc:' + color + '">'
+        + glyphSvg(cat.icon) + badge + '</div>';
+      return L.divIcon({
+        className: 'sm-marker-icon',
+        html: html,
+        iconSize: [26, 26],
+        iconAnchor: [13, 13]
+      });
+    }
+
+    // ── School profile card (issue #320, P2) ────────────────────────
+    // Marker click opens the card immediately with the light record,
+    // then merges the full record from studios-detail/{CONT}.json —
+    // fetched once per continent, on demand.
+    var schoolCardEl = null;
+    var schoolCardBody = null;
+
+    function loadContinentDetail(contCode) {
+      var cont = contCode || 'XX';
+      if (!detailCache[cont]) {
+        detailCache[cont] = fetch('studios-detail/' + cont + '.json' + CACHE_BUST)
+          .then(function(r) { return r.ok ? r.json() : { byId: {} }; })
+          .then(function(d) { return (d && d.byId) || {}; })
+          .catch(function(err) {
+            console.warn('[detail] ' + cont + ' fetch failed:', err);
+            return {};
+          });
+      }
+      return detailCache[cont];
+    }
+
+    function schoolCardHtml(marker, detail) {
+      var r = marker._rec || {};
+      var name = (detail && detail.n) || r.n || 'Unknown studio';
+      var html = '<h3 id="school-card-name">' + escapeHtml(name) + '</h3>';
+      var cats = (detail && detail.cats) || [];
+      var primary = (detail && detail.pc) || marker._cleanCat || '';
+      if (primary || cats.length) {
+        html += '<div class="sc-cats">';
+        if (primary) {
+          var pc = catByName[primary];
+          html += '<span class="sc-chip" style="--chip:'
+            + escapeHtml((pc && pc.color) || '#8b949e') + '">'
+            + escapeHtml(primary) + '</span>';
+        }
+        cats.forEach(function(cn) {
+          if (cn === primary) return;
+          var cc = catByName[cn];
+          html += '<span class="sc-chip sc-chip-alt" style="--chip:'
+            + escapeHtml((cc && cc.color) || '#8b949e') + '">'
+            + escapeHtml(cn) + '</span>';
+        });
+        html += '</div>';
+      }
+      var locBits = [];
+      var city = (detail && detail.city) || '';
+      var ctry = (detail && detail.ctry) || countryNameByCode[r.co] || r.co || '';
+      if (city) locBits.push(city);
+      if (detail && detail.ad) locBits.push(detail.ad);
+      if (ctry) locBits.push(ctry);
+      if (locBits.length) {
+        html += '<div class="sc-loc">' + escapeHtml(locBits.join(', ')) + '</div>';
+      }
+      if (detail && detail.addr) {
+        html += '<div class="sc-addr">' + escapeHtml(detail.addr) + '</div>';
+      }
+      var links = '';
+      if (detail && detail.web) {
+        var w = String(detail.web);
+        var href = /^https?:\/\//i.test(w) ? w
+          : (/^[\w.-]+\.[a-z]{2,}/i.test(w) ? 'https://' + w : '');
+        if (href) {
+          links += '<a class="sc-link" href="' + escapeHtml(href)
+            + '" target="_blank" rel="noopener">' + escapeHtml(w) + '</a>';
+        } else {
+          links += '<span class="sc-plain">' + escapeHtml(w) + '</span>';
+        }
+      }
+      if (detail && detail.ph) {
+        links += '<a class="sc-link" href="tel:' + escapeHtml(String(detail.ph).replace(/[^\d+]/g, '')) + '">' + escapeHtml(detail.ph) + '</a>';
+      }
+      if (detail && detail.em) {
+        links += '<a class="sc-link" href="mailto:' + escapeHtml(detail.em) + '">' + escapeHtml(detail.em) + '</a>';
+      }
+      if (links) html += '<div class="sc-links">' + links + '</div>';
+      if (r.mc && r.mc > 1) {
+        html += '<div class="sc-meta">' + r.mc.toLocaleString()
+          + ' studios at this location</div>';
+      }
+      if (r.al && r.al.length) {
+        html += '<details class="sc-altnames"><summary>+'
+          + r.al.length.toLocaleString() + ' more name'
+          + (r.al.length > 1 ? 's' : '') + '</summary>';
+        r.al.forEach(function(an) {
+          html += '<div>' + escapeHtml(an) + '</div>';
+        });
+        html += '</details>';
+      }
+      if (youthAvailable && (r.yr || r.ps || r.so || r.kg)) {
+        html += '<div class="sc-youth">';
+        if (r.ps) {
+          html += '<span class="sc-seg" style="background:' + youthMarkerColor(r.ps)
+            + '">Segment ' + escapeHtml(r.ps) + '</span>';
+        }
+        html += '<span class="sc-yr">Youth readiness ' + (r.yr || 0) + '/100</span>';
+        if (r.so) html += '<span class="sc-so">' + escapeHtml(somaticFullName(r.so)) + '</span>';
+        if (r.kg) html += '<span class="sc-kg">Kindergarten ready</span>';
+        html += '</div>';
+      }
+      if (detail === null) {
+        html += '<div class="sc-loading">Loading details…</div>';
+      } else if (!detail) {
+        html += '<div class="sc-note">No additional details on file.</div>';
+      }
+      return html;
+    }
+
+    function openSchoolCard(marker) {
+      if (!schoolCardEl) {
+        schoolCardEl = document.getElementById('school-card');
+        schoolCardBody = document.getElementById('school-card-body');
+      }
+      if (!schoolCardEl || !schoolCardBody) return;
+      cardMarker = marker;
+      schoolCardBody.innerHTML = schoolCardHtml(marker, null);
+      schoolCardEl.hidden = false;
+      var closeBtn = document.getElementById('school-card-close');
+      if (closeBtn) closeBtn.focus();
+      announce('Studio card: ' + (marker._rec && marker._rec.n || 'studio'));
+      var rec = marker._rec || {};
+      var cont = rec.ct || countryToContinent[marker._cleanCo] || 'XX';
+      var sid = marker._studioId;
+      loadContinentDetail(cont).then(function(byId) {
+        if (cardMarker !== marker) return;   // user moved on
+        schoolCardBody.innerHTML = schoolCardHtml(marker, byId[sid] || undefined);
+      });
+    }
+
+    window.closeSchoolCard = function() {
+      if (schoolCardEl) schoolCardEl.hidden = true;
+      cardMarker = null;
+    };
+
+    // ── List view (issue #320, P3) ──────────────────────────────────
+    // The non-map path through the same filtered result set — required
+    // for keyboard/screen-reader users and dense-result browsing.
+    function toggleListView(force) {
+      listMode = (force !== undefined) ? !!force : !listMode;
+      document.getElementById('map-layout').classList.toggle('list-mode', listMode);
+      var btn = document.getElementById('list-view-btn');
+      if (btn) {
+        btn.setAttribute('aria-pressed', listMode ? 'true' : 'false');
+        btn.textContent = listMode ? 'Map' : 'List';
+      }
+      var listEl = document.getElementById('studio-list');
+      if (listEl) listEl.hidden = !listMode;
+      if (listMode) renderList(true);
+      leafletMap.invalidateSize();
+    }
+    window.toggleListView = toggleListView;
+
+    function listRowHtml(marker) {
+      var r = marker._rec || {};
+      var bits = [];
+      if (r.ci) bits.push(r.ci.replace(/-/g, ' '));
+      var ctry = countryNameByCode[r.co] || r.co || '';
+      if (ctry) bits.push(ctry);
+      return '<button type="button" class="sl-row" data-sid="' + escapeHtml(marker._studioId) + '">'
+        + '<span class="sl-name">' + escapeHtml(r.n || 'Unknown studio') + '</span>'
+        + '<span class="sl-meta">' + escapeHtml(bits.join(', ')) + '</span>'
+        + '<span class="sl-cat">' + escapeHtml(marker._cleanCat || '') + '</span>'
+        + '</button>';
+    }
+
+    function renderList(reset) {
+      var rowsEl = document.getElementById('studio-list-rows');
+      var countEl = document.getElementById('studio-list-count');
+      var moreBtn = document.getElementById('studio-list-more');
+      if (!rowsEl) return;
+      var result = computeFilteredMarkers();
+      var markers = result.markers.slice().sort(function(a, b) {
+        return (a._cleanName || '').localeCompare(b._cleanName || '');
+      });
+      if (reset) { rowsEl.innerHTML = ''; listShown = 0; }
+      var batch = markers.slice(listShown, listShown + LIST_PAGE);
+      rowsEl.insertAdjacentHTML('beforeend', batch.map(listRowHtml).join(''));
+      listShown += batch.length;
+      if (countEl) {
+        countEl.textContent = result.count.toLocaleString() + ' studios';
+      }
+      if (moreBtn) moreBtn.hidden = listShown >= markers.length;
+      announce(result.count.toLocaleString() + ' studios in list');
+    }
+
+    window.loadMoreList = function() { renderList(false); };
+
+    // Row click → profile card (the marker may not be rendered on the
+    // map — the card only needs the light record).
+    document.addEventListener('click', function(e) {
+      var row = e.target && e.target.closest ? e.target.closest('.sl-row') : null;
+      if (!row) return;
+      var sid = row.getAttribute('data-sid');
+      var found = null;
+      Object.keys(catMarkers).forEach(function(cn) {
+        if (found) return;
+        catMarkers[cn].forEach(function(m) {
+          if (!found && m._studioId === sid) found = m;
+        });
+      });
+      if (found) {
+        openSchoolCard(found);
+      } else {
+        console.warn('[list] no marker for studio id ' + sid);
+      }
+    });
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && schoolCardEl && !schoolCardEl.hidden) {
+        closeSchoolCard();
+      }
+    });
+
+    // Screen-reader announcements for state changes.
+    var srStatusEl = null;
+    var srTimer = null;
+    function announce(msg) {
+      if (!srStatusEl) srStatusEl = document.getElementById('map-sr-status');
+      if (!srStatusEl) return;
+      clearTimeout(srTimer);
+      srTimer = setTimeout(function() { srStatusEl.textContent = msg; }, 300);
+    }
+
+    function loadCategory(catName) {
+      if (loadedCats[catName]) return Promise.resolve();
+      if (loadingPromises[catName]) return loadingPromises[catName];
+      var cat = catByName[catName];
+      if (!cat) return Promise.resolve();
+
+      loadingPromises[catName] = fetchManifest().then(function() {
+        var catFile = cat.file;
+        if (!catFile) throw new Error('No file for category ' + catName);
+        setStatus('Loading ' + cat.name + '…');
+        return fetch(catFile + CACHE_BUST).then(function(r) {
+          if (!r.ok) throw new Error('HTTP ' + r.status);
+          return r.json();
+        }).then(function(data) {
+          var studios = data.studios || [];
+
+          // ── Load-time data validation (issue #114) ──────────────────
+          var validStudios = [];
+          var rejected = 0;
+          studios.forEach(function(r) {
+            var latOk = typeof r.lat === 'number' && isFinite(r.lat) && r.lat >= -90 && r.lat <= 90;
+            var lngOk = typeof r.lng === 'number' && isFinite(r.lng) && r.lng >= -180 && r.lng <= 180;
+            var idOk = !!r.id;
+            var yyOk = r.yy === undefined || r.yy === 0 || r.yy === 1;
+            var aaOk = r.aa === undefined || r.aa === 0 || r.aa === 1;
+            var notOrphaned = !(r.yy === 0 && r.aa === 0);
+            if (!latOk || !lngOk || !idOk || !yyOk || !aaOk || !notOrphaned) {
+              rejected++;
+              var reasons = [];
+              if (!latOk) reasons.push('bad lat');
+              if (!lngOk) reasons.push('bad lng');
+              if (!idOk) reasons.push('missing id');
+              if (!yyOk) reasons.push('bad yy:' + r.yy);
+              if (!aaOk) reasons.push('bad aa:' + r.aa);
+              if (!notOrphaned) reasons.push('orphaned (yy=0,aa=0)');
+              console.warn('[loadCategory:' + catName + '] rejected record ' + (r.id || '(no id)') + ' — ' + reasons.join(', '));
+              return;
+            }
+            validStudios.push(r);
+          });
+          if (rejected > 0) {
+            console.warn('[loadCategory:' + catName + '] ' + rejected + ' of ' + studios.length + ' records rejected, ' + validStudios.length + ' kept');
+          }
+          studios = validStudios;
+
+          if (!youthAvailable && studios.some(function(r) { return r.yr || r.ps || r.so || r.kg; })) {
+            youthAvailable = true;
+            syncYouthPanel();
+          }
+
+          var cg = L.markerClusterGroup({
+            iconCreateFunction: function(cluster) {
+              var count = cluster.getChildCount();
+              var size = count > 100 ? 44 : count > 10 ? 36 : 30;
+              return L.divIcon({
+                html: '<div style="background:' + cat.color + ';width:' + size + 'px;height:' + size + 'px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:700;border:2px solid rgba(255,255,255,.7);box-shadow:0 2px 8px rgba(0,0,0,.3)">' + count + '</div>',
+                className: 'clean-cluster', iconSize: [size, size]
+              });
+            }
+          });
+
+          catMarkers[catName] = [];
+          studios.forEach(function(r) {
+            // Glyph marker (issue #320): category icon + color, click opens
+            // the profile card instead of a popup. In youth mode the marker
+            // color still carries the priority segment.
+            var marker = L.marker([r.lat, r.lng], {
+              icon: studioMarkerIcon(cat, r),
+              keyboard: true,
+              title: r.n || '',
+              riseOnHover: true
+            });
+            marker._rec = r;
+            marker._cleanName = (r.n || '').toLowerCase();
+            marker._cleanCat = catName;
+            marker._cleanCo = r.co || '';
+            marker._cleanAdmin1 = r.ad || '';
+            marker._cleanCi = r.ci || '';
+            marker._cleanYr = r.yr || 0;
+            marker._cleanPs = r.ps || '';
+            marker._cleanSo = r.so || '';
+            marker._cleanKg = r.kg || 0;
+            marker._cleanYy = r.yy || 0;
+            marker._cleanAa = (r.aa === undefined) ? 1 : r.aa;
+            marker._studioId = r.id || '';
+            marker.on('click', function() { openSchoolCard(marker); });
+            catMarkers[catName].push(marker);
+            // Note: markers are NOT added to cg here. applyGeoFilter()
+            // handles lazy rendering — only viewport-visible markers are
+            // attached to the cluster group.
+          });
+
+          catLayers[catName] = cg;
+          loadedCats[catName] = true;
+          delete loadingPromises[catName];
+
+          var pillBtn = document.querySelector('.cat-pill[data-cat="' + catName + '"]');
+          if (pillBtn) {
+            var countEl = pillBtn.querySelector('.cat-pill-count');
+            if (countEl) countEl.textContent = (cat.count || 0).toLocaleString();
+          }
+
+          setStatus('');
+        });
+      }).catch(function(err) { delete loadingPromises[catName]; throw err; });
+      return loadingPromises[catName];
+    }
+
+    window.toggleCat = function(btn) {
+      var catName = btn.dataset.cat;
+      if (activeCats.has(catName)) {
+        deactivateCat(catName);
+        // Removing the cluster layer clears the detail markers, but the
+        // continent summary pills (#319) still count this category —
+        // recompute them.
+        applyGeoFilter();
+      } else {
+        var cat = catByName[catName];
+        if (cat && cat.parent && activeCats.has(cat.parent)) {
+          deactivateCat(cat.parent);
+        }
+        categories.forEach(function(c) {
+          if (c.parent === catName && activeCats.has(c.name)) deactivateCat(c.name);
+        });
+        activateCat(catName);
+      }
+      updateStats();
+    };
+
+    window.toggleOthers = function() {
+      othersShown = !othersShown;
+      syncOthersButton();
+      syncPillVisibility();
+      var topLevel = categories.filter(function(c) { return !c.parent; });
+      if (othersShown) {
+        var autoActivate = topLevel
+          .filter(function(c) { return c.name !== 'Japanese Martial Arts'; })
+          .map(function(c) { return c.name; });
+        activateCats(autoActivate).then(function() {
+          applyGeoFilter();
+          updateStats();
+        });
+      } else {
+        topLevel.forEach(function(cat) { deactivateCat(cat.name); });
+        applyGeoFilter();
+        updateStats();
+      }
+    };
+
+    var searchDebounceTimer = null;
+    window.filterMarkers = function() {
+      clearTimeout(searchDebounceTimer);
+      searchDebounceTimer = setTimeout(function() {
+        var input = document.getElementById('clean-search-input');
+        searchQuery = (input.value || '').toLowerCase().trim();
+        applyGeoFilter();
+        updateStats();
+        if (searchQuery) ensureMatchesVisible();
+      }, 150);
+    };
+
+    window.resetZoom = function() {
+      var bounds = getVisibleBounds();
+      if (bounds) {
+        flyToBbox(bounds);
+      } else {
+        clearBbox();
+        leafletMap.flyTo([0, 150], mapFitZoom);
+      }
+    };
+
+    window.togglePanel = function() {
+      var panel = document.getElementById('clean-panel');
+      var backdrop = document.getElementById('panel-backdrop');
+      var btn = document.getElementById('panel-toggle-btn');
+      if (!panel) return;
+      var open = panel.classList.toggle('open');
+      if (backdrop) backdrop.classList.toggle('open', open);
+      if (btn) btn.setAttribute('aria-expanded', String(open));
+    };
+
+    window.closePanel = function() {
+      var panel = document.getElementById('clean-panel');
+      var backdrop = document.getElementById('panel-backdrop');
+      var btn = document.getElementById('panel-toggle-btn');
+      if (panel) panel.classList.remove('open');
+      if (backdrop) backdrop.classList.remove('open');
+      if (btn) btn.setAttribute('aria-expanded', 'false');
+    };
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') window.closePanel();
+    });
+
+    window.togglePanelHelp = function() {
+      var btn = document.getElementById('panel-help-btn');
+      var tip = document.getElementById('panel-help-tip');
+      if (!tip) return;
+      var shown = tip.classList.toggle('show');
+      if (btn) btn.setAttribute('aria-expanded', String(shown));
+    };
+
+    window.clearSearch = function() {
+      var input = document.getElementById('clean-search-input');
+      if (!input) return;
+      input.value = '';
+      searchQuery = '';
+      filterMarkers();
+      input.focus();
+    };
+
+    // Back to this mode's starting state — categories, search, geography and
+    // youth filters together. The view resets too: clearing the filters while
+    // still zoomed into the last region leaves a near-empty map next to a
+    // full-count label.
+    window.resetFilters = function() {
+      applyModeState(defaultModeState(mapMode)).then(function() {
+        var bounds = getVisibleBounds();
+        if (bounds) flyToBbox(bounds, false);
+      });
+    };
+
+    // Export bridge: parent page requests visible studio IDs via postMessage.
+    window.requestStudioList = function() {
+      window.parent.postMessage({type: 'request-export'}, '*');
+    };
+    window.addEventListener('message', function(e) {
+      // Same-origin parents only (the map iframe is embedded on this site) —
+      // otherwise any page that frames us could inject 'add-studio' data.
+      if (e.origin !== window.location.origin) return;
+      if (!e.data) return;
+      if (e.data.type === 'request-visible-ids') {
+        var result = computeFilteredMarkers();
+        var ids = result.markers.map(function(l) { return l._studioId; }).filter(Boolean);
+        (e.source || window.parent).postMessage({type: 'visible-ids', ids: ids}, '*');
+      }
+      if (e.data.type === 'set-map-mode' && (e.data.mode === 'youth' || e.data.mode === 'adult')) {
+        if (mapMode === e.data.mode) return;
+        setMapMode(e.data.mode).then(function() {
+          (e.source || window.parent).postMessage({type: 'map-mode-changed', mode: mapMode}, '*');
+        });
+      }
+      // Add a user-submitted studio marker to the map immediately.
+      // The parent page sends this after a successful submit to the backend.
+      // studio = { name, website, email, address, lat, lng, countryCode, admin1Code, id }
+      if (e.data.type === 'add-studio' && e.data.studio) {
+        var s = e.data.studio;
+        var marker = addSubmittedStudio(s);
+        saveSubmittedToStorage(s);
+        if (marker) {
+          // Fly to the new marker so the user sees it appear.
+          leafletMap.flyTo([s.lat, s.lng], Math.max(leafletMap.getZoom(), 10), { duration: 0.8 });
+          marker.openPopup();
+        }
+        (e.source || window.parent).postMessage({type: 'studio-added', ok: true}, '*');
+      }
+    });
+
+    function showFailure(msg) {
+      setStatus(msg);
+      titleCountEl.textContent = 'Studios failed to load';
+      var retryBtn = document.getElementById('clean-retry-btn');
+      if (retryBtn) retryBtn.style.display = '';
+    }
+
+    function runInitialLoad() {
+      var retryBtn = document.getElementById('clean-retry-btn');
+      if (retryBtn) retryBtn.style.display = 'none';
+      setStatus('Loading studio data…');
+      // Restore any previously submitted studios from localStorage so they
+      // persist across reloads for this user.
+      loadSubmittedFromStorage();
+      fetchManifest().then(function() {
+      // Cold load goes through the same restore path as the mode toggle, so
+      // ?map_mode=youth and clicking Youth land on identical state.
+      return applyModeState(modeState[mapMode] || defaultModeState(mapMode)).then(function() {
+        var bounds = getVisibleBounds();
+        if (bounds) flyToBbox(bounds, false);
+      });
+    }).then(function() {
+      if (GEO_TREE_URL) fetchGeoTree();
+      // Geo-IP lookup after the geo tree fetch has started — the lookup
+      // callback waits for fetchGeoTree() to resolve before computing
+      // the 4 nearest admin1s.
+      requestGeolocation();
+      updateStats();
+    }).catch(function(err) {
+      console.error('[boot] initial load failed: ' + (err && err.message ? err.message : err));
+      showFailure('Failed to load studio data — please retry or refresh.');
+    });
+    }
+    window.retryInitialLoad = runInitialLoad;
+    ensureChoropleth();
+    runInitialLoad();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', boot);
+  } else {
+    boot();
+  }
+})();
+</script>
+
+            <div class="folium-map" id="map_363fa43554c25f1504b1cb6cc0f58051" ></div>
+
+            <script>
+            // Move the Folium-generated map div into the flex #map-slot
+            // so the layout is handled by CSS flexbox instead of position:fixed hacks.
+            (function() {
+                var mapDiv = document.getElementById('map_363fa43554c25f1504b1cb6cc0f58051');
+                var slot = document.getElementById('map-slot');
+                if (mapDiv && slot) slot.appendChild(mapDiv);
+            })();
+            </script>
+
+</body>
+<script>
+            var map_363fa43554c25f1504b1cb6cc0f58051 = L.map(
+                "map_363fa43554c25f1504b1cb6cc0f58051",
+                {
+                    center: [0.0, 150.0],
+                    crs: L.CRS.EPSG3857,
+                    ...{
+  "zoom": 2,
+  "maxZoom": 16,
+  "zoomControl": true,
+  "preferCanvas": false,
+  "scrollWheelZoom": true,
+  "wheelPxPerZoomLevel": 120,
+  "worldCopyJump": true,
+  "maxBounds": [[-90, -180], [90, 180]],
+  "maxBoundsViscosity": 1.0
+}
+
+                }
+            );
+
+            // Self-hosted basemap — Natural Earth country boundaries rendered
+            // as local GeoJSON polygons; no external tile provider (#316).
+            // continents.geo.json is the attributed variant (name/iso2/cont)
+            // emitted by the data pipeline (#335); studios-map.js adds an
+            // interactive density layer over it (#320).
+            fetch('continents.geo.json')
+                .then(function(r) { return r.json(); })
+                .then(function(geo) {
+                    window.__continentsGeo = geo;
+                    L.geoJSON(geo, {
+                        interactive: false,
+                        attribution: 'Boundaries: Natural Earth',
+                        style: { color: '#3a4a63', weight: 0.6, fillColor: '#1C2940', fillOpacity: 1 }
+                    }).addTo(map_363fa43554c25f1504b1cb6cc0f58051);
+                })
+                .catch(function(err) { console.warn('studios-map: basemap GeoJSON failed to load', err); });
+
+            var marker_cluster_84cb59a34fa9346ae917e0eec2473d40 = L.markerClusterGroup(
+                {
+}
+            );
+
+            marker_cluster_84cb59a34fa9346ae917e0eec2473d40.addTo(map_363fa43554c25f1504b1cb6cc0f58051);
+</script>
+</html>
