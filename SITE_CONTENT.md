@@ -1267,3 +1267,55 @@ Studio Finder** listing.
 `noindex`. Confirms receipt, sets expectations (snapshot reply, listing
 confirmation), offers the contact page for a sooner conversation. Trimmed
 nav (Home / Free Services For Studios / Get Started).
+
+## Canonical claims and boundaries (issues #85, #87, #95, #97)
+
+Recorded 2026-10-22. These are the canonical wordings; pages must not drift from them.
+
+### Result claims (issue #85)
+
+- **87%** = reduction in vulnerability remediation time (165 → 21 days), from a
+  DevOps workflow rearchitecture (nine-year fractional CISO engagement).
+  Canonical wording: "Reduction in vulnerability remediation time (165 → 21
+  days) from a DevOps workflow rearchitecture."
+- **21 → 3 days** = further remediation-time cut from AI-assisted triage
+  workflows — a later stage of the same engagement, stated separately.
+- **$5M** = blocked sales channel (ARR) recovered by resolving customer
+  security objections.
+- The "87% customer-reported risk eliminated in three thirty-minute meetings"
+  claim was removed from `contact.html` — it shared the 87% number but had no
+  documented source and read as a different metric.
+
+### AikiField / Neuro Wellness Dojo boundary (issue #87)
+
+- AikiField offers coaching for leaders plus digital/business/technology
+  support for studios. It never offers personal somatic coaching for health
+  conditions.
+- Neuro Wellness Dojo offers somatic relaxation skills for individuals facing
+  dental anxiety. It never offers business services.
+- No nav cross-link. One factual bio line is permitted: "He also runs Neuro
+  Wellness Dojo, a separate practice teaching relaxation skills for dental
+  anxiety." (in place on the home-page coach block).
+- The studio/community scope boundary stands: digital, business and
+  technology support only — never clinical, therapeutic or medical advice.
+
+### World Studio Finder public description (issue #95)
+
+- Public copy describes WSF as a **consent-based, opt-in studio directory**
+  and a geo-aware research map. Studios appear only by opt-in and can edit or
+  remove their listing at any time; they are never contacted in bulk.
+- The public site must not describe mail merge, bulk email campaigns, Hunter.io
+  / NeverBounce harvesting, or automated contact-form submission as live
+  capabilities. (Underlying code functions in the WSF repo are a separate
+  decision — biofool/WorldStudioFinder.)
+- Canonical bullets: searches Google Maps worldwide with Places API fallback;
+  builds a studio directory (opt-in, editable, removable); syncs to Google
+  Sheets as the working store; geo-aware research coverage; resumable
+  pipeline.
+
+### Coaching engagement shape (issue #97)
+
+- Coaching engagements begin with a short series of conversations — a minimum
+  initial commitment of three sessions. Stated in the `#coaching` section on
+  the home page; no fee figures are published. Kenneth to confirm the stated
+  minimum; change in one place if he vetoes.
