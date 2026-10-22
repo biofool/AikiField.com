@@ -56,7 +56,7 @@ New copy has no `data-i18n` keys yet, so it shows in English in every locale.
 
 ### JSON-LD structured data (`<head>`)
 
-`ProfessionalService` with `@id` `https://aikifield.com/#organization` (kept), `areaServed: Global`, `knowsAbout` (Leadership Coaching, Executive Presence, Aikido, the Creative Unified Field, Fractional CISO, vCISO, DevSecOps), and an `OfferCatalog` with three `Offer` items:
+`ProfessionalService` with `@id` `https://aikifield.com/#organization` (kept), `areaServed: Global`, `knowsAbout` (Leadership Coaching, Executive Presence, Aikido, Creativity in the Unified Field, Fractional CISO, vCISO, DevSecOps), and an `OfferCatalog` with three `Offer` items:
 - **Aikido-Based Leadership Coaching** — Coaching in presence under pressure: centre, blend, and lead, practised on the job.
 - **Fractional CISO Leadership** — Executive security leadership, compliance roadmap execution, and enterprise sales unblocking.
 - **AI-Assisted DevSecOps Triage** — Automated application and cloud vulnerability triage reducing mitigation time from 21 days to 3 days using Aikido.dev integration.
@@ -85,8 +85,8 @@ Four cards, each with a short description and a ghost button:
 - Eyebrow: Your coach
 - Heading: Security accountability and a lifetime of practice.
 - Para 1: Kenneth Kron is a virtual CISO with more than twenty years in cybersecurity, most recently in the IoT space, where leaders answer for products that live in the physical world.
-- Para 2: He has also practised the Creative Unified Field for over forty years. Coaching here joins the two: the calm, decisive posture of Aikido applied to board rooms, incidents and hard conversations.
-- Para 3: His practice comes through the lineage of the Creative Unified Field founder Richard Moon.
+- Para 2: He has also practised Creativity in the Unified Field for over forty years. Coaching here joins the two: the calm, decisive posture of Aikido applied to board rooms, incidents and hard conversations.
+- Para 3: His practice comes through the lineage of Creativity in the Unified Field founder Richard Moon.
 - Para 4: His clients are founders, security leads and product teams at Series A–C startups and SaaS companies who carry enterprise security expectations.
 
 ### How the coaching works (`#coaching`)
@@ -1020,7 +1020,7 @@ carousels (ported from QA `script.js`).
 
 - `data/books-search.json` — verbatim copy of QA's `books/books-search.json`
   full-text index (fetched lazily on first search input; `js/books.js` strips
-  the `https://quantumaikido.com/books/` prefix from card hrefs so index keys
+  the `/books.html` prefix from card hrefs so index keys
   still match). Regenerate/copy again if the QA book set changes.
 
 ## Design System
@@ -1208,9 +1208,9 @@ extensionless canonical the posts had on Cloudflare Pages.
 Self-contained under `blog/`: `styles.css`, `js/locale-utils.js` +
 `js/language-selector.js` (QA copies patched to fetch `/blog/data/…`),
 `subscribe-popup.js` (subscribe CTA points back to
-`https://quantumaikido.com/sangha`), `favicon.ico`, `assets/`, and
+`/sangha`), `favicon.ico`, `assets/`, and
 `data/` (i18n config + strings + terminology JSON the language selector needs).
-In-page nav links point back to `https://quantumaikido.com/…` absolute URLs;
+In-page nav links point back to `/…` absolute URLs;
 canonical/og/schema.org URLs use `https://aikifield.com/blog/<slug>`.
 
 Posts: Aikido and Conflict Resolution · Blowing the Whistle · Bosnia ·

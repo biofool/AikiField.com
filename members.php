@@ -28,7 +28,7 @@ $qaIsAdmin   = $_SESSION['qa_is_admin'] ?? false;
   <link rel="apple-touch-icon" href="/favicon.svg">
   <meta name="robots" content="noindex,nofollow">
   <title>Unified Field Chat — AikiField</title>
-  <meta name="description" content="Enter the Unified Field Chat: AI-supported guidance grounded in the Creative Unified Field teachings.">
+  <meta name="description" content="Enter the Unified Field Chat: AI-supported guidance grounded in Creativity in the Unified Field teachings.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preload" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Public+Sans:wght@400;600;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
@@ -156,8 +156,8 @@ $qaIsAdmin   = $_SESSION['qa_is_admin'] ?? false;
                         <div class="coach-menu-sep" role="separator"></div>
                         <a href="https://quantumaikido.com/profile" id="coach-profile-link" class="coach-menu-item" role="menuitem" tabindex="-1">Profile &amp; Settings</a>
                         <div class="coach-menu-sep" role="separator"></div>
-                        <a href="https://quantumaikido.com/privacy" class="coach-menu-item" role="menuitem" tabindex="-1">Privacy</a>
-                        <a href="https://quantumaikido.com/terms" class="coach-menu-item" role="menuitem" tabindex="-1">Terms</a>
+                        <a href="/privacy" class="coach-menu-item" role="menuitem" tabindex="-1">Privacy</a>
+                        <a href="/terms" class="coach-menu-item" role="menuitem" tabindex="-1">Terms</a>
                         <div class="coach-menu-sep" role="separator"></div>
                         <button type="button" id="coach-passkey-register" class="coach-menu-item" role="menuitem" tabindex="-1" hidden>Register passkey</button>
                         <div class="coach-menu-sep" role="separator"></div>
@@ -269,7 +269,7 @@ $qaIsAdmin   = $_SESSION['qa_is_admin'] ?? false;
                 </div>
                 <p class="coach-intro-subtitle">AI-supported guidance for embodied practice, awareness, and constructive interaction.</p>
                 <ul class="coach-intro-features">
-                    <li>AI-generated responses informed by the Creative Unified Field field of teachings</li>
+                    <li>AI-generated responses informed by Creativity in the Unified Field teachings</li>
                     <li>Ask in over 30 languages &mdash; the coach replies in the language you write in</li>
                     <li>Ask to speak with a human coach at any time, right in the chat</li>
                 </ul>

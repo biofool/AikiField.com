@@ -3,7 +3,7 @@
 ## Responsibility
 
 Blind `/login.php` page that gates pre-release `/beta/` assessment pages
-by authenticating against the Creative Unified Field coaching backend
+by authenticating against Creativity in the Unified Field coaching backend
 (AIRichardMoon, FastAPI on Cloud Run). Third frontend surface of a
 shared auth flow spanning three repos.
 

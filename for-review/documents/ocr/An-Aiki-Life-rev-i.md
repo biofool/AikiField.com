@@ -22,7 +22,7 @@ now, just this breath.
 
 ***For more on Sensei Richard Moon –***
 
-[***the Creative Unified Field***](https://www.innertraditions.com/quantum-aikido) - ***The Power of Harmony (New Book)***
+[***Creativity in the Unified Field***](https://www.innertraditions.com/quantum-aikido) - ***The Power of Harmony (New Book)***
 
 ***Aikido in Three Easy Lessons -***[***https://www.youtube.com/watch?v=DxyMZtA452k***](https://www.youtube.com/watch?v=DxyMZtA452k) ***and***
 

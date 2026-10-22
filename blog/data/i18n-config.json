@@ -1,5 +1,5 @@
 {
-  "$schema": "https://quantumaikido.com/data/i18n-config.schema.json",
+  "$schema": "https://aikifield.com/data/i18n-config.schema.json",
   "version": 1,
   "defaultLocale": "en",
   "comment": "Foundational i18n configuration for quantumaikido.com. Addresses issues #75-#84. Locales are listed with their native (endonym) names rather than flags, because flags represent nations and can be politically sensitive (issue #76). Color semantics are cultural (issue #77): the per-locale overrides let meaning be tuned without forking the palette. Data meaning must never be conveyed by color alone.",

@@ -105,7 +105,7 @@
     // selected per chat session and its ID is sent with any feedback on the
     // welcome message so the dashboard can track per-variation reactions.
     let currentWelcomeId = "";
-    const WELCOME_FALLBACK = "Welcome! I'm <em>Discussing The Unified Field</em>, grounded in <em>The Creative Unified Field</em>.<br>I can adjust to your learning style and your preferred language. Just drop a note in the chat about it when you ask a question.<br><br>My knowledge comes from Richard Moon's <em>books, videos, and private coaching writings</em>.<br>Let's begin with something useful: <em>How to get luckier.</em>";
+    const WELCOME_FALLBACK = "Welcome! I'm <em>Discussing The Unified Field</em>, grounded in <em>Creativity in the Unified Field</em>.<br>I can adjust to your learning style and your preferred language. Just drop a note in the chat about it when you ask a question.<br><br>My knowledge comes from Richard Moon's <em>books, videos, and private coaching writings</em>.<br>Let's begin with something useful: <em>How to get luckier.</em>";
 
     async function loadWelcomeVariation() {
         try {

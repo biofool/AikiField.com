@@ -93,7 +93,7 @@ img.hero{width:100%;max-width:300px;display:block;margin:10px auto;border:1px so
 .deploy{font-size:11px;background:#fff;border:1px solid #E8E0D0;padding:14px}
 @media(max-width:1050px){.wrap{grid-template-columns:1fr} .sidebar,.right{position:relative;max-height:none}}
 </style></head><body>
-<header><h1>TWENTY PRACTICES <span>The Creative Unified Field — Book of Exercises & Practices — from the work of Richard Moon 6th Dan · Student of Robert Nadeau since '71</span></h1><a href="/games/" style="padding:7px 14px;border:1px solid #1A1A1A;background:#fff;color:#1A1A1A;text-decoration:none;font-size:12px">All games</a></header>
+<header><h1>TWENTY PRACTICES <span>Creativity in the Unified Field — Book of Exercises & Practices — from the work of Richard Moon 6th Dan · Student of Robert Nadeau since '71</span></h1><a href="/games/" style="padding:7px 14px;border:1px solid #1A1A1A;background:#fff;color:#1A1A1A;text-decoration:none;font-size:12px">All games</a></header>
 <div class="wrap">
 <div class="sidebar">
 <h3 id="studioHead" style="font-size:11px;letter-spacing:0.12em"></h3>

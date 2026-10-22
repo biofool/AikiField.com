@@ -6,7 +6,7 @@
  * .htaccess rewrites every request under /for-review/ to this script. The
  * session gate is the same one that protects /beta/ (beta-gate.load.php):
  * unauthenticated visitors are redirected to /login.php?next=<path>, and the
- * shared coaching session cookie means an existing the Creative Unified Field account
+ * shared coaching session cookie means an existing Creativity in the Unified Field account
  * signs straight in. session_start() inside the gate also emits
  * `Cache-Control: no-store` etc., so gated responses are never edge-cached
  * by Cloudflare.

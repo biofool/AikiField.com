@@ -7,9 +7,9 @@
   ],
   "keep_exact": [
     "AikiField",
-    "The Creative Unified Field Wisdom",
+    "Creativity in the Unified Field Wisdom",
     "World Studio Finder",
-    "The Creative Unified Field",
+    "Creativity in the Unified Field",
     "Gemini API",
     "Gemini",
     "SQLite FTS5",
@@ -94,7 +94,7 @@
   ],
   "proper_nouns": [
     "AikiField",
-    "The Creative Unified Field",
+    "Creativity in the Unified Field",
     "Richard Moon",
     "O Sensei",
     "Gemini",
@@ -171,7 +171,7 @@
     "Takemusu Aiki": {
       "keep": true
     },
-    "The Creative Unified Field": {
+    "Creativity in the Unified Field": {
       "keep": true,
       "note": "Product / book title"
     },

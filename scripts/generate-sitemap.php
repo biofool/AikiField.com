@@ -126,11 +126,26 @@ foreach ($blogSlugs as $slug) {
     $xml .= "  </url>\n";
 }
 
+// Unified Field pages moved from quantumaikido.com (issue #135): extensionless
+// canonical URLs via root .htaccess, same pattern as /blog/.
+$unifiedFieldPages = array(
+    'glossary', 'media-kit', 'richard-moon', 'resources', 'privacy', 'terms',
+    'reviews', 'podcasts', 'sangha', 'about', 'free_chapter', 'book', 'media',
+    'books/print-on-demand', 'books/egbert_bigger_world',
+);
+foreach ($unifiedFieldPages as $p) {
+    $xml .= "  <url>\n";
+    $xml .= "    <loc>" . htmlspecialchars($baseUrl . '/' . $p, ENT_XML1) . "</loc>\n";
+    $xml .= "    <changefreq>monthly</changefreq>\n";
+    $xml .= "    <priority>0.6</priority>\n";
+    $xml .= "  </url>\n";
+}
+
 $xml .= '</urlset>' . "\n";
 
 // Output
 $writeMode = in_array('--write', $argv, true);
-$count = count($localizablePages) * count($supportedLocales) + count($nonLocalizablePages) + count($askPaths) + count($blogSlugs) + 1;
+$count = count($localizablePages) * count($supportedLocales) + count($nonLocalizablePages) + count($askPaths) + count($blogSlugs) + count($unifiedFieldPages) + 1;
 if ($writeMode) {
     file_put_contents($sitemapPath, $xml);
     echo "Wrote $sitemapPath ($count URLs)\n";

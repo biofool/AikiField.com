@@ -1,10 +1,10 @@
 // Books page — ported from quantumaikido.com (script.js + books/index.html).
 // Review/testimonial quotes are about Richard Moon's "Quantum Aikido" book;
-// portraits and PDFs stay on quantumaikido.com (absolute URLs, single source).
+// portraits and PDFs are hosted locally on aikifield.com (issue #135).
 (function () {
   "use strict";
 
-  var QA = "https://quantumaikido.com";
+  var QA = "";
 
   // ---- Testimonial data (from quantumaikido.com script.js) ----
   var reviewers = [
@@ -192,7 +192,7 @@
     function itemHref(item) {
       var a = item.querySelector('a[href]');
       var href = a ? a.getAttribute('href') : '';
-      return href.replace(/^https:\/\/quantumaikido\.com\/books\//, '');
+      return href.replace(/^(?:https:\/\/quantumaikido\.com)?\/books\//, '');
     }
 
     function matchesQuery(item, terms) {

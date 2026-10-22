@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Egbert and the Bigger World | Creativity in the Unified Field</title>
+    <meta name="description" content="Egbert and the Bigger World — More Adventures in Aiki-land. An Aikido story for children by Richard Moon.">
+    <meta name="author" content="Richard Moon">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://aikifield.com/books/egbert_bigger_world">
+    <link rel="alternate" hreflang="en" href="/books/egbert_bigger_world">
+    <link rel="alternate" hreflang="x-default" href="/books/egbert_bigger_world">
+
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://aikifield.com/books/egbert_bigger_world.html">
+    <meta property="og:title" content="Egbert and the Bigger World | Creativity in the Unified Field">
+    <meta property="og:description" content="More Adventures in Aiki-land — a continuation of Aikido and the Transformation of Egbert.">
+    <meta property="og:image" content="https://aikifield.com/BookHeadShot.png">
+    <meta property="og:site_name" content="Creativity in the Unified Field">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600;700&family=Noto+Sans+JP:wght@400;700&family=Noto+Sans+Arabic:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/blog/styles.css">
+    <style>
+        :root {
+            --primary-bg: #0f172a;
+            --secondary-bg: #1e293b;
+            --accent: #8b5cf6;
+            --accent-light: #a78bfa;
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
+            --border: #334155;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Noto Sans', 'Noto Sans JP', 'Noto Sans SC', 'Noto Sans KR', 'Noto Sans Arabic', 'Noto Sans Devanagari', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            background-color: var(--primary-bg);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        a { color: var(--accent-light); text-decoration: none; transition: color 0.2s; }
+        a:hover { color: var(--accent); }
+
+        .container { max-width: 740px; margin: 0 auto; padding: 0 1.5rem; }
+
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--accent);
+            color: white;
+            padding: 0.5rem 1rem;
+            z-index: 1000;
+        }
+        .skip-link:focus { top: 0; }
+
+        /* Loading state */
+        #loading {
+            text-align: center;
+            padding: 4rem 0;
+            color: var(--text-muted);
+        }
+
+        #error {
+            display: none;
+            text-align: center;
+            padding: 4rem 0;
+            color: #f87171;
+        }
+
+        /* Markdown content styles */
+        #content {
+            padding: 2.5rem 0 4rem;
+        }
+
+        #content h1 {
+            font-size: 2.2rem;
+            font-weight: 300;
+            letter-spacing: -0.02em;
+            color: var(--text-primary);
+            margin: 2rem 0 0.5rem;
+            line-height: 1.2;
+        }
+
+        #content h1:first-child { margin-top: 0; }
+
+        #content h2 {
+            font-size: 1.4rem;
+            font-weight: 400;
+            color: var(--accent-light);
+            margin: 2rem 0 0.75rem;
+            letter-spacing: -0.01em;
+        }
+
+        #content h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin: 1.75rem 0 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            font-size: 0.85rem;
+        }
+
+        #content p {
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            font-size: 1.05rem;
+        }
+
+        #content hr {
+            display: none;
+        }
+
+        #content blockquote {
+            border-left: 3px solid var(--accent);
+            margin: 1.5rem 0;
+            padding: 0.75rem 1.25rem;
+            background: rgba(139, 92, 246, 0.06);
+            border-radius: 0 6px 6px 0;
+        }
+
+        #content blockquote p {
+            color: var(--text-muted);
+            font-style: italic;
+            margin-bottom: 0.25rem;
+            font-size: 1rem;
+        }
+
+        #content blockquote p:last-child { margin-bottom: 0; }
+
+        #content strong { color: var(--text-primary); }
+
+        #content em { color: var(--text-secondary); }
+
+        #content img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            display: block;
+            margin: 1.5rem auto;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        }
+
+        /* YOUR TURN prompts */
+        #content p:has(strong:first-child) {
+            /* Handled via class added by JS post-processing */
+        }
+
+        .your-turn-block {
+            background: var(--secondary-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem 1.25rem;
+            margin: 1rem 0;
+        }
+
+        .your-turn-block p {
+            margin-bottom: 0.5rem;
+        }
+
+        .your-turn-block p:last-child { margin-bottom: 0; }
+
+        /* Writing space */
+        #content p:has(> span.nbsp-space) {
+            line-height: 2.5;
+        }
+
+        /* Chapter headers */
+        #content h1 + h2 {
+            margin-top: 0.25rem;
+        }
+
+        footer {
+            padding: 1.5rem 0;
+            text-align: center;
+        }
+
+        footer p { font-size: 0.95rem; color: var(--text-muted); }
+        footer a { color: var(--text-muted); }
+        footer a:hover { color: var(--accent-light); }
+
+        @media (max-width: 600px) {
+            #content h1 { font-size: 1.6rem; }
+            #content h2 { font-size: 1.2rem; }
+            .nav-links { gap: 0.75rem; font-size: 0.8rem; }
+        }
+
+        /* Print styles */
+        @media print {
+            header, footer { display: none; }
+            body { background: white; color: black; }
+            #content { padding: 0; }
+            #content h1, #content h2, #content h3 { color: black; }
+            #content p, #content blockquote p { color: #333; }
+            #content blockquote { border-left-color: #999; background: #f5f5f5; }
+            #content hr { border-color: #ccc; }
+        }
+    </style>
+</head>
+<body>
+                                                        <a href="#main-content" class="skip-link" data-i18n="nav.skip_to_main">Skip to main content</a>
+
+    <header role="banner">
+        <div class="site-nav-inner">
+            <div class="header-content">
+                <a href="/blog/" class="logo">Creativity in the Unified Field</a>
+                <button class="nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="qa-nav-links" data-i18n-attr="aria-label:nav.toggle_menu">
+                    <span class="nav-toggle-icon" aria-hidden="true">
+                        <svg class="nav-toggle-open" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+                        <svg class="nav-toggle-close" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+                    </span>
+                </button>
+                <nav data-i18n-attr="aria-label:nav.main_navigation">
+                    <ul class="nav-links" id="qa-nav-links">
+                        <li><a href="/blog/" class="nav-item-link"><svg class="nav-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9.5 12 3l9 6.5"/><path d="M5 9v11h14V9"/><path d="M9 20v-6h6v6"/></svg><span data-i18n="nav.home">Home</span></a></li>
+                        <li><a href="/richard-moon" class="nav-item-link"><img src="/assets/RichardMoonPortrait.jpg?v=1790733619" alt="" class="nav-icon nav-icon-photo" width="28" height="28" aria-hidden="true"><span data-i18n="nav.about_author_more">About Author</span></a></li>
+                        <li class="dropdown">
+                            <a href="/resources" class="dropdown-trigger nav-item-link" id="nav-resources-trigger" aria-haspopup="true" aria-expanded="false" aria-controls="nav-resources-menu" data-i18n-attr="aria-label:nav.resources_menu" aria-current="page">
+                                <svg class="nav-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h6l2 2h8v12H4z"/></svg>                                <span data-i18n="nav.resources">Resources</span>
+                                <span class="dropdown-caret" aria-hidden="true">&#9662;</span>
+                            </a>
+                            <ul class="dropdown-menu" id="nav-resources-menu">
+                                <li><a href="/blog/" class="nav-item-link"><svg class="nav-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg><span data-i18n="nav.insights">Insights</span></a></li>
+                                <li><a href="/books.html" aria-current="page" class="nav-item-link"><svg class="nav-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg><span data-i18n="nav.books">Books</span></a></li>
+                                <li><a href="/glossary" class="nav-item-link"><svg class="nav-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><path d="M9 7h8M9 11h5"/></svg><span data-i18n="nav.glossary">Glossary</span></a></li>
+                                <li><a href="/media-kit" class="nav-item-link"><svg class="nav-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg><span data-i18n="nav.press_materials">Press Materials</span></a></li>
+                            </ul>
+                        </li>
+                        <li><a href="/contact.html" class="nav-item-link"><svg class="nav-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg><span data-i18n="nav.contact">Contact</span></a></li>
+                        <li><a href="/login.php" class="nav-item-link"><svg class="nav-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span data-i18n="nav.member_login">Discussing The Unified Field</span></a></li>
+                    </ul>
+                </nav>
+                <!-- Language selector: re-enabled with full page translations (issue #120).
+                     i18n infrastructure + string files for 12 locales are now in place. -->
+                <div id="qa-language-selector" class="qa-lang-selector" data-i18n-attr="aria-label:nav.language_selection">
+                    <svg class="qa-lang-label" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- i18n infrastructure (issues #75, #76, #77, #120): locale utils + language selector.
+         locale-utils.js provides locale-aware formatting + translation loading.
+         language-selector.js renders the dropdown and switches locales. -->
+    <script src="/blog/js/locale-utils.js"></script>
+    <script src="/blog/js/language-selector.js"></script>
+    <script>
+    // Mobile nav collapse + Resources pull-down submenu.
+    // Mobile: the toggle opens an overlay sheet under the header (issue #326).
+    // While open: background scroll is locked, the rest of the page is inert,
+    // Tab is trapped in the header + sheet, Escape closes and refocuses the
+    // toggle. Desktop nav starts at 961px (<=960px is the sheet); keep in sync with styles.css.
+    // 961px is the width where the widest locale's nav clears the wordmark
+    // (fr measured to overlap until ~880px; issue #329).
+    (function () {
+        var toggle = document.getElementById('nav-toggle');
+        var links = document.getElementById('qa-nav-links');
+        if (!toggle || !links) return;
+        var header = toggle.closest('header') || document.querySelector('header[role="banner"]');
+        var inerted = [];
+
+        function isDesktop() {
+            return window.matchMedia('(min-width: 961px)').matches;
+        }
+
+        function closeAllDropdowns() {
+            var openMenus = links.querySelectorAll('.dropdown.open');
+            for (var i = 0; i < openMenus.length; i++) {
+                openMenus[i].classList.remove('open');
+                var btn = openMenus[i].querySelector('.dropdown-trigger');
+                if (btn) btn.setAttribute('aria-expanded', 'false');
+            }
+        }
+
+        function setBackgroundInert(on) {
+            if (on) {
+                var kids = document.body.children;
+                for (var i = 0; i < kids.length; i++) {
+                    var el = kids[i];
+                    if (el === header || el.contains(header) || el.tagName === 'SCRIPT' || el.hasAttribute('inert')) continue;
+                    el.setAttribute('inert', '');
+                    inerted.push(el);
+                }
+            } else {
+                while (inerted.length) inerted.pop().removeAttribute('inert');
+            }
+        }
+
+        let navScrollY = 0;
+        let bodyLocked = false;
+
+        function lockBody(on) {
+            // html.qa-nav-open{overflow:hidden} alone does not stop touch
+            // scrolling on iOS Safari <16 — the fixed-body pattern is the
+            // reliable lock (issue #341).
+            if (on && !bodyLocked) {
+                navScrollY = window.scrollY;
+                document.body.style.position = 'fixed';
+                document.body.style.top = (-navScrollY) + 'px';
+                document.body.style.width = '100%';
+                bodyLocked = true;
+            } else if (!on && bodyLocked) {
+                document.body.style.position = '';
+                document.body.style.top = '';
+                document.body.style.width = '';
+                bodyLocked = false;
+                window.scrollTo(0, navScrollY);
+            }
+        }
+
+        function setExpanded(open) {
+            var wasOpen = links.classList.contains('open');
+            if (open && !isDesktop()) {
+                // Sheet starts right under the header, wherever it is stuck.
+                links.style.setProperty('--qa-nav-top', Math.round(header.getBoundingClientRect().bottom) + 'px');
+            }
+            links.classList.toggle('open', open);
+            toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+            document.documentElement.classList.toggle('qa-nav-open', open);
+            lockBody(open && !isDesktop());
+            setBackgroundInert(open);
+            if (!open) closeAllDropdowns();
+            return wasOpen !== open;
+        }
+
+        // Focusable controls in DOM order: header controls + the sheet's links.
+        function trapTargets() {
+            var all = header.querySelectorAll('a[href], button:not([disabled]), select:not([disabled])');
+            var out = [];
+            for (var i = 0; i < all.length; i++) {
+                if (all[i].offsetParent !== null || all[i] === toggle) out.push(all[i]);
+            }
+            return out;
+        }
+
+        toggle.addEventListener('click', function (e) {
+            e.stopPropagation();
+            setExpanded(!links.classList.contains('open'));
+        });
+
+        links.addEventListener('click', function (e) {
+            var trigger = e.target.closest && e.target.closest('.dropdown-trigger');
+            if (trigger && links.contains(trigger)) {
+                var dropdown = trigger.closest('.dropdown');
+                var isOpen = dropdown.classList.contains('open');
+                // Mobile: first tap opens the pull-down. Desktop: hover shows
+                // it; clicking a link trigger goes to Resources.
+                if (!isDesktop() && !isOpen) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    closeAllDropdowns();
+                    dropdown.classList.add('open');
+                    trigger.setAttribute('aria-expanded', 'true');
+                    return;
+                }
+                if (trigger.tagName === 'BUTTON') {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    closeAllDropdowns();
+                    dropdown.classList.toggle('open', !isOpen);
+                    trigger.setAttribute('aria-expanded', !isOpen ? 'true' : 'false');
+                    return;
+                }
+            }
+            // Close the sheet after following a real nav link (mobile UX).
+            if (!isDesktop() && e.target.closest && e.target.closest('a')) {
+                setExpanded(false);
+            }
+        });
+
+        // Close the pull-down when keyboard focus leaves it.
+        links.addEventListener('focusout', function (e) {
+            var dropdown = e.target.closest && e.target.closest('.dropdown');
+            if (!dropdown) return;
+            requestAnimationFrame(function () {
+                if (!dropdown.contains(document.activeElement)) {
+                    dropdown.classList.remove('open');
+                    var btn = dropdown.querySelector('.dropdown-trigger');
+                    if (btn) btn.setAttribute('aria-expanded', 'false');
+                }
+            });
+        });
+
+        document.addEventListener('keydown', function (e) {
+            // Escape closes the submenu first, then the sheet (WCAG 2.1.2).
+            if (e.key === 'Escape') {
+                var openDropdown = links.querySelector('.dropdown.open');
+                if (openDropdown) {
+                    closeAllDropdowns();
+                    var btn = openDropdown.querySelector('.dropdown-trigger');
+                    if (btn) btn.focus();
+                    return;
+                }
+                if (links.classList.contains('open')) {
+                    setExpanded(false);
+                    toggle.focus();
+                }
+                return;
+            }
+            // Focus trap while the sheet is open.
+            if (e.key === 'Tab' && links.classList.contains('open') && !isDesktop()) {
+                var items = trapTargets();
+                if (!items.length) return;
+                var first = items[0];
+                var last = items[items.length - 1];
+                var active = document.activeElement;
+                if (e.shiftKey && (active === first || !header.contains(active))) {
+                    e.preventDefault();
+                    last.focus();
+                } else if (!e.shiftKey && (active === last || !header.contains(active))) {
+                    e.preventDefault();
+                    first.focus();
+                }
+            }
+        });
+
+        document.addEventListener('click', function (e) {
+            if (!links.contains(e.target) && !toggle.contains(e.target) && !(e.target.closest && e.target.closest('.qa-lang-selector'))) {
+                closeAllDropdowns();
+                setExpanded(false);
+            }
+        });
+
+        window.addEventListener('resize', function () {
+            if (isDesktop()) setExpanded(false);
+        });
+    })();
+    </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <main id="main-content" tabindex="-1" role="main">
+        <div class="container">
+            <div id="loading" aria-live="polite">Loading…</div>
+            <div id="error" role="alert">Could not load the book. Please try refreshing.</div>
+            <article id="content" aria-label="Book content">
+                <h1>Egbert and the Bigger World</h1>
+                <h2>More Adventures in Aiki-land</h2>
+                <p><em>An Aikido Story for Children</em></p>
+                <p><strong>By Richard Moon</strong></p>
+                <p><em>A continuation of "Aikido and the Power of Harmony in the Transformation of Egbert"</em></p>
+                <blockquote>
+                    <p><em>"Rely on harmony to activate your manifold powers, pacify your environment and create a beautiful world."</em></p>
+                    <p>— Morihei Ueshiba, O Sensei, Founder of Aikido</p>
+                </blockquote>
+                <p>This book is an interactive Aikido story for children by Richard Moon. The full content is loaded below. If you have JavaScript disabled, you can <a href="/books/egbert_bigger_world.md">read the markdown source directly</a> or <a href="/books.html">return to the books page</a>.</p>
+            </article>
+            <noscript>
+                <div style="padding: 2rem 0;">
+                    <p style="color: var(--text-muted);">JavaScript is required to render the full book content. You can <a href="/books/egbert_bigger_world.md">read the markdown source directly</a> or <a href="/books.html">return to the books page</a>.</p>
+                </div>
+            </noscript>
+        </div>
+    </main>
+
+                                        <footer role="contentinfo">
+        <div class="site-footer-inner">
+            <div class="footer-grid">
+                <div class="footer-section">
+                    <h2 class="footer-heading">Creativity in the Unified Field</h2>
+                    <p class="footer-copyright-line" data-i18n="footer.copyright" data-i18n-params='{"year":"2026"}'>&copy; 2026 Richard Moon<br>Published by Park Street Press</p>
+                    <div class="footer-legal">
+                        <a href="/privacy" data-i18n="footer.privacy">Privacy</a>
+                        <span class="footer-legal-separator"></span>
+                        <a href="/terms" data-i18n="footer.terms">Terms</a>
+                        <span class="footer-legal-separator"></span>
+                        <a href="/media-kit" data-i18n="footer.media_kit">Media Kit</a>
+                    </div>
+                </div>
+
+                <div class="footer-section">
+                    <h2 class="footer-heading" data-i18n="footer.connect">Connect</h2>
+                    <a href="mailto:kenneth@quantumaikido.com" data-i18n="footer.email">Email</a>
+                    <a href="https://www.youtube.com/@moonsensei" target="_blank" rel="noopener noreferrer" data-i18n="footer.youtube" class="footer-social-link">
+                        <svg class="footer-social-icon" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                        <span>YouTube</span>
+                    </a>
+                    <a href="https://www.instagram.com/quantumaikido/" target="_blank" rel="noopener noreferrer" data-i18n="footer.instagram" class="footer-social-link">
+                        <svg class="footer-social-icon" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
+                        <span>Instagram</span>
+                    </a>
+                </div>
+
+                <div class="footer-section">
+                    <h2 class="footer-heading" data-i18n="footer.member">Member</h2>
+                    <a href="/login.php" data-i18n="footer.welcome_back">Discussing The Unified Field</a>
+                    <a href="/login.php" data-i18n="footer.join_community">Join Creativity in the Unified Field Community</a>
+                    <div google-add-preferred-source-btn data-theme="light" style="margin-top: 1rem;"></div>
+                </div>
+            </div>
+        </div>
+        <p class="footer-last-updated">Last updated: <time datetime="2026-09-29">2026-09-29</time></p>
+    </footer>
+
+        <!-- Floating AI Chat button — appears on all pages except auth-gated pages -->
+    <a href="/members" class="qa-chat-fab" aria-describedby="qa-chat-fab-info" data-i18n-attr="aria-label:site.unified_field_inquiry">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+        </svg>
+        <span class="qa-chat-fab__label" data-i18n="site.unified_field_inquiry">Discussing The Unified Field</span>
+        <div class="qa-chat-fab-panel" id="qa-chat-fab-info">
+            <strong class="qa-chat-fab-panel__title" data-i18n="site.unified_field_inquiry">Discussing The Unified Field</strong>
+            <p class="qa-chat-fab-panel__subtitle">AI-supported guidance for embodied practice, awareness, and constructive interaction.</p>
+            <p class="qa-chat-fab-panel__text">Explore personalised guidance for posture, breathing, mental focus, and everyday interactions. Ask about your practice, apply Aikido principles at work, or request support from a human coach.</p>
+            <ul class="qa-chat-fab-panel__features">
+                <li>Responses informed by Richard Moon&rsquo;s authorised teaching materials &mdash; not direct quotations</li>
+                <li>Request a handoff to a human coach when you need more</li>
+                <li>Free to use &mdash; sign up to start chatting</li>
+            </ul>
+        </div>
+    </a>
+        <script async src="https://news.google.com/swg/js/v1/publisher.js"></script>
+
+
+
+
+
+
+
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js" integrity="sha384-/TQbtLCAerC3jgaim+N78RZSDYV7ryeoBCVqTuzRrFec2akfBkHS7ACQ3PQhvMVi" crossorigin="anonymous"></script>
+    <script>
+        (async function () {
+            const loading = document.getElementById('loading');
+            const error = document.getElementById('error');
+            const content = document.getElementById('content');
+
+            try {
+                const res = await fetch('egbert_bigger_world.md');
+                if (!res.ok) throw new Error('HTTP ' + res.status);
+                const md = await res.text();
+
+                marked.setOptions({
+                    breaks: false,
+                    gfm: true
+                });
+
+                content.innerHTML = marked.parse(md);
+                loading.style.display = 'none';
+                content.style.display = '';
+
+                // Update page title from first h1
+                const h1 = content.querySelector('h1');
+                if (h1) document.title = h1.textContent + ' | Creativity in the Unified Field';
+
+            } catch (e) {
+                loading.style.display = 'none';
+                error.style.display = '';
+                console.error('Failed to load markdown:', e);
+            }
+        })();
+    </script>
+    <script>
+    // Mobile nav collapse + Resources pull-down submenu.
+    (function () {
+        var toggle = document.getElementById('nav-toggle');
+        var links = document.getElementById('qa-nav-links');
+        if (!toggle || !links) return;
+
+        function isDesktop() {
+            return window.matchMedia('(min-width: 769px)').matches;
+        }
+
+        function closeAllDropdowns() {
+            var openMenus = links.querySelectorAll('.dropdown.open');
+            for (var i = 0; i < openMenus.length; i++) {
+                openMenus[i].classList.remove('open');
+                var btn = openMenus[i].querySelector('.dropdown-trigger');
+                if (btn) btn.setAttribute('aria-expanded', 'false');
+            }
+        }
+
+        function setExpanded(open) {
+            links.classList.toggle('open', open);
+            toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+            if (!open) closeAllDropdowns();
+        }
+
+        toggle.addEventListener('click', function (e) {
+            e.stopPropagation();
+            setExpanded(!links.classList.contains('open'));
+        });
+
+        links.addEventListener('click', function (e) {
+            var trigger = e.target.closest && e.target.closest('.dropdown-trigger');
+            if (trigger && links.contains(trigger)) {
+                e.preventDefault();
+                e.stopPropagation();
+                var dropdown = trigger.closest('.dropdown');
+                var willOpen = !dropdown.classList.contains('open');
+                closeAllDropdowns();
+                dropdown.classList.toggle('open', willOpen);
+                trigger.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+                return;
+            }
+            // Close the hamburger after following a real nav link (mobile UX).
+            if (!isDesktop() && e.target.closest && e.target.closest('a')) {
+                setExpanded(false);
+            }
+        });
+
+        // Close the pull-down when keyboard focus leaves it.
+        links.addEventListener('focusout', function (e) {
+            var dropdown = e.target.closest && e.target.closest('.dropdown');
+            if (!dropdown) return;
+            requestAnimationFrame(function () {
+                if (!dropdown.contains(document.activeElement)) {
+                    dropdown.classList.remove('open');
+                    var btn = dropdown.querySelector('.dropdown-trigger');
+                    if (btn) btn.setAttribute('aria-expanded', 'false');
+                }
+            });
+        });
+
+        // Escape closes the submenu first, then the hamburger (WCAG 2.1.2).
+        document.addEventListener('keydown', function (e) {
+            if (e.key !== 'Escape') return;
+            var openDropdown = links.querySelector('.dropdown.open');
+            if (openDropdown) {
+                closeAllDropdowns();
+                var btn = openDropdown.querySelector('.dropdown-trigger');
+                if (btn) btn.focus();
+                return;
+            }
+            if (links.classList.contains('open')) {
+                setExpanded(false);
+                toggle.focus();
+            }
+        });
+
+        document.addEventListener('click', function (e) {
+            if (!links.contains(e.target) && !toggle.contains(e.target)) {
+                closeAllDropdowns();
+                setExpanded(false);
+            }
+        });
+
+        window.addEventListener('resize', function () {
+            if (isDesktop()) setExpanded(false);
+        });
+    })();
+    </script>
+    <script src="/blog/subscribe-popup.js"></script>
+</body>
+</html>

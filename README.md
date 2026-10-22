@@ -186,7 +186,7 @@ AikiField.com/
 - **Fonts:** Google Fonts (Source Serif 4, Public Sans)
 - **Accessibility:** Skip links, ARIA labels, semantic HTML
 - **Backend integration:** PHP includes and proxy (`coach-proxy.php`) to the
-  The Creative Unified Field backend on Cloud Run
+  Creativity in the Unified Field backend on Cloud Run
 - **Hosting:** Shared host (`peec.biz`) via rsync, fronted by Cloudflare
 - **Data versioning:** DVC for large binary assets
 - **Testing:** Playwright end-to-end tests, PHP unit tests, Python unit tests

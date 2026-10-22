@@ -180,6 +180,17 @@ RewriteRule ^for-review/games/lucky-wave(/.*)?$ /games/lucky-wave$1 [R=301,L]
 RewriteRule ^games/verbal-aikido/index\.html$ /for-review/games/verbal-aikido/ [R=301,L]
 RewriteRule ^games/verbal-aikido(/.*)?$ /for-review/games/verbal-aikido$1 [R=301,L]
 
+# Unified Field pages moved from quantumaikido.com (issue #135). Canonical
+# URL form mirrors the old site: extensionless (/glossary). The .html variant
+# 301s to the clean form; extensionless requests serve the .html file —
+# same pattern as blog/.htaccess.
+RewriteCond %{ENV:REDIRECT_STATUS} ^$
+RewriteRule ^(glossary|media-kit|richard-moon|resources|privacy|terms|reviews|podcasts|sangha|about|free_chapter|book|media)\.html$ /$1 [R=301,L]
+RewriteRule ^(glossary|media-kit|richard-moon|resources|privacy|terms|reviews|podcasts|sangha|about|free_chapter|book|media)$ $1.html [END]
+
+# /books/ is the AF books page (books.html); PDFs live under /books/.
+RewriteRule ^books/?$ /books.html [L]
+
 # /ask/* — Ask AikiField AEO knowledge layer (issue #65). Public, indexable
 # sourced Q&A pages; ask/index.php renders them dynamically from data/ask/.
 RewriteRule ^ask(/.*)?$ /ask/index.php [L]

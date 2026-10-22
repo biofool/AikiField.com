@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://quantumaikido.com/data/ask-richard-moon/schema/source.schema.json",
+  "$id": "/data/ask/schema/source.schema.json",
   "title": "Discussing The Unified Field source record",
   "type": "object",
   "additionalProperties": false,

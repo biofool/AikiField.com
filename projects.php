@@ -7,7 +7,7 @@
  * public — there is no login or chat on this page anymore.
  *
  * History: this page previously hosted an inline coaching login + AI Chat
- * (a public CTA authenticating against the Creative Unified Field Wisdom backend
+ * (a public CTA authenticating against Creativity in the Unified Field Wisdom backend
  * on Cloud Run via coach-proxy.php). That surface was removed — the page
  * now shows an invitation card pointing visitors to the contact form to
  * request a live demo. The coaching login was extracted to a blind

@@ -4,7 +4,7 @@
  *
  * Ported from quantumaikido.com includes/ask-richard-moon-lib.php.
  * Two corpora share one pipeline:
- *   - records with "attribution": "richard-moon" are the Creative Unified Field /
+ *   - records with "attribution": "richard-moon" are Creativity in the Unified Field /
  *     Richard Moon Q&A ported from quantumaikido.com (their sources stay
  *     cited to quantumaikido.com public pages)
  *   - records with "attribution": "aikifield" (or absent) are AikiField's
@@ -282,17 +282,18 @@ function ask_page_meta(string $path): array
 
 /**
  * JSON-LD author node for a record: the QA-ported corpus attributes to the
- * Richard Moon Person entity on quantumaikido.com; AikiField's own records
- * attribute to the AikiField Organization entity.
+ * Richard Moon Person entity on aikifield.com (moved from quantumaikido.com,
+ * issue #135); AikiField's own records attribute to the AikiField Organization
+ * entity.
  */
 function ask_author_node(string $attribution): array
 {
     if ($attribution === 'richard-moon') {
         return [
             '@type' => 'Person',
-            '@id' => 'https://quantumaikido.com/#author',
+            '@id' => 'https://aikifield.com/richard-moon#author',
             'name' => 'Richard Moon',
-            'url' => 'https://quantumaikido.com/richard-moon',
+            'url' => 'https://aikifield.com/richard-moon',
             'sameAs' => [
                 'https://www.youtube.com/@moonsensei',
                 'https://www.youtube.com/channel/UCL_IvoqYe6KmHN_K9sEt2qQ',
@@ -385,7 +386,7 @@ function ask_jsonld(array $meta, string $canonical): array
         return ['@context' => 'https://schema.org', '@graph' => $graph];
     }
 
-    $collectionDesc = 'Ask AikiField is a sourced Q&A knowledge layer covering AikiField services and Richard Moon’s public the Creative Unified Field teachings. It is an AI-assisted editorial interface, not a live person speaking.';
+    $collectionDesc = 'Ask AikiField is a sourced Q&A knowledge layer covering AikiField services and Richard Moon’s public Creativity in the Unified Field teachings. It is an AI-assisted editorial interface, not a live person speaking.';
     $graph = [
         $org,
         $crumbs,
@@ -429,7 +430,7 @@ function ask_disclosure(): string
 {
     $contact = '/contact.html?subject=' . rawurlencode('Ask AikiField correction');
     return '<aside class="ask-disclosure">'
-        . '<p><strong>Ask AikiField</strong> is an AI-assisted editorial knowledge layer built from pages already public on aikifield.com and quantumaikido.com. '
+        . '<p><strong>Ask AikiField</strong> is an AI-assisted editorial knowledge layer built from pages already public on aikifield.com. '
         . 'It is not a person speaking, and it is not the live Unified Field chat.</p>'
         . '<p>Last reviewed dates appear on each answer. '
         . '<a href="' . ask_h($contact) . '">Suggest a correction</a>.</p>'
@@ -669,7 +670,7 @@ function ask_render_hub(string $hub): string
 {
     if ($hub === 'overview') {
         $html = '<h1>' . ask_h(ask_layer_name()) . '</h1>';
-        $html .= '<p class="ask-direct-answer">' . ask_h(ask_layer_name()) . ' is a sourced Q&amp;A knowledge layer — every answer cites public pages on aikifield.com and quantumaikido.com. The Unified Field chat at <a href="/members">/members</a> is the signed-in companion product.</p>';
+        $html .= '<p class="ask-direct-answer">' . ask_h(ask_layer_name()) . ' is a sourced Q&amp;A knowledge layer — every answer cites public pages on aikifield.com. The Unified Field chat at <a href="/members">/members</a> is the signed-in companion product.</p>';
         $html .= '<ul class="ask-index">';
         $html .= '<li><a href="' . ask_h(ask_url('questions')) . '">Questions</a></li>';
         $html .= '<li><a href="' . ask_h(ask_url('concepts')) . '">Core concepts</a></li>';
@@ -684,7 +685,7 @@ function ask_render_hub(string $hub): string
     if ($hub === 'about') {
         return '<h1>About ' . ask_h(ask_layer_name()) . '</h1>'
             . '<p class="ask-direct-answer"><strong>AikiField</strong> is the B2B cybersecurity consulting practice behind this site. <strong>' . ask_h(ask_layer_name()) . '</strong> is this sourced Q&amp;A knowledge layer. The <strong>Unified Field chat</strong> is the signed-in conversational product.</p>'
-            . '<p>These pages are AI-assisted editorial work grounded in already-public site copy. AikiField records cite public aikifield.com pages; the Creative Unified Field records are attributed to Richard Moon and cite public quantumaikido.com pages.</p>'
+            . '<p>These pages are AI-assisted editorial work grounded in already-public site copy. AikiField records cite public aikifield.com pages; Creativity in the Unified Field records are attributed to Richard Moon and cite public aikifield.com pages.</p>'
             . '<p>Quotes must be verbatim substrings of a cited source before a record can publish — the validator rejects anything else.</p>';
     }
     if ($hub === 'how-it-works') {
@@ -693,12 +694,12 @@ function ask_render_hub(string $hub): string
             . '<ul>'
             . '<li>Chat: <a href="/members">/members</a> &mdash; conversational, noindex, not used as AEO content.</li>'
             . '<li>Knowledge: these pages &mdash; one question, one short answer in the first paragraph, then explanation and provenance.</li>'
-            . '<li>Privacy: only text already public on aikifield.com or quantumaikido.com is quoted.</li>'
+            . '<li>Privacy: only text already public on aikifield.com is quoted.</li>'
             . '</ul>';
     }
     if ($hub === 'sources') {
         $html = '<h1>Sources and methodology</h1>';
-        $html .= '<p class="ask-direct-answer">Every published claim points at a source already public on aikifield.com or quantumaikido.com.</p>';
+        $html .= '<p class="ask-direct-answer">Every published claim points at a source already public on aikifield.com.</p>';
         $html .= '<p>Unpublished records stay in JSON and are not emitted as HTML. A validator rejects quotes that are not substrings of the source&rsquo;s <code>exact_source_text</code>.</p>';
         $html .= '<ul>';
         foreach (ask_sources() as $src) {
@@ -782,7 +783,7 @@ function ask_render_document(string $path): void
     if (($meta['type'] ?? '') === 'record' && !empty($meta['record']['short_answer'])) {
         $desc = (string) $meta['record']['short_answer'];
     } elseif (($meta['hub'] ?? '') === 'overview') {
-        $desc = 'Browse sourced Q&A from AikiField and Richard Moon’s public the Creative Unified Field work — questions, books, and videos.';
+        $desc = 'Browse sourced Q&A from AikiField and Richard Moon’s public Creativity in the Unified Field work — questions, books, and videos.';
     } else {
         $desc = ($meta['title'] ?? ask_layer_name()) . ' — sourced Q&A on aikifield.com.';
     }
