@@ -120,6 +120,11 @@ $message = trim($_POST['message'] ?? '');
 // required; consent_marketing is a separate, optional opt-in. Neither is
 // pre-ticked in markup and the service consent is enforced server-side too.
 $route = strip_header_injection($_POST['route'] ?? '');
+// Posts missing `route` entirely come from a stale cached copy of the old
+// single form — treat them as legacy so deploy-overlap users are not held
+// to checkboxes their form never rendered. The record marks them as
+// consent-not-captured rather than pretending a tick happened.
+$legacyPost = !isset($_POST['route']);
 if (!isset($ROUTE_PAGES[$route])) {
     $route = 'general';
 }
@@ -249,13 +254,23 @@ if ($email === '') {
 if ($message === '') {
     $errors[] = 'Message is required.';
 }
-if (!$consentService) {
+if (!$legacyPost && !$consentService) {
     $errors[] = 'Please tick the consent box so we can reply to your enquiry.';
 }
 
 if (count($errors) > 0) {
     redirect_with_status('error', implode(' ', $errors));
 }
+
+// --- Persist the per-contact record (source, lawful basis, permission
+// status, date) for the Pass 3 outreach system (issue #91) ---
+require_once __DIR__ . '/includes/contact-record.php';
+af_record_contact(af_contact_record(
+    $route, $name, $email, $organization,
+    $consentService, $consentMarketing,
+    ['interest' => $interest],
+    $legacyPost
+));
 
 // --- Build email ---
 $subject = 'AikiField Inquiry: ' . ($interest !== '' ? $interest : 'General');

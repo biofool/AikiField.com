@@ -63,10 +63,9 @@
           <li class="af-nav__megacol">
             <a href="/digital-experience/" class="af-nav__colhead">Digital Experience</a>
             <ul class="af-nav__megalist">
-          <li><a href="/digital-experience/lucky-wave.html#v1" class="af-nav__sublink">Ride the Lucky Wave</a></li>
           <li><a href="/digital-experience/lucky-wave.html#v2" class="af-nav__sublink">Ride the Lucky Wave V2</a></li>
-          <li><a href="/digital-experience/practices.html" class="af-nav__sublink">Twenty Practices</a></li>
-          <li class="af-nav__subsep"><a href="/digital-experience/unified-field-chat.html" class="af-nav__sublink af-nav__sublink--feature">Enter the Unified Field Chat</a></li>
+          <li><a href="/games/exercises/" class="af-nav__sublink">Twenty Practices</a></li>
+          <li class="af-nav__subsep"><a href="/members" class="af-nav__sublink af-nav__sublink--feature">Enter the Unified Field Chat</a></li>
               <li class="af-nav__subsep"><a href="/blog/index.html#social" class="af-nav__sublink">Social Media</a></li>
             </ul>
           </li>
@@ -218,6 +217,7 @@
       </div>
 
       <form class="af-form" action="/studio-review-handler.php" method="post">
+        <input type="hidden" name="form_version" value="v2">
         <!-- Honeypot field (hidden from humans, bots fill it) -->
         <div style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden;" aria-hidden="true">
           <label for="fax">Fax (leave empty)</label>
@@ -275,13 +275,19 @@
         </div>
         <div class="af-form-group">
           <label style="font-weight: 400; display: flex; gap: 10px; align-items: flex-start;">
+            <input type="checkbox" name="consent_service" value="yes" required style="width: auto; margin-top: 4px;">
+            <span>I agree that AikiField may use these details to respond to my application and carry out the requested review. <span aria-hidden="true">*</span></span>
+          </label>
+        </div>
+        <div class="af-form-group">
+          <label style="font-weight: 400; display: flex; gap: 10px; align-items: flex-start;">
             <input type="checkbox" name="consent_listing" value="yes" style="width: auto; margin-top: 4px;">
             Also list my studio for free in the World Studio Finder. I may edit or remove the listing at any time.
           </label>
         </div>
         <div class="af-form-group">
           <label style="font-weight: 400; display: flex; gap: 10px; align-items: flex-start;">
-            <input type="checkbox" name="consent_updates" value="yes" style="width: auto; margin-top: 4px;">
+            <input type="checkbox" name="consent_marketing" value="yes" style="width: auto; margin-top: 4px;">
             Send me occasional practical resources about studio visibility and digital readiness.
           </label>
         </div>
@@ -372,7 +378,13 @@
       script.defer = true;
       document.head.appendChild(script);
     })
-    .catch(function () { /* no captcha configured — form still submits */ });
+    .catch(function () {
+      // Issue #125: a failed sitekey fetch silently hid the widget while
+      // the server still rejected every submission — surface it instead.
+      container.innerHTML =
+        '<p style="color:#a00;font-size:.9em">Captcha failed to load — ' +
+        'submissions may be rejected. Please reload and try again.</p>';
+    });
 })();
 </script>
 </body>

@@ -26,6 +26,9 @@ require __DIR__ . '/includes/coach-config.load.php';
 // limiter and notification email key on the real visitor address.
 require __DIR__ . '/includes/cloudflare-ips.php';
 
+// Per-contact consent record writer (issue #91).
+require __DIR__ . '/includes/contact-record.php';
+
 function studio_client_ip(): string
 {
     $remoteAddr = (string) ($_SERVER['REMOTE_ADDR'] ?? '');
@@ -65,19 +68,32 @@ function redirect_with_error(string $msg): void
 // strip control characters for defense in depth (CWE-93).
 function strip_header_injection(string $value): string
 {
-    return trim(str_replace(["\r", "\n"], '', $value));
+    // Strip ALL control chars — not just CR/LF. A NUL byte in a mail()
+    // argument throws a ValueError (HTTP 500); other C0s corrupt headers
+    // and bodies (issue #125).
+    return trim((string) preg_replace('/[\x00-\x1F\x7F]/', '', $value));
 }
 
-$name = strip_header_injection($_POST['name'] ?? '');
-$email = trim($_POST['email'] ?? '');
-$studio = strip_header_injection($_POST['studio'] ?? '');
-$website = strip_header_injection($_POST['website'] ?? '');
-$location = strip_header_injection($_POST['location'] ?? '');
-$practice = strip_header_injection($_POST['practice'] ?? '');
-$help = strip_header_injection($_POST['help'] ?? '');
-$message = trim($_POST['message'] ?? '');
+// Length caps — unbounded fields were accepted verbatim (issue #125).
+$name = strip_header_injection(substr($_POST['name'] ?? '', 0, 100));
+$email = trim(substr($_POST['email'] ?? '', 0, 200));
+$studio = strip_header_injection(substr($_POST['studio'] ?? '', 0, 150));
+$website = strip_header_injection(substr($_POST['website'] ?? '', 0, 200));
+$location = strip_header_injection(substr($_POST['location'] ?? '', 0, 100));
+$practice = strip_header_injection(substr($_POST['practice'] ?? '', 0, 100));
+$help = strip_header_injection(substr($_POST['help'] ?? '', 0, 200));
+$message = trim(substr($_POST['message'] ?? '', 0, 5000));
+// Consent split (issue #91): service consent = we may use the details to
+// respond and carry out the review; marketing consent = occasional notes.
+// consent_listing stays separate — it consents to *publishing* the studio
+// in the directory. The hidden form_version=v2 marker distinguishes a
+// new-form post (where consent_service is required) from a stale cached
+// form — an unticked checkbox sends no key, so it cannot carry that
+// signal itself.
+$legacyPost = ($_POST['form_version'] ?? '') !== 'v2';
+$consentService = ($_POST['consent_service'] ?? '') === 'yes';
+$consentMarketing = ($_POST['consent_marketing'] ?? $_POST['consent_updates'] ?? '') === 'yes';
 $consentListing = ($_POST['consent_listing'] ?? '') === 'yes';
-$consentUpdates = ($_POST['consent_updates'] ?? '') === 'yes';
 
 // --- Rate limiting (same fixed-window limiter as contact-handler.php) ---
 function studio_rate_limited(string $ip, int $maxRequests = 5, int $windowSeconds = 600): bool
@@ -190,13 +206,37 @@ if ($email === '') {
 if ($website !== '' && !filter_var($website, FILTER_VALIDATE_URL)) {
     $errors[] = 'Please enter a valid website URL (including https://).';
 }
+if (!$legacyPost && !$consentService) {
+    $errors[] = 'Please confirm we may use your details to respond to your application.';
+}
 
 if (count($errors) > 0) {
     redirect_with_error(implode(' ', $errors));
 }
 
+// --- Record the contact (source, lawful basis, permission status, date) ---
+af_record_contact(af_contact_record(
+    'studio', $name, $email, $studio,
+    $consentService, $consentMarketing,
+    [
+        'studio'          => $studio,
+        'website'         => $website,
+        'location'        => $location,
+        'practice'        => $practice,
+        'help'            => $help,
+        'consent_listing' => $consentListing,
+        'lawful_basis_listing' => $consentListing ? 'consent-publication' : 'not-given',
+    ],
+    $legacyPost
+));
+
 // --- Build email ---
 $subject = 'Studio Visibility Review request: ' . ($studio !== '' ? $studio : $name);
+// RFC 2047-encode non-ASCII names — raw 8-bit subjects are invalid
+// (issue #125) and some relays mangle or reject them.
+if (function_exists('mb_encode_mimeheader')) {
+    $subject = mb_encode_mimeheader($subject, 'UTF-8');
+}
 
 $body = "New Studio Visibility Review request from aikifield.com/somatic-studios/:\n\n";
 $body .= "Name: " . $name . "\n";
@@ -216,8 +256,9 @@ if ($practice !== '') {
 if ($help !== '') {
     $body .= "Wants help with: " . $help . "\n";
 }
+$body .= "Service consent (respond + carry out review): " . ($consentService ? 'yes' : 'no') . "\n";
+$body .= "Marketing consent (occasional resources): " . ($consentMarketing ? 'yes' : 'no') . "\n";
 $body .= "World Studio Finder listing consent: " . ($consentListing ? 'yes' : 'no') . "\n";
-$body .= "Occasional resources consent: " . ($consentUpdates ? 'yes' : 'no') . "\n";
 if ($message !== '') {
     $body .= "\nMessage:\n" . $message . "\n";
 }
@@ -226,9 +267,14 @@ $body .= "Submitted: " . date('Y-m-d H:i:s') . " (server time)\n";
 $clientIpForLog = studio_client_ip();
 $body .= "IP: " . ($clientIpForLog !== '' ? $clientIpForLog : 'unknown') . "\n";
 
+// Reply-To display-name must not carry , < > " or \ — those let an
+// attacker append recipient addresses so the owner's reply also reaches
+// them (issue #125 — CR/LF was stripped but not address syntax).
+$replyToName = str_replace(['<', '>', '"', ',', "'"], '', $name);
 $headers = [
     'From: AikiField Contact <' . $FROM_EMAIL . '>',
-    'Reply-To: ' . $name . ' <' . $email . '>',
+    'Reply-To: ' . ($replyToName !== '' ? $replyToName . ' <' . $email . '>' : $email),
+    'MIME-Version: 1.0',
     'X-Mailer: PHP/' . phpversion(),
     'Content-Type: text/plain; charset=UTF-8',
 ];
