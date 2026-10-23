@@ -179,5 +179,80 @@ qa_check(
     qa_resolve_client_ip_headers('not-an-ip', '1.2.3.4 (spoofed)', '1.2.3.4 (spoofed)')
 );
 
+// ---------------------------------------------------------------------
+// qa_signed_client_ip_headers() — issue #130 / AIR#943: signed visitor-IP
+// headers (X-AF-Client-IP / -Ts / -Sig) so the backend can rate-limit per
+// visitor instead of per proxy.
+// ---------------------------------------------------------------------
+
+// Genuine Cloudflare peer: the visitor IP is the (trusted) CF-Connecting-IP,
+// and the signature is hex(HMAC-SHA256(secret, "<ip>|<ts>")).
+$expectedSig = hash_hmac('sha256', '203.0.113.9|1700000000', 'test-secret');
+qa_check(
+    'genuine Cloudflare peer: signs CF-Connecting-IP as the visitor IP',
+    [
+        'X-AF-Client-IP' => '203.0.113.9',
+        'X-AF-Client-Ts' => '1700000000',
+        'X-AF-Client-Sig' => $expectedSig,
+    ],
+    qa_signed_client_ip_headers('173.245.48.1', '203.0.113.9', 'test-secret', 1700000000)
+);
+
+// Non-Cloudflare peer: the client-supplied (spoofed) CF-Connecting-IP is
+// ignored; REMOTE_ADDR is signed instead.
+$expectedSig = hash_hmac('sha256', '8.8.8.8|1700000000', 'test-secret');
+qa_check(
+    'non-Cloudflare peer: signs REMOTE_ADDR, ignores spoofed CF-Connecting-IP',
+    [
+        'X-AF-Client-IP' => '8.8.8.8',
+        'X-AF-Client-Ts' => '1700000000',
+        'X-AF-Client-Sig' => $expectedSig,
+    ],
+    qa_signed_client_ip_headers('8.8.8.8', '1.2.3.4 (spoofed)', 'test-secret', 1700000000)
+);
+
+// Cloudflare peer that omitted CF-Connecting-IP: falls back to REMOTE_ADDR
+// (the Cloudflare edge IP — not ideal, but a valid literal IP tied to a
+// real connection, matching the issue spec "else REMOTE_ADDR").
+$expectedSig = hash_hmac('sha256', '173.245.48.1|1700000000', 'test-secret');
+qa_check(
+    'genuine Cloudflare peer without CF-Connecting-IP: signs REMOTE_ADDR',
+    [
+        'X-AF-Client-IP' => '173.245.48.1',
+        'X-AF-Client-Ts' => '1700000000',
+        'X-AF-Client-Sig' => $expectedSig,
+    ],
+    qa_signed_client_ip_headers('173.245.48.1', null, 'test-secret', 1700000000)
+);
+
+// Fail-closed cases: empty secret or a non-literal-IP visitor address must
+// produce no headers at all — the backend's unsigned-request fallback then
+// applies (same behavior as before signing existed).
+qa_check(
+    'empty proxy secret: no headers are emitted',
+    [],
+    qa_signed_client_ip_headers('8.8.8.8', '203.0.113.9', '', 1700000000)
+);
+
+qa_check(
+    'malformed REMOTE_ADDR: no headers are emitted (never signs garbage)',
+    [],
+    qa_signed_client_ip_headers('not-an-ip', null, 'test-secret', 1700000000)
+);
+
+qa_check(
+    'empty REMOTE_ADDR: no headers are emitted',
+    [],
+    qa_signed_client_ip_headers('', '203.0.113.9', 'test-secret', 1700000000)
+);
+
+// A spoofed CF-Connecting-IP value only counts when the peer is Cloudflare —
+// and even then a non-literal-IP value must fail closed, not get signed.
+qa_check(
+    'Cloudflare peer with malformed CF-Connecting-IP: no headers are emitted',
+    [],
+    qa_signed_client_ip_headers('173.245.48.1', 'not-an-ip', 'test-secret', 1700000000)
+);
+
 echo "\n$passed passed, $failures failed.\n";
 exit($failures === 0 ? 0 : 1);

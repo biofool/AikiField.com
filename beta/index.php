@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex,nofollow">
   <title>AikiField — Beta Index</title>
-  <meta name="description" content="Index of unreleased beta previews on aikifield.com. Gated — requires Quantum Aikido Wisdom login.">
+  <meta name="description" content="Index of unreleased beta previews on aikifield.com. Gated — requires Creativity in the Unified Field Wisdom login.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preload" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Public+Sans:wght@400;600;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
@@ -52,10 +52,9 @@
           <li class="af-nav__megacol">
             <a href="/digital-experience/" class="af-nav__colhead">Digital Experience</a>
             <ul class="af-nav__megalist">
-          <li><a href="/digital-experience/lucky-wave.html#v1" class="af-nav__sublink">Ride the Lucky Wave</a></li>
           <li><a href="/digital-experience/lucky-wave.html#v2" class="af-nav__sublink">Ride the Lucky Wave V2</a></li>
-          <li><a href="/digital-experience/practices.html" class="af-nav__sublink">Twenty Practices</a></li>
-          <li class="af-nav__subsep"><a href="/digital-experience/unified-field-chat.html" class="af-nav__sublink af-nav__sublink--feature">Enter the Unified Field Chat</a></li>
+          <li><a href="/games/exercises/" class="af-nav__sublink">Twenty Practices</a></li>
+          <li class="af-nav__subsep"><a href="/members" class="af-nav__sublink af-nav__sublink--feature">Enter the Unified Field Chat</a></li>
               <li class="af-nav__subsep"><a href="../blog/index.html#social" class="af-nav__sublink">Social Media</a></li>
             </ul>
           </li>
@@ -86,7 +85,7 @@
     <div class="bta-container bta-hero__inner">
       <p class="bta-eyebrow">Beta preview</p>
       <h1 class="bta-h1">What&rsquo;s in here</h1>
-      <p class="bta-lead">Unreleased previews behind the Quantum Aikido Wisdom login. Nothing here is linked from the main site, and the content is still changing.</p>
+      <p class="bta-lead">Unreleased previews behind Creativity in the Unified Field Wisdom login. Nothing here is linked from the main site, and the content is still changing.</p>
     </div>
   </section>
 

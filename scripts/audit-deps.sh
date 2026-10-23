@@ -73,7 +73,10 @@ for i in expired:
     print('echo "!! allowlist entry %s is EXPIRED — ignored (renew the issue or fix the dep)"' % i)
 PY
 )
-    eval "$_al_eval"
+    # Issue #126: never eval generated text — parse the two output shapes
+    # (ALLOWLIST_IDS="…" and echo "!! …") literally instead.
+    ALLOWLIST_IDS="$(printf '%s\n' "$_al_eval" | sed -n 's/^ALLOWLIST_IDS="\(.*\)"$/\1/p')"
+    printf '%s\n' "$_al_eval" | sed -n 's/^echo "\(!! .*\)"$/\1/p' | sed 's/\\"/"/g'
   else
     echo "!! vulnerability-allowlist.json present but python3 unavailable — allowlist ignored."
   fi

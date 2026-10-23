@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://quantumaikido.com/data/ask-richard-moon/schema/answer.schema.json",
+  "$id": "/data/ask/schema/answer.schema.json",
   "title": "Discussing The Unified Field answer record",
   "type": "object",
   "additionalProperties": false,

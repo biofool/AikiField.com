@@ -6,7 +6,7 @@
 */
 
 /* ============================================================================
-   Quantum Aikido — Unified Mobile-First Stylesheet
+   Creativity in the Unified Field — Unified Mobile-First Stylesheet
    ----------------------------------------------------------------------------
    Strategy: base styles target mobile (≤640px). @media (min-width) queries
    enhance for tablet (≥768px) and desktop (≥1024px). All pages link this
@@ -3347,7 +3347,7 @@ body:has(main > .toc) main > .toc {
 
 .endorsements-section {
     position: relative;
-    background-image: url('https://quantumaikido.com/BookCover.webp');
+    background-image: url('/blog/BookCover.webp');
     background-size: cover;
     background-position: center;
     border-radius: 16px;
@@ -3400,7 +3400,7 @@ body:has(main > .toc) main > .toc {
 /* Viewfinder carousel (reviews + index pages) */
 .viewfinder-container {
     position: relative;
-    background-image: url('https://quantumaikido.com/BookCover.webp');
+    background-image: url('/blog/BookCover.webp');
     background-size: cover;
     background-position: center;
     border-radius: 16px;

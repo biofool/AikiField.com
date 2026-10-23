@@ -226,6 +226,23 @@ EXCLUDES=(
     --exclude='.venv/'
     --exclude='node_modules/'
     --exclude='tests/'
+    # Issue #126: internal-only paths that the deny-list used to publish —
+    # .ai-context/*.yaml includes the site's own weakness register
+    # (debt/register.yaml with file+line of every finding).
+    --exclude='.ai-context/'
+    --exclude='.github/'
+    --exclude='.cursor/'
+    --exclude='.vscode/'
+    --exclude='docs/'
+    --exclude='test-results/'
+    --exclude='*.log'
+    --exclude='.dvcignore'
+    --exclude='LICENSE'
+    --exclude='AikiField.pdf'
+    --exclude='composer.json'
+    --exclude='composer.lock'
+    --exclude='package.json'
+    --exclude='package-lock.json'
     # Server-only secrets file (gitignored). Excluding it also stops
     # `rsync --delete` from removing it on the remote.
     --exclude='coach-config.local.php'
@@ -310,9 +327,20 @@ cloudflare_ip_check() {
 # up either way; a CI failure fails the sync command (gate at end).
 CI_LOCAL_PID=""
 CI_LOCAL_LOG=""
+CI_LOCAL_TREE=""
 start_ci_local() {
     if [[ "${SKIP_CI:-0}" == "1" ]]; then
         echo "  Local CI: SKIPPED (--skip-ci)"
+        return 0
+    fi
+    # Skip if this exact tree already cleared a CI run (staging CI clears
+    # the prod sync — the marker records the tree sha, not the commit sha,
+    # so a staging→main merge commit still matches).
+    local marker="${LOCAL_PATH}ci-results/.ci-passed"
+    local head_tree
+    head_tree="$(git -C "${LOCAL_PATH}" rev-parse 'HEAD^{tree}' 2>/dev/null || true)"
+    if [[ -n "$head_tree" && -f "$marker" && "$(cut -d' ' -f2 "$marker" 2>/dev/null)" == "$head_tree" ]]; then
+        echo "  Local CI: cleared (tree ${head_tree:0:8} already passed — see $marker)"
         return 0
     fi
     local script="${LOCAL_PATH}scripts/ci-local.sh"
@@ -321,6 +349,9 @@ start_ci_local() {
         return 0
     fi
     mkdir -p "${LOCAL_PATH}ci-results"
+    # Capture the tree under test now — a mid-deploy git pull can move HEAD
+    # before wait_ci_local records the result.
+    CI_LOCAL_TREE="$(git -C "${LOCAL_PATH}" rev-parse 'HEAD^{tree}' 2>/dev/null || true)"
     CI_LOCAL_LOG="${LOCAL_PATH}ci-results/sync-$(date +%Y%m%d-%H%M%S).log"
     # CI_LOCAL_ARGS overrides the default step set (php-lint + unit + e2e).
     # shellcheck disable=SC2086
@@ -341,6 +372,10 @@ wait_ci_local() {
         return 1
     fi
     echo "  ✓ Local CI passed ($CI_LOCAL_LOG)"
+    # Record the cleared tree so a later prod deploy of the same content
+    # can skip a redundant CI run.
+    echo "$(git -C "${LOCAL_PATH}" rev-parse HEAD 2>/dev/null) ${CI_LOCAL_TREE}" \
+        > "${LOCAL_PATH}ci-results/.ci-passed" 2>/dev/null || true
     return 0
 }
 
@@ -370,9 +405,10 @@ for arg in "$@"; do
         --purge-all) PURGE_ALL=1 ;;
         --no-pull)   NO_PULL=1 ;;
         --skip-ci)   SKIP_CI=1 ;;
-        --skip-audit) SKIP_AUDIT=1 ;;
+                --skip-audit) SKIP_AUDIT=1 ;;
+        --allow-dirty) ALLOW_DIRTY=1 ;;
         -y|--yes) YES=1 ;;
-        upload|download|dryrun|deploy|deploy-all|sftp|ftp|logs|report|help)
+        upload|download|dryrun|deploy|deploy-all|sftp|ftp|logs|report|selftest|help)
             [ -z "$CMD" ] && CMD="$arg"
             ;;
         *)
@@ -422,7 +458,15 @@ else
 fi
 unset -f _apply_known_remote
 
-[[ -n "$REMOTE_PATH_FLAG" ]] && REMOTE_PATH="$REMOTE_PATH_FLAG"
+# Issue #126: -p PATH feeds rsync --delete — reject paths that could wipe
+# the wrong remote dir (root, home, traversal, missing site prefix).
+if [[ -n "$REMOTE_PATH_FLAG" ]]; then
+    if [[ "$REMOTE_PATH_FLAG" =~ \.\. || "$REMOTE_PATH_FLAG" =~ ^/ || "$REMOTE_PATH_FLAG" =~ ^~ || "$REMOTE_PATH_FLAG" != *aikifield* ]]; then
+        echo "ERROR: refusing -p remote path '$REMOTE_PATH_FLAG' with --delete (must be relative, contain 'aikifield', no .. / ~ / leading /)" >&2
+        exit 1
+    fi
+    REMOTE_PATH="$REMOTE_PATH_FLAG"
+fi
 RSYNC_REMOTE="${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_PATH}"
 
 # coach-config.staging.php points the coaching-auth proxy at a placeholder,
@@ -652,6 +696,17 @@ case "$CMD" in
 esac
 
 case "$CMD" in
+    selftest)
+        # Issue #126: dry-run the upload and fail if any denied internal
+        # path would be published. Extend the pattern as new internals land.
+        RSYNC_OUT=$(do_rsync -avz --dry-run --delete "${EXCLUDES[@]}" -e "$RSYNC_SSH_CMD" "$RSYNC_LOCAL" "$RSYNC_REMOTE" 2>/dev/null || true)
+        if printf '%s\n' "$RSYNC_OUT" | grep -E '(^|/)(\.ai-context|\.github|\.cursor|\.vscode|\.env|test-results|ci-results|docs|\.git)/|\.(log|dvcignore)$|(^|/)LICENSE$|AikiField\.pdf' ; then
+            echo "SELF-TEST FAIL — internal paths would be published (above)" >&2
+            exit 1
+        fi
+        echo "SELF-TEST OK — dry-run publishes no internal paths"
+        exit 0
+        ;;
     upload)
         log_v "Upload (dry-run preview then confirm) to ${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_PATH}"
         echo ""
@@ -758,6 +813,19 @@ case "$CMD" in
         ;;
 
     deploy)
+        # Issue #126: gates audit committed code but rsync ships the working
+        # tree — refuse to deploy uncommitted/untracked files so what CI
+        # cleared is what ships. --allow-dirty overrides (logged).
+        if [[ "${ALLOW_DIRTY:-0}" != "1" && -n "$(git -C "$LOCAL_PATH" status --porcelain 2>/dev/null)" ]]; then
+            echo "ERROR: refusing deploy — working tree has uncommitted/untracked files." >&2
+            echo "  The audit/CI gate covers committed code; rsync ships the working tree." >&2
+            echo "  Commit first, or rerun with --allow-dirty (logs an override)." >&2
+            exit 1
+        fi
+        if [[ "${ALLOW_DIRTY:-0}" == "1" && -n "$(git -C "$LOCAL_PATH" status --porcelain 2>/dev/null)" ]]; then
+            echo "  ⚠ DEPLOYING DIRTY TREE (--allow-dirty) — rsync ships uncommitted files the gate never saw" >&2
+            echo "$(date -u +%FT%TZ) allow-dirty deploy user=${USER:-?}" >> "${LOCAL_PATH}logs/.deploy-audit-skip.log" 2>/dev/null || true
+        fi
         log_v "Deploying to ${REMOTE_NAME:-prod} (${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_PATH})"
         echo "========================================"
         echo "  DEPLOY — git pull + push + rsync to peec.biz"
@@ -769,9 +837,23 @@ case "$CMD" in
             require_git_branch "staging"
             echo ""
         fi
-        # Issue #67: local CI gates every deploy, not just staging — prod
-        # deploys ship the same content and deserve the same check. Kick it
-        # off in parallel; wait_ci_local (end of this case) gates the result.
+        # Issue #67: prod deploys ship the same content and deserve the same
+        # check — but CI must not run twice. Staging's run is the gate: prod
+        # is blocked unless HEAD's tree is recorded as passed
+        # (ci-results/.ci-passed), so deploy to staging first. For staging
+        # itself, kick CI off in parallel; wait_ci_local (end of this case)
+        # gates the result.
+        if [[ "$REMOTE_NAME" == "prod" && "${SKIP_CI:-0}" != "1" ]]; then
+            _marker="${LOCAL_PATH}ci-results/.ci-passed"
+            _head_tree="$(git -C "${LOCAL_PATH}" rev-parse 'HEAD^{tree}' 2>/dev/null || true)"
+            if [[ -z "$_head_tree" || ! -f "$_marker" || "$(cut -d' ' -f2 "$_marker" 2>/dev/null)" != "$_head_tree" ]]; then
+                echo "ERROR: production deploy blocked — this tree has not cleared staging CI." >&2
+                echo "  Run './sync.sh --staging deploy' first (its CI run clears the same tree)," >&2
+                echo "  or pass --skip-ci to bypass." >&2
+                exit 1
+            fi
+            echo "  ✓ Staging CI clearance found (tree ${_head_tree:0:8} — see $_marker)"
+        fi
         start_ci_local
         php_lint
         echo ""

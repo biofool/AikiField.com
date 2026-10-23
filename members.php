@@ -28,13 +28,13 @@ $qaIsAdmin   = $_SESSION['qa_is_admin'] ?? false;
   <link rel="apple-touch-icon" href="/favicon.svg">
   <meta name="robots" content="noindex,nofollow">
   <title>Unified Field Chat — AikiField</title>
-  <meta name="description" content="Enter the Unified Field Chat: AI-supported guidance grounded in the Quantum Aikido teachings.">
+  <meta name="description" content="Enter the Unified Field Chat: AI-supported guidance grounded in Creativity in the Unified Field teachings.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preload" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Public+Sans:wght@400;600;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <noscript><link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Public+Sans:wght@400;600;700&display=swap" rel="stylesheet"></noscript>
   <link rel="stylesheet" href="/css/redesign.css?v=20261003">
-  <link rel="stylesheet" href="/css/coach-chat.css?v=20261005b">
+  <link rel="stylesheet" href="/css/coach-chat.css?v=20261016">
 </head>
 <body>
 
@@ -75,10 +75,9 @@ $qaIsAdmin   = $_SESSION['qa_is_admin'] ?? false;
           <li class="af-nav__megacol">
             <a href="/digital-experience/" class="af-nav__colhead" data-i18n="nav.digital_experience">Digital Experience</a>
             <ul class="af-nav__megalist">
-          <li><a href="/digital-experience/lucky-wave.html#v1" class="af-nav__sublink">Ride the Lucky Wave</a></li>
           <li><a href="/digital-experience/lucky-wave.html#v2" class="af-nav__sublink">Ride the Lucky Wave V2</a></li>
-          <li><a href="/digital-experience/practices.html" class="af-nav__sublink">Twenty Practices</a></li>
-          <li class="af-nav__subsep"><a href="/digital-experience/unified-field-chat.html" class="af-nav__sublink af-nav__sublink--feature">Enter the Unified Field Chat</a></li>
+          <li><a href="/games/exercises/" class="af-nav__sublink">Twenty Practices</a></li>
+          <li class="af-nav__subsep"><a href="/members" class="af-nav__sublink af-nav__sublink--feature">Enter the Unified Field Chat</a></li>
               <li class="af-nav__subsep"><a href="/blog/index.html#social" class="af-nav__sublink" data-i18n="nav.social_media">Social Media</a></li>
             </ul>
           </li>
@@ -157,13 +156,20 @@ $qaIsAdmin   = $_SESSION['qa_is_admin'] ?? false;
                         <div class="coach-menu-sep" role="separator"></div>
                         <a href="https://quantumaikido.com/profile" id="coach-profile-link" class="coach-menu-item" role="menuitem" tabindex="-1">Profile &amp; Settings</a>
                         <div class="coach-menu-sep" role="separator"></div>
-                        <a href="https://quantumaikido.com/privacy" class="coach-menu-item" role="menuitem" tabindex="-1">Privacy</a>
-                        <a href="https://quantumaikido.com/terms" class="coach-menu-item" role="menuitem" tabindex="-1">Terms</a>
+                        <a href="/privacy" class="coach-menu-item" role="menuitem" tabindex="-1">Privacy</a>
+                        <a href="/terms" class="coach-menu-item" role="menuitem" tabindex="-1">Terms</a>
+                        <div class="coach-menu-sep" role="separator"></div>
+                        <button type="button" id="coach-passkey-register" class="coach-menu-item" role="menuitem" tabindex="-1" hidden>Register passkey</button>
                         <div class="coach-menu-sep" role="separator"></div>
                         <button type="button" id="coach-logout" class="coach-menu-item coach-logout-btn" role="menuitem" tabindex="-1">Sign Out</button>
                     </div>
                 </div>
             </div>
+            <!-- Visible Sign out: the More-menu item alone was too hidden to find. -->
+            <button type="button" id="coach-logout-bar" class="coach-signout-btn" title="Sign out">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                <span class="coach-signout-label">Sign out</span>
+            </button>
         </div>
     </div>
 
@@ -263,7 +269,7 @@ $qaIsAdmin   = $_SESSION['qa_is_admin'] ?? false;
                 </div>
                 <p class="coach-intro-subtitle">AI-supported guidance for embodied practice, awareness, and constructive interaction.</p>
                 <ul class="coach-intro-features">
-                    <li>AI-generated responses informed by the Quantum Aikido field of teachings</li>
+                    <li>AI-generated responses informed by Creativity in the Unified Field teachings</li>
                     <li>Ask in over 30 languages &mdash; the coach replies in the language you write in</li>
                     <li>Ask to speak with a human coach at any time, right in the chat</li>
                 </ul>
@@ -320,7 +326,7 @@ window.QA_SESSION = {
     premium: false
 };
 </script>
-<script src="/coach-chat.js?v=20261005b"></script>
+<script src="/coach-chat.js?v=20261016"></script>
 <script src="/js/nav-menu.js?v=20261002" defer></script>
 </body>
 </html>

@@ -88,19 +88,19 @@ channel management.
 
 ---
 
-## 5. Quantum Aikido / Wellness Websites
+## 5. Creativity in the Unified Field / Wellness Websites
 
-Web properties for the Quantum Aikido ecosystem — book promotion, coaching
+Web properties for Creativity in the Unified Field ecosystem — book promotion, coaching
 platform, and wellness consulting.
 
 | Repo | What it does |
 |------|-------------|
-| **AIRichardMoon** | FastAPI backend for Quantum Aikido coaching system (auth, invitations, mail) |
-| **quantumaikido.com** | Quantum Aikido website (PHP, members portal, coach dashboard) |
+| **AIRichardMoon** | FastAPI backend for Creativity in the Unified Field coaching system (auth, invitations, mail) |
+| **quantumaikido.com** | Creativity in the Unified Field website (PHP, members portal, coach dashboard) |
 | **AikiField.com** | Presence-based leadership consulting website |
 | **neurowellnessdojo.com** | Neuro wellness dojo website |
 
-**Portfolio value:** A complete digital presence for the Quantum Aikido
+**Portfolio value:** A complete digital presence for Creativity in the Unified Field
 brand — book marketing, coaching platform with auth and email, and
 leadership consulting — with a shared auth flow spanning frontend and
 backend repos.
@@ -199,7 +199,7 @@ provenance.
 | Cloud Cost & Infrastructure Management | 3 | Multi-cloud cost control & secrets |
 | Cloud Based OSInt | 1 | Studio discovery & contact verification |
 | Media & Video Processing | 5 | Video download, conversion, tracking |
-| Quantum Aikido / Wellness Websites | 4 | Book marketing, coaching, consulting |
+| Creativity in the Unified Field / Wellness Websites | 4 | Book marketing, coaching, consulting |
 | Security & Threat Intelligence | 4 | Defensive security tooling |
 | System Administration & OS Analysis | 1 | Linux bloat detection & networking |
 | Text & Content Processing | 1 | Caption correction, document conversion |

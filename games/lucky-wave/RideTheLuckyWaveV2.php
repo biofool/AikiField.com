@@ -37,6 +37,51 @@ require dirname(__DIR__, 2) . '/includes/beta-gate.load.php';
   <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
   <script src="https://unpkg.com/@babel/standalone@8.0.4/babel.min.js" integrity="sha384-bdF7m0Y1IFKt9Q6xC8X9qkXn0OBriQWKyWwZKYsN05zF6P/g9OakjjL0G2Sd4pB4" crossorigin="anonymous"></script>
   <script src="language.js"></script>
+  <script>
+    // Game-translation registry for games/translate.js (issue #894).
+    // collect() enumerates every user-visible string in the language tables;
+    // apply() mutates them in place and remounts React so the whole app —
+    // both standard and rmoone modes — renders in the chosen language.
+    window.AF_GAME = (function () {
+      var SRC = {}, SET = {};
+      function reg(id, obj, key) {
+        SRC[id] = obj[key];
+        SET[id] = function (v) { obj[key] = v; };
+        return { id: id, text: obj[key] };
+      }
+      function collect() {
+        var items = [];
+        [["std", PHASES], ["rmoone", PHASES_RMOONE]].forEach(function (pv) {
+          pv[1].forEach(function (p) {
+            items.push(reg("ph." + pv[0] + "." + p.id + ".label", p, "label"));
+            items.push(reg("ph." + pv[0] + "." + p.id + ".cue", p, "cue"));
+            p.components.forEach(function (c, i) { items.push(reg("ph." + pv[0] + "." + p.id + ".comp." + i, p.components, i)); });
+            p.instruction.forEach(function (t, i) { items.push(reg("ph." + pv[0] + "." + p.id + ".inst." + i, p.instruction, i)); });
+          });
+        });
+        [["std", SCORES], ["rmoone", SCORES_RMOONE]].forEach(function (sv) {
+          sv[1].forEach(function (s) {
+            items.push(reg("sc." + sv[0] + "." + s.v + ".label", s, "label"));
+            items.push(reg("sc." + sv[0] + "." + s.v + ".short", s, "short"));
+          });
+        });
+        [["std", UI_STRINGS.standard], ["rmoone", UI_STRINGS.rmoone]].forEach(function (uv) {
+          Object.keys(uv[1]).forEach(function (k) {
+            if (typeof uv[1][k] === "string") items.push(reg("ui." + uv[0] + "." + k, uv[1], k));
+          });
+        });
+        return items;
+      }
+      function apply(map) {
+        // A cached language applies before collect() has ever run — build
+        // the setter registry on first use.
+        if (!Object.keys(SET).length) collect();
+        Object.keys(map).forEach(function (id) { if (SET[id]) SET[id](map[id]); });
+        if (window.__AF_REMOUNT) window.__AF_REMOUNT();
+      }
+      return { id: "lucky-wave", collect: collect, apply: apply, src: function (id) { return SRC[id]; } };
+    })();
+  </script>
 
   <script type="text/babel">
     const { useState, useEffect, useRef, useCallback } = React;
@@ -711,7 +756,7 @@ require dirname(__DIR__, 2) . '/includes/beta-gate.load.php';
               </p>
               <ul style={{ fontSize: 14, color: T.primary, lineHeight: 1.6, paddingLeft: 20, margin: 0 }}>
                 <li style={{ marginBottom: 6 }}>
-                  <strong style={{ color: "#D4B8F0" }}>Harmony:</strong> Uses native Moonisms and the vocabulary of Quantum Aikido (Ki, Unified-Field, Kami).
+                  <strong style={{ color: "#D4B8F0" }}>Harmony:</strong> Uses native Moonisms and the vocabulary of Creativity in the Unified Field (Ki, Unified-Field, Kami).
                 </li>
                 <li>
                   <strong style={{ color: "#9CA8BC" }}>Standard:</strong> A plain vanilla, secular framing focused on nervous system activation and psychology.
@@ -828,7 +873,7 @@ require dirname(__DIR__, 2) . '/includes/beta-gate.load.php';
 
               <div style={{ flex: 1 }}>
                 {phase.instruction.map((txt, i) => (
-                  <div key={i} style={{ display: "flex", gap: 12, marginBottom: 20 }}>
+                  <div key={i + "-" + txt.length} style={{ display: "flex", gap: 12, marginBottom: 20 }}>
                     <div style={{
                       minWidth: 26, height: 26, borderRadius: "50%",
                       background: phase.color + "25", border: `2px solid ${phase.color}80`,
@@ -836,12 +881,14 @@ require dirname(__DIR__, 2) . '/includes/beta-gate.load.php';
                       fontWeight: 800, fontSize: 12, color: phase.color, flexShrink: 0, marginTop: 2,
                     }}>{i + 1}</div>
                     <p style={{ fontSize: 17, lineHeight: 1.8, margin: 0, color: T.primary, fontFamily: "Georgia, serif" }}>{txt}</p>
+                    <span ref={el => { if (el && window.AF_TR && window.AF_TR.current()) { const vid = "ph." + (isRMoonE ? "rmoone" : "std") + "." + phase.id + ".inst." + i; window.AF_TR.annotate(el, vid, window.AF_GAME.src(vid), txt); } }} />
                   </div>
                 ))}
                 <div style={{ borderLeft: `2px solid ${phase.color}50`, paddingLeft: 14, marginTop: 4 }}>
                   <p style={{ fontSize: 15, lineHeight: 1.7, margin: 0, color: T.secondary, fontStyle: "italic", fontFamily: "Georgia, serif" }}>
                     {phase.cue}
                   </p>
+                  <span ref={el => { if (el && window.AF_TR && window.AF_TR.current()) { const vid = "ph." + (isRMoonE ? "rmoone" : "std") + "." + phase.id + ".cue"; window.AF_TR.annotate(el, vid, window.AF_GAME.src(vid), phase.cue); } }} />
                 </div>
               </div>
 
@@ -1130,8 +1177,12 @@ require dirname(__DIR__, 2) . '/includes/beta-gate.load.php';
       return null;
     }
 
-    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+    const _afRoot = ReactDOM.createRoot(document.getElementById('root'));
+    _afRoot.render(<App />);
+    // translate.js calls this after mutating the language tables (issue #894).
+    window.__AF_REMOUNT = () => _afRoot.render(<App />);
   </script>
+  <script src="../translate.js"></script>
 </body>
 
 </html>

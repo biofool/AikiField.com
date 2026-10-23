@@ -24,7 +24,7 @@ cloud budgets.
 2. [Cloud Cost & Infrastructure Management](#2-cloud-cost--infrastructure-management)
 3. [Cloud Based OSInt](#3-cloud-based-osint)
 4. [Media & Video Processing](#4-media--video-processing)
-5. [Quantum Aikido / Wellness Websites](#5-quantum-aikido--wellness-websites)
+5. [Creativity in the Unified Field / Wellness Websites](#5-creativity-in-the-unified-field--wellness-websites)
 6. [Security & Threat Intelligence](#6-security--threat-intelligence)
 7. [System Administration & OS Analysis](#7-system-administration--os-analysis)
 8. [Text & Content Processing](#8-text--content-processing)
@@ -411,9 +411,9 @@ This tool transforms video from a linear medium into a searchable, quotable reso
 
 ---
 
-## 5. Quantum Aikido / Wellness Websites
+## 5. Creativity in the Unified Field / Wellness Websites
 
-*Web properties for the Quantum Aikido ecosystem — book promotion, coaching platform, and wellness consulting.*
+*Web properties for Creativity in the Unified Field ecosystem — book promotion, coaching platform, and wellness consulting.*
 
 ### AIRichardMoon
 
@@ -448,7 +448,7 @@ This system demonstrates how AI can extend human expertise rather than replace i
 ### quantumaikido.com
 
 **What it is**
-The public website for Quantum Aikido that showcases Richard Moon's book, teachings, and body of work, while also providing a members-only portal for AI-powered coaching and community resources.
+The public website for Creativity in the Unified Field that showcases Richard Moon's book, teachings, and body of work, while also providing a members-only portal for AI-powered coaching and community resources.
 
 **Who it's for**
 - Readers and practitioners interested in martial arts philosophy, conflict resolution, and mindfulness
@@ -471,7 +471,7 @@ The public website features the book "Quantum Aikido: The Power of Harmony" with
 - **Professional presentation**: Polished design and structured content establish credibility
 
 **Why it matters**
-This site is the digital hub for the Quantum Aikido movement, serving as both a marketing engine for the book and a platform for deeper engagement. It bridges physical martial arts practice with digital accessibility, allowing Richard's teachings to reach a global audience. The members portal demonstrates how traditional teachings can be extended through technology while maintaining fidelity to the source material.
+This site is the digital hub for Creativity in the Unified Field movement, serving as both a marketing engine for the book and a platform for deeper engagement. It bridges physical martial arts practice with digital accessibility, allowing Richard's teachings to reach a global audience. The members portal demonstrates how traditional teachings can be extended through technology while maintaining fidelity to the source material.
 
 ---
 
@@ -501,7 +501,7 @@ The website presents AikiField's services: fractional CISO engagement (part-time
 - **Self-assessment tools**: Companies can evaluate their readiness before committing
 
 **Why it matters**
-AikiField represents a new model for security leadership — blending technical expertise with executive coaching and somatic practice. It addresses a critical gap in the market: companies that need security leadership but can't justify a full-time hire. The site positions security not as a compliance burden but as a business enabler and differentiator. It also showcases sponsored projects (including the Quantum Aikido AI coaching backend) that demonstrate the intersection of security leadership and practical wisdom.
+AikiField represents a new model for security leadership — blending technical expertise with executive coaching and somatic practice. It addresses a critical gap in the market: companies that need security leadership but can't justify a full-time hire. The site positions security not as a compliance burden but as a business enabler and differentiator. It also showcases sponsored projects (including Creativity in the Unified Field AI coaching backend) that demonstrate the intersection of security leadership and practical wisdom.
 
 ---
 
@@ -967,7 +967,7 @@ TDN represents the portfolio's engagement with one of the most pressing societal
 | Cloud Cost & Infrastructure Management | 3 | Multi-cloud cost control & secrets |
 | Cloud Based OSInt | 1 | Studio discovery & contact verification |
 | Media & Video Processing | 5 | Video download, conversion, tracking |
-| Quantum Aikido / Wellness Websites | 4 | Book marketing, coaching, consulting |
+| Creativity in the Unified Field / Wellness Websites | 4 | Book marketing, coaching, consulting |
 | Security & Threat Intelligence | 4 | Defensive security tooling |
 | System Administration & OS Analysis | 1 | Linux bloat detection & cleanup |
 | Text & Content Processing | 1 | Caption correction with learning dictionary |

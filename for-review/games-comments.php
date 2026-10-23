@@ -23,7 +23,14 @@ if ($action === 'list') {
         echo json_encode([]);
         exit;
     }
-    echo file_get_contents($dataFile);
+    // Shared lock so a concurrent 'add' can't serve a torn write (issue #100).
+    $lfp = fopen($dataFile, 'r');
+    if ($lfp !== false) {
+        flock($lfp, LOCK_SH);
+        echo stream_get_contents($lfp);
+        flock($lfp, LOCK_UN);
+        fclose($lfp);
+    }
     exit;
 }
 
@@ -62,13 +69,26 @@ if ($action === 'add' && $_SERVER['REQUEST_METHOD'] === 'POST') {
         'date'    => date('Y-m-d'),
     ];
 
-    $comments = [];
-    if (file_exists($dataFile)) {
-        $comments = json_decode(file_get_contents($dataFile), true) ?: [];
+    // Read-modify-write under one exclusive lock (issue #100): a plain
+    // file_get_contents + LOCK_EX file_put_contents let two concurrent adds
+    // read the same snapshot so the second write clobbered the first.
+    $fp = fopen($dataFile, 'c+');
+    if ($fp === false) {
+        error_log('games-comments: cannot open comment store for writing');
+        http_response_code(500);
+        echo json_encode(['ok' => false, 'error' => 'Comment store unavailable']);
+        exit;
     }
+    flock($fp, LOCK_EX);
+    $raw = stream_get_contents($fp);
+    $comments = ($raw === false || trim($raw) === '') ? [] : (json_decode($raw, true) ?: []);
     $comments[] = $entry;
-
-    file_put_contents($dataFile, json_encode($comments, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE), LOCK_EX);
+    rewind($fp);
+    ftruncate($fp, 0);
+    fwrite($fp, json_encode($comments, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+    fflush($fp);
+    flock($fp, LOCK_UN);
+    fclose($fp);
     echo json_encode(['ok' => true]);
     exit;
 }

@@ -50,7 +50,8 @@
     const charCount      = document.getElementById("coach-char-count");
     const queueBanner    = document.getElementById("coach-queue-banner");
     const userInfo       = document.getElementById("coach-user-info");
-    const logoutBtn      = document.getElementById("coach-logout");
+    // Sign out lives in two places: the always-visible bar button and the More menu.
+    const logoutBtns     = [document.getElementById("coach-logout"), document.getElementById("coach-logout-bar")].filter(Boolean);
     const clearBtn       = document.getElementById("coach-clear-btn");
     const languageSelect = document.getElementById("coach-language-select");
     const sessionSelect  = document.getElementById("coach-session-select");
@@ -104,7 +105,7 @@
     // selected per chat session and its ID is sent with any feedback on the
     // welcome message so the dashboard can track per-variation reactions.
     let currentWelcomeId = "";
-    const WELCOME_FALLBACK = "Welcome! I'm <em>Discussing The Unified Field</em>, grounded in <em>Quantum Aikido</em>.<br>I can adjust to your learning style and your preferred language. Just drop a note in the chat about it when you ask a question.<br><br>My knowledge comes from Richard Moon's <em>books, videos, and private coaching writings</em>.<br>Let's begin with something useful: <em>How to get luckier.</em>";
+    const WELCOME_FALLBACK = "Welcome! I'm <em>Discussing The Unified Field</em>, grounded in <em>Creativity in the Unified Field</em>.<br>I can adjust to your learning style and your preferred language. Just drop a note in the chat about it when you ask a question.<br><br>My knowledge comes from Richard Moon's <em>books, videos, and private coaching writings</em>.<br>Let's begin with something useful: <em>How to get luckier.</em>";
 
     async function loadWelcomeVariation() {
         try {
@@ -912,6 +913,70 @@
         });
     }
 
+    // ── Source labels (issue #106) ───────────────────────────────────────
+    // Never surface internal identifiers as user-facing source names: bare
+    // YouTube IDs, corpus filenames/paths, or opaque hashes. Verified English
+    // video titles come from data/youtube-titles.json (generated from the
+    // ClipQuotes title audit); a YouTube source with no useful title shows
+    // "YT" — the embedded player still renders. The map loads once, eagerly,
+    // so it is resolved long before the first backend reply renders.
+    let ytTitles = null;
+    const pendingYtChips = [];
+    fetch("/data/youtube-titles.json", { credentials: "same-origin" })
+        .then(r => (r.ok ? r.json() : {}))
+        .then(map => {
+            ytTitles = (map && typeof map === "object") ? map : {};
+            // Re-label any chips that rendered before the map arrived.
+            pendingYtChips.forEach(entry => { entry.chip.textContent = sourceLabel(entry.s); });
+            pendingYtChips.length = 0;
+        })
+        .catch(err => {
+            ytTitles = {};
+            console.warn("coach-chat: could not load data/youtube-titles.json", err);
+        });
+
+    function isYouTubeId(v) {
+        return /^[A-Za-z0-9_-]{11}$/.test(v);
+    }
+
+    function firstYouTubeId(u) {
+        const m = (typeof u === "string")
+            && u.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([A-Za-z0-9_-]{11})/);
+        return m ? m[1] : null;
+    }
+
+    // True when a label is an internal identifier rather than a human title:
+    // a path, a filename with an extension, a bare YouTube ID, a hex digest,
+    // or a long single-token blob.
+    function looksOpaque(v) {
+        if (/[\/\\]/.test(v)) return true;
+        if (/\.[A-Za-z0-9]{1,6}$/.test(v)) return true;
+        if (isYouTubeId(v)) return true;
+        if (/^[0-9a-f]{12,}$/i.test(v)) return true;
+        if (!/\s/.test(v) && /^[A-Za-z0-9_-]{16,}$/.test(v)) return true;
+        return false;
+    }
+
+    function sourceLabel(s) {
+        const title = (s && typeof s.title === "string") ? s.title.trim() : "";
+        if (title && !looksOpaque(title)) return title;
+        // Title is missing or internal — treat as a video source when any
+        // field carries a YouTube URL or a bare video ID.
+        const fields = [s.videoUrl, s.youtubeUrl, s.url, s.link, s.sourceUrl, s.title, s.path];
+        let videoId = null;
+        for (const f of fields) {
+            videoId = firstYouTubeId(f) || (typeof f === "string" && isYouTubeId(f.trim()) ? f.trim() : null);
+            if (videoId) break;
+        }
+        if (videoId) {
+            const known = ytTitles && ytTitles[videoId];
+            return (typeof known === "string" && known.trim() && !looksOpaque(known.trim()))
+                ? known.trim()
+                : "YT";
+        }
+        return "Source";
+    }
+
     // A source is a link only when it carries an http(s) URL or a site-relative
     // path. Anything else (e.g. a corpus file path) is shown as plain text.
     function sourceHref(s) {
@@ -961,7 +1026,7 @@
             sources
                 .filter(s => s && typeof s === "object")
                 .forEach(s => {
-                    const label = s.title || s.path || "untitled";
+                    const label = sourceLabel(s);
                     const href = sourceHref(s);
                     const li = document.createElement("li");
                     let chip;
@@ -975,6 +1040,9 @@
                     }
                     chip.className = "coach-source-chip";
                     chip.textContent = label;
+                    // If the title map is still loading, queue this chip for
+                    // a re-label once it resolves (issue #106).
+                    if (ytTitles === null) pendingYtChips.push({ chip, s });
                     li.appendChild(chip);
                     list.appendChild(li);
                 });
@@ -1540,7 +1608,7 @@
     }
 
     // --- Logout ---
-    if (logoutBtn) {
+    logoutBtns.forEach((logoutBtn) => {
         logoutBtn.addEventListener("click", async () => {
             // Clear server-side session via login.php
             try {
@@ -1562,7 +1630,7 @@
             // Redirect to login
             window.location.href = '/login.php?next=' + encodeURIComponent(window.location.pathname);
         });
-    }
+    });
 
     // --- Clear conversation / New chat (issues #17, #324) ---
     // Forgiveness pattern: no confirm dialog. Clear and New chat act at once and
@@ -1972,6 +2040,115 @@
 
     // Issue #184: populate the language selector from the backend
     initLanguageSelector();
+
+    // --- Passkey (WebAuthn) registration — AIRichardMoon issue #650 ---
+    // "Register passkey" in the More menu. Hidden unless the browser supports
+    // WebAuthn AND the backend flag passkey_login is on (same gate as the
+    // login-page button — fail closed on any error). The backend resolves the
+    // RP from this request's Origin, so the passkey is bound to aikifield.com.
+    // This block must live in THIS IIFE: API / fetchWithTimeout / authHeaders
+    // and the toast elements are all scoped here (issue #124 — it shipped
+    // inside initCoachUIEnhancements and threw ReferenceError on /members).
+    const passkeyRegBtn = document.getElementById("coach-passkey-register");
+
+    function b64urlToBytes(s) {
+        const b64 = s.replace(/-/g, "+").replace(/_/g, "/");
+        return Uint8Array.from(atob(b64), c => c.charCodeAt(0));
+    }
+    function bytesToB64url(buf) {
+        return btoa(String.fromCharCode(...new Uint8Array(buf)))
+            .replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+    }
+    function showPasskeyStatus(msg) {
+        // Reuse the chat toast without its Undo button.
+        if (!toastEl || !toastMsg) { console.warn("passkey:", msg); return; }
+        toastMsg.textContent = msg;
+        if (toastUndoBtn) toastUndoBtn.hidden = true;
+        toastEl.hidden = false;
+        setTimeout(function() {
+            toastEl.hidden = true;
+            if (toastUndoBtn) toastUndoBtn.hidden = false;
+        }, 6000);
+    }
+
+    if (passkeyRegBtn && window.PublicKeyCredential) {
+        fetchWithTimeout(API + "/v1/feature-flags", { method: "GET" })
+            .then(function(r) { return r.ok ? r.json() : null; })
+            .then(function(d) {
+                if (d && d.flags && d.flags.passkey_login) passkeyRegBtn.hidden = false;
+            })
+            .catch(function(err) { console.warn("feature_flags_fetch_failed — passkey registration stays hidden", err); });
+
+        passkeyRegBtn.addEventListener("click", async function() {
+            passkeyRegBtn.disabled = true;
+            showPasskeyStatus("Follow your browser's prompt to create a passkey…");
+            try {
+                const beginResp = await fetchWithTimeout(API + "/v1/auth/passkey/register/begin", {
+                    method: "POST",
+                    headers: authHeaders(),
+                });
+                const beginData = await beginResp.json();
+                if (!beginData.ok) {
+                    showPasskeyStatus(beginData.error || "Passkey registration could not start.");
+                    return;
+                }
+                const o = beginData.options;
+                const publicKey = {
+                    challenge: b64urlToBytes(o.challenge),
+                    rp: o.rp,
+                    user: {
+                        id: b64urlToBytes(o.user.id),
+                        name: o.user.name,
+                        displayName: o.user.displayName,
+                    },
+                    pubKeyCredParams: o.pubKeyCredParams,
+                    timeout: o.timeout,
+                    excludeCredentials: (o.excludeCredentials || []).map(function(c) {
+                        return { type: c.type, id: b64urlToBytes(c.id) };
+                    }),
+                    authenticatorSelection: o.authenticatorSelection,
+                    attestation: o.attestation,
+                };
+                const cred = await navigator.credentials.create({ publicKey: publicKey });
+                if (!cred) {
+                    showPasskeyStatus("Passkey registration was cancelled.");
+                    return;
+                }
+                const credJson = JSON.stringify({
+                    id: cred.id,
+                    rawId: cred.id,
+                    type: cred.type,
+                    response: {
+                        clientDataJSON: bytesToB64url(cred.response.clientDataJSON),
+                        attestationObject: bytesToB64url(cred.response.attestationObject),
+                    },
+                    clientExtensionResults: cred.getClientExtensionResults ? cred.getClientExtensionResults() : {},
+                    transports: cred.response.getTransports ? cred.response.getTransports() : [],
+                });
+                const finishResp = await fetchWithTimeout(API + "/v1/auth/passkey/register/finish", {
+                    method: "POST",
+                    headers: authHeaders(),
+                    body: JSON.stringify({
+                        credential: credJson,
+                        challengeKey: beginData.challengeKey,
+                    }),
+                });
+                const finishData = await finishResp.json();
+                showPasskeyStatus(finishData.ok
+                    ? "Passkey registered. You can sign in with it next time."
+                    : (finishData.error || "Passkey registration failed."));
+            } catch (err) {
+                if (err && err.name === "NotAllowedError") {
+                    showPasskeyStatus("Passkey registration was cancelled.");
+                } else {
+                    console.warn("passkey registration failed:", err);
+                    showPasskeyStatus("Passkey registration failed. Please try again.");
+                }
+            } finally {
+                passkeyRegBtn.disabled = false;
+            }
+        });
+    }
 
     // Verify the session is still valid before entering chat.
     // The Pages Function checks this server-side, but the session could

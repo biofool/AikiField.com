@@ -1,6 +1,6 @@
-You are translating remaining Quantum Aikido and AikiField UI strings.
+You are translating remaining Creativity in the Unified Field and AikiField UI strings.
 Translate ONLY the keys/values below. Do not invent extra keys.
-Keep proper nouns in English: AikiField, Quantum Aikido, Richard Moon, O Sensei,
+Keep proper nouns in English: AikiField, Creativity in the Unified Field, Richard Moon, O Sensei,
 Gemini, Cloud Run, Firestore, SQLite FTS5, Google Maps, Places API, Hunter.io,
 NeverBounce, YAMM, Playwright, Compute Engine, OpenTofu, Terraform, Cheng Hsin,
 Strozzi Somatics, Harvard Law School.
@@ -18,7 +18,7 @@ Also still English in every AikiField locale (glossary treated as keep-exact; tr
 ```
 Locales: es, fr, de, pt, ja, zh, ko, ar, he, fa, hi.
 
-## Quantum Aikido locale JSON
+## Creativity in the Unified Field locale JSON
 
 ### locale fr (French)
 ```json

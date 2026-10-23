@@ -39,7 +39,7 @@ test.describe('exercises gate (issue #71)', () => {
     await browserLogin(page, { email: TEST_EMAIL, password: PASSWORD, next: '/games/exercises/' });
 
     await expect(page.locator('#authBadge')).toBeVisible();
-    await expect(page.locator('#authBadge')).toContainText('all 20 practices unlocked');
+    await expect(page.locator('#authBadge')).toContainText('all 15 practices unlocked');
     await expect(page.locator('.ex-chip')).toHaveCount(15);
     await expect(page.locator('.ex-chip.locked')).toHaveCount(0);
 
@@ -48,5 +48,15 @@ test.describe('exercises gate (issue #71)', () => {
     await expect(page.locator('#lockModal')).toHaveCount(0);
     await expect(page.locator('#player h2')).toBeVisible();
     await expect(page.locator('#player .body')).not.toBeEmpty();
+  });
+
+  test('signed-in: Invisible Partner toggle has a clean label and an accessible explanation', async ({ page }) => {
+    await browserLogin(page, { email: TEST_EMAIL, password: PASSWORD, next: '/games/exercises/' });
+    await page.locator('.ex-chip', { hasText: 'Wrist Grab' }).click();
+    const invB = page.locator('#invB');
+    await expect(invB).toHaveText('Invisible Partner');
+    await expect(invB).toHaveAttribute('title', 'Invisible partner means practicing by yourself.');
+    await expect(invB).toHaveAttribute('aria-describedby', 'invB-desc');
+    await expect(page.locator('#invB-desc')).toHaveText('Invisible partner means practicing by yourself.');
   });
 });

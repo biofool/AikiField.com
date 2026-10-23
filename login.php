@@ -51,7 +51,7 @@ require __DIR__ . '/includes/coach-config.load.php';
  * percent-encoded backslashes, CR/LF injection, and login.php targets.
  * Also rejects any path that resolves off-site.
  */
-function af_safe_redirect(?string $candidate, string $fallback): string
+function af_safe_redirect($candidate, string $fallback): string
 {
     $candidate = is_string($candidate) ? trim($candidate) : '';
     if ($candidate === ''
@@ -59,8 +59,11 @@ function af_safe_redirect(?string $candidate, string $fallback): string
         || str_starts_with($candidate, '//')
         || parse_url($candidate, PHP_URL_HOST) !== null
         || parse_url($candidate, PHP_URL_SCHEME) !== null
-        || str_contains($candidate, "\r")
-        || str_contains($candidate, "\n")
+        // Any control char or DEL anywhere in the value: browsers strip TAB
+        // (and CR/LF) from URLs, so /<TAB>/evil.com in a Location header is
+        // read as //evil.com — an open redirect (issue #121). CR/LF also
+        // covers header injection.
+        || preg_match('/[\x00-\x20\x7f]/', $candidate)
         || af_contains_backslash($candidate)
     ) {
         return $fallback;
@@ -123,8 +126,16 @@ function af_url_is_offsite(string $candidate, string $scheme, string $host): boo
 // includes/beta-gate.load.php — the session cookie must be valid site-wide
 // so /beta/ pages read it.
 if (session_status() === PHP_SESSION_NONE) {
+    // The session cookie promises 7 days; the default gc_maxlifetime (1440 s)
+    // would let the server-side file die long before that (issue #123).
+    ini_set('session.gc_maxlifetime', (string) (86400 * 7));
+    // Honour the scheme the client actually used — behind a TLS-terminating
+    // proxy (Cloudflare) $_SERVER['HTTPS'] is empty even for https visitors,
+    // which would drop the Secure flag (issue #100).
     $secure = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
-        || (($_SERVER['SERVER_PORT'] ?? '') == 443);
+        || (($_SERVER['SERVER_PORT'] ?? '') == 443)
+        || strtolower((string) ($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '')) === 'https'
+        || str_contains((string) ($_SERVER['HTTP_CF_VISITOR'] ?? ''), '"https"');
     session_set_cookie_params([
         'lifetime' => 86400 * 7,  // 7 days
         'path'     => '/',
@@ -158,6 +169,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && $qaAlreadyAuthed && empty($_GET['err
 // coach-login.js posts email + sessionToken here after a successful backend
 // auth. We verify against the backend and store in the PHP session cookie.
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'backend-login') {
+    // Login-CSRF guard (issues #100, #121): a cross-site POST could plant the
+    // attacker's account in the victim's browser so the victim's activity
+    // lands in the attacker's backend account. Require a same-origin signal:
+    // the Origin header's host must equal Host, or Sec-Fetch-Site must say
+    // same-origin. Same pattern as games/ai-coach.php.
+    $loginPostSameOrigin = false;
+    $originHeader = (string) ($_SERVER['HTTP_ORIGIN'] ?? '');
+    if ($originHeader !== '') {
+        // HTTP_HOST may carry a port (dev servers); Origin's host never does —
+        // compare host to host.
+        $reqHost = (string) (parse_url('//' . (string) ($_SERVER['HTTP_HOST'] ?? ''), PHP_URL_HOST) ?? '');
+        $loginPostSameOrigin = strcasecmp(
+            (string) (parse_url($originHeader, PHP_URL_HOST) ?? ''),
+            $reqHost
+        ) === 0;
+    } else {
+        $fetchSite = strtolower((string) ($_SERVER['HTTP_SEC_FETCH_SITE'] ?? ''));
+        $loginPostSameOrigin = in_array($fetchSite, ['same-origin', 'same-site'], true);
+    }
+    if (!$loginPostSameOrigin) {
+        error_log('login.php: backend-login rejected — no same-origin signal'
+            . ' origin=' . ($originHeader !== '' ? $originHeader : '(none)')
+            . ' sec-fetch-site=' . ($_SERVER['HTTP_SEC_FETCH_SITE'] ?? '(none)')
+            . ' host=' . ($_SERVER['HTTP_HOST'] ?? '(none)'));
+        header('Content-Type: application/json');
+        http_response_code(200);
+        echo json_encode(['ok' => false]);
+        exit;
+    }
+
     $postEmail = trim($_POST['email'] ?? '');
     $postToken = trim($_POST['sessionToken'] ?? '');
     $qaSessionEstablished = false;
@@ -169,12 +210,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'backe
         if (defined('COACH_PROXY_SECRET') && COACH_PROXY_SECRET !== '') {
             $reqHeaders[] = 'X-Proxy-Secret: ' . COACH_PROXY_SECRET;
         }
+        // Forward the trust-checked client IP so the backend's rate limiting
+        // is keyed on the real visitor, not the shared-host egress IP
+        // (issue #100). Same resolver coach-proxy.php uses.
+        require_once __DIR__ . '/includes/cloudflare-ips.php';
+        foreach (qa_resolve_client_ip_headers(
+            (string) ($_SERVER['REMOTE_ADDR'] ?? ''),
+            isset($_SERVER['HTTP_CF_CONNECTING_IP']) ? (string) $_SERVER['HTTP_CF_CONNECTING_IP'] : null,
+            isset($_SERVER['HTTP_X_FORWARDED_FOR']) ? (string) $_SERVER['HTTP_X_FORWARDED_FOR'] : null
+        ) as $hName => $hValue) {
+            $reqHeaders[] = "$hName: $hValue";
+        }
         curl_setopt_array($ch, [
             CURLOPT_POST           => true,
             CURLOPT_POSTFIELDS     => $payload,
             CURLOPT_HTTPHEADER     => $reqHeaders,
             CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_TIMEOUT        => 10,
+            // Cloud Run cold start is ~10-17 s; 10 s turned a cold backend
+            // into failed sign-ins (issue #123).
+            CURLOPT_TIMEOUT        => 35,
             CURLOPT_SSL_VERIFYPEER => COACH_VERIFY_TLS,
             CURLOPT_SSL_VERIFYHOST => COACH_VERIFY_TLS ? 2 : 0,
         ]);
@@ -189,11 +243,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'backe
                 $_SESSION['qa_session_token'] = $postToken;
                 $_SESSION['qa_target_env']    = $data['targetEnvironment'] ?? 'both';
                 $_SESSION['qa_is_admin']      = $data['admin'] ?? false;
+                // Member tier for gated surfaces (issue #122). Treat a
+                // missing tier as 'member' until the backend ships the field
+                // — deploy order is AIR first, then this repo.
+                $_SESSION['qa_tier']          = $data['tier'] ?? 'member';
                 // Timestamp this check-session call so includes/beta-gate.load.php
                 // knows not to re-check again immediately; it re-verifies on its
                 // own cadence from this point rather than trusting the session
-                // for the full 7-day cookie lifetime.
+                // for the full 7-day cookie lifetime. beta_last_validated is
+                // seeded too (issue #123): without it the outage grace window
+                // had no baseline and the first cold-backend re-check
+                // destroyed every session older than 6h.
                 $_SESSION['qa_session_checked_at'] = time();
+                $_SESSION['beta_last_validated']   = time();
                 $qaSessionEstablished = true;
             } else {
                 error_log('login.php: check-session returned ok=false for ' . $postEmail);
@@ -212,6 +274,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'backe
 
 // --- Handle logout ---
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'logout') {
+    // Revoke the backend session token first (issue #123): the token lives
+    // in the PHP session and stays valid for auth_session_ttl_hours (24 h
+    // default) unless the backend is told to drop it. Failure here must not
+    // block local sign-out — log a WARNING and destroy the session anyway.
+    $logoutEmail = (string) ($_SESSION['qa_email'] ?? '');
+    $logoutToken = (string) ($_SESSION['qa_session_token'] ?? '');
+    if ($logoutEmail !== '' && $logoutToken !== '') {
+        $logoutUrl = rtrim(COACH_BACKEND_URL, '/') . '/v1/auth/logout';
+        $logoutHeaders = ['Content-Type: application/json'];
+        if (defined('COACH_PROXY_SECRET') && COACH_PROXY_SECRET !== '') {
+            $logoutHeaders[] = 'X-Proxy-Secret: ' . COACH_PROXY_SECRET;
+        }
+        require_once __DIR__ . '/includes/cloudflare-ips.php';
+        foreach (qa_resolve_client_ip_headers(
+            (string) ($_SERVER['REMOTE_ADDR'] ?? ''),
+            isset($_SERVER['HTTP_CF_CONNECTING_IP']) ? (string) $_SERVER['HTTP_CF_CONNECTING_IP'] : null,
+            isset($_SERVER['HTTP_X_FORWARDED_FOR']) ? (string) $_SERVER['HTTP_X_FORWARDED_FOR'] : null
+        ) as $hName => $hValue) {
+            $logoutHeaders[] = "$hName: $hValue";
+        }
+        $lch = curl_init($logoutUrl);
+        curl_setopt_array($lch, [
+            CURLOPT_POST           => true,
+            CURLOPT_POSTFIELDS     => json_encode(['email' => $logoutEmail, 'sessionToken' => $logoutToken]),
+            CURLOPT_HTTPHEADER     => $logoutHeaders,
+            CURLOPT_RETURNTRANSFER => true,
+            // Cold backend must not hang sign-out — short timeout, local
+            // session is destroyed regardless.
+            CURLOPT_TIMEOUT        => 10,
+            CURLOPT_SSL_VERIFYPEER => COACH_VERIFY_TLS,
+            CURLOPT_SSL_VERIFYHOST => COACH_VERIFY_TLS ? 2 : 0,
+        ]);
+        $lresp = curl_exec($lch);
+        $lcode = (int) curl_getinfo($lch, CURLINFO_HTTP_CODE);
+        curl_close($lch);
+        if ($lresp === false || $lcode !== 200) {
+            error_log('WARNING: login.php: /v1/auth/logout failed http=' . $lcode
+                . ' — backend token may remain valid until TTL; ending local session anyway');
+        }
+    }
     $_SESSION = [];
     if (ini_get('session.use_cookies')) {
         $p = session_get_cookie_params();
@@ -304,10 +406,9 @@ $coachLoginUrl = $_SERVER['SCRIPT_NAME'] ?? '/login.php';
           <li class="af-nav__megacol">
             <a href="/digital-experience/" class="af-nav__colhead" data-i18n="nav.digital_experience">Digital Experience</a>
             <ul class="af-nav__megalist">
-          <li><a href="/digital-experience/lucky-wave.html#v1" class="af-nav__sublink">Ride the Lucky Wave</a></li>
           <li><a href="/digital-experience/lucky-wave.html#v2" class="af-nav__sublink">Ride the Lucky Wave V2</a></li>
-          <li><a href="/digital-experience/practices.html" class="af-nav__sublink">Twenty Practices</a></li>
-          <li class="af-nav__subsep"><a href="/digital-experience/unified-field-chat.html" class="af-nav__sublink af-nav__sublink--feature">Enter the Unified Field Chat</a></li>
+          <li><a href="/games/exercises/" class="af-nav__sublink">Twenty Practices</a></li>
+          <li class="af-nav__subsep"><a href="/members" class="af-nav__sublink af-nav__sublink--feature">Enter the Unified Field Chat</a></li>
               <li class="af-nav__subsep"><a href="blog/index.html#social" class="af-nav__sublink" data-i18n="nav.social_media">Social Media</a></li>
             </ul>
           </li>

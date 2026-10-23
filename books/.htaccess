@@ -1,0 +1,18 @@
+# Books directory moved from quantumaikido.com/books/ (issue #135).
+# PDFs/markdown serve as files; HTML pages get the same extensionless
+# canonical form as blog/.htaccess (/books/print-on-demand).
+RewriteEngine On
+
+# /books/<page>/ -> /books/<page> (trailing slash off non-directories)
+RewriteCond %{ENV:REDIRECT_STATUS} ^$
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.+)/$ /books/$1 [R=301,L]
+
+# /books/<page>.html -> /books/<page>
+RewriteCond %{ENV:REDIRECT_STATUS} ^$
+RewriteRule ^(.+)\.html$ /books/$1 [R=301,L]
+
+# Extensionless request -> serve the .html file if it exists
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME}.html -f
+RewriteRule ^(.+?)$ $1.html [END]

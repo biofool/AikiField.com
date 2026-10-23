@@ -13,7 +13,7 @@ AikiField.com is the marketing website for AikiField, a fractional-CISO and
 security-leadership consultancy. Static multi-page HTML/CSS/JS site with no
 build step, no framework. A thin PHP layer provides: (1) a blind `/login.php`
 that gates pre-release `/beta/` assessment pages by authenticating against
-the Quantum Aikido coaching backend (AIRichardMoon, FastAPI on Cloud Run),
+Creativity in the Unified Field coaching backend (AIRichardMoon, FastAPI on Cloud Run),
 and (2) a contact form handler. Deployed via `sync.sh` (rsync to peec.biz
 shared hosting) behind Cloudflare CDN.
 

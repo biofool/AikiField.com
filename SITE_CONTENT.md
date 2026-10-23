@@ -18,10 +18,9 @@
 - Digital Experience — submenu (links point at public preview pages; the
   experiences themselves require sign-in — issue #71):
   - All experiences (`/digital-experience/` — hub)
-  - Ride the Lucky Wave (`/digital-experience/lucky-wave.html#v1` → gated `/games/lucky-wave/RideTheLuckyWaveV1-legacy.php`)
   - Ride the Lucky Wave V2 (`/digital-experience/lucky-wave.html#v2` → gated `/games/lucky-wave/RideTheLuckyWaveV2.php`)
-  - Twenty Practices (`/digital-experience/practices.html` → gated `/games/exercises/`)
-  - Enter the Unified Field Chat (`/digital-experience/unified-field-chat.html` → gated `/members` — AI chat, sign-in required)
+  - Twenty Practices (direct to gated `/games/exercises/` — issue #106 removed the preview page; `/digital-experience/practices.html` 301s there)
+  - Enter the Unified Field Chat (direct to gated `/members` — AI chat, sign-in required; `/digital-experience/unified-field-chat.html` 301s there)
 - Verbal Aikido — Story Mode is not listed in the Digital Experience menu. Its review build is gated at `/for-review/games/verbal-aikido/`; the former `/games/verbal-aikido/` URL redirects there.
 - Free Services For Studios (`/somatic-studios/`) — audience pathway for somatic
   practitioners and studios (see "Somatic Studios" section below)
@@ -57,7 +56,7 @@ New copy has no `data-i18n` keys yet, so it shows in English in every locale.
 
 ### JSON-LD structured data (`<head>`)
 
-`ProfessionalService` with `@id` `https://aikifield.com/#organization` (kept), `areaServed: Global`, `knowsAbout` (Leadership Coaching, Executive Presence, Aikido, Quantum Aikido, Fractional CISO, vCISO, DevSecOps), and an `OfferCatalog` with three `Offer` items:
+`ProfessionalService` with `@id` `https://aikifield.com/#organization` (kept), `areaServed: Global`, `knowsAbout` (Leadership Coaching, Executive Presence, Aikido, Creativity in the Unified Field, Fractional CISO, vCISO, DevSecOps), and an `OfferCatalog` with three `Offer` items:
 - **Aikido-Based Leadership Coaching** — Coaching in presence under pressure: centre, blend, and lead, practised on the job.
 - **Fractional CISO Leadership** — Executive security leadership, compliance roadmap execution, and enterprise sales unblocking.
 - **AI-Assisted DevSecOps Triage** — Automated application and cloud vulnerability triage reducing mitigation time from 21 days to 3 days using Aikido.dev integration.
@@ -86,8 +85,8 @@ Four cards, each with a short description and a ghost button:
 - Eyebrow: Your coach
 - Heading: Security accountability and a lifetime of practice.
 - Para 1: Kenneth Kron is a virtual CISO with more than twenty years in cybersecurity, most recently in the IoT space, where leaders answer for products that live in the physical world.
-- Para 2: He has also practised Quantum Aikido for over forty years. Coaching here joins the two: the calm, decisive posture of Aikido applied to board rooms, incidents and hard conversations.
-- Para 3: His practice comes through the lineage of Quantum Aikido founder Richard Moon.
+- Para 2: He has also practised Creativity in the Unified Field for over forty years. Coaching here joins the two: the calm, decisive posture of Aikido applied to board rooms, incidents and hard conversations.
+- Para 3: His practice comes through the lineage of Creativity in the Unified Field founder Richard Moon.
 - Para 4: His clients are founders, security leads and product teams at Series A–C startups and SaaS companies who carry enterprise security expectations.
 
 ### How the coaching works (`#coaching`)
@@ -105,7 +104,7 @@ Four cards, each with a short description and a ghost button:
 - Heading: 20 exercises to begin your journey to personal mastery
 - Lead: Create a free account to open all twenty. Work through them in order or pick the one your day calls for.
 - Tiles (static list; titles from `games/exercises/data/collected_exercises_app_data.json`): Exercise 01 DropBackSinkOpen (DBSO) · 02 Listen to the impulse to breathe · 03 Feel / Locate / Align / Unify (Kamae) · 04 Tense & Release Body Scan · 05 Center of the Central Core Relaxation · 06 Wrist Grab Grounding · 07 Breathe Universal Harmony (Aiki Kokyu) · 08 Breathing the Whole System · 09 The O2 Continuum · 10 Ocean Breathing · 11 Infant Breathing · 12 Ten to the Tenth — State Shifting Scale · 13 Enjoy / Joy / Appreciate · 14 Shoulder Slap — Sensing Finer Dimensions · 15 Application Visualization · Interludes: Opening · After Part I · After Part II · After Part III · Closing
-- CTA: Start exercise 01 (→ /digital-experience/practices.html)
+- CTA: Start exercise 01 (→ /games/exercises/)
 
 ### Games (`#games`)
 
@@ -1021,7 +1020,7 @@ carousels (ported from QA `script.js`).
 
 - `data/books-search.json` — verbatim copy of QA's `books/books-search.json`
   full-text index (fetched lazily on first search input; `js/books.js` strips
-  the `https://quantumaikido.com/books/` prefix from card hrefs so index keys
+  the `/books.html` prefix from card hrefs so index keys
   still match). Regenerate/copy again if the QA book set changes.
 
 ## Design System
@@ -1209,9 +1208,9 @@ extensionless canonical the posts had on Cloudflare Pages.
 Self-contained under `blog/`: `styles.css`, `js/locale-utils.js` +
 `js/language-selector.js` (QA copies patched to fetch `/blog/data/…`),
 `subscribe-popup.js` (subscribe CTA points back to
-`https://quantumaikido.com/sangha`), `favicon.ico`, `assets/`, and
+`/sangha`), `favicon.ico`, `assets/`, and
 `data/` (i18n config + strings + terminology JSON the language selector needs).
-In-page nav links point back to `https://quantumaikido.com/…` absolute URLs;
+In-page nav links point back to `/…` absolute URLs;
 canonical/og/schema.org URLs use `https://aikifield.com/blog/<slug>`.
 
 Posts: Aikido and Conflict Resolution · Blowing the Whistle · Bosnia ·
@@ -1268,3 +1267,55 @@ Studio Finder** listing.
 `noindex`. Confirms receipt, sets expectations (snapshot reply, listing
 confirmation), offers the contact page for a sooner conversation. Trimmed
 nav (Home / Free Services For Studios / Get Started).
+
+## Canonical claims and boundaries (issues #85, #87, #95, #97)
+
+Recorded 2026-10-22. These are the canonical wordings; pages must not drift from them.
+
+### Result claims (issue #85)
+
+- **87%** = reduction in vulnerability remediation time (165 → 21 days), from a
+  DevOps workflow rearchitecture (nine-year fractional CISO engagement).
+  Canonical wording: "Reduction in vulnerability remediation time (165 → 21
+  days) from a DevOps workflow rearchitecture."
+- **21 → 3 days** = further remediation-time cut from AI-assisted triage
+  workflows — a later stage of the same engagement, stated separately.
+- **$5M** = blocked sales channel (ARR) recovered by resolving customer
+  security objections.
+- The "87% customer-reported risk eliminated in three thirty-minute meetings"
+  claim was removed from `contact.html` — it shared the 87% number but had no
+  documented source and read as a different metric.
+
+### AikiField / Neuro Wellness Dojo boundary (issue #87)
+
+- AikiField offers coaching for leaders plus digital/business/technology
+  support for studios. It never offers personal somatic coaching for health
+  conditions.
+- Neuro Wellness Dojo offers somatic relaxation skills for individuals facing
+  dental anxiety. It never offers business services.
+- No nav cross-link. One factual bio line is permitted: "He also runs Neuro
+  Wellness Dojo, a separate practice teaching relaxation skills for dental
+  anxiety." (in place on the home-page coach block).
+- The studio/community scope boundary stands: digital, business and
+  technology support only — never clinical, therapeutic or medical advice.
+
+### World Studio Finder public description (issue #95)
+
+- Public copy describes WSF as a **consent-based, opt-in studio directory**
+  and a geo-aware research map. Studios appear only by opt-in and can edit or
+  remove their listing at any time; they are never contacted in bulk.
+- The public site must not describe mail merge, bulk email campaigns, Hunter.io
+  / NeverBounce harvesting, or automated contact-form submission as live
+  capabilities. (Underlying code functions in the WSF repo are a separate
+  decision — biofool/WorldStudioFinder.)
+- Canonical bullets: searches Google Maps worldwide with Places API fallback;
+  builds a studio directory (opt-in, editable, removable); syncs to Google
+  Sheets as the working store; geo-aware research coverage; resumable
+  pipeline.
+
+### Coaching engagement shape (issue #97)
+
+- Coaching engagements begin with a short series of conversations — a minimum
+  initial commitment of three sessions. Stated in the `#coaching` section on
+  the home page; no fee figures are published. Kenneth to confirm the stated
+  minimum; change in one place if he vetoes.

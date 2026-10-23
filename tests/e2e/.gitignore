@@ -5,3 +5,6 @@ blob-report/
 .stub-*.jsonl
 # Stub backend game-results state (stub-backend.php)
 af-e2e-stub-game-results.json*
+# Stub backend revoked-session and feature-flag state
+af-e2e-stub-revoked.json
+af-e2e-stub-flags.json

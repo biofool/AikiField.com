@@ -37,12 +37,23 @@ $USERS = [
         'username'          => 'testuser',
         'admin'             => false,
         'active'            => true,
+        'tier'              => 'member',
         'targetEnvironment' => 'both',
     ],
     'admin@example.com' => [
         'username'          => 'admin',
         'admin'             => true,
         'active'            => true,
+        'tier'              => 'member',
+        'targetEnvironment' => 'both',
+    ],
+    // Issue #122: free-tier account (the kind LinkedIn sign-in auto-creates)
+    // for member-gate tests.
+    'free@example.com' => [
+        'username'          => 'freebie',
+        'admin'             => false,
+        'active'            => true,
+        'tier'              => 'free',
         'targetEnvironment' => 'both',
     ],
 ];
@@ -152,6 +163,55 @@ if ($path === '/__stub/game-results/missing' && $method === 'POST') {
     stub_json(200, ['ok' => true, 'missing' => $on]);
 }
 
+// Feature flags (issue #124 passkey-registration tests). The real
+// GET /v1/feature-flags is public and returns only {key: bool} for registry
+// keys; here the flags live in a control-plane file so a spec can turn
+// passkey_login on without affecting the other specs' pages (the login
+// visual baselines must keep the passkey button hidden).
+$FLAGS_FILE = dirname($LOG_FILE) . '/af-e2e-stub-flags.json';
+function stub_flags(string $file): array
+{
+    $raw = @file_get_contents($file);
+    $flags = $raw === false ? [] : (json_decode($raw, true) ?: []);
+    return is_array($flags) ? $flags : [];
+}
+if ($path === '/__stub/feature-flags') {
+    if ($method === 'DELETE') {
+        @unlink($FLAGS_FILE);
+        stub_json(200, ['ok' => true]);
+    }
+    if ($method === 'POST') {
+        $flags = stub_flags($FLAGS_FILE);
+        foreach (stub_body($rawBody) as $k => $v) {
+            $flags[(string) $k] = (bool) $v;
+        }
+        @file_put_contents($FLAGS_FILE, json_encode($flags), LOCK_EX);
+        stub_json(200, ['ok' => true, 'flags' => $flags]);
+    }
+    stub_json(200, ['flags' => stub_flags($FLAGS_FILE)]);
+}
+
+// Revoked session tokens (issue #123 logout-revocation tests).
+$REVOKE_FILE = dirname($LOG_FILE) . '/af-e2e-stub-revoked.json';
+if ($path === '/__stub/revoked' && $method === 'DELETE') {
+    @unlink($REVOKE_FILE);
+    stub_json(200, ['ok' => true]);
+}
+function stub_revoked_tokens(string $file): array
+{
+    $raw = @file_get_contents($file);
+    $list = $raw === false ? [] : (json_decode($raw, true) ?: []);
+    return is_array($list) ? $list : [];
+}
+function stub_unrevoke(string $file, string $token): void
+{
+    $revoked = array_values(array_filter(
+        stub_revoked_tokens($file),
+        static fn ($t) => $t !== $token
+    ));
+    @file_put_contents($file, json_encode($revoked), LOCK_EX);
+}
+
 // ── Proxy-secret enforcement (mirrors backend/app/main.py) ───────────────────
 
 $isExempt = str_starts_with($path, '/v1/auth/')
@@ -159,6 +219,7 @@ $isExempt = str_starts_with($path, '/v1/auth/')
     || str_ends_with($path, '.css')
     || str_ends_with($path, '.js')
     || $path === '/'
+    || $path === '/v1/feature-flags'   // public in the real backend (issue #657)
     || $path === '/healthz'
     || $path === '/health';
 
@@ -170,8 +231,9 @@ if ($SECRET !== '' && !$isExempt && !hash_equals($SECRET, $sent)) {
 // ── Auth endpoints ──────────────────────────────────────────────────────────
 
 if ($path === '/v1/auth/providers') {
-    // No social providers in tests — coach-login.js hides the social block.
-    stub_json(200, ['providers' => []]);
+    // LinkedIn is the only social provider, and coach-login.js only renders
+    // its button for ?src=li visitors — returning it unconditionally is safe.
+    stub_json(200, ['providers' => [['id' => 'linkedin', 'label' => 'LinkedIn']]]);
 }
 
 if ($path === '/v1/auth/verify' && $method === 'POST') {
@@ -182,11 +244,17 @@ if ($path === '/v1/auth/verify' && $method === 'POST') {
         stub_json(200, ['ok' => false, 'error' => 'Invalid email or password.']);
     }
     $user = $USERS[$email];
+    // A successful sign-in supersedes any earlier sign-out — the real
+    // backend mints a fresh token; our token is deterministic per email so
+    // lift the email's prior revocation or a logout test would poison every
+    // later login for that user.
+    stub_unrevoke($REVOKE_FILE, stub_token($email));
     stub_json(200, [
         'ok'                => true,
         'email'             => $email,
         'sessionToken'      => stub_token($email),
         'admin'             => $user['admin'],
+        'tier'              => $user['tier'],
         'targetEnvironment' => $user['targetEnvironment'],
     ]);
 }
@@ -195,8 +263,10 @@ if ($path === '/v1/auth/check-session' && $method === 'POST') {
     $body  = stub_body($rawBody);
     $email = strtolower(trim((string) ($body['email'] ?? '')));
     $token = (string) ($body['sessionToken'] ?? '');
-    if (!isset($USERS[$email]) || !hash_equals(stub_token($email), $token)) {
-        error_log('stub-backend: check-session rejected email=' . $email);
+    $revoked = in_array($token, stub_revoked_tokens($REVOKE_FILE), true);
+    if ($revoked || !isset($USERS[$email]) || !hash_equals(stub_token($email), $token)) {
+        error_log('stub-backend: check-session rejected email=' . $email
+            . ($revoked ? ' (revoked)' : ''));
         stub_json(200, ['ok' => false, 'error' => 'Session is not valid.']);
     }
     $user = $USERS[$email];
@@ -204,8 +274,28 @@ if ($path === '/v1/auth/check-session' && $method === 'POST') {
         'ok'                => true,
         'email'             => $email,
         'admin'             => $user['admin'],
+        'tier'              => $user['tier'],
         'targetEnvironment' => $user['targetEnvironment'],
     ]);
+}
+
+// Sign-out — mirrors /v1/auth/logout: the token stops working immediately.
+if ($path === '/v1/auth/logout' && $method === 'POST') {
+    $body  = stub_body($rawBody);
+    $email = strtolower(trim((string) ($body['email'] ?? '')));
+    $token = (string) ($body['sessionToken'] ?? '');
+    if (!isset($USERS[$email]) || !hash_equals(stub_token($email), $token)) {
+        stub_json(200, ['ok' => false, 'error' => 'Session is not valid.']);
+    }
+    $revoked = stub_revoked_tokens($REVOKE_FILE);
+    if (!in_array($token, $revoked, true)) {
+        $revoked[] = $token;
+        if (@file_put_contents($REVOKE_FILE, json_encode($revoked), LOCK_EX) === false) {
+            error_log('stub-backend: could not write revoke file ' . $REVOKE_FILE);
+            stub_json(500, ['detail' => 'revoke store unavailable']);
+        }
+    }
+    stub_json(200, ['ok' => true]);
 }
 
 // ── AI Chat (games/ai-coach.php → /v1/chat-secure) ──────────────────────────
@@ -229,6 +319,13 @@ if ($path === '/v1/chat-secure' && $method === 'POST') {
             ['chunkId' => 'c1', 'title' => 'Corpus note', 'path' => 'notes/x.md'],
             ['chunkId' => 'c2', 'title' => 'Blending practice', 'path' => 'videos/blend.md',
              'youtubeUrl' => 'https://www.youtube.com/watch?v=stubVideo01', 'startSeconds' => 42],
+            // Issue #106: a source titled by a bare YouTube ID must render the
+            // verified English title from data/youtube-titles.json.
+            ['chunkId' => 'c3', 'title' => '2MU3b6LUi6Y',
+             'youtubeUrl' => 'https://www.youtube.com/watch?v=2MU3b6LUi6Y'],
+            // A YouTube source whose title is an opaque hash falls back to YT.
+            ['chunkId' => 'c4', 'title' => 'a1b2c3d4e5f6a1b2c3d4',
+             'youtubeUrl' => 'https://www.youtube.com/watch?v=stubVideo02'],
         ],
     ]);
 }
@@ -292,6 +389,72 @@ if ($path === '/v1/auth/confirm-email' && $method === 'POST') {
 
 if ($path === '/v1/auth/rate-limit-status') {
     stub_json(200, ['recentHits' => []]);
+}
+
+// Public feature flags — same shape as the real GET /v1/feature-flags
+// ({flags: {key: bool}} only, no environment/actor). Values come from the
+// /__stub/feature-flags control plane; empty by default so every flag reads
+// as off unless a spec turns one on.
+if ($path === '/v1/feature-flags' && $method === 'GET') {
+    stub_json(200, ['flags' => stub_flags($FLAGS_FILE)]);
+}
+
+// ── Passkey registration (issue #124, AIR #650) ─────────────────────────────
+// Same shapes as the real /v1/auth/passkey/register/{begin,finish}: begin is
+// session-gated and returns {ok, challengeKey, options} where options mirrors
+// PublicKeyCredentialCreationOptions; finish takes {credential, challengeKey}
+// and returns {ok}. The challenge itself is fixed — the spec stubs
+// navigator.credentials.create, so no real attestation is verified.
+
+if ($path === '/v1/auth/passkey/register/begin' && $method === 'POST') {
+    $email = strtolower(trim((string) ($_SERVER['HTTP_X_AUTH_EMAIL'] ?? '')));
+    $token = (string) ($_SERVER['HTTP_X_AUTH_SESSION'] ?? '');
+    if (!isset($USERS[$email]) || !hash_equals(stub_token($email), $token)) {
+        stub_json(401, ['detail' => 'Session expired.']);
+    }
+    stub_json(200, [
+        'ok'           => true,
+        'challengeKey' => 'stub-challenge-key',
+        'options'      => [
+            'rp'         => ['name' => 'AikiField', 'id' => 'aikifield.com'],
+            'user'       => [
+                'id'          => 'c3R1Yi11c2VyLWlk',
+                'name'        => $email,
+                'displayName' => $email,
+            ],
+            'challenge'  => 'c3R1Yi1jaGFsbGVuZ2U',
+            'pubKeyCredParams' => [
+                ['type' => 'public-key', 'alg' => -7],
+                ['type' => 'public-key', 'alg' => -257],
+            ],
+            'timeout'        => 60000,
+            'excludeCredentials' => [],
+            'attestation'    => 'none',
+            'authenticatorSelection' => [
+                'authenticatorAttachment' => 'platform',
+                'userVerification'        => 'preferred',
+                'residentKey'             => 'preferred',
+                'requireResidentKey'      => false,
+            ],
+        ],
+    ]);
+}
+
+if ($path === '/v1/auth/passkey/register/finish' && $method === 'POST') {
+    $email = strtolower(trim((string) ($_SERVER['HTTP_X_AUTH_EMAIL'] ?? '')));
+    $token = (string) ($_SERVER['HTTP_X_AUTH_SESSION'] ?? '');
+    if (!isset($USERS[$email]) || !hash_equals(stub_token($email), $token)) {
+        stub_json(401, ['detail' => 'Session expired.']);
+    }
+    $body = stub_body($rawBody);
+    if (($body['challengeKey'] ?? '') !== 'stub-challenge-key' || ($body['credential'] ?? '') === '') {
+        stub_json(200, ['ok' => false, 'error' => 'Registration challenge expired or invalid. Please try again.']);
+    }
+    stub_json(200, [
+        'ok'           => true,
+        'credentialId' => 'stub-cred-id',
+        'message'      => 'Passkey registered.',
+    ]);
 }
 
 // ── Health endpoints ────────────────────────────────────────────────────────

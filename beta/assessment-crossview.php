@@ -52,10 +52,9 @@
           <li class="af-nav__megacol">
             <a href="/digital-experience/" class="af-nav__colhead">Digital Experience</a>
             <ul class="af-nav__megalist">
-          <li><a href="/digital-experience/lucky-wave.html#v1" class="af-nav__sublink">Ride the Lucky Wave</a></li>
           <li><a href="/digital-experience/lucky-wave.html#v2" class="af-nav__sublink">Ride the Lucky Wave V2</a></li>
-          <li><a href="/digital-experience/practices.html" class="af-nav__sublink">Twenty Practices</a></li>
-          <li class="af-nav__subsep"><a href="/digital-experience/unified-field-chat.html" class="af-nav__sublink af-nav__sublink--feature">Enter the Unified Field Chat</a></li>
+          <li><a href="/games/exercises/" class="af-nav__sublink">Twenty Practices</a></li>
+          <li class="af-nav__subsep"><a href="/members" class="af-nav__sublink af-nav__sublink--feature">Enter the Unified Field Chat</a></li>
               <li class="af-nav__subsep"><a href="../blog/index.html#social" class="af-nav__sublink">Social Media</a></li>
             </ul>
           </li>

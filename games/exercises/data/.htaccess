@@ -1,0 +1,3 @@
+# The practice text is members-only (issue #114). index.php reads
+# practices.json server-side; nothing in this dir may be fetched directly.
+Require all denied

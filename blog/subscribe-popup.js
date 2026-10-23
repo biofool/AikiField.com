@@ -18,7 +18,7 @@
             '<button id="popup-close" style="position:absolute;top:1rem;right:1rem;background:none;border:none;color:#94a3b8;font-size:1.5rem;cursor:pointer;line-height:1;">&times;</button>' +
             '<h2 style="color:#a78bfa;margin-bottom:1rem;font-size:1.5rem;">Before You Go...</h2>' +
             '<p style="color:#cbd5e1;margin-bottom:1.5rem;line-height:1.6;">Get Chapter One of <strong>Quantum Aikido</strong> free and join Richard Moon\'s community.</p>' +
-            '<a href="https://quantumaikido.com/sangha" style="display:inline-block;background:#8b5cf6;color:white;padding:1rem 2rem;border-radius:6px;text-decoration:none;font-weight:500;">Get Free Chapter</a>' +
+            '<a href="/sangha" style="display:inline-block;background:#8b5cf6;color:white;padding:1rem 2rem;border-radius:6px;text-decoration:none;font-weight:500;">Get Free Chapter</a>' +
             '<p style="color:#94a3b8;font-size:0.85rem;margin-top:1rem;">No spam. Unsubscribe anytime.</p>' +
         '</div>';
     document.body.appendChild(overlay);

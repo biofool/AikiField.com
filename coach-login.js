@@ -35,7 +35,9 @@
     function safeRedirect(candidate, fallback) {
         if (!candidate || typeof candidate !== "string") return fallback;
         const c = candidate.trim();
-        if (!c || c[0] !== "/" || c.startsWith("//") || c.includes("\r") || c.includes("\n") || containsBackslash(c)) {
+        // Control chars (incl. TAB) and DEL: browsers strip TAB/CR/LF from
+        // URLs, so /<TAB>/evil.com is read as //evil.com (issue #121).
+        if (!c || c[0] !== "/" || c.startsWith("//") || /[\x00-\x20\x7f]/.test(c) || containsBackslash(c)) {
             return fallback;
         }
         try {
@@ -54,7 +56,10 @@
     const _initParams = new URLSearchParams(window.location.search);
     const REDIRECT = safeRedirect(
         _initParams.get("redirect"),
-        window.COACH_LOGIN_REDIRECT || "/members.php",
+        // The baked COACH_LOGIN_REDIRECT is just as attacker-controlled as
+        // ?redirect= (it comes from ?next=) — run it through the same
+        // validation instead of trusting it as the fallback (issue #121).
+        safeRedirect(window.COACH_LOGIN_REDIRECT, "/beta/"),
     );
     // Invitation-code links: /login.php?invite=CODE, or nested inside the
     // post-login target (beta-gate sends ?next= which PHP folds into
@@ -1247,6 +1252,10 @@
             if (data.ok && data.sessionToken) {
                 showStatus(resetStatus, data.message || "Password reset. Redirecting...", "success");
                 establishServerSession(data.email, data.sessionToken, resetStatus);
+            } else if (data.ok && data.pending) {
+                // Backend #880: pending accounts reset the password but get
+                // no session — admin approval still required.
+                showStatus(resetStatus, data.message || "Password reset. Your account is pending approval.", "info");
             } else {
                 showStatus(resetStatus, data.error || "Reset failed.", "error");
             }

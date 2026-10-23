@@ -11,12 +11,58 @@
  * No session is started for the free preview, so the page stays cookie-free
  * for that traffic.
  */
-$afFreePreview = (($_GET['src'] ?? '') === 'li') && empty($_COOKIE[session_name()]);
-if (!$afFreePreview) {
-    require dirname(__DIR__, 2) . '/includes/beta-gate.load.php';
-} else {
+$afIsLi = (($_GET['src'] ?? '') === 'li');
+$afFreePreview = false;
+if ($afIsLi && empty($_COOKIE[session_name()])) {
+    // Anonymous LinkedIn landing — cookie-free free preview, no session
+    // started (issue #101 taste-then-ask).
+    $afFreePreview = true;
     error_log('exercises: li-landing free preview ua=' . ($_SERVER['HTTP_USER_AGENT'] ?? '-'));
+} elseif ($afIsLi) {
+    // A session cookie exists (the visitor may have touched login.php once).
+    // Decide the preview by the auth-state result, not by cookie presence
+    // (issue #121): signed-in members get the full set through the normal
+    // gate path, everyone else still gets the free preview instead of a
+    // redirect that strands the LinkedIn funnel.
+    define('AF_GATE_NO_REDIRECT', true);
+    require dirname(__DIR__, 2) . '/includes/beta-gate.load.php';
+    $afFreePreview = !$betaAuthed;
+} else {
+    // Non-LinkedIn traffic: unauthenticated visitors go to login as before.
+    require dirname(__DIR__, 2) . '/includes/beta-gate.load.php';
 }
+
+// Issue #114: the practice text is members-only and must not ship to
+// anonymous browsers. Load the single canonical copy server-side
+// (data/.htaccess denies direct fetches). Anonymous ?src=li visitors get
+// only the three free practices in full — the other twelve are emitted as
+// title-only stubs, so view-source can no longer read the book. Signed-in
+// members get all 15.
+$afPracticesRaw = file_get_contents(__DIR__ . '/data/practices.json');
+$afPractices = $afPracticesRaw === false ? null : json_decode($afPracticesRaw, true);
+if (!is_array($afPractices) || empty($afPractices['exercises'])) {
+    error_log('exercises: data/practices.json missing or unreadable — cannot render');
+    http_response_code(500);
+    echo 'Practice data unavailable.';
+    exit;
+}
+$afExercises  = $afPractices['exercises'];
+$afInterludes = $afPractices['interludes'] ?? [];
+if ($afFreePreview) {
+    $afFreeIds = [1, 6, 12]; // keep in sync with FREE_IDS in the script below
+    $afExercises = array_map(static function (array $ex) use ($afFreeIds): array {
+        if (in_array((int) ($ex['id'] ?? 0), $afFreeIds, true)) {
+            return $ex;
+        }
+        return [
+            'id'     => $ex['id'],
+            'title'  => $ex['title'],
+            'part'   => $ex['part'],
+            'locked' => true,
+        ];
+    }, $afExercises);
+}
+$afJsonFlags = JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG;
 ?>
 <!DOCTYPE html>
 <html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
@@ -30,8 +76,6 @@ h1{font-size:26px;letter-spacing:-0.02em;line-height:1.1} h1 span{display:block;
 .sidebar,.right{padding:20px;border-right:1px solid #E8E0D0;overflow-y:auto;max-height:calc(100vh - 70px);position:sticky;top:70px}
 .right{border-right:none;border-left:1px solid #E8E0D0}
 .center{padding:28px;max-width:820px}
-.studio{padding:10px 12px;margin:6px 0;border:1px solid #E8E0D0;background:#fff;cursor:pointer;font-size:12px}
-.studio.active{background:#1A1A1A;color:#fff}
 .chip{display:inline-block;padding:6px 10px;border:1px solid #1A1A1A;font-size:11px;cursor:pointer;background:#fff;margin:4px}
 .chip.active{background:#1A1A1A;color:#fff} .chip.locked{opacity:0.35}
 .player{background:#fff;border:1.5px solid #1A1A1A;padding:26px;margin-top:18px}
@@ -47,43 +91,27 @@ img.hero{width:100%;max-width:300px;display:block;margin:10px auto;border:1px so
 .deploy{font-size:11px;background:#fff;border:1px solid #E8E0D0;padding:14px}
 @media(max-width:1050px){.wrap{grid-template-columns:1fr} .sidebar,.right{position:relative;max-height:none}}
 </style></head><body>
-<header><h1>TWENTY PRACTICES <span>Quantum Aikido — Book of Exercises & Practices — from the work of Richard Moon 6th Dan · Student of Robert Nadeau since '71</span></h1><a href="/games/" style="padding:7px 14px;border:1px solid #1A1A1A;background:#fff;color:#1A1A1A;text-decoration:none;font-size:12px">All games</a></header>
+<header><h1>TWENTY PRACTICES <span>Creativity in the Unified Field — Book of Exercises & Practices — from the work of Richard Moon 6th Dan · Student of Robert Nadeau since '71</span></h1><a href="/games/" style="padding:7px 14px;border:1px solid #1A1A1A;background:#fff;color:#1A1A1A;text-decoration:none;font-size:12px">All games</a></header>
 <div class="wrap">
 <div class="sidebar">
-<h3 style="font-size:11px;letter-spacing:0.12em">60 STUDIOS · PERSONALIZATION</h3>
-<input id="search" placeholder="Search studios..." style="width:100%;padding:8px;border:1px solid #1A1A1A;margin:10px 0">
-<div id="studioList"></div>
 <img class="hero" src="images/image_20260919_144743.webp">
 <img class="hero" src="images/image_20260919_144742.webp">
 <img class="hero" src="images/image_20260919_144741.webp">
-<p style="font-size:10px;opacity:0.5;margin-top:6px">Simple image copy: ≤7 words, black on washi, sub "By Richard Moon 6th Dan"</p>
 </div>
 <div class="center">
 <div id="banner" style="display:none;padding:12px;background:#1A1A1A;color:#fff;font-size:12px;margin-bottom:14px"></div>
 <div id="authBadge" style="display:none;padding:8px 12px;background:#F5F0E6;border:1px solid #E8E0D0;font-size:12px;margin-bottom:10px"></div>
-<div style="font-size:11px;letter-spacing:0.1em">PART NAVIGATION — AUTO-LOADED FROM MARKDOWN</div>
 <div id="partTabs"></div>
-<div style="font-size:11px;letter-spacing:0.1em;margin-top:14px">EXERCISES — 15 FROM YOUR PDF</div>
-<div id="exList"></div>
+<div id="exList" style="margin-top:14px"></div>
 <div class="player" id="player"></div>
 </div>
 <div class="right">
-<h3 style="font-size:11px;letter-spacing:0.1em">FREEMIUM MODEL</h3>
-<div style="border:1px solid #1A1A1A;padding:10px;margin:8px 0;background:#fff"><strong>FREE</strong> — DBSO, Wrist Grab, Ten to the Tenth<br><span style="font-size:10px">3 practices always free + log + reminder</span></div>
-<div style="border:2px solid #1A1A1A;padding:10px;margin:8px 0;background:#1A1A1A;color:#fff"><strong>CREATOR $12/mo $96/yr</strong><br><span style="font-size:10px">All 15+5 exclusive, 21-day Challenge, offline audio, progress</span></div>
-<div style="border:1px solid #1A1A1A;padding:10px;margin:8px 0"><strong>DOJO $49/mo</strong><br><span style="font-size:10px">White-label for 60 studios, 30% rev share, analytics, student invites via 180 CTAs</span></div>
 <div id="progress"></div>
-<div class="deploy">
-<b>AikiField deep links</b><br>
-Query: /games/exercises/?studio_id=city-aikido&amp;exercise=wrist-grab-grounding<br>
-Path: /games/exercises/wrist-grab-grounding?studio_id=city-aikido<br>
-studio_id personalizes the banner; exercise auto-opens the practice.
-</div>
 </div>
 </div>
 <script>
-const exercises = [{"id": 1, "title": "DropBackSinkOpen (DBSO)", "meta": "Solo \u00b7 30 sec, repeated through the day", "body": "Whenever you notice tension, a fixed idea, or a reactive moment: drop back, sink, open. If you re-tighten, release again \u2014 in ever-finer increments, anywhere, any time.\n\nThis is the foundation everything else rests on. 'Calm the spirit. Return to the source.' Once in the morning is not enough \u2014 KeepDoingIt.", "complexity": 4, "type": "exercise", "part": "Part IV \u2014 dialogue & relationship"}, {"id": 2, "title": "listen to the impulse to breathe", "meta": "Solo \u00b7 2\u20134 min \u00b7 after DBSO \u00b7 the reverse movement of the five-stage breath", "body": "after dropping back, sinking, and opening, don't take the breath \u2014 wait for it. feel the impulse to breathe arise on its own, and let it breathe you.\n\nrather than running the breath, feel life activating it \u2014 the universal pulse breathing you. this is the reverse of Breathing the Whole System, met here as an early taste right after DropBackSinkOpen.", "complexity": 1, "type": "exercise", "part": "Part I \u2014 centering & grounding"}, {"id": 3, "title": "Feel / Locate / Align / Unify (Kamae)", "meta": "Solo \u00b7 3\u20135 min \u00b7 Create A Beautiful World in 3 Aikido Lessons", "body": "Feel and locate the central core of your being. Feel the 'glow of life' that is you. Apply DBSO in ever-finer alignment.\n\nNotice that each small shift in the location of attention creates a different experiential world.", "complexity": 1, "type": "exercise", "part": "Part I \u2014 centering & grounding"}, {"id": 4, "title": "Tense & Release Body Scan (Align, Allow, Appreciate)", "meta": "Solo \u00b7 5\u201315 min \u00b7 CABW 3 Aikido Lessons", "body": "Gently tense the whole body, then relax and feel. Re-tense the muscles progressively closer to the spine, head to hips, releasing each time.\n\nAs you relax, feel into the central core of being \u2014 align with gravity, allow the tension to release, appreciate the flow. How long? As long as you're enjoying it.", "complexity": 1, "type": "exercise", "part": "Part I \u2014 centering & grounding"}, {"id": 5, "title": "Center of the Central Core Relaxation", "meta": "Solo \u00b7 10\u201320 min \u00b7 CABW 3 Aikido Lessons", "body": "Move sequentially through the body's regions \u2014 mind, brain, forehead, eyes, jaw, throat, shoulders, abdomen, hips, legs, feet \u2014 sinking open into the 'gravity shadow' at each.\n\nNo fixed pace. A natural candidate for a longer recorded guided track and a fitting close to Part I.", "complexity": 1, "type": "exercise", "part": "Part I \u2014 centering & grounding"}, {"id": 6, "title": "Wrist Grab Grounding", "meta": "Partner \u00b7 5 min \u00b7 Adventures in Aiki-land (R. Moon, 2010)", "body": "A partner grabs your extended wrist and gently pushes, then pulls. Resisting the push lets them pull you easily, resisting the pull lets them push you; relaxing and 'feeling where you are' produces an effortless presence that is harder to move.\n\nAt first 50/50 - resist less, ground more. After a while the resistance becomes hard to see from outside but you feel it inside. Eventually 50% \u2192 60% ground.\n\nDBSO KeepDoingIt. Real or invisible partner.", "complexity": 1, "type": "exercise", "part": "Part I \u2014 centering & grounding"}, {"id": 7, "title": "Lesson II \u2014 Breathe Universal Harmony (Aiki Kokyu)", "meta": "Solo \u00b7 3\u20135 min \u00b7 Create A Beautiful World in 3 Aikido Lessons", "body": "Breathe in harmony so each cell 'enjoys life's glow.' The lesson that opens the whole-system view of breath \u2014 the second of the three Aikido Lessons, pairing with Lesson I.", "complexity": 2, "type": "exercise", "part": "Part II \u2014 breath & energy"}, {"id": 8, "title": "Breathing the Whole System (Five-Stage Breath)", "meta": "Solo \u00b7 5\u201310 min \u00b7 CABW 3 Aikido Lessons", "body": "Feel into each phase in turn:\n\nexternal breathing, air moving in and out of the lungs;\n\ntransfer, oxygen into the bloodstream;\n\ntransport, the blood carrying it to every cell;\n\nabsorption, each cell taking it in;\n\nlife, each cell burning oxygen into the glow of aliveness.\n\nThen reverse the imagery. Feel life activating the breath \u2014 the universal pulse breathing you. Listen to the impulse to breathe.", "complexity": 2, "type": "exercise", "part": "Part II \u2014 breath & energy"}, {"id": 9, "title": "The O2 Continuum", "meta": "Solo \u00b7 3\u20135 min \u00b7 CABW 3 Aikido Lessons", "body": "Feel where you are on the O2 continuum \u2014 from O2 debt, through perfect saturation, to reserve. Locate it consciously; sense which cells feel in balance and which don't.\n\nThen breathe exactly the way you want for two or three breaths, and feel your location shift. It usually takes fewer than three; it never takes seven. First your own oxygen mask on first\u2014 then you have the reserves\n\n-- create a beautiful world.", "complexity": 2, "type": "exercise", "part": "Part II \u2014 breath & energy"}, {"id": 10, "title": "Ocean Breathing", "meta": "Solo \u00b7 2\u20134 min \u00b7 Experiential Breathing Explorations", "body": "Remember, or imagine, the first deep breath of ocean air \u2014 every cell lights up, the glow of life increases, and a natural desire for another breath follows. Breathe at the ocean even when you can't be there; hold the feeling.", "complexity": 2, "type": "exercise", "part": "Part II \u2014 breath & energy"}, {"id": 11, "title": "Infant Breathing", "meta": "Solo \u00b7 3\u20135 min \u00b7 Experiential Breathing Explorations", "body": "Imagine breathing as an infant \u2014 oxygen equalized after birth, simply lying there breathing and enjoying the glow of life, no thought, no thing. A return to the purity of being before socialization.", "complexity": 2, "type": "exercise", "part": "Part II \u2014 breath & energy"}, {"id": 12, "title": "Ten to the Tenth \u2014 State Shifting Scale", "meta": "Solo (can be coached) \u00b7 10\u201330 min to learn, seconds once trained \u00b7 Ten to the Tenth", "body": "Rate your current state 1\u201310. Notice why, by felt sense. 'Square away'your posture, breath, and attention until the number plateaus higher, then 'call up' the next number and embody it, on up to 10.\n\n*Down the Scale (Contrast Step)*\n\n*Solo \u00b7 1\u20132 min \u00b7 Ten to the Tenth*\n\nAfter climbing to  4, briefly imagine and feel dropping a number back to 3 then go to 6 then drop back to 4 \u2014 6 to 5 to 4 \u2014 noticing the self-talk and physical contraction that come with it.\n\n*Getting to 10*\n\n7 should be feeling very capable.  10 will be your best operating place, entering flow state.\n\n8 Remember a day when everything went fine, even the hard stuff\n\n9 Remember one of those really great days that come back to you, good times with family, a great day at work\n\n10 Think back to the best day you can remember.  Really soak in it move, breathe.  Think again when did you enter flow state and were able to be there for longer than made sense.  You were laughing joyously as the unsolvable situation just melted away\n\n*Quantum Shift*\n\nRlabel 10 as a new '1' and climb again through octaves. Once trained, the whole move compresses to a near-instant cue. The most fully documented exercise in the source.", "complexity": 3, "type": "exercise", "part": "Part III \u2014 attention & feeling"}, {"id": 13, "title": "Enjoy / Joy / Appreciate", "meta": "Solo \u00b7 3\u20135 min \u00b7 CABW 3 Aikido Lessons", "body": "Intentionally enjoy yourself \u2014 'enjoy yourSELF enjoying joy.' Bring attention to something you love, and treat the enjoyment as guidance: 'feeling better' signals a useful direction. Close with DBSO.\n\nCompletes the Feel (I) / Breathe (II) / Enjoy (III) arc. It names Ki, but the practice itself is attention and appreciation \u2014 confirmed for Part III.", "complexity": 3, "type": "exercise", "part": "Part III \u2014 attention & feeling"}, {"id": 14, "title": "Shoulder Slap \u2014 Sensing Finer Dimensions", "meta": "Partner \u00b7 5\u201315 min \u00b7 Aikido class teaching (R. Moon), cleaned \u00b7 closes Part III", "body": "A re-attacking slap on the shoulder in place of a shomen strike. Stance is flexible \u2014 natural stance (shizentai), a left- or right-foot lead all work; natural stance paired with the finger-snap is the simplest way in, and hanmi is fine in a dojo. Partners stand one step apart and agree on force: relaxed enough to sting a little, reality not fear, never to hurt.\n\n*Attacker***.** Don't telegraph. Go from nothing to the hit as fast as you can \u2014 a real attack carries a burst of ki, and a slow or sloppy approach gives a different, weaker feel. Vary the timing; never count \u201cone, two, three, slap.\u201d\n\n*Receiver***.** Start one step away. For the first few reps, snap your fingers the instant you sense the attack is about to come, then check \u2014 early, late, close? Come to center and face the attacker so you feel their attention. Give the most honest feedback you canProgress from one step to two.", "complexity": 3, "type": "exercise", "part": "Part III \u2014 attention & feeling"}, {"id": 15, "title": "Application Visualization", "meta": "Solo \u00b7 5\u201310 min \u00b7 Ten to the Tenth (full PDF)", "body": "Visualize how you'd normally handle an upcoming situation. Run Ten to the Tenth, climb several octaves, and re-visualize the situation from the new state. Repeat until a satisfying strategy emerges, then push past it for a quantum shift.\n\nThe applied form of the Part III scale \u2014 a fit for negotiation prep (the Cyprus framing) and youth decision-making.", "complexity": 4, "type": "exercise", "part": "Part IV \u2014 dialogue & relationship"}];
-const interludes = [{"title": "INTERLUDE \u2014 OPENING", "text": "This second has passed\nas has this one\nThe moment is so fleeting\nyet\nthe now is eternal\n\nRichard Moon"}, {"title": "INTERLUDE \u2014 AFTER PART I", "text": "Feel\ninto the center\nof your central core\neven by drops\nin ever finer adjustments\n\nRichard Moon"}, {"title": "INTERLUDE \u2014 AFTER PART II", "text": "Listen to the impulse to breathe\nfollow the guidance\nbreathe exactly\nlike you want to\n\nRichard Moon"}, {"title": "INTERLUDE \u2014 AFTER PART III", "text": "I don't really study Aikido as a Martial art,\nan art in the realm of Mars, the god of war.\nI study Aikido as a Venusial art,\nan art in the realm of Venus, the goddess of love.\n\nRichard Moon"}, {"title": "INTERLUDE \u2014 CLOSING", "text": "joy is the greatest treasure\ndon't get mad\ndon't even get even\ncreate a beautiful world\n\nRichard Moon\n\n\u201cLove gives birth to harmony, harmony brings forth joy, and joy is the greatest treasure.\u201d \u2014 Morihei Ueshiba, O-Sensei."}];
+const exercises = <?= json_encode($afExercises, $afJsonFlags) ?>;
+const interludes = <?= json_encode($afInterludes, $afJsonFlags) ?>;
 const studios = [
 {name:"City Aikido", region:"SF Bay", cat:"Aikido dojo", about:"Home dojo of Robert Nadeau Shihan, Richard Moon's teacher since 1971. Friends of City Aikido and O-Sensei's teachings."},
 {name:"Aikido San Francisco", region:"SF Bay", cat:"Aikido dojo", about:"Opened 1986 in SOMA, positive supportive environment."},
@@ -104,10 +132,11 @@ const studios = [
 {name:"Empire Aerial Arts", region:"Wellington NZ", cat:"Aerial", about:"Open timetable without term-based courses."},
 {name:"Body Electric Pole", region:"Wellington NZ", cat:"Pole", about:"Beautiful art of pole dancing."},
 {name:"Aikido Shinryukan Burnside", region:"Christchurch NZ", cat:"Aikido", about:"South Island's largest Aikido club."},
-{name:"Movement Studio Rolleston", region:"Canterbury NZ", cat:"Pilates", about:"Movement is Medicine, remedial massage reformer pilates."}
+{name:"Movement Studio Rolleston", region:"Canterbury NZ", cat:"Pilates", about:"Pilates and movement studio in Rolleston."}
 ];
 let currentId = 6;
-let groundPercent=50, timeLeft=300, isPlaying=false, timer=null;
+let groundPercent=50, isPlaying=false, timer=null, justFinished=false;
+let timeLeft=practiceSeconds(currentEx());
 const FREE_IDS=[1,6,12];
 let freeIds=new Set(FREE_IDS);
 let currentPart='all';
@@ -119,33 +148,37 @@ function persistProgress(){
       localStorage.setItem('moon_session_log', JSON.stringify(sessionLog)); }catch(e){ console.error('KeepDoingIt persist failed', e); }
 }
 function studioSlug(n){ return n.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,''); }
+// Issue #113: each practice carries a guide block — guide.seconds is the
+// low end of its own duration range; guide.segments (only Wrist Grab
+// Grounding today) drives timed prompts and the ground meter. A practice
+// with no segments gets a quiet timer.
+function currentEx(){ return exercises.find(e=>e.id===currentId); }
+function practiceSeconds(ex){ const s=ex&&ex.guide&&ex.guide.seconds; return (typeof s==='number'&&s>0)?s:300; }
+function stopTimer(){ clearInterval(timer); isPlaying=false; }
+// Switch practice: always stop and reset the timer for the new practice's
+// own duration (issue #113 — the old page-wide timer kept running).
+function setPractice(id){
+ if(id!==currentId){ stopTimer(); justFinished=false; groundPercent=50; currentId=id; }
+ timeLeft=practiceSeconds(currentEx());
+ renderPlayer();
+}
 function showLockedModal(ex){
+ const freeNames=exercises.filter(e=>freeIds.has(e.id)).map(e=>e.title).join(', ');
  const overlay=document.createElement('div');
  overlay.id='lockModal';
  overlay.style.cssText='position:fixed;inset:0;background:rgba(26,26,26,0.55);display:flex;align-items:center;justify-content:center;z-index:50;padding:20px';
  overlay.innerHTML=`<div style="background:#FAF6EF;border:2px solid #1A1A1A;padding:32px;max-width:420px;text-align:center">
    <div style="font-size:11px;letter-spacing:0.12em;margin-bottom:10px">LOCKED PRACTICE</div>
    <h2 style="font-size:20px;margin-bottom:10px">${ex.title}</h2>
-   <p style="font-size:14px;font-style:italic">Twenty practices from the work of Richard Moon 6th Dan</p>
-   <p style="font-size:12px;opacity:0.7;margin:14px 0">Free practices: DBSO, Wrist Grab Grounding, Ten to the Tenth. Unlock all 15+5 with a free AikiField account.</p>
-   <a href="/login.php?next=/games/exercises/" class="btn" style="display:inline-block;margin-bottom:10px">Sign in to unlock all</a><br>
+   <p style="font-size:14px;font-style:italic">Practices from the work of Richard Moon 6th Dan</p>
+   <p style="font-size:12px;opacity:0.7;margin:14px 0">Free practices: ${esc(freeNames)}. Unlock all ${exercises.length} practices with a free AikiField account.</p>
+   <a href="/login.php?src=li&next=/games/exercises/" class="btn" style="display:inline-block;margin-bottom:10px">Sign in to unlock all</a><br>
    <button class="btn" id="lockClose">Back to free practices</button>
  </div>`;
  document.body.appendChild(overlay);
  const close=()=>{ overlay.remove(); };
  overlay.onclick=(e)=>{ if(e.target===overlay) close(); };
  document.getElementById('lockClose').onclick=close;
-}
-function renderStudios(f=""){
- const list=document.getElementById('studioList');
- list.innerHTML=studios.filter(s=>s.name.toLowerCase().includes(f.toLowerCase())).map(s=>`<div class="studio" data-n="${s.name}"><strong>${s.name}</strong><br><span style="font-size:10px;opacity:0.7">${s.region} · ${s.cat}</span></div>`).join('');
- list.querySelectorAll('.studio').forEach(el=>{
-   el.onclick=()=>{
-     document.querySelectorAll('.studio').forEach(x=>x.classList.remove('active')); el.classList.add('active');
-     const st=studios.find(x=>x.name===el.dataset.n);
-     showStudioBanner(st);
-   }
- });
 }
 function showStudioBanner(st){
  const b=document.getElementById('banner'); b.style.display='block';
@@ -155,10 +188,15 @@ function selectStudioBySlug(slug){
  const st=studios.find(x=>studioSlug(x.name)===slug.toLowerCase());
  if(st) showStudioBanner(st);
 }
+// Translations arrive as {itemId: translatedText}; tr() returns the
+// translation when one is cached, else the English source (issue #894).
+const TR={}; let ANNOT=null;
+function tr(id, src){ return TR[id] || src; }
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 function renderPartTabs(){
  const tabs=document.getElementById('partTabs');
  const parts=[["all","All 15"], ["Part I","Part I · centering (6)"], ["Part II","Part II · breath (5)"], ["Part III","Part III · attention (3)"], ["Part IV","Part IV · dialogue (1)"]];
- tabs.innerHTML=parts.map(p=>`<span class="chip ${p[0]==='all'?'active':''}" data-part="${p[0]}">${p[1]}</span>`).join('');
+ tabs.innerHTML=parts.map(p=>`<span class="chip ${p[0]==='all'?'active':''}" data-part="${p[0]}">${esc(tr('part.'+p[0], p[1]))}</span>`).join('');
  tabs.querySelectorAll('.chip').forEach(el=>{
    el.onclick=()=>{ tabs.querySelectorAll('.chip').forEach(x=>x.classList.remove('active')); el.classList.add('active'); currentPart=el.dataset.part; renderExList(currentPart); }
  });
@@ -167,12 +205,12 @@ function renderExList(part="all"){
  const list=document.getElementById('exList');
  let filtered=exercises;
  if(part!=="all") filtered=exercises.filter(e=>e.part.includes(part));
- list.innerHTML=filtered.map(e=>`<span class="chip ex-chip ${e.id===currentId?'active':''} ${freeIds.has(e.id)?'':'locked'}" data-id="${e.id}">${e.id}. ${e.title} ${freeIds.has(e.id)?'• FREE':'🔒'}</span>`).join('');
+ list.innerHTML=filtered.map(e=>`<span class="chip ex-chip ${e.id===currentId?'active':''} ${freeIds.has(e.id)?'':'locked'}" data-id="${e.id}">${e.id}. ${esc(tr('ex'+e.id+'.title', e.title))} ${freeIds.has(e.id)?'• FREE':'🔒'}</span>`).join('');
  list.querySelectorAll('.ex-chip').forEach(el=>{
    el.onclick=()=>{
      const ex=exercises.find(e=>e.id===parseInt(el.dataset.id));
      if(!freeIds.has(ex.id)){ showLockedModal(ex); return; }
-     currentId=parseInt(el.dataset.id); renderPlayer(); renderExList(part);
+     setPractice(parseInt(el.dataset.id)); renderExList(part);
    }
  });
 }
@@ -180,23 +218,36 @@ function renderPlayer(){
  const ex=exercises.find(e=>e.id===currentId);
  if(!freeIds.has(ex.id)){ showLockedModal(ex); return; }
  const isWrist=ex.title.includes('Wrist Grab');
+ // Guide-driven prompts: only practices with guide.segments get timed
+ // prompts/phase/ground meter — everyone else gets a quiet timer (#113).
+ const guide=ex.guide||{};
+ const segments=Array.isArray(guide.segments)?guide.segments:null;
  const interMap={'Part I — centering & grounding':interludes[1],'Part II — breath & energy':interludes[2],'Part III — attention & feeling':interludes[3],'Part IV — dialogue & relationship':interludes[4]};
  const inter=interMap[ex.part]||null;
+ const bodyText=tr('ex'+ex.id+'.body', ex.body);
+ const bodyParas=bodyText.split(/\n\n+/).map((p,i)=>`<div class="tp" data-p="p${i}">${esc(p).replace(/\n/g,'<br>')}</div>`).join('');
  document.getElementById('player').innerHTML=`
-   <div style="display:flex;justify-content:space-between"><div><h2 style="font-size:22px">${ex.title}</h2><div class="meta">${ex.meta} · ${ex.part}</div></div><span style="font-size:10px;border:1px solid #000;padding:3px 7px">Complexity ${ex.complexity}</span></div>
-   ${isWrist?`<div class="toggle"><button id="realB">Real Partner</button><button id="invB" class="active">Invisible Partner — "we say invisible"</button></div>`:''}
-   <div class="body">${ex.body.replace(/\n/g,'<br>')}</div>
-   <div class="timer"><div id="phase">Phase: 50/50 — Resist less, ground more</div><div class="circle" id="circ">${Math.floor(timeLeft/60)}:${String(timeLeft%60).padStart(2,'0')}</div><div id="prompt" style="font-size:11px">${isWrist?'Push... feel where you are':'Breathe...'}</div>${isWrist?`<div class="ground"><div class="ground-fill" id="gfill" style="width:${groundPercent}%"></div></div><div style="font-size:10px">${groundPercent}% ground — goal 60% — DBSO</div>`:''}
+   <div style="display:flex;justify-content:space-between"><div><h2 style="font-size:22px">${esc(tr('ex'+ex.id+'.title', ex.title))}</h2><div class="meta">${esc(tr('ex'+ex.id+'.meta', ex.meta))} · ${esc(tr('ex'+ex.id+'.part', ex.part))}</div></div><span style="font-size:10px;border:1px solid #000;padding:3px 7px">Complexity ${ex.complexity}</span></div>
+   ${isWrist?`<div class="toggle"><button id="realB">Real Partner</button><button id="invB" class="active" title="Invisible partner means practicing by yourself." aria-describedby="invB-desc">Invisible Partner</button><span id="invB-desc" hidden>Invisible partner means practicing by yourself.</span></div>`:''}
+   <div class="body">${bodyParas}</div>
+   <div class="timer">${segments?`<div id="phase">Phase: ${esc(segments[0].phase||'')}</div>`:''}<div class="circle" id="circ">${Math.floor(timeLeft/60)}:${String(timeLeft%60).padStart(2,'0')}</div><div id="prompt" style="font-size:11px">${segments?esc(guide.initialPrompt||''):''}</div>${segments?`<div class="ground"><div class="ground-fill" id="gfill" style="width:${groundPercent}%"></div></div><div id="glabel" style="font-size:10px">${groundPercent}% ground — goal 60% — DBSO</div>`:''}
    <div style="display:flex;gap:6px;margin-top:10px"><button class="btn" id="playB" style="flex:1">${isPlaying?'Pause':'Play Guided'}</button><button class="btn" id="resetB" style="flex:0.3;background:#fff;color:#000;border:1px solid #000">Reset</button></div></div>
+   ${justFinished?`<div id="doneNote" style="text-align:center;padding:20px;background:#F5F0E6;margin:22px 0;border:1px solid #E8E0D0">Session complete — nicely done.<br><span style="font-size:12px;opacity:0.7">Log it below to KeepDoingIt.</span></div>`:''}
    <button class="btn" id="keepB">KeepDoingIt — Log Session</button>
    <div id="pdots" style="margin-top:10px;font-size:10px"></div>
-   ${inter?`<div class="poem"><b>${inter.title}</b>
+   ${inter?`<div class="poem"><b>${esc(tr('int'+interludes.indexOf(inter)+'.title', inter.title))}</b>
 
-${inter.text}</div>`:''}
+${esc(tr('int'+interludes.indexOf(inter)+'.text', inter.text))}</div>`:''}
  `;
+ if(ANNOT){
+   const srcParas=ex.body.split(/\n\n+/);
+   document.querySelectorAll('#player .tp').forEach((el,i)=>ANNOT(el,'ex'+ex.id+'.body:p'+i, srcParas[i]||'', el.textContent));
+   const poem=document.querySelector('#player .poem');
+   if(poem&&inter) ANNOT(poem,'int'+interludes.indexOf(inter)+'.text',inter.text,poem.textContent);
+ }
  document.getElementById('playB').onclick=togglePlay;
  document.getElementById('resetB').onclick=reset;
- document.getElementById('keepB').onclick=()=>{completed.add(currentId); sessionLog.push({id:currentId,at:new Date().toISOString()}); persistProgress(); renderProgress(); alert('Logged! KeepDoingIt');};
+ document.getElementById('keepB').onclick=()=>{completed.add(currentId); sessionLog.push({id:currentId,at:new Date().toISOString()}); persistProgress(); justFinished=false; renderProgress(); const pd=document.getElementById('pdots'); if(pd) pd.textContent='Logged — KeepDoingIt.';};
  if(isWrist){
    document.getElementById('realB').onclick=(e)=>{e.target.parentElement.querySelectorAll('button').forEach(b=>b.classList.remove('active')); e.target.classList.add('active')};
    document.getElementById('invB').onclick=(e)=>{e.target.parentElement.querySelectorAll('button').forEach(b=>b.classList.remove('active')); e.target.classList.add('active')};
@@ -207,38 +258,51 @@ function renderProgress(){
  const el=document.getElementById('progress'); if(!el) return;
  const dots=exercises.map(e=>completed.has(e.id)?'●':'○').join(' ');
  el.innerHTML=`<div style="font-size:10px">Progress: ${completed.size}/${exercises.length}<br>${dots}</div>`;
- const pd=document.getElementById('pdots'); if(pd) pd.innerHTML=`Completed IDs: ${Array.from(completed).join(', ')}`;
 }
 function togglePlay(){
  isPlaying=!isPlaying;
+ if(isPlaying) justFinished=false;
  document.getElementById('playB').textContent=isPlaying?'Pause':'Play Guided';
  if(isPlaying){
    timer=setInterval(()=>{
      timeLeft--; const c=document.getElementById('circ'); if(c) c.textContent=`${Math.floor(timeLeft/60)}:${String(timeLeft%60).padStart(2,'0')}`;
-     if(timeLeft%15===0){
-       const prompt=document.getElementById('prompt'), phase=document.getElementById('phase'), fill=document.getElementById('gfill');
-       if(timeLeft>180){ if(prompt) prompt.textContent=timeLeft%30===0?'Push — resisting lets them pull you easily — relax & feel where you are':'Pull — resisting lets them push — relax & feel where you are'; if(phase) phase.textContent='50/50 — Resist less, ground more'; groundPercent=50; }
-       else if(timeLeft>60){ if(prompt) prompt.textContent='Resistance hard to see from outside but you feel it inside'; if(phase) phase.textContent='Inside feel'; groundPercent=55; }
-       else{ if(prompt) prompt.textContent='DBSO — 60% ground — KeepDoingIt'; if(phase) phase.textContent='60% ground'; groundPercent=60; }
-       if(fill) fill.style.width=groundPercent+'%';
+     // Timed prompts come from the practice's own guide.segments (#113) —
+     // each segment applies while timeLeft >= its minLeft.
+     const segs=(currentEx().guide&&currentEx().guide.segments)||null;
+     if(timeLeft%15===0 && segs){
+       const seg=segs.find(s=>timeLeft>=s.minLeft);
+       if(seg){
+         const prompt=document.getElementById('prompt'), phase=document.getElementById('phase');
+         if(prompt) prompt.textContent=seg.alternate?seg.alternate[Math.floor(timeLeft/15)%2]:(seg.prompt||'');
+         if(phase) phase.textContent=seg.phase||'';
+         if(typeof seg.ground==='number'){
+           groundPercent=seg.ground;
+           const fill=document.getElementById('gfill'), label=document.getElementById('glabel');
+           if(fill) fill.style.width=groundPercent+'%';
+           if(label) label.textContent=groundPercent+'% ground — goal 60% — DBSO';
+         }
+       }
      }
-     if(timeLeft<=0){ clearInterval(timer); isPlaying=false; timeLeft=300; alert(interludes[1].text); renderPlayer(); }
+     if(timeLeft<=0){ clearInterval(timer); isPlaying=false; justFinished=true; timeLeft=practiceSeconds(currentEx()); renderPlayer(); }
    },1000);
  } else { clearInterval(timer); }
 }
-function reset(){ clearInterval(timer); isPlaying=false; timeLeft=300; groundPercent=50; renderPlayer(); }
-document.getElementById('search').oninput=(e)=>renderStudios(e.target.value);
-renderStudios(); renderPartTabs(); renderExList(); renderPlayer(); renderProgress();
+function reset(){ clearInterval(timer); isPlaying=false; justFinished=false; timeLeft=practiceSeconds(currentEx()); groundPercent=50; renderPlayer(); }
+renderPartTabs(); renderExList(); renderPlayer(); renderProgress();
 // Signed-in members get every practice free — check the shared site session.
 fetch('auth-state.php',{credentials:'same-origin'})
  .then(r=>r.ok?r.json():Promise.reject(new Error('auth-state HTTP '+r.status)))
  .then(d=>{
    if(!d.authed) return;
+   // Free-preview render only carries bodies for the three free practices
+   // (issue #114) — a session created after this page loaded can't unlock
+   // text that was never sent. Reload so PHP re-renders the full member set.
+   if(exercises.some(e=>e.body===undefined)){ location.reload(); return; }
    freeIds=new Set(exercises.map(e=>e.id));
    document.getElementById('lockModal')?.remove();
    const b=document.getElementById('authBadge');
    b.style.display='block';
-   b.innerHTML='Signed in — <strong>all 20 practices unlocked</strong>.';
+   b.innerHTML='Signed in — <strong>all '+exercises.length+' practices unlocked</strong>.';
    renderExList(currentPart); renderPlayer();
  })
  .catch(e=>console.error('auth-state check failed',e));
@@ -269,7 +333,7 @@ fetch('auth-state.php',{credentials:'same-origin'})
   if(studioParam) { try { selectStudioBySlug(studioParam); } catch(e){ console.error('studio banner', e); } }
   const exSlug = (params.get('exercise')||'').toLowerCase();
   if(slugMap[exSlug]) {
-    try { currentId = slugMap[exSlug]; if(typeof renderPlayer==='function') renderPlayer(); } catch(e){ console.error('exercise slug route', e); }
+    try { if(typeof setPractice==='function') setPractice(slugMap[exSlug]); } catch(e){ console.error('exercise slug route', e); }
   }
   // Support path-based /games/exercises/:slug
   const pathParts = location.pathname.split('/').filter(Boolean);
@@ -277,10 +341,46 @@ fetch('auth-state.php',{credentials:'same-origin'})
   if(pathParts.length>=3 && pathParts[0]==='games' && pathParts[1]==='exercises') {
     const last = pathParts[pathParts.length-1].toLowerCase();
     if(slugMap[last]) {
-      try { currentId = slugMap[last]; if(typeof renderPlayer==='function') renderPlayer(); } catch(e){ console.error('exercise path route', e); }
+      try { if(typeof setPractice==='function') setPractice(slugMap[last]); } catch(e){ console.error('exercise path route', e); }
     }
   }
 })();
 </script>
+
+<script>
+// Game-translation registry for games/translate.js (issue #894).
+window.AF_GAME = {
+  id: 'exercises',
+  collect() {
+    const items=[];
+    exercises.forEach(e=>{
+      items.push({id:'ex'+e.id+'.title', text:e.title});
+      if(e.meta!==undefined) items.push({id:'ex'+e.id+'.meta', text:e.meta});
+      items.push({id:'ex'+e.id+'.part', text:e.part});
+      // Free-preview stubs carry no body (issue #114).
+      String(e.body||'').split(/\n\n+/).forEach((p,i)=>{ if(p.trim()) items.push({id:'ex'+e.id+'.body:p'+i, text:p}); });
+    });
+    interludes.forEach((it,i)=>{
+      items.push({id:'int'+i+'.title', text:it.title});
+      items.push({id:'int'+i+'.text', text:it.text});
+    });
+    [["all","All 15"],["Part I","Part I · centering (6)"],["Part II","Part II · breath (5)"],["Part III","Part III · attention (3)"],["Part IV","Part IV · dialogue (1)"]]
+      .forEach(p=>items.push({id:'part.'+p[0], text:p[1]}));
+    return items;
+  },
+  apply(map, annotate) {
+    Object.assign(TR, map);
+    // Per-paragraph ids (ex1.body:p0) roll up to the whole body for tr().
+    exercises.forEach(e=>{
+      const paras=[];
+      for(let i=0; map['ex'+e.id+'.body:p'+i]!==undefined; i++) paras.push(map['ex'+e.id+'.body:p'+i]);
+      if(paras.length) TR['ex'+e.id+'.body']=paras.join('\n\n');
+    });
+    ANNOT=(el,itemId,src,trans)=>annotate(el,itemId,src,trans);
+    renderPartTabs(); renderExList(currentPart); renderPlayer();
+  },
+};
+</script>
+<script src="../translate.js"></script>
 
 </body></html>

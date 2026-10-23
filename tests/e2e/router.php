@@ -42,6 +42,16 @@ if (str_contains($path, '..')) {
     exit;
 }
 
+// ── Locale prefix (issue #100) — /en|es/<path> serves the underlying path.
+// Like Apache's internal rewrite, REQUEST_URI keeps the original
+// locale-prefixed path; for-review-serve.php normalizes it itself.
+if (preg_match('#^/(en|es)(/.*)$#', $path, $_lm)) {
+    $path = $_lm[2];
+    if ($path === '/') {
+        $path = '/index.html';
+    }
+}
+
 // ── 301 redirects for old static URLs ──────────────────────────────────────
 
 $redirects = [
@@ -55,6 +65,10 @@ $redirects = [
     '#^/games/lucky-wave/RideTheLuckyWaveV2\.html$#' => '/games/lucky-wave/RideTheLuckyWaveV2.php',
     '#^/games/verbal-aikido/index\.html$#' => '/for-review/games/verbal-aikido/',
     '#^/games/exercises/index\.html$#' => '/games/exercises/',
+    // Issue #106: intermediate Digital Experience preview pages → direct entry.
+    '#^/digital-experience/unified-field-chat\.html$#' => '/members',
+    '#^/digital-experience/practices\.html$#' => '/games/exercises/',
+    '#^/digital-experience/moon-practices\.html$#' => '/games/exercises/',
 ];
 
 // Lucky Wave was promoted from the gated review area; Verbal Aikido moved back.

@@ -356,38 +356,78 @@
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://aikifield.com/digital-experience/</loc>
+    <loc>https://aikifield.com/glossary</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://aikifield.com/digital-experience/lucky-wave.html</loc>
+    <loc>https://aikifield.com/media-kit</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://aikifield.com/digital-experience/verbal-aikido.html</loc>
+    <loc>https://aikifield.com/richard-moon</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://aikifield.com/digital-experience/practices.html</loc>
+    <loc>https://aikifield.com/resources</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://aikifield.com/digital-experience/unified-field-chat.html</loc>
+    <loc>https://aikifield.com/privacy</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://aikifield.com/somatic-studios/</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <loc>https://aikifield.com/terms</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://aikifield.com/books.html</loc>
+    <loc>https://aikifield.com/reviews</loc>
     <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://aikifield.com/podcasts</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://aikifield.com/sangha</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://aikifield.com/about</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://aikifield.com/free_chapter</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://aikifield.com/book</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://aikifield.com/media</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://aikifield.com/books/print-on-demand</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://aikifield.com/books/egbert_bigger_world</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
   </url>
 </urlset>

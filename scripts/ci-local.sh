@@ -130,6 +130,8 @@ for cmd in "${COMMANDS[@]}"; do
             run_step "unit:cloudflare-ip-trust" php tests/unit/test-cloudflare-ip-trust.php
             run_step "unit:cf-token" python3 tests/unit/test_allocate_cloudflare_token.py
             run_step "unit:locale-path" node tests/test_locale_path.js
+            # Public repo: the studio map data must hold no emails or phones.
+            run_step "unit:studio-map-contacts" python3 scripts/import_studio_map.py --check
             ;;
         e2e)
             if [[ ! -d "$WT/tests/e2e/node_modules/@playwright/test" ]]; then

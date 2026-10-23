@@ -63,10 +63,9 @@
           <li class="af-nav__megacol">
             <a href="/digital-experience/" class="af-nav__colhead" data-i18n="nav.digital_experience">Digital Experience</a>
             <ul class="af-nav__megalist">
-          <li><a href="/digital-experience/lucky-wave.html#v1" class="af-nav__sublink">Ride the Lucky Wave</a></li>
           <li><a href="/digital-experience/lucky-wave.html#v2" class="af-nav__sublink">Ride the Lucky Wave V2</a></li>
-          <li><a href="/digital-experience/practices.html" class="af-nav__sublink">Twenty Practices</a></li>
-          <li class="af-nav__subsep"><a href="/digital-experience/unified-field-chat.html" class="af-nav__sublink af-nav__sublink--feature">Enter the Unified Field Chat</a></li>
+          <li><a href="/games/exercises/" class="af-nav__sublink">Twenty Practices</a></li>
+          <li class="af-nav__subsep"><a href="/members" class="af-nav__sublink af-nav__sublink--feature">Enter the Unified Field Chat</a></li>
               <li class="af-nav__subsep"><a href="/blog/index.html#social" class="af-nav__sublink" data-i18n="nav.social_media">Social Media</a></li>
             </ul>
           </li>
@@ -100,7 +99,7 @@
         <div class="af-card">
           <h3 class="af-card__title">Play the story</h3>
           <p class="af-card__body">Two branching chapters from the Verbal Aikido design. Each scene asks how you respond — calm, curious, or furious — and the story bends to your choices.</p>
-          <p style="margin-top:16px;"><a class="af-btn af-btn--primary af-btn--sm" href="/for-review/games/verbal-aikido/">Sign in to play</a></p>
+          <p style="margin-top:16px;"><a class="af-btn af-btn--primary af-btn--sm" href="/for-review/games/verbal-aikido/" data-auth-label="Play Verbal Aikido">Sign in to play</a></p>
         </div>
         <div class="af-card">
           <h3 class="af-card__title">What you practice</h3>
@@ -117,12 +116,12 @@
   </section>
 
   <!-- MEMBERSHIP CTA -->
-  <section class="af-section af-section--lg">
+  <section class="af-section af-section--lg" data-auth-hide>
     <div class="af-container">
       <div class="af-callout">
         <h2 class="af-callout__title">Members only</h2>
         <p class="af-callout__body">Verbal Aikido is included with a free AikiField account. Sign in — or create an account in under a minute — and the story opens.</p>
-        <a href="/login.php" class="af-btn af-btn--light">Sign in or create an account</a>
+        <a href="/login.php?next=%2Ffor-review%2Fgames%2Fverbal-aikido%2F" class="af-btn af-btn--light">Sign in or create an account</a>
       </div>
     </div>
   </section>
@@ -174,5 +173,6 @@
 <script src="/js/locale-utils.js?v=20261004-2"></script>
 <script src="/js/language-selector.js?v=20261004-2"></script>
 <script src="/js/nav-menu.js?v=20261002" defer></script>
+<script src="/js/digital-experience-auth.js?v=20261007" defer></script>
 </body>
 </html>

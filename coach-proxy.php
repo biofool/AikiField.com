@@ -1,7 +1,7 @@
 <?php
 /**
  * Coach API Proxy for AikiField — forwards /coach-api/* requests to the
- * Quantum Aikido Wisdom backend (AIRichardMoon on Cloud Run).
+ * Creativity in the Unified Field Wisdom backend (AIRichardMoon on Cloud Run).
  *
  * Ported from quantumaikido.com/web/coach-proxy.php, trimmed for AikiField:
  *   - No staging folder (AikiField has no /staging/ wrapper).
@@ -67,6 +67,7 @@ $FORWARD_REQ_HEADERS = [
     'x-auth-session',
     'x-request-id',
     'authorization',
+    'origin',          // WebAuthn multi-RP: backend resolves rp_id from the site origin
 ];
 
 $FORWARD_RESP_HEADERS = [
@@ -155,6 +156,15 @@ foreach (qa_resolve_client_ip_headers($remoteAddr, $clientCfConnectingIp, $clien
 // Add proxy secret header so the backend knows this came through the proxy
 if (COACH_PROXY_SECRET !== '') {
     $headers[] = 'X-Proxy-Secret: ' . COACH_PROXY_SECRET;
+
+    // Issue #130 / AIR#943: also sign the resolved visitor IP so the backend
+    // can rate-limit per visitor instead of per proxy. The backend verifies
+    // these only when X-Proxy-Secret is valid; clients cannot forge them —
+    // X-AF-Client-* is not in $FORWARD_REQ_HEADERS, so any client-supplied
+    // copies are dropped above.
+    foreach (qa_signed_client_ip_headers($remoteAddr, $clientCfConnectingIp, COACH_PROXY_SECRET) as $name => $value) {
+        $headers[] = "$name: $value";
+    }
 }
 
 // For any OAuth authorize endpoint, pass the local redirect_uri to the
@@ -165,6 +175,20 @@ if ($method === 'GET' && preg_match('#/v1/auth/([^/]+)/authorize$#', $path, $pro
     $redirectUri = str_replace('/google/callback', '/' . $provider . '/callback', COACH_OAUTH_REDIRECT_URI);
     $sep = str_contains($backendUrl, '?') ? '&' : '?';
     $backendUrl .= $sep . 'redirect_uri=' . urlencode($redirectUri);
+}
+
+// Issue #129 / AIR#941: forward the browser's Cookie header on the OAuth
+// authorize/callback routes so the backend's oauth_state_nonce HttpOnly
+// cookie round-trips through this proxy. Scoped to those two routes only —
+// nothing else needs the browser's cookie jar at the backend. Response
+// Set-Cookie is already forwarded via $FORWARD_RESP_HEADERS.
+if (preg_match('#/v1/auth/[^/]+/(authorize|callback)$#', $path)) {
+    foreach (getallheaders() as $name => $value) {
+        if (strtolower($name) === 'cookie' && $value !== '') {
+            $headers[] = "Cookie: $value";
+            break;
+        }
+    }
 }
 
 // Get request body

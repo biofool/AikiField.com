@@ -105,14 +105,17 @@ function redirect_with_status(string $status, string $msg = ''): void
 // strip control characters from all of them for defense in depth (CWE-93).
 function strip_header_injection(string $value): string
 {
-    return trim(str_replace(["\r", "\n"], '', $value));
+    // Strip ALL control chars — not just CR/LF. A NUL byte in a mail()
+    // argument throws a ValueError (HTTP 500) (issue #125).
+    return trim((string) preg_replace('/[\x00-\x1F\x7F]/', '', $value));
 }
 
-$name = strip_header_injection($_POST['name'] ?? '');
-$email = trim($_POST['email'] ?? '');
-$organization = strip_header_injection($_POST['organization'] ?? '');
-$interest = strip_header_injection($_POST['interest'] ?? '');
-$message = trim($_POST['message'] ?? '');
+// Length caps — unbounded fields were accepted verbatim (issue #125).
+$name = strip_header_injection(substr($_POST['name'] ?? '', 0, 100));
+$email = trim(substr($_POST['email'] ?? '', 0, 200));
+$organization = strip_header_injection(substr($_POST['organization'] ?? '', 0, 150));
+$interest = strip_header_injection(substr($_POST['interest'] ?? '', 0, 200));
+$message = trim(substr($_POST['message'] ?? '', 0, 5000));
 
 // --- Route + consent (issue #91) ---
 // Each audience has its own form page carrying a `route` hidden field.
@@ -143,8 +146,14 @@ function contact_rate_limited(string $ip, int $maxRequests = 5, int $windowSecon
         return false; // nothing to key on - fail open rather than block everyone
     }
     $dir = __DIR__ . '/data/ratelimit';
-    if (!is_dir($dir) && !@mkdir($dir, 0700, true) && !is_dir($dir)) {
-        return false; // fail open if local storage isn't available
+    if (!is_dir($dir)) {
+        if (!@mkdir($dir, 0700, true) && !is_dir($dir)) {
+            return false; // fail open if local storage isn't available
+        }
+        // data/ratelimit/ is gitignored, so the deny file isn't deployed —
+        // write it when the dir is created or the hashed per-IP files are
+        // web-readable on Apache (issue #100).
+        @file_put_contents($dir . '/.htaccess', "Require all denied\n");
     }
     $file = $dir . '/' . hash('sha256', $ip) . '.json';
     $fh = @fopen($file, 'c+');
@@ -274,6 +283,10 @@ af_record_contact(af_contact_record(
 
 // --- Build email ---
 $subject = 'AikiField Inquiry: ' . ($interest !== '' ? $interest : 'General');
+// RFC 2047-encode non-ASCII — raw 8-bit subjects are invalid (issue #125).
+if (function_exists('mb_encode_mimeheader')) {
+    $subject = mb_encode_mimeheader($subject, 'UTF-8');
+}
 
 $body = "New inquiry from aikifield.com contact form:\n\n";
 $body .= "Route: " . $route . "\n";
@@ -297,9 +310,14 @@ $body .= "Submitted: " . date('Y-m-d H:i:s') . " (server time)\n";
 $clientIpForLog = contact_client_ip();
 $body .= "IP: " . ($clientIpForLog !== '' ? $clientIpForLog : 'unknown') . "\n";
 
+// Reply-To display-name must not carry , < > " or \ — those let an
+// attacker append recipient addresses so the owner's reply also reaches
+// them (issue #125).
+$replyToName = str_replace(['<', '>', '"', ',', "'"], '', $name);
 $headers = [
     'From: AikiField Contact <' . $FROM_EMAIL . '>',
-    'Reply-To: ' . $name . ' <' . $email . '>',
+    'Reply-To: ' . ($replyToName !== '' ? $replyToName . ' <' . $email . '>' : $email),
+    'MIME-Version: 1.0',
     'X-Mailer: PHP/' . phpversion(),
     'Content-Type: text/plain; charset=UTF-8',
 ];

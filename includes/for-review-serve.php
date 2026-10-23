@@ -6,7 +6,7 @@
  * .htaccess rewrites every request under /for-review/ to this script. The
  * session gate is the same one that protects /beta/ (beta-gate.load.php):
  * unauthenticated visitors are redirected to /login.php?next=<path>, and the
- * shared coaching session cookie means an existing Quantum Aikido account
+ * shared coaching session cookie means an existing Creativity in the Unified Field account
  * signs straight in. session_start() inside the gate also emits
  * `Cache-Control: no-store` etc., so gated responses are never edge-cached
  * by Cloudflare.
@@ -18,7 +18,15 @@
 
 require_once __DIR__ . '/beta-gate.load.php'; // redirects to /login.php when unauthed
 
+// Issue #122: any active account used to pass the gate — LinkedIn sign-in
+// creates `free` accounts, and unreleased review material is members-only.
+af_require_member_tier('for-review-serve');
+
 $uriPath = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?? '/';
+// The locale rewrite (^(en|es)/(.+)$ → /$2) is internal, so REQUEST_URI
+// still carries the /es/ or /en/ prefix when the request had one —
+// /es/for-review/* used to 404 here (issue #100). Normalize it away.
+$uriPath = preg_replace('#^/(en|es)(?=/|$)#', '', $uriPath);
 if ($uriPath !== '/for-review' && strpos($uriPath, '/for-review/') !== 0) {
     http_response_code(404);
     exit;
