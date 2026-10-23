@@ -217,6 +217,7 @@
       </div>
 
       <form class="af-form" action="/studio-review-handler.php" method="post">
+        <input type="hidden" name="form_version" value="v2">
         <!-- Honeypot field (hidden from humans, bots fill it) -->
         <div style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden;" aria-hidden="true">
           <label for="fax">Fax (leave empty)</label>
@@ -274,13 +275,19 @@
         </div>
         <div class="af-form-group">
           <label style="font-weight: 400; display: flex; gap: 10px; align-items: flex-start;">
+            <input type="checkbox" name="consent_service" value="yes" required style="width: auto; margin-top: 4px;">
+            <span>I agree that AikiField may use these details to respond to my application and carry out the requested review. <span aria-hidden="true">*</span></span>
+          </label>
+        </div>
+        <div class="af-form-group">
+          <label style="font-weight: 400; display: flex; gap: 10px; align-items: flex-start;">
             <input type="checkbox" name="consent_listing" value="yes" style="width: auto; margin-top: 4px;">
             Also list my studio for free in the World Studio Finder. I may edit or remove the listing at any time.
           </label>
         </div>
         <div class="af-form-group">
           <label style="font-weight: 400; display: flex; gap: 10px; align-items: flex-start;">
-            <input type="checkbox" name="consent_updates" value="yes" style="width: auto; margin-top: 4px;">
+            <input type="checkbox" name="consent_marketing" value="yes" style="width: auto; margin-top: 4px;">
             Send me occasional practical resources about studio visibility and digital readiness.
           </label>
         </div>

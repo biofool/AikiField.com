@@ -26,6 +26,9 @@ require __DIR__ . '/includes/coach-config.load.php';
 // limiter and notification email key on the real visitor address.
 require __DIR__ . '/includes/cloudflare-ips.php';
 
+// Per-contact consent record writer (issue #91).
+require __DIR__ . '/includes/contact-record.php';
+
 function studio_client_ip(): string
 {
     $remoteAddr = (string) ($_SERVER['REMOTE_ADDR'] ?? '');
@@ -80,8 +83,17 @@ $location = strip_header_injection(substr($_POST['location'] ?? '', 0, 100));
 $practice = strip_header_injection(substr($_POST['practice'] ?? '', 0, 100));
 $help = strip_header_injection(substr($_POST['help'] ?? '', 0, 200));
 $message = trim(substr($_POST['message'] ?? '', 0, 5000));
+// Consent split (issue #91): service consent = we may use the details to
+// respond and carry out the review; marketing consent = occasional notes.
+// consent_listing stays separate — it consents to *publishing* the studio
+// in the directory. The hidden form_version=v2 marker distinguishes a
+// new-form post (where consent_service is required) from a stale cached
+// form — an unticked checkbox sends no key, so it cannot carry that
+// signal itself.
+$legacyPost = ($_POST['form_version'] ?? '') !== 'v2';
+$consentService = ($_POST['consent_service'] ?? '') === 'yes';
+$consentMarketing = ($_POST['consent_marketing'] ?? $_POST['consent_updates'] ?? '') === 'yes';
 $consentListing = ($_POST['consent_listing'] ?? '') === 'yes';
-$consentUpdates = ($_POST['consent_updates'] ?? '') === 'yes';
 
 // --- Rate limiting (same fixed-window limiter as contact-handler.php) ---
 function studio_rate_limited(string $ip, int $maxRequests = 5, int $windowSeconds = 600): bool
@@ -194,10 +206,29 @@ if ($email === '') {
 if ($website !== '' && !filter_var($website, FILTER_VALIDATE_URL)) {
     $errors[] = 'Please enter a valid website URL (including https://).';
 }
+if (!$legacyPost && !$consentService) {
+    $errors[] = 'Please confirm we may use your details to respond to your application.';
+}
 
 if (count($errors) > 0) {
     redirect_with_error(implode(' ', $errors));
 }
+
+// --- Record the contact (source, lawful basis, permission status, date) ---
+af_record_contact(af_contact_record(
+    'studio', $name, $email, $studio,
+    $consentService, $consentMarketing,
+    [
+        'studio'          => $studio,
+        'website'         => $website,
+        'location'        => $location,
+        'practice'        => $practice,
+        'help'            => $help,
+        'consent_listing' => $consentListing,
+        'lawful_basis_listing' => $consentListing ? 'consent-publication' : 'not-given',
+    ],
+    $legacyPost
+));
 
 // --- Build email ---
 $subject = 'Studio Visibility Review request: ' . ($studio !== '' ? $studio : $name);
@@ -225,8 +256,9 @@ if ($practice !== '') {
 if ($help !== '') {
     $body .= "Wants help with: " . $help . "\n";
 }
+$body .= "Service consent (respond + carry out review): " . ($consentService ? 'yes' : 'no') . "\n";
+$body .= "Marketing consent (occasional resources): " . ($consentMarketing ? 'yes' : 'no') . "\n";
 $body .= "World Studio Finder listing consent: " . ($consentListing ? 'yes' : 'no') . "\n";
-$body .= "Occasional resources consent: " . ($consentUpdates ? 'yes' : 'no') . "\n";
 if ($message !== '') {
     $body .= "\nMessage:\n" . $message . "\n";
 }

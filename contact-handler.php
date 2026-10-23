@@ -17,6 +17,17 @@ $RECIPIENT_EMAIL = 'kenneth@aikifield.com';
 $FROM_EMAIL = 'contact@aikifield.com';
 $REDIRECT_URL = 'contact.html';
 
+// Per-audience enquiry routes (issue #91). The `route` POST field picks the
+// page the user is sent back to; anything outside this whitelist falls back
+// to the contact.html router so a tampered field cannot become an open
+// redirect.
+$ROUTE_PAGES = [
+    'coaching'  => 'contact-coaching.html',
+    'security'  => 'contact-security.html',
+    'community' => 'somatic-studios/index.html',
+    'general'   => 'contact.html',
+];
+
 // Shared coaching-auth config loader (same precedence login.php uses:
 // coach-config.local.php overrides > coach-config.php defaults). Reused here
 // only for TURNSTILE_SITE_KEY / TURNSTILE_SECRET_KEY so the contact form's
@@ -77,7 +88,8 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 function redirect_with_status(string $status, string $msg = ''): void
 {
     global $REDIRECT_URL;
-    $url = $REDIRECT_URL . '?status=' . urlencode($status);
+    $url = $REDIRECT_URL . (str_contains($REDIRECT_URL, '?') ? '&' : '?')
+        . 'status=' . urlencode($status);
     if ($msg !== '') {
         $url .= '&msg=' . urlencode($msg);
     }
@@ -104,6 +116,24 @@ $email = trim(substr($_POST['email'] ?? '', 0, 200));
 $organization = strip_header_injection(substr($_POST['organization'] ?? '', 0, 150));
 $interest = strip_header_injection(substr($_POST['interest'] ?? '', 0, 200));
 $message = trim(substr($_POST['message'] ?? '', 0, 5000));
+
+// --- Route + consent (issue #91) ---
+// Each audience has its own form page carrying a `route` hidden field.
+// consent_service is the lawful basis for replying to the enquiry and is
+// required; consent_marketing is a separate, optional opt-in. Neither is
+// pre-ticked in markup and the service consent is enforced server-side too.
+$route = strip_header_injection($_POST['route'] ?? '');
+// Posts missing `route` entirely come from a stale cached copy of the old
+// single form — treat them as legacy so deploy-overlap users are not held
+// to checkboxes their form never rendered. The record marks them as
+// consent-not-captured rather than pretending a tick happened.
+$legacyPost = !isset($_POST['route']);
+if (!isset($ROUTE_PAGES[$route])) {
+    $route = 'general';
+}
+$REDIRECT_URL = $ROUTE_PAGES[$route];
+$consentService = ($_POST['consent_service'] ?? '') === 'yes';
+$consentMarketing = ($_POST['consent_marketing'] ?? '') === 'yes';
 
 // --- Rate limiting ---
 // Turnstile CAPTCHA verification lives further down (after the honeypot
@@ -233,10 +263,23 @@ if ($email === '') {
 if ($message === '') {
     $errors[] = 'Message is required.';
 }
+if (!$legacyPost && !$consentService) {
+    $errors[] = 'Please tick the consent box so we can reply to your enquiry.';
+}
 
 if (count($errors) > 0) {
     redirect_with_status('error', implode(' ', $errors));
 }
+
+// --- Persist the per-contact record (source, lawful basis, permission
+// status, date) for the Pass 3 outreach system (issue #91) ---
+require_once __DIR__ . '/includes/contact-record.php';
+af_record_contact(af_contact_record(
+    $route, $name, $email, $organization,
+    $consentService, $consentMarketing,
+    ['interest' => $interest],
+    $legacyPost
+));
 
 // --- Build email ---
 $subject = 'AikiField Inquiry: ' . ($interest !== '' ? $interest : 'General');
@@ -246,6 +289,7 @@ if (function_exists('mb_encode_mimeheader')) {
 }
 
 $body = "New inquiry from aikifield.com contact form:\n\n";
+$body .= "Route: " . $route . "\n";
 $body .= "Name: " . $name . "\n";
 $body .= "Email: " . $email . "\n";
 if ($organization !== '') {
@@ -256,6 +300,12 @@ if ($interest !== '') {
 }
 $body .= "\nMessage:\n" . $message . "\n";
 $body .= "\n---\n";
+// Consent record for the outreach system (issue #91): which form, which
+// lawful basis, marketing permission status, and when.
+$body .= "Source page: " . $REDIRECT_URL . "\n";
+$body .= "Lawful basis: consent (service enquiry)\n";
+$body .= "Service consent: " . ($consentService ? 'yes' : 'no') . "\n";
+$body .= "Marketing consent: " . ($consentMarketing ? 'yes' : 'no') . "\n";
 $body .= "Submitted: " . date('Y-m-d H:i:s') . " (server time)\n";
 $clientIpForLog = contact_client_ip();
 $body .= "IP: " . ($clientIpForLog !== '' ? $clientIpForLog : 'unknown') . "\n";

@@ -19,6 +19,9 @@ data/audit/
 # contact-handler.php per-IP rate-limit counters (regenerated on every run)
 data/ratelimit/
 
+# Per-contact consent records (contain name/email/PII — never commit)
+data/contacts/
+
 # Downloaded access logs — contain visitor IPs, never commit
 logs/
 
