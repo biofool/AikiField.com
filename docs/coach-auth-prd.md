@@ -595,6 +595,25 @@ See `backend/PRD.md` in AIRichardMoon for full endpoint details.
 > (Cloudflare Pages Functions migration) and `AIRichardMoon/backend/PRD.md`
 > (backend note — API contract unchanged).
 
+> **Note — quantumaikido.com security review (issue
+> [quantumaikido.com#379](https://github.com/biofool/quantumaikido.com/issues/379),
+> 2026-10-12).** An adversarial review of the QA Pages Functions found a
+> sev-1 JWT fallback-secret auth bypass (`JWT_SECRET` unset → anyone can
+> mint `qa_session` JWTs), a member-session `dojos-export` PII endpoint,
+> stored XSS on a staff page, and a committed fallback gate-secret — all in
+> the **Cloudflare Pages layer**. **AikiField is unaffected**: it uses PHP
+> sessions (not JWT cookies), has no Pages Functions, no `for-review`
+> export endpoint, and no scraped-data embeds. The paired AikiField-side
+> hardening is tracked in
+> [AikiField.com#100](https://github.com/biofool/AikiField.com/issues/100)
+> (login CSRF session-planting guard, CF-verified client-IP forwarding,
+> `dashboard.php` key moved out of the URL into an HttpOnly cookie), and
+> the backend-side seams in
+> [AIRichardMoon#880](https://github.com/biofool/AIRichardMoon/issues/880).
+> If AikiField is ever migrated to Cloudflare Pages Functions, the #379
+> findings must be checked on the port — do not copy a fallback secret
+> pattern.
+
 ### No cross-domain session issue
 
 The login and the gated `/beta/` pages are all on `aikifield.com` (same
