@@ -173,6 +173,13 @@ RewriteRule ^projects\.html$ /projects.php [R=301,L]
 # session-gated (beta-gate.load.php) and redirects to /login.php when unauthed.
 RewriteRule ^members/?$ members.php [L]
 
+# /profile — coaching account Profile & Settings (replicated from
+# quantumaikido.com/profile so members stay on this site). Session-gated by
+# the same beta-gate.load.php as /members; redirects to /login.php when
+# unauthed.
+RewriteRule ^profile\.php$ /profile [R=301,L]
+RewriteRule ^profile/?$ profile.php [L]
+
 # Lucky Wave was promoted out of the gated review area to /games/. Verbal
 # Aikido moved back into /for-review/ and its former /games/ URL redirects to
 # the gated review path. These rules must stay above the catch-all below.
