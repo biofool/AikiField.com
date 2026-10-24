@@ -16,6 +16,11 @@
 - [Author's Insights blog](https://aikifield.com/blog/): essays and talks; social links at /blog/index.html#social
 - [Digital Experience](https://aikifield.com/digital-experience/): interactive practices — Ride the Lucky Wave, Verbal Aikido story mode, Moon practices, Unified Field Chat
 - [Ask AikiField](https://aikifield.com/ask/): sourced Q&A knowledge layer — questions, books, videos with visible citations
+- [Coaching](https://aikifield.com/coaching.html): confidential coaching with Kenneth Kron for leaders facing consequential decisions
+- [About Kenneth](https://aikifield.com/about-kenneth.html): Kenneth Kron, former CISO and Quantum Aikido 6th degree black belt
+- [Career Highlight](https://aikifield.com/career-highlight.html): short summary of Kenneth's security and Aikido career
+- [About Richard Moon](https://aikifield.com/about-richard-moon.html): Aikido teacher, mediator, executive coach and author
+- [Richard Moon: Aikido and Music](https://aikifield.com/richard-moon-music.html): improvisation as the thread between music and Aikido
 
 ## Not for crawlers
 

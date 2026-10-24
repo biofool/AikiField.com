@@ -77,6 +77,15 @@
           <li><a href="assessment.html" class="af-nav__sublink" data-i18n="nav.assessment">Assessment</a></li>
         </ul>
       </div>
+      <div class="af-nav__group">
+        <button type="button" class="af-nav__link af-nav__menu-btn" aria-expanded="false" aria-controls="af-nav-sub-about" data-i18n="nav.about">About</button>
+        <ul class="af-nav__submenu" id="af-nav-sub-about">
+          <li><a href="about-kenneth.html" class="af-nav__sublink" data-i18n="nav.about_kenneth">About Kenneth</a></li>
+          <li><a href="about-richard-moon.html" class="af-nav__sublink" data-i18n="nav.about_richard_moon">About Richard Moon</a></li>
+          <li><a href="richard-moon-music.html" class="af-nav__sublink" data-i18n="nav.richard_moon_music">Richard Moon: Aikido and Music</a></li>
+        </ul>
+      </div>
+      <a href="coaching.html" class="af-nav__link" data-i18n="nav.coaching">Coaching</a>
       <a href="projects.php" class="af-nav__link af-nav__link--active" aria-current="page" data-i18n="nav.demonstration_technologies">Projects</a>
       <div class="af-nav__group">
         <button type="button" class="af-nav__link af-nav__menu-btn" aria-expanded="false" aria-controls="af-nav-sub-uf" data-i18n="nav.unified_field_studies">Studies in the Unified Field</button>
@@ -480,6 +489,8 @@
         <li><a href="process.html">Engagement Process</a></li>
         <li><a href="approach.html">Our Approach</a></li>
         <li><a href="services.html">Services</a></li>
+        <li><a href="coaching.html">Coaching</a></li>
+        <li><a href="about-kenneth.html">About Kenneth</a></li>
         <li><a href="case-studies.html">Case Studies</a></li>
         <li><a href="fractional-ciso-for-saas.html">Fractional CISO for SaaS</a></li>
         <li><a href="ai-devsecops-vulnerability-remediation.html">AI DevSecOps Remediation</a></li>

@@ -61,6 +61,15 @@ $qaIsAdmin   = $_SESSION['qa_is_admin'] ?? false;
           <li><a href="/assessment.html" class="af-nav__sublink" data-i18n="nav.assessment">Assessment</a></li>
         </ul>
       </div>
+      <div class="af-nav__group">
+        <button type="button" class="af-nav__link af-nav__menu-btn" aria-expanded="false" aria-controls="af-nav-sub-about">About</button>
+        <ul class="af-nav__submenu" id="af-nav-sub-about">
+          <li><a href="/about-kenneth.html" class="af-nav__sublink">About Kenneth</a></li>
+          <li><a href="/about-richard-moon.html" class="af-nav__sublink">About Richard Moon</a></li>
+          <li><a href="/richard-moon-music.html" class="af-nav__sublink">Richard Moon: Aikido and Music</a></li>
+        </ul>
+      </div>
+      <a href="/coaching.html" class="af-nav__link">Coaching</a>
       <a href="/projects.php" class="af-nav__link">Demonstration Technologies</a>
       <div class="af-nav__group">
         <button type="button" class="af-nav__link af-nav__menu-btn" aria-expanded="false" aria-controls="af-nav-sub-uf" data-i18n="nav.unified_field_studies">Studies in the Unified Field</button>

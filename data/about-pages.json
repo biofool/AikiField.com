@@ -1,0 +1,313 @@
+{
+  "_note": "Copy for the Kenneth/Richard/coaching pages. Source: Google Docs 'AikiField Page 1-5 (Draft)' of 2026-10-24, with every fact marked Verify or Hold in the Evidence Sheets (Part 2) removed. Rebuild HTML with scripts/build_about_pages.py. Open items: docs/about-pages-open-items.md.",
+  "pages": [
+    {
+      "file": "career-highlight.html",
+      "title": "Kenneth Kron: Career Highlight",
+      "eyebrow": "Career highlight",
+      "h1": "Twenty years in security, nearly forty on the mat",
+      "description": "Kenneth Kron has led security for growing companies for over twenty years and has trained in Aikido since 1987. Here is how the two fit together.",
+      "sections": [
+        {
+          "p": [
+            "For more than twenty years I have worked on the part of security that decides whether a company can move: the review that closes a sale, the control a customer asks to see, and the picture a board needs of what could go wrong. I have led security services teams, worked on product security, and served as a CISO. The work is the same at every level. It means listening closely enough to find the few things that matter and then saying them plainly.",
+            "That approach has produced concrete results. At one company I cut the time to fix known vulnerabilities from 165 days to 21. I have led a team of analysts and penetration testers, analyzed the software stack of a phone, and built one-time-password infrastructure on HashiCorp Vault and Boundary. I was most recently CISO at Vigilent. Today I advise growing companies on security leadership and AI governance, based in Wellington and working with clients everywhere.",
+            "I found my Aikido teacher, Richard Moon, in 1987. Through the 1990s I taught children and adults at Aikido of Mountain View and Aikido of San Francisco, and later took over Richard's Thursday evening class at City Aikido in San Francisco. In September 2025 Richard awarded me a 6th degree black belt in Quantum Aikido. I have chosen not to register it with a federation. The practice is between me and my teacher, and it shows up in my daily work.",
+            "The two fit together in practice. A security review and a hard conversation both go better when you stay steady, notice what the other person is actually worried about, and respond before the situation hardens. That is what I train on the mat, and it is what I bring to a board meeting or an incident call. If that sounds like the help you need, I would be glad to talk. You can read more on the <a href=\"about-kenneth.html\">About Kenneth</a> page."
+          ]
+        }
+      ],
+      "cta": {"text": "Begin a confidential conversation", "href": "contact-coaching.html"}
+    },
+    {
+      "file": "about-kenneth.html",
+      "title": "About Kenneth Kron",
+      "eyebrow": "About Kenneth",
+      "h1": "Kenneth Kron: security leader, coach and Aikido teacher",
+      "description": "Kenneth Kron is a former CISO and 6th degree Quantum Aikido black belt who advises leaders on security and on the decisions that matter most.",
+      "sections": [
+        {
+          "h": "Who I work with",
+          "p": [
+            "I work in two lanes. The first is coaching for leaders, founders and practitioners who face a consequential decision, or who understand a problem but have not yet found a way through it. The second is security leadership for growing companies: fractional CISO work, enterprise security reviews, and governance for AI. Both begin the same way, with careful listening.",
+            "I would rather spend an hour understanding what is at stake than open with a framework and fit your situation to it. Most of the value in my work comes from asking the question that changes what the real problem is, and from helping the people around the table say what they already know.",
+            "The people who come to me are usually capable and busy. A security lead may be asked to justify a budget to a board that does not speak the language. A founder may be answering a customer's questionnaire at midnight. A senior practitioner may be sensing that the work no longer matches what they care about. In each case I try to make the problem smaller and clearer, so that the next step becomes obvious."
+          ]
+        },
+        {
+          "h": "Security career",
+          "p": [
+            "I have worked in security for more than twenty years, across services, product security and executive leadership. In 2009 I joined Security Consortium as a senior professional services engineer and became Director of Services, leading a team of three to five analysts and penetration testers. At Code Integrity I performed static analysis of a phone software stack. I spent 2011 to 2015 at Truvantis.",
+            "I later completed the Insight Data Science fellowship, where I built one-time-password infrastructure on HashiCorp Vault and Boundary. At Vigilent I was Security Lead from July 2021 and CISO from March 2022, on a contract basis.",
+            "What ties these roles together is a habit of asking what the business needs to do next, then working backward to the security that makes it possible. I help companies pass enterprise security reviews, earn customer trust, and give their boards a clear view of risk. I prefer to focus on the few pieces of work that change a company's exposure the most, and to avoid long checklists that satisfy an auditor and change little else. Security is easier to sustain when it is explained in terms the business already uses, such as revenue, deal timing and customer confidence. In New Zealand I also work with mid-market companies that need senior security judgment without hiring a full-time executive. You can read the short version on the <a href=\"career-highlight.html\">Career Highlight</a> page."
+          ]
+        },
+        {
+          "h": "Aikido and teaching",
+          "p": [
+            "I found my Aikido teacher, Richard Moon, in 1987, and I have trained with him ever since. Through the 1990s I taught children and adult classes at Aikido of Mountain View and Aikido of San Francisco. Later I took over Richard's Thursday evening class at City Aikido in San Francisco.",
+            "In September 2025, in New Zealand, Richard awarded me a 6th degree black belt in Quantum Aikido. I have chosen not to register it with a federation. The rank reflects the work between a teacher and a student, and I am content to leave it there. Aikido has been the one constant through every job I have held, and it is the reason I treat security as a discipline of attention and response as much as a discipline of controls.",
+            "Teaching children taught me to explain an idea without jargon. Teaching adults taught me to wait while someone finds their own answer. Both habits come into every coaching conversation and every security review I run."
+          ]
+        },
+        {
+          "h": "Working with Richard Moon",
+          "p": [
+            "I have been Richard's student for nearly forty years, and for part of that time I have also worked alongside him. Through Quantum Edge I have developed curriculum, edited, and been part of the seminar delivery team for his team building, executive coaching and communications workshops. I edited The Power of Extraordinary Listening, published by Zanshin Press. I also co-created the Moonsensei YouTube channel and the 2014 Create A Beautiful World video magazine.",
+            "Richard serves as AikiField's Chief Creative Officer, a creative role. His teaching, writing and views remain his own, and nothing on this site speaks for him. You can read about his work on <a href=\"about-richard-moon.html\">his own page</a>."
+          ]
+        },
+        {
+          "h": "Online communities and tools",
+          "p": [
+            "In the mid-1990s I ran an early martial arts mailing list, and I helped build and run the websites for City Aikido and Aikido of Mountain View. I enjoy making it easier for people who practice to find one another and learn from one another.",
+            "When people ask what I do, I say that I help people see their situation clearly and act on it. The setting changes, whether it is a security program, a board presentation or a difficult conversation with a colleague, but the method does not."
+          ]
+        },
+        {
+          "h": "Education",
+          "p": [
+            "I earned a B.S. in Computer Science at Southeastern Louisiana University, where I studied from 1982 to 1986 and was the founding president of the ACM student chapter."
+          ]
+        },
+        {
+          "h": "Where I work",
+          "p": [
+            "I am based in Wellington, New Zealand, and I work with clients anywhere. I speak English and Spanish."
+          ]
+        },
+        {
+          "h": "Start a conversation",
+          "p": [
+            "If you are weighing a security decision, or a decision that is larger than security, I would like to hear about it. Begin a confidential conversation, and we will see whether I am the right person to help. You can also read about the <a href=\"coaching.html\">coaching</a>.",
+            "Don't take any of this on my authority. If something I've said sparks an interesting conversation with your inner teacher, then that's between you and your inner teacher."
+          ]
+        }
+      ],
+      "cta": {"text": "Begin a confidential conversation", "href": "contact-coaching.html"}
+    },
+    {
+      "file": "about-richard-moon.html",
+      "title": "About Richard Moon",
+      "eyebrow": "About Richard Moon",
+      "h1": "Richard Moon, teacher of Aikido's inner art",
+      "description": "Richard Moon is a 6th Dan Aikido teacher, mediator, executive coach, musician and author of Quantum Aikido: The Power of Harmony.",
+      "sections": [
+        {
+          "h": "Who he is",
+          "p": [
+            "Richard Moon is one of the world's foremost teachers of Aikido's inner art. He is a 6th Dan sensei, and he is also a mediator, executive coach and musician. He has taught Aikido around the world for more than fifty years. In the mid-1990s he was on the staff of a weeklong mediation project in Cyprus, where Douglas Stone, a Harvard Law lecturer and co-author of Difficult Conversations, first met him."
+          ]
+        },
+        {
+          "h": "Teaching",
+          "p": [
+            "Richard teaches seminars internationally, and in September 2025 his teaching took him to New Zealand. His approach treats Aikido as a way of life more than a way of fighting. He is the creator of Extraordinary Listening, a body of teaching on how attention, presence and listening change what is possible between people.",
+            "In simple terms, the practice teaches you to meet force without meeting it with force, and to stay present when a situation begins to move quickly. On the mat that means training with a partner. In a meeting, a family or a negotiation, it means noticing what is happening before deciding how to respond. Richard calls this the inner art of Aikido, and it is the thread that connects his teaching in the dojo with his work in organizations."
+          ]
+        },
+        {
+          "h": "Peace and mediation work",
+          "p": [
+            "The Cyprus project is where Douglas Stone met Richard. Stone lectured at Harvard Law School for 35 years and wrote the foreword to Richard's book. He is a useful witness to Richard's work because he saw it in a setting where the stakes for the participants were real.",
+            "Mediation asks people to stay centered, to listen to someone they disagree with, and to keep a conversation open when it would be easier to close it. That is the same practice Richard teaches in the dojo and in organizations."
+          ]
+        },
+        {
+          "h": "Executive coaching",
+          "p": [
+            "For more than thirty years Richard has coached executives and teams across telecommunications, construction, utilities and international project management. With Christopher Thorsen he wrote the white paper Leadership of the Spirit, which brings together Aikido's way of centering, blending and leading with the practice of dialogue.",
+            "In practice, the work asks leaders to center themselves before a difficult conversation, to blend with the other person's concern instead of pushing against it, and to lead the conversation toward something both sides can use. Organizations come to Richard when a decision is stuck, when a team is divided, or when leaders sense that the conversation in the room is not the one that needs to happen."
+          ]
+        },
+        {
+          "h": "Writing",
+          "p": [
+            "Richard's book Quantum Aikido: The Power of Harmony was published by Park Street Press in January 2026, with a foreword by Douglas Stone. He is also a co-author of Aikido: The Art of Transformation. His Extraordinary Listening titles, which include The Power of Extraordinary Listening and The Business of Listening, are available free at <a href=\"https://extraordinarylistening.com\" rel=\"noopener\">ExtraordinaryListening.com</a>.",
+            "The book describes how the principles of harmony he has taught for decades work in practice. It is written for people who train in Aikido and for readers who have never stepped on a mat. Richard's own order of events matters here: the practice came first, and the language of quantum physics came later, because it matched what he was already doing in the dojo and with the people he coached."
+          ]
+        },
+        {
+          "h": "Music",
+          "p": [
+            "In his own words, music came first for Richard, before yoga and before Aikido. Douglas Stone describes him as a musician who plays in many styles and lives as an improviser. You can read more on the page about <a href=\"richard-moon-music.html\">Richard's Aikido and music</a>."
+          ]
+        },
+        {
+          "h": "Food",
+          "p": [
+            "Moon also describes himself as a food designer. He has worked in kitchens that include the Aware Inn, The Source on the Sunset Strip, and Wild Mountain Cafe."
+          ]
+        },
+        {
+          "h": "His role at AikiField",
+          "p": [
+            "Richard serves as AikiField's Chief Creative Officer, a creative role in which he helps shape how the practice is presented. Kenneth Kron, who leads AikiField, has been Richard's student since 1987, and the two have worked together on workshops, writing and video. AikiField does not own, represent or speak for Richard. His teaching, his writing and his opinions are his own, and he decides what is said in his name."
+          ]
+        },
+        {
+          "h": "A note on his approach",
+          "p": [
+            "Across all of these settings Richard teaches the same thing in different words. Slow down enough to notice what is really happening, stay connected to the person in front of you, and act from that clarity instead of from habit or fear."
+          ]
+        },
+        {
+          "h": "Where to begin",
+          "p": [
+            "If you are new to Richard's work, the book is the best place to start, because it sets out the ideas in order. The Moonsensei videos and the Ki to the City podcast are the quickest way to hear how he teaches. The free Extraordinary Listening titles are suited to readers who want something practical to take into the next meeting."
+          ]
+        },
+        {
+          "h": "Where to find his work",
+          "ul": [
+            "Quantum Aikido, the book and the community: <a href=\"https://quantumaikido.com\" rel=\"noopener\">quantumaikido.com</a>",
+            "The Moonsensei channel on <a href=\"https://www.youtube.com/@moonsensei\" rel=\"noopener\">YouTube</a>",
+            "The Ki to the City podcast",
+            "Free Extraordinary Listening titles: <a href=\"https://extraordinarylistening.com\" rel=\"noopener\">ExtraordinaryListening.com</a>"
+          ],
+          "p": [
+            "Richard signs off his teaching with a line that sums up the work: Don't get mad. Don't even get even. Create a beautiful world."
+          ]
+        }
+      ]
+    },
+    {
+      "file": "richard-moon-music.html",
+      "title": "Richard Moon: Aikido and Music",
+      "eyebrow": "Richard Moon",
+      "h1": "Two practices, one thread: improvisation",
+      "description": "Richard Moon began as a musician before he found yoga and Aikido. Improvisation connects the music, the practice and the way he teaches.",
+      "sections": [
+        {
+          "h": "Opening",
+          "p": [
+            "Ask Richard Moon how he came to Aikido and he starts with music. Before yoga, and before the dojo, he was a musician. Decades later, the same instinct runs through how he teaches. In his foreword to Quantum Aikido: The Power of Harmony, Douglas Stone describes Richard as a musician who plays in many styles and lives as an improviser. This page follows that thread from the music to the dojo."
+          ]
+        },
+        {
+          "h": "Music first",
+          "p": [
+            "Richard's path ran from music to yoga to Aikido, and each step kept something from the one before it. In his own account, music came first.",
+            "That is a useful background for someone who later became a teacher of an art that depends on responding to another person in real time. It also helps explain why Richard has little patience for technique that is performed without attention to what is happening in the room.",
+            "The word improviser is easy to misread. It does not mean someone who makes things up at random. It means someone who has practiced enough to respond to what is actually happening, and who trusts that preparation to show up when the moment calls for it."
+          ]
+        },
+        {
+          "h": "Aikido as improvisation",
+          "p": [
+            "Richard came to yoga and then to Aikido after music, and he describes Aikido in his own words as a way of life more than a way of fighting. When he teaches, the emphasis falls on listening: to the person in front of you, to the situation, and to your own state. Techniques matter, but they are what comes out when attention is clear. They are not the starting point.",
+            "An improvising musician knows the same thing. You can practice scales for years, and the scales matter, but the music happens when you stop thinking about them and start listening. Aikido, as Richard teaches it, asks the student to find the same place under pressure, with a partner who is moving toward them."
+          ]
+        },
+        {
+          "h": "The aiki-dance form",
+          "p": [
+            "Richard has developed an improvisational form that fuses Aikido movement with music. It brings the two practices together in a single activity. The movement comes from Aikido, and the music sets the context in which the movement is improvised.",
+            "Because the form is improvised, it shows quickly whether the participants are listening to one another. A partner who tries to control the dance loses the music, and a partner who only follows loses the dance. The skill is to blend with what is happening and lead gently where it is wanted. That is the same skill Richard teaches for conversations, negotiations and conflict, practiced in a setting where it is easier to see and easier to enjoy."
+          ]
+        },
+        {
+          "h": "Why it matters for leaders",
+          "p": [
+            "People who come to Richard through his executive coaching sometimes find the musical side surprising. A leader in a stuck meeting faces the same problem as a player in a stuck song, which is how to listen well enough to find the next phrase. The practice of centering, blending and leading that Richard teaches in organizations is the same attention he brings to music, described in different words."
+          ]
+        },
+        {
+          "h": "Writing and recordings",
+          "p": [
+            "Richard's teaching, including talks and conversations on listening, appears on the Moonsensei channel on <a href=\"https://www.youtube.com/@moonsensei\" rel=\"noopener\">YouTube</a> and on the Ki to the City podcast. His book Quantum Aikido: The Power of Harmony, published by Park Street Press in January 2026, puts his thinking about attention, harmony and response in writing. You can read more about him on <a href=\"about-richard-moon.html\">his page</a>.",
+            "For Richard the two practices do not compete. Music trains the ear and Aikido trains the body, and both train a person to stay open while something unpredictable is happening.",
+            "He often closes his teaching with a line that carries the whole approach: Don't get mad. Don't even get even. Create a beautiful world."
+          ]
+        }
+      ]
+    },
+    {
+      "file": "coaching.html",
+      "title": "AikiField Coaching",
+      "eyebrow": "Coaching",
+      "h1": "A confidential thinking partner for consequential decisions",
+      "description": "Confidential coaching with Kenneth Kron, grounded in Richard Moon's teaching on listening, for leaders facing decisions that matter.",
+      "sections": [
+        {
+          "h": "Who the coaching is for",
+          "p": [
+            "I coach people who carry responsibility for other people: executives, founders, senior practitioners and leadership teams. They are usually capable, and they are usually not stuck for lack of information. What they lack is a place to think out loud with someone who will listen carefully and ask the question that changes the picture.",
+            "I am a former CISO and a 6th degree black belt in Quantum Aikido, and I have taught Aikido to children and adults. I also lead with the experience of having sat in the room when a decision could have gone either way. People who work with me tend to be those who value being listened to by someone who has carried responsibility and who still trains."
+          ]
+        },
+        {
+          "h": "What brings people here",
+          "ul": [
+            "A leader is facing a consequential decision and wants to make it with a clear head.",
+            "A practitioner is trying to align their work with what they care about most.",
+            "A founder has found that the organization has outgrown the way it operates.",
+            "Someone understands the problem well but cannot yet move through it.",
+            "A leadership team needs a more useful conversation about attention, responsibility, conflict or change."
+          ]
+        },
+        {
+          "h": "How this differs from generic advice",
+          "p": [
+            "Much advice begins with a method. I begin with the situation. We spend the first part of our time on what is happening, who is involved, and what you are noticing in your own body and reactions as you describe it. Then we look for the next move that you can make with conviction. Some sessions end with a decision. Others end with a clearer question, which is often the more useful result at the start. If a conversation is ahead of you, we may rehearse it, so that you can hear how it lands before it counts. I draw on more than twenty years of leading security teams, where the stakes are often high and the information is incomplete, and on nearly forty years of Aikido practice, where you learn to stay steady while something is coming at you."
+          ]
+        },
+        {
+          "h": "How Richard Moon's work informs it",
+          "p": [
+            "The foundation of this coaching is the teaching of Richard Moon, my teacher since 1987. Richard is the creator of Extraordinary Listening and the author of Quantum Aikido: The Power of Harmony. For more than thirty years he has coached executives and teams, and his work on centering, blending and leading is central to how I think about a hard conversation. I have developed curriculum and helped deliver his workshops, and I edited The Power of Extraordinary Listening. Richard serves as AikiField's Chief Creative Officer. He does not deliver this coaching unless we say so, and any joint session happens only when he agrees to it. AikiField does not speak for him."
+          ]
+        },
+        {
+          "h": "Coaching teams",
+          "p": [
+            "Some leaders ask me to work with a team instead of an individual. The same approach applies. We look at how the group listens to itself, where responsibility is unclear, and what is going unsaid. I treat what is said in the room as confidential."
+          ]
+        },
+        {
+          "h": "Why Aikido belongs in a leadership conversation",
+          "p": [
+            "Richard teaches a sequence that I use constantly: center yourself, blend with what is happening, and lead toward something that works. In a hard conversation this means getting steady before you speak, understanding the other person's concern as they hold it, and then proposing a direction that takes it seriously. It sounds simple. It is hard to do under pressure, which is why we practice it."
+          ]
+        },
+        {
+          "h": "Confidentiality",
+          "p": [
+            "What you tell me stays between us. If a situation ever called for sharing something, I would tell you first and ask for your agreement."
+          ]
+        },
+        {
+          "h": "What a first conversation involves",
+          "p": [
+            "A first conversation is confidential. You describe what you are facing, and I ask questions. By the end we both have a better sense of whether coaching is the right kind of help, and whether I am the right person to provide it. There is no obligation to continue. If we do continue, we agree together on how often to meet and what we are working toward, and we revisit that agreement as the situation changes."
+          ]
+        },
+        {
+          "h": "What clients may leave with",
+          "p": [
+            "Clients often leave with a clearer statement of the decision in front of them, a way to have the conversation they have been avoiding, and a steadier way of responding when pressure rises. I do not promise outcomes. The work depends on what you bring to it and what is happening in your organization."
+          ]
+        },
+        {
+          "h": "What is out of scope",
+          "p": [
+            "This is not therapy, and it does not replace medical, legal or financial advice. If I think another kind of help would serve you better, I will say so."
+          ]
+        },
+        {
+          "h": "Working with Richard's ideas in your own setting",
+          "p": [
+            "You do not need to know Aikido to benefit. Nobody is asked to step on a mat, and no physical practice is required. The ideas are applied to the conversation, the decision or the team in front of us, and I explain each one in plain language as we use it. If you are curious about the practice itself, I am glad to point you toward Richard's book and videos."
+          ]
+        },
+        {
+          "h": "How to begin",
+          "p": [
+            "Begin a confidential conversation. Tell me briefly what you are facing and when you would like to talk. I am based in Wellington and meet with clients anywhere. You can read more <a href=\"about-kenneth.html\">about me</a>."
+          ]
+        }
+      ],
+      "cta": {"text": "Begin a confidential conversation", "href": "contact-coaching.html"}
+    }
+  ]
+}

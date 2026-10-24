@@ -1319,3 +1319,13 @@ Recorded 2026-10-22. These are the canonical wordings; pages must not drift from
   initial commitment of three sessions. Stated in the `#coaching` section on
   the home page; no fee figures are published. Kenneth to confirm the stated
   minimum; change in one place if he vetoes.
+
+
+## Kenneth, Richard Moon and Coaching pages (`about-kenneth.html`, `career-highlight.html`, `about-richard-moon.html`, `richard-moon-music.html`, `coaching.html`)
+
+- Canonical copy lives in `data/about-pages.json` (from the Google Docs
+  "AikiField Page 1-5 (Draft)", 2026-10-24). Edit the JSON, then run
+  `python3 scripts/build_about_pages.py` to regenerate the HTML. Do not edit
+  the generated pages by hand.
+- Facts marked Verify or Hold in the Evidence Sheets are left out. The list of
+  omissions and open decisions is in `docs/about-pages-open-items.md`.
