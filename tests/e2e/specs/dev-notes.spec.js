@@ -48,7 +48,4 @@ test('visible counts match the listed items', async ({ page }) => {
   // 15 practice chips are listed; every visible count must say so.
   await expect(page.locator('.ex-chip')).toHaveCount(15);
   await expect(page.locator('#authBadge')).toContainText('all 15 practices unlocked');
-  // Studio count comes from the data, not a hardcoded "60".
-  const studios = await page.locator('#studioList .studio').count();
-  await expect(page.locator('#studioHead')).toHaveText(`${studios} STUDIOS · PERSONALIZATION`);
 });

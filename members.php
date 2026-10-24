@@ -163,7 +163,7 @@ $qaIsAdmin   = $_SESSION['qa_is_admin'] ?? false;
                             <span>Clear conversation</span>
                         </button>
                         <div class="coach-menu-sep" role="separator"></div>
-                        <a href="https://quantumaikido.com/profile" id="coach-profile-link" class="coach-menu-item" role="menuitem" tabindex="-1">Profile &amp; Settings</a>
+                        <a href="/profile" id="coach-profile-link" class="coach-menu-item" role="menuitem" tabindex="-1">Profile &amp; Settings</a>
                         <div class="coach-menu-sep" role="separator"></div>
                         <a href="/privacy" class="coach-menu-item" role="menuitem" tabindex="-1">Privacy</a>
                         <a href="/terms" class="coach-menu-item" role="menuitem" tabindex="-1">Terms</a>
